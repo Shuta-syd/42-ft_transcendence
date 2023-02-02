@@ -4,10 +4,12 @@
 × フロント、バック、クラスなど  
 ◎ issue「map class」(map classを実装する場合)
 
-## Branch Name 
+## Branch Name
+### 開発ブランチはissue単位
 機能別,担当別にbranchを切り分ける。branch名は「**issue名/"issue"issue番号**」  
 × shogura  
 ◎ map/issue1
+### 開発ブランチは最新のmainブランチを必ず反映する
 
 ## Commit Message
 - 先頭に#issue番号を必ず付加（./git/hook/commit-msgで対応）
@@ -17,6 +19,7 @@
 例）#X(what is the issue number) [add (what did you do change)] :[body (why did you change)]
 
 ## Pull Request
+### プルリクが承認されたら、ブランチは削除する
 #### 十分小さくプルリクエストを作ろう
 	プルリクが小さいと、レビューが簡単になり、変更がすばやく中央のブランチに取り込まれるため、レビューの精度が高くなり開発スピードも早くなる。
 
