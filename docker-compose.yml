@@ -1,23 +1,26 @@
 version: '3'
-  services:
+services:
 
-    frontend:
-      container_name: frontend
+  frontend:
+    container_name: frontend
+    build:
       context: ./docker
       dockerfile: frontend.Dockerfile
-      ports:
-        - 3000:3000
+    ports:
+      - 3000:3000
 
-    backend:
-      container_name: backend
+  backend:
+    container_name: backend
+    build:
       context: ./docker
       dockerfile: backend.Dockerfile
-      depend_on: database
-      ports:
-       - 8080:8080
+    depends_on:
+      - database
+    ports:
+      - 8080:8080
 
-    database:
-      container_name: database
-      image: "postgressql:latest"
-      ports:
-        - 5432:5432
+  database:
+    container_name: database
+    image: "postgres:latest"
+    ports:
+      - 5432:5432
