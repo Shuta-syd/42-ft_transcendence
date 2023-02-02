@@ -2,8 +2,9 @@ FROM node:latest
 
 WORKDIR /frontend
 
-RUN apt-get -y update
-RUN npm i -g npm@latest
-RUN npm update
+EXPOSE 3000
 
-CMD ["npm", "run"]
+RUN apt-get -y update
+RUN npm ci
+
+CMD ["npm", "run", "start"]
