@@ -2,9 +2,14 @@ FROM node:latest
 
 WORKDIR /frontend
 
-EXPOSE 3000
+COPY scripts/frontend/entrypoint.sh /
 
 RUN apt-get -y update
-RUN npm ci
 
-CMD ["npm", "run", "start"]
+RUN npm install -g npm@latest
+RUN npm install -g npm-check-updates
+RUN npm update
+
+
+RUN chmod +x /entrypoint.sh
+CMD ["/entrypoint.sh"]
