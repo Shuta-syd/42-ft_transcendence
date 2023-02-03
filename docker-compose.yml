@@ -28,3 +28,6 @@ services:
     image: "postgres:latest"
     ports:
       - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=user42
+      
