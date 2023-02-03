@@ -4,7 +4,7 @@ module.exports = {
     es2021: true
   },
   extends: [
-    'airbnb',
+    'airbnb-base',
     'airbnb-typescript',
     'react-app',
     'react-app/jest',
@@ -12,7 +12,6 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
     'plugin:react/recommended',
-    'standard-with-typescript',
     'prettier'
   ],
   overrides: [
