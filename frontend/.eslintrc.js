@@ -4,6 +4,8 @@ module.exports = {
     es2021: true
   },
   extends: [
+    'airbnb',
+    'airbnb-typescript',
     'react-app',
     'react-app/jest',
     'eslint:recommended',
