@@ -8,9 +8,9 @@
   <p align="center">
     <br />
     <div style="display: flex; justify-content: center; align-items: center;">
-        <img src="./asset/nestjs.logo.svg" style="width: 100px; margin: 13px;">
-        <img src="./asset/reactjs.logo.png" style="width: 100px; margin: 13px;">
-        <img src="./asset/postgresql.logo.svg" style="width: 100px; margin: 13px;">
+        <img src="./assets/nestjs.logo.svg" style="width: 100px; margin: 13px;">
+        <img src="./assets/reactjs.logo.png" style="width: 100px; margin: 13px;">
+        <img src="./assets/postgresql.logo.svg" style="width: 100px; margin: 13px;">
     </div>
   </p>
 </div>
