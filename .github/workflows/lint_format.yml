@@ -1,0 +1,22 @@
+name: eslint and format
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  build:
+    name: check lint and format
+    runs-on: ubuntu-latest
+    steps:
+      - name: clone source codes
+        uses: actions/checkout@v3
+      - name: frontend & backend init
+        run : |
+            cd ./frontend
+            npm install .
+            cd ../backend
+            npm install .
+      - name: frontend lint
+        working-directory: ./frontend
+        run : npm run lint
+      - name: backend format
+        working-directory: ./backend
+        run : npm run format

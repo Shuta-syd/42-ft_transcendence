@@ -2,3 +2,6 @@
 
 *.idea*
 *.xml
+.DS_Store
+assets/study/
+node_modules/
