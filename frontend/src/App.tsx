@@ -1,5 +1,4 @@
 import React from 'react';
-import 'antd/dist/react.css';
 import './App.css';
 
 function App() {
