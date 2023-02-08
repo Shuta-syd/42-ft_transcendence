@@ -1,21 +1,18 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import { Container } from "@mui/system";
 import React from "react";
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Chat from "./features/chat/Chat";
+import {Route, Routes } from 'react-router-dom';
 import Home from "./features/home/Home";
-import Navbar from "./components/Navbar";
+import Chat from "./features/chat/Chat";
 
 function App() {
   return (
-    <div>
-      <Navbar />
-      <BrowserRouter>
+    <Container maxWidth="xl">
         <Routes>
           <Route index element={<Home/>} />
           <Route path="/chat" element={<Chat/>} />
         </Routes>
-      </BrowserRouter>
-    </div>
+    </Container>
   )
 }
 

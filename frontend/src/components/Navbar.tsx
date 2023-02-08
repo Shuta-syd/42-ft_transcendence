@@ -1,7 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { AppBar, Link, Toolbar, Typography } from "@mui/material";
+import { AppBar, Toolbar, Typography } from "@mui/material";
 import { Box, Container } from "@mui/system";
 import React from "react";
+import { Link } from "react-router-dom";
 
 function Navbar() {
   return (
@@ -10,10 +11,10 @@ function Navbar() {
         <Toolbar disableGutters>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             <Typography mr={5}>
-              <Link href=" /" color={"#fffff"}>Home</Link>
+              <Link to={"/"}>Home</Link>
             </Typography>
+              <Link to={"/chat"}>Chat</Link>
             <Typography>
-              <Link href=" /chat" color={"#fffff"}>Chat</Link>
             </Typography>
           </Box>
         </Toolbar>
