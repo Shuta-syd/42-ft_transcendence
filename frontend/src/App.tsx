@@ -1,10 +1,11 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import React from "react";
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Chat from "../features/chat/Chat";
-import Home from "../features/home/Home";
-import Navbar from "./Navbar";
+import Chat from "./features/chat/Chat";
+import Home from "./features/home/Home";
+import Navbar from "./components/Navbar";
 
-function Header() {
+function App() {
   return (
     <div>
       <Navbar />
@@ -18,4 +19,4 @@ function Header() {
   )
 }
 
-export default Header;
+export default App;
