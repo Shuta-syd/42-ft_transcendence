@@ -2,9 +2,9 @@ import React from "react";
 
 function Chat() {
   return (
-    <h3>
+    <h1>
       This is Chat Page
-    </h3>
+    </h1>
   );
 }
 
