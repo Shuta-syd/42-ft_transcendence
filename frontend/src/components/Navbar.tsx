@@ -13,8 +13,11 @@ function Navbar() {
             <Typography mr={5}>
               <Link to={"/"}>Home</Link>
             </Typography>
+            <Typography mr={5}>
               <Link to={"/chat"}>Chat</Link>
+            </Typography>
             <Typography>
+              <Link to={"/game"}>Game</Link>
             </Typography>
           </Box>
         </Toolbar>
