@@ -8,11 +8,13 @@ jobs:
     steps:
       - name: clone source codes
         uses: actions/checkout@v3
-      - name: frontend & backend init
+      - name: frontend init
         run : |
             cd ./frontend
             npm install .
-            cd ../backend
+      - name: backend init
+        run : |
+            cd ./backend
             npm install .
       - name: frontend lint
         working-directory: ./frontend
