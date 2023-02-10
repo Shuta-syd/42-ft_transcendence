@@ -21,11 +21,10 @@ export class ChatGateway {
     });
   }
 
-  @SubscribeMessage('send_message')
+  @SubscribeMessage('send_message') // to subscribeEvent
+  //@MessageBody clientから送られてくるbody内容
   listenForMessages(@MessageBody() data: string) {
-    console.log('data:[', data, ']');
     this.server.emit('onMessage', {
-      msg: 'New Message',
       content: data,
     });
   }

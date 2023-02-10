@@ -3,10 +3,9 @@ import React, { useContext, useEffect, useState } from "react"
 import { WebsocketContext } from "../contexts/WebsocketContext"
 
 type MessagePayload = {
+  socketId: string;
   content: string;
-  msg: string;
 };
-
 
 export default function Websocket() {
   const [value, setValue] = useState('');
@@ -15,17 +14,12 @@ export default function Websocket() {
 
   useEffect(() => {
     socket.on('connect', () => {
-      console.log('Connected!');
-      console.log(socket.connect());
-    });
-
-    socket.on('onMessage', (newMessage : MessagePayload) => {
-      console.log('onMessage event received!');
-      setMessage((prev) => [...prev, newMessage]);
+      socket.on('onMessage', (newMessage : MessagePayload) => {
+        setMessage((prev) => [...prev, newMessage]);
+      });
     });
 
     return () => {
-      console.log('Unregistering Events');
       socket.off('connect');
       socket.off('onMessage');
     }
@@ -48,6 +42,7 @@ export default function Websocket() {
         }
       </div>
       <TextField fullWidth label='...' variant="outlined"
+        value={value}
         onChange={(e) => setValue(e.target.value)}
       />
       <Button variant="contained"
