@@ -1,10 +1,14 @@
 import React from "react";
+import Websocket from "../../components/Websocket";
+import { socket, WebsocketProvider } from "../../contexts/WebsocketContext";
 
 function Chat() {
   return (
-    <h1>
-      This is Chat Page
-    </h1>
+    <div className="Chat">
+      <WebsocketProvider value={socket}>
+        <Websocket/>
+      </WebsocketProvider>
+    </div>
   );
 }
 

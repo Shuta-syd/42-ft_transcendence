@@ -6,18 +6,27 @@ import {
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 
-@WebSocketGateway()
+@WebSocketGateway({
+  cors: {
+    origin: ['http://localhost:3000'],
+  },
+})
 export class ChatGateway {
   @WebSocketServer()
   server: Server;
 
-  @SubscribeMessage('send_message')
-  listenForMessages(@MessageBody() data: string) {
-    this.server.sockets.emit('receive_message', data);
+  onModuleInit() {
+    this.server.on('connection', (socket) => {
+      console.log('Connected', socket.id);
+    });
   }
 
-  @SubscribeMessage('events')
-  handleEvent(@MessageBody() data: string): string {
-    return data;
+  @SubscribeMessage('send_message')
+  listenForMessages(@MessageBody() data: string) {
+    console.log('data:[', data, ']');
+    this.server.emit('onMessage', {
+      msg: 'New Message',
+      content: data,
+    });
   }
 }
