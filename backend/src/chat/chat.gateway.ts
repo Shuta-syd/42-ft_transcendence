@@ -12,7 +12,6 @@ import {
 import { Server, Socket } from 'socket.io';
 
 type ChatPayload = {
-  uname: string;
   time: string;
   text: string;
 };

@@ -16,7 +16,7 @@ export default function Websocket() {
   const [text, setText] = useState('');
   const [uname, setUname] = useState('');
   const [chatLog, setChatLog] = useState<ChatLog>([]);
-  const socket = useContext(WebsocketContext); // type is Socket
+  const socket = useContext(WebsocketContext);
 
   useEffect(() => {
     socket.on('connect', () => {
