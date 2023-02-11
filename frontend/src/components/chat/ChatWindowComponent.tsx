@@ -55,12 +55,12 @@ export default function ChatWindowComponent() {
 
 
   return (
-    <Grid item xs={9}>
+    <Grid item xs={9} height={"92vh"} position='relative'>
       <Stack spacing={0}>
         <Box sx={{backgroundColor: '#b39ddb'}}>
           <Typography variant="h6">Chat Window</Typography>
         </Box>
-        <Paper elevation={1} sx={{backgroundColor: '#ede7f6'}}>
+        <Paper elevation={1} sx={{backgroundColor: '#ede7f6'}} >
           <h3>トーク内容（仮）</h3>
           {chatLog.map((chat, idx) => (
             <div key={idx}>
@@ -70,6 +70,7 @@ export default function ChatWindowComponent() {
           ))}
         </Paper>
         <TextField fullWidth variant="outlined" placeholder="new message"
+          style={{position: 'absolute', bottom: 0}}
           value={text}
           onChange={(e) => { setText(e.target.value) }}
           InputProps={{

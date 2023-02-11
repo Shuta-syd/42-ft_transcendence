@@ -1,4 +1,4 @@
-import { Avatar, Grid, Link, Typography } from "@mui/material";
+import { Avatar, Grid, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
 import PersonIcon from '@mui/icons-material/Person';
 import React from "react";
