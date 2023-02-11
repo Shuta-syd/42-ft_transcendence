@@ -70,6 +70,7 @@ export default function ChatWindowComponent() {
           ))}
         </Paper>
         <TextField fullWidth variant="outlined" placeholder="new message"
+          value={text}
           onChange={(e) => { setText(e.target.value) }}
           InputProps={{
             endAdornment: (

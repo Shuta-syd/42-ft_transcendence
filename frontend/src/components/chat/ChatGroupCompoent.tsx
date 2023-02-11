@@ -1,7 +1,7 @@
 import { Grid, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import React from "react";
-import ChatFriendsComponent from "../ChatFriendsComponent";
+import ChatFriendsComponent from "./ChatFriendsComponent";
 
 
 /**
