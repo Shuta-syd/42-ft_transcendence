@@ -1,7 +1,8 @@
-import { Grid, Paper, Typography, Button, TextField, InputAdornment } from "@mui/material";
+import { Grid, Paper, Typography, TextField, InputAdornment, IconButton} from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import SendIcon from '@mui/icons-material/Send';
 import React from "react";
+import { Link } from "react-router-dom";
 
 /**
  * @returns 実際にchatをするトーク画面のコンポーネント
@@ -20,8 +21,10 @@ export default function ChatWindowComponent() {
           fullWidth label="new message" variant="outlined"
           InputProps={{
             endAdornment: (
-              <InputAdornment position="start">
-                <SendIcon/>
+              <InputAdornment position="end">
+                <IconButton color="primary">
+                  <SendIcon/>
+                </IconButton>
               </InputAdornment>
             )
           }}
