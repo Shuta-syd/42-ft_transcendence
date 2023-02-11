@@ -1,5 +1,6 @@
-import { Avatar } from "@mui/material";
+import { Avatar, Grid, Link, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
+import PersonIcon from '@mui/icons-material/Person';
 import React from "react";
 
 /**
@@ -10,9 +11,14 @@ export default function ChatFriendsComponent() {
   return (
     <Stack>
       {friends.map((friend, idx) => (
-        <>
-          <Avatar>{friend}</Avatar>
-        </>
+        <Grid container spacing={2} key={idx}>
+          <Grid item>
+            <Avatar ><PersonIcon /></Avatar>
+          </Grid>
+          <Grid item>
+            <Typography variant="subtitle1">{friend}</Typography>
+          </Grid>
+        </Grid>
       ))}
     </Stack>
   )
