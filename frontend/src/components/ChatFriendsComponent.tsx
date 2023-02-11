@@ -9,10 +9,10 @@ import React from "react";
 export default function ChatFriendsComponent() {
   const friends = SampleFriend;
   return (
-    <Stack>
+    <Stack spacing={2} sx={{backgroundColor: '#ede7f6'}}>
       {friends.map((friend, idx) => (
-        <Grid container spacing={2} key={idx}>
-          <Grid item>
+        <Grid container key={idx}>
+          <Grid item mr={2}>
             <Avatar ><PersonIcon /></Avatar>
           </Grid>
           <Grid item>
