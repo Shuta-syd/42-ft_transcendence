@@ -4,7 +4,7 @@ body {
 #gameCanvas {
     background-color: black;
     width: 640px;
-    height: 360px;
+    height: 600px;
     margin: auto;
     align: center;
 }
@@ -20,6 +20,7 @@ body {
     color: white;
 }
 #title {
-    background-color: white;
-    color: black;
+    text-align: start;
+    color: green;
 }
+

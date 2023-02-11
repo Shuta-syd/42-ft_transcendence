@@ -139,9 +139,7 @@ function Game() {
 // not doing this somehow messes up shadow rendering
     camera.position.z = 320;
 
-    function setup()
-    {
-
+    const setup = () : void => {
         draw();
     }
 
@@ -264,31 +262,29 @@ function Game() {
     const paddleSpeed = 3;
 
 
-    if (Key.isDown(Key.A))
-    {
+    if (Key.isDown(Key.A)) {
         // if paddle is not touching the side of table
         // we move
-        if (paddle1.position.y < fieldHeight * 0.45)
-        {
+        if (paddle1.position.y < fieldHeight * 0.45) {
             paddle1DirY = paddleSpeed * 0.5;
         }
-            // else we don't move and stretch the paddle
+        // else we don't move and stretch the paddle
         // to indicate we can't move
-        else
-        {
+        else {
             paddle1DirY = 0;
             paddle1.scale.z += (10 - paddle1.scale.z) * 0.2;
         }
-        // code to move paddle left
+      // code to move paddle left
     }
 
     return (
     <div id='scoreboard'>
-        <h1 id='scores'>0-0</h1>
         <h1 id='title'>3D PONG</h1>
-        <h2 id='winnerBoard'>First to 7 wins!</h2>
-        <h3>A - move left
-            <br/>D - move right</h3>
+         <div id="gameCanvas" />
+        <h2 id='scores'>0-0</h2>
+         <h2 id='winnerBoard'>First to 7, wins!!!!</h2>
+         {/* <script src={'./Game.tsx'}></script> */}
+        <br/>
     </div>
     );
 }
