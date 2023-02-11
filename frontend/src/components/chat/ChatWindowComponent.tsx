@@ -18,7 +18,9 @@ export default function ChatWindowComponent() {
           <h1>hello</h1>
         </Paper>
         <TextField
-          fullWidth label="new message" variant="outlined"
+          fullWidth
+          variant="outlined"
+          placeholder="new Message"
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
