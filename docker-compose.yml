@@ -28,8 +28,7 @@ services:
     image: postgres:latest
     ports:
       - 5432:5432
-    environment:
-      - POSTGRES_PASSWORD=user42
+    env_file: ./backend/.env
 
   swagger-editor:
     container_name: swagger-editor
