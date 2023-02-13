@@ -22,6 +22,8 @@ services:
       - database
     ports:
       - 8080:8080
+    networks:
+      - back-tier
 
   database:
     container_name: database
@@ -30,4 +32,10 @@ services:
       - 5432:5432
     environment:
       - POSTGRES_PASSWORD=user42
-      
+      - POSTGRES_USER=user42
+    networks:
+      - back-tier
+
+networks:
+  back-tier:
+    driver: bridge
