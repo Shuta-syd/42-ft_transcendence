@@ -7,12 +7,12 @@ import Chat from "./features/chat/Chat";
 
 function App() {
   return (
-    <Box>
+    <>
         <Routes>
           <Route index element={<Home/>} />
           <Route path="/chat" element={<Chat/>} />
         </Routes>
-    </Box>
+    </>
   )
 }
 

@@ -55,7 +55,7 @@ export default function ChatWindowComponent() {
 
 
   return (
-    <Grid item xs={9} height={"92vh"} position='relative'>
+    <Grid item xs={9} height={"92.5vh"} position='relative'>
       <Stack spacing={0}>
         <Box sx={{backgroundColor: '#b39ddb'}}>
           <Typography variant="h6">Chat Window</Typography>

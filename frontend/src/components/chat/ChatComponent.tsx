@@ -8,7 +8,7 @@ import ChatWindowComponent from "./ChatWindowComponent";
  */
 export default function ChatComponent() {
   return (
-    <Grid container >
+    <Grid container>
       <ChatGroupComponent />
       <ChatWindowComponent />
     </Grid>

@@ -9,13 +9,15 @@ import ChatFriendsComponent from "./ChatFriendsComponent";
  */
 export default function ChatGroupComponent() {
   return (
-    <Grid item xs={3} height={"50vw"}>
+    <Grid item xs={3} height={"93vh"}>
       <Box>
         <Stack>
           <Box sx={{ backgroundColor: '#b39ddb'}}>
             <Typography variant="h6">Direct Messages</Typography>
           </Box>
-          <ChatFriendsComponent />
+          <Box>
+            <ChatFriendsComponent />
+          </Box>
         </Stack>
       </Box>
     </Grid>
