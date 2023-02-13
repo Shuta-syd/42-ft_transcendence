@@ -25,9 +25,24 @@ services:
 
   database:
     container_name: database
-    image: "postgres:latest"
+    image: postgres:latest
     ports:
       - 5432:5432
     environment:
       - POSTGRES_PASSWORD=user42
-      
+
+  swagger-editor:
+    container_name: swagger-editor
+    image: swaggerapi/swagger-editor
+    ports:
+      - 8000:8000
+
+  swagger-ui:
+    container_name: swagger-ui
+    image: swaggerapi/swagger-ui
+    volumes:
+      - ./swagger/openapi.yml:/openapi.yml
+    ports:
+      - 8001:8001
+    environment:
+      SWAGGER_JSON: /openapi.yml
