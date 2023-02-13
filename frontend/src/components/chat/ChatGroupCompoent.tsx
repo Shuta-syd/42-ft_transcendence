@@ -9,7 +9,7 @@ import ChatFriendsComponent from "./ChatFriendsComponent";
  */
 export default function ChatGroupComponent() {
   return (
-    <Grid item xs={3} height={"93vh"}>
+    <Grid item xs={3} height={"94vh"}>
       <Box>
         <Stack>
           <Box sx={{ backgroundColor: '#b39ddb'}}>

@@ -1,4 +1,4 @@
-import { Grid, Paper, Typography, TextField, InputAdornment, IconButton} from "@mui/material";
+import { Grid , Typography, TextField, InputAdornment, IconButton} from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import SendIcon from '@mui/icons-material/Send';
 import React, { useCallback, useContext, useEffect, useState } from "react";
@@ -55,34 +55,35 @@ export default function ChatWindowComponent() {
 
 
   return (
-    <Grid item xs={9} height={"92.5vh"} position='relative'>
+    <Grid item xs={9} height={"94vh"} position='relative'>
       <Stack spacing={0}>
         <Box sx={{backgroundColor: '#b39ddb'}}>
           <Typography variant="h6">Chat Window</Typography>
         </Box>
-        <Paper elevation={1} sx={{backgroundColor: '#ede7f6'}} >
-          <h3>トーク内容（仮）</h3>
-          {chatLog.map((chat, idx) => (
-            <div key={idx}>
-              <div>{chat.time}[{chat.socketId}]</div>
-              <div>user: {chat.text}</div>
-            </div>
-          ))}
-        </Paper>
-        <TextField fullWidth variant="outlined" placeholder="new message"
-          style={{position: 'absolute', bottom: 0}}
-          value={text}
-          onChange={(e) => { setText(e.target.value) }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <IconButton color="primary" onClick={sendChat}>
-                  <SendIcon/>
-                </IconButton>
-              </InputAdornment>
-            )
-          }}
-        />
+        <Box sx={{ backgroundColor: '#ede7f6', height: '91vh' }}>
+          <Box>
+            {chatLog.map((chat, idx) => (
+              <div key={idx}>
+                <div>{chat.time}[{chat.socketId}]</div>
+                <div>user: {chat.text}</div>
+              </div>
+            ))}
+          </Box>
+          <TextField fullWidth variant="outlined" placeholder="new message"
+            style={{position: 'absolute', bottom: 0}}
+            value={text}
+            onChange={(e) => { setText(e.target.value) }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton color="primary" onClick={sendChat}>
+                    <SendIcon/>
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
+            />
+        </Box>
       </Stack>
     </Grid>
   )

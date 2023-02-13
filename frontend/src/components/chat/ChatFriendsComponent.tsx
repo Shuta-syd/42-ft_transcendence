@@ -9,7 +9,7 @@ import React from "react";
 export default function ChatFriendsComponent() {
   const friends = SampleFriend;
   return (
-    <Stack spacing={2} sx={{backgroundColor: '#ede7f6'}}>
+    <Stack spacing={2} sx={{ backgroundColor: '#d1c4e9' }} height={'91vh'}>
       {friends.map((friend, idx) => (
         <Grid container key={idx}>
           <Grid item mr={2}>

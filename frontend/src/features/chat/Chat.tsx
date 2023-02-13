@@ -4,11 +4,11 @@ import { socket, WebsocketProvider } from "../../contexts/WebsocketContext";
 
 function Chat() {
   return (
-    <div className="Chat">
+    <>
       <WebsocketProvider value={socket}>
         <ChatComponent />
       </WebsocketProvider>
-    </div>
+    </>
   );
 }
 
