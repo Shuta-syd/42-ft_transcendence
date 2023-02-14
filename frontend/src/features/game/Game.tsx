@@ -1,45 +1,50 @@
-import React from "react";
-// import ReactDOM from "react-dom";
+import React, { useRef, useEffect } from "react";
 
-type FlexDirection = 'row' | 'row-reverse' | 'column' | 'column-reverse';
-interface Properties<T, U> {
-    display: T;
-    flexDirection?: FlexDirection;
-    justifyContent?: U;
-}
+const Game = () => {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
 
-const inner: Properties<'flex', 'center'> = {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-}
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (canvas == null) {
+            return ;
+        }
+        const ctx = canvas.getContext("2d");
+        if (ctx == null) {
+            return ;
+        }
+        let x = canvas.width / 2;
+        let y = canvas.height - 30;
+        let dx = 2;
+        let dy = -2;
+        const ballRadius = 10;
 
-const ROW_SIZE = 10;
-const COL_SIZE = 20;
-const board : number[] = [...Array(ROW_SIZE * COL_SIZE).map(() => 0)];
+        const drawBall = () => {
+            ctx.beginPath();
+            ctx.arc(x, y, ballRadius, 0, Math.PI * 2);
+            ctx.fillStyle = "#0095DD";
+            ctx.fill();
+            ctx.closePath();
+        };
 
-const style = {
-    width: "250px",
-    heigth: "250px",
-    display: "grid",
-    gridTemplate: `repeat(${ROW_SIZE}, 1fr) / repeat(${COL_SIZE}, 1fr)`
-}
+        const draw = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawBall();
 
-function Game() {
-    return (
-        <div id='scoreboard'>
-            <h1 id='title'>3D PONG</h1>
-            {/* start new logic */}
-            <div style={inner}>
+            if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
+                dx = -dx;
+            }
+            if (y + dy > canvas.height - ballRadius || y + dy < ballRadius) {
+                dy = -dy;
+            }
 
-            </div>
-            {/* end new logic */}
-            <div id="gameCanvas" />
-            <h2 id='scores'>0-0</h2>
-            <h2 id='winnerBoard'>First to 7, wins!!!!</h2>
-            <br/>
-        </div>
-    );
-}
+            x += dx;
+            y += dy;
+        };
+
+        const interval = setInterval(draw, 10);
+    }, []);
+
+    return <canvas ref={canvasRef} width={400} height={400} />;
+};
 
 export default Game;
