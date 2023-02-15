@@ -29,12 +29,18 @@ const ball = {
     }
 }
 
+const paddle = {
+    x: 5,
+    y: 5,
+    draw() {
+
+    }
+}
 
 /* Helper */
 function randomInt(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-
 
 /*
 後に変更のないobject
@@ -65,6 +71,7 @@ function drawStaticObject() {
 
 function draw() {
     context?.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
+    drawStaticObject();
     ball.draw();
     ball.x += ball.vx;
     ball.y += ball.vy;
@@ -97,7 +104,7 @@ const Canvas = () => {
         if (!context) {
             return ;
         }
-        drawStaticObject();
+        // drawStaticObject();
 
         canvas.addEventListener('mousemove', (e) => {
             if (!isRunning) {
