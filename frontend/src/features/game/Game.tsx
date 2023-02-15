@@ -6,6 +6,7 @@ let context: CanvasRenderingContext2D | null;
 let canvas:  HTMLCanvasElement | null;
 let raf : number;
 let isRunning : boolean;
+const middleLine = 450;
 
 /*
 ballの情報をオブジェクト化して、drawで描けるようになってる
@@ -54,14 +55,13 @@ function drawStaticObject() {
     rectangleの外枠だけを出力する関数
     x、 y(始点)、幅、高さ
      */
-    context?.strokeRect(5, 5, 505, 305);
-
+    context?.strokeRect(5, 100, 900, 700);
     /*
     strokeを用いて、設定情報からlineをひく
      */
     context?.beginPath();
-    context?.moveTo(255, 5);
-    context?.lineTo(255, 310);
+    context?.moveTo(middleLine, 100);
+    context?.lineTo(middleLine, 800);
     context?.stroke();
 }
 
@@ -76,20 +76,19 @@ function draw() {
     ball.x += ball.vx;
     ball.y += ball.vy;
     /* より現実に近くなるようにする */
-    ball.vy *= 0.99;
-    ball.vy += 0.25;
 
     /* judge conflict */
     if (canvas == null) {
         return ;
     }
-    if (ball.y + ball.vy > canvas.height || ball.y + ball.vy < 0) {
+    const h = 790;
+    const w = 890;
+    if (h < ball.y + ball.vy || ball.y + ball.vy < 100) {
         ball.vy = -ball.vy;
     }
-    if (ball.x + ball.vx > canvas.width || ball.x + ball.vx < 0) {
+    if (ball.x + ball.vx < 5 || w < ball.x + ball.vx) {
         ball.vx = -ball.vx;
     }
-
     raf = window.requestAnimationFrame(draw);
 }
 
@@ -118,7 +117,7 @@ const Canvas = () => {
         });
         ball.draw();
     }, []);
-    return <canvas ref={canvasRef} height="1000" width="1000"/>
+    return <canvas ref={canvasRef} height="900" width="1000"/>
 }
 
 export default Canvas;
