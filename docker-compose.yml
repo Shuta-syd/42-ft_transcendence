@@ -24,6 +24,7 @@ services:
       - database
     ports:
       - 8080:8080
+      - 5555:5555
     networks:
       - back-tier
 
