@@ -37,6 +37,8 @@ services:
       - ./backend/.env
     networks:
       - back-tier
+    volumes:
+      - db-vol:/var/lib/postgresql
 
   swagger-editor:
     container_name: swagger-editor
@@ -66,3 +68,6 @@ services:
 networks:
   back-tier:
     driver: bridge
+
+volumes:
+  db-vol:
