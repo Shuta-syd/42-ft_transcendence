@@ -1,7 +1,10 @@
 import React, { useRef, useEffect } from "react";
 
+
+/* global variables */
 let gContext: CanvasRenderingContext2D | null;
 let gCanvas:  HTMLCanvasElement | null;
+let gRaf : number;
 
 /*
 ballの情報をオブジェクト化して、drawで描けるようになってる
@@ -24,6 +27,13 @@ const ball = {
         gContext?.fill();
     }
 }
+
+
+/* Helper */
+function randomInt(min: number, max: number): number {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 
 /*
 後に変更のないobject
@@ -52,20 +62,17 @@ function drawStaticObject() {
 後があるobject
  */
 
-function drawDynamicOnjsct() {
+function drawDynamicObject() {
     ball.draw();
 }
 
 
-function randomInt(min: number, max: number): number {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
 function draw() {
-    gContext?.clearRect(5, 5, 500, 300);
+    gContext?.clearRect(0, 0, gCanvas?.width || 0, gCanvas?.height || 0);
     ball.draw();
     ball.x += ball.vx;
     ball.y += ball.vy;
+    gRaf = window.requestAnimationFrame(draw);
 }
 
 const Canvas = () => {
@@ -80,7 +87,13 @@ const Canvas = () => {
             return ;
         }
         drawStaticObject();
-        drawDynamicOnjsct();
+        drawDynamicObject();
+
+        gCanvas.addEventListener('mousemove', (e) => {
+            gRaf = window.requestAnimationFrame(draw);
+        });
+
+
     }, []);
     return <canvas ref={canvasRef} height="1000" width="1000"/>
 }
