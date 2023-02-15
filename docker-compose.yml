@@ -24,6 +24,8 @@ services:
       - database
     ports:
       - 8080:8080
+    networks:
+      - back-tier
 
   database:
     container_name: database
@@ -32,6 +34,8 @@ services:
       - 5432:5432
     env_file:
       - ./backend/.env
+    networks:
+      - back-tier
 
   swagger-editor:
     container_name: swagger-editor
@@ -57,3 +61,7 @@ services:
     command: mock -h 0.0.0.0 /openapi.yml
     volumes:
       - ./swagger/openapi.yml:/openapi.yml
+
+networks:
+  back-tier:
+    driver: bridge
