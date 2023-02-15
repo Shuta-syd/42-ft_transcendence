@@ -77,6 +77,7 @@ function drawDynamicOnjsct() {
 
     ball.draw();
 
+
     // for (;;) {
     //     const lpadx = 5;
     //     const lpady = 5;
@@ -122,6 +123,16 @@ const ball = {
 
 
 
+function draw() {
+
+    context?.clearRect(5, 5, 500, 300);
+    ball.draw();
+    ball.x += ball.vx;
+    ball.y += ball.vy;
+
+
+}
+
 const Canvas = () => {
 
 
@@ -136,23 +147,10 @@ const Canvas = () => {
             return ;
         }
 
-        // drawing smile face
-        // context.arc(75, 75, 50, 0, Math.PI * 2, true); // Outer circle
-        // context.moveTo(110, 75);
-        // context.arc(75, 75, 35, 0, Math.PI, false); // Mouth (clockwise)
-        // context.moveTo(65, 65);
-        // context.arc(60, 65, 5, 0, Math.PI * 2, true); // Left eye
-        // context.moveTo(95, 65);
-        // context.arc(90, 65, 5, 0, Math.PI * 2, true); // Right eye
-        // context.stroke();
 
-        for (;;) {
+
             draeStaticObjsct();
             drawDynamicOnjsct();
-
-        }
-
-
 
 
 
