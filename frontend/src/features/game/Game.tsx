@@ -5,7 +5,6 @@ import React, { useRef, useEffect } from "react";
 let context: CanvasRenderingContext2D | null;
 let canvas:  HTMLCanvasElement | null;
 let raf : number;
-let isRunning : boolean;
 const middleLine = 450;
 
 /*
@@ -126,18 +125,24 @@ const Canvas = () => {
         // drawStaticObject();
 
         canvas.addEventListener('mousemove', (e) => {
-            if (!isRunning) {
                 raf = window.requestAnimationFrame(draw);
-                isRunning = true;
-            }
         });
         canvas.addEventListener('mouseout', (e) => {
             window.cancelAnimationFrame(raf);
-            isRunning = false;
         });
         ball.draw();
     }, []);
-    return <canvas ref={canvasRef} height="900" width="1000"/>
+
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        leftPaddle.y += 100;
+    };
+
+    return (
+        <div>
+            <canvas ref={canvasRef} height="900" width="1000"/>
+            <button onClick={handleClick}>Click</button>
+        </div>
+        );
 }
 
 export default Canvas;
