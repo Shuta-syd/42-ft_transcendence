@@ -72,6 +72,18 @@ function draw() {
     ball.draw();
     ball.x += ball.vx;
     ball.y += ball.vy;
+
+    /* judge conflict */
+    if (gCanvas == null) {
+        return ;
+    }
+    if (ball.y + ball.vy > gCanvas.height || ball.y + ball.vy < 0) {
+        ball.vy = -ball.vy;
+    }
+    if (ball.x + ball.vx > gCanvas.width || ball.x + ball.vx < 0) {
+        ball.vx = -ball.vx;
+    }
+
     gRaf = window.requestAnimationFrame(draw);
 }
 
@@ -87,13 +99,14 @@ const Canvas = () => {
             return ;
         }
         drawStaticObject();
-        drawDynamicObject();
 
         gCanvas.addEventListener('mousemove', (e) => {
             gRaf = window.requestAnimationFrame(draw);
         });
-
-
+        gCanvas.addEventListener('mouseout', (e) => {
+            window.cancelAnimationFrame(gRaf);
+        });
+        drawDynamicObject();
     }, []);
     return <canvas ref={canvasRef} height="1000" width="1000"/>
 }
