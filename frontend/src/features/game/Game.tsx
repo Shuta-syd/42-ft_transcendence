@@ -30,11 +30,29 @@ const ball = {
     }
 }
 
-const paddle = {
+const leftPaddle = {
     x: 5,
-    y: 5,
+    y: 100,
+    color: "black",
     draw() {
+        context?.beginPath();
+        context?.rect(this.x, this.y, 50, 200);
+        context?.closePath();
+        context?.fillStyle && (context.fillStyle = this.color);
+        context?.fill();
+    }
+}
 
+const rightPaddle = {
+    x: 855,
+    y: 100,
+    color: "black",
+    draw() {
+        context?.beginPath();
+        context?.rect(this.x, this.y, 50, 200);
+        context?.closePath();
+        context?.fillStyle && (context.fillStyle = this.color);
+        context?.fill();
     }
 }
 
@@ -75,7 +93,9 @@ function draw() {
     ball.draw();
     ball.x += ball.vx;
     ball.y += ball.vy;
-    /* より現実に近くなるようにする */
+
+    leftPaddle.draw();
+    rightPaddle.draw();
 
     /* judge conflict */
     if (canvas == null) {
