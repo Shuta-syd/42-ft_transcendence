@@ -2,9 +2,10 @@ import React, { useRef, useEffect } from "react";
 
 
 /* global variables */
-let gContext: CanvasRenderingContext2D | null;
-let gCanvas:  HTMLCanvasElement | null;
-let gRaf : number;
+let context: CanvasRenderingContext2D | null;
+let canvas:  HTMLCanvasElement | null;
+let raf : number;
+let isRunning : boolean;
 
 /*
 ballの情報をオブジェクト化して、drawで描けるようになってる
@@ -20,11 +21,11 @@ const ball = {
     radius: 25,
     color: "red",
     draw() {
-        gContext?.beginPath();// 自身を書く関数をpropertyのなかに格納
-        gContext?.arc(this.x, this.y, this.radius, 0, Math.PI * 2 );
-        gContext?.closePath();
-        gContext?.fillStyle && (gContext.fillStyle = this.color);
-        gContext?.fill();
+        context?.beginPath();// 自身を書く関数をpropertyのなかに格納
+        context?.arc(this.x, this.y, this.radius, 0, Math.PI * 2 );
+        context?.closePath();
+        context?.fillStyle && (context.fillStyle = this.color);
+        context?.fill();
     }
 }
 
@@ -42,82 +43,75 @@ function randomInt(min: number, max: number): number {
 function drawStaticObject() {
     // create a field of game
     /* lineを出す */
-    gContext?.beginPath();
+    context?.beginPath();
     /*
     rectangleの外枠だけを出力する関数
     x、 y(始点)、幅、高さ
      */
-    gContext?.strokeRect(5, 5, 505, 305);
+    context?.strokeRect(5, 5, 505, 305);
 
     /*
     strokeを用いて、設定情報からlineをひく
      */
-    gContext?.beginPath();
-    gContext?.moveTo(255, 5);
-    gContext?.lineTo(255, 310);
-    gContext?.stroke();
+    context?.beginPath();
+    context?.moveTo(255, 5);
+    context?.lineTo(255, 310);
+    context?.stroke();
 }
 
 /*
 後があるobject
  */
 
-function drawDynamicObject() {
-    ball.draw();
-}
-
-
 function draw() {
-    gContext?.clearRect(0, 0, gCanvas?.width || 0, gCanvas?.height || 0);
+    context?.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
     ball.draw();
     ball.x += ball.vx;
     ball.y += ball.vy;
+    /* より現実に近くなるようにする */
+    ball.vy *= 0.99;
+    ball.vy += 0.25;
 
     /* judge conflict */
-    if (gCanvas == null) {
+    if (canvas == null) {
         return ;
     }
-    if (ball.y + ball.vy > gCanvas.height || ball.y + ball.vy < 0) {
+    if (ball.y + ball.vy > canvas.height || ball.y + ball.vy < 0) {
         ball.vy = -ball.vy;
     }
-    if (ball.x + ball.vx > gCanvas.width || ball.x + ball.vx < 0) {
+    if (ball.x + ball.vx > canvas.width || ball.x + ball.vx < 0) {
         ball.vx = -ball.vx;
     }
 
-    gRaf = window.requestAnimationFrame(draw);
+    raf = window.requestAnimationFrame(draw);
 }
 
 const Canvas = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     useEffect(() => {
-        gCanvas = canvasRef.current;
-        if (!gCanvas) {
+        canvas = canvasRef.current;
+        if (!canvas) {
             return ;
         }
-        gContext = gCanvas.getContext('2d');
-        if (!gContext) {
+        context = canvas.getContext('2d');
+        if (!context) {
             return ;
         }
         drawStaticObject();
 
-        gCanvas.addEventListener('mousemove', (e) => {
-            gRaf = window.requestAnimationFrame(draw);
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isRunning) {
+                raf = window.requestAnimationFrame(draw);
+                isRunning = true;
+            }
         });
-        gCanvas.addEventListener('mouseout', (e) => {
-            window.cancelAnimationFrame(gRaf);
+        canvas.addEventListener('mouseout', (e) => {
+            window.cancelAnimationFrame(raf);
+            isRunning = false;
         });
-        drawDynamicObject();
+        ball.draw();
     }, []);
     return <canvas ref={canvasRef} height="1000" width="1000"/>
 }
 
 export default Canvas;
-
-/*
-TODO
- *requestAnimationFrame関数を利用して
- ballを動かせるようにする
- (https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Advanced_animations)
- ↑参考url
- *globalにしないで済むかどうかも検討
- */
