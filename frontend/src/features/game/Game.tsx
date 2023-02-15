@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from "react";
+import {isNumberObject} from "util/types";
 
 // const Game = () => {
 //     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -52,29 +53,73 @@ function pong() {
 
 }
 
+let context: CanvasRenderingContext2D | null;
+let canvas:  HTMLCanvasElement | null;
 
-function draeStaticObjsct(context:  CanvasRenderingContext2D) {
+function draeStaticObjsct() {
     // create a field of game
-    context.beginPath();
-    context.strokeRect(5, 5, 505, 305);
-    context.stroke();
+    context?.beginPath();
+    context?.strokeRect(5, 5, 505, 305);
+    context?.stroke();
 
     // center line
-    context.beginPath();
-    context.moveTo(255, 5);
-    context.lineTo(255, 305);
-    context.stroke();
+    context?.beginPath();
+    context?.moveTo(255, 5);
+    context?.lineTo(255, 305);
+    context?.stroke();
 }
 
 
 
-function drawDynamicOnjsct(context:  CanvasRenderingContext2D) {
+
+function drawDynamicOnjsct() {
+
+
+    ball.draw();
 
     // for (;;) {
-    //     statement
+    //     const lpadx = 5;
+    //     const lpady = 5;
     //
+    //     canvasの位置情報を取得
+        // const canvasRect = canvas.getBoundingClientRect();
+//
+// mousemoveイベントのハンドラを登録
+        // canvas.addEventListener('mousemove', (event) => {
+        //     マウス位置を計算
+            // const mouseX = event.clientX - canvasRect.left;
+            // const mouseY = event.clientY - canvasRect.top;
+            //
+            // デバッグ用にコンソールにログを出力
+            // console.log(`Mouse position: (${mouseX}, ${mouseY})`);
+        // });
     // }
 }
+
+
+function randomInt(min:number, max:number): number{
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+const angle =  randomInt(0, 360) * (Math.PI / 180);
+
+const ball = {
+    x: 255,
+    y: 155,
+    vx: Math.cos(angle),
+    vy: Math.sign(angle),
+    radius: 25,
+    color: "red",
+    draw() {
+        context?.beginPath();
+        context?.arc(this.x, this.y, this.radius, 0, Math.PI * 2 );
+        context?.closePath();
+        context?.fill();
+    }
+
+
+}
+
 
 
 const Canvas = () => {
@@ -82,11 +127,11 @@ const Canvas = () => {
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     useEffect(() => {
-        const canvas = canvasRef.current;
+        canvas = canvasRef.current;
         if (!canvas) {
             return ;
         }
-        const context = canvas.getContext('2d');
+        context = canvas.getContext('2d');
         if (!context) {
             return ;
         }
@@ -101,8 +146,12 @@ const Canvas = () => {
         // context.arc(90, 65, 5, 0, Math.PI * 2, true); // Right eye
         // context.stroke();
 
-        draeStaticObjsct(context);
-        drawDynamicOnjsct(context);
+        for (;;) {
+            draeStaticObjsct();
+            drawDynamicOnjsct();
+
+        }
+
 
 
 
