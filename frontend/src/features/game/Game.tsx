@@ -1,30 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { QueryClient, QueryClientProvider } from "react-query";
+import FetchComponent from "../../components/sample/fetch";
+import ReactQueryComponent from "../../components/sample/ReactQuery";
 
-const fetchUsers = async () => {
-  const res = await fetch('https://jsonplaceholder.typicode.com/users');
-  return res.json();
-}
+const queryClient = new QueryClient();
 
 function Game() {
-  const [users, setUsers] = useState([]);
-
-  useEffect(() => {
-    fetchUsers().then((data) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      setUsers(data);
-    }).catch((e) => {console.log(e)});
-  }, []);
-
   return (
-    <>
-      <h2>ユーザー一覧</h2>
-      <div>
-        {users.map((user: any) => (
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
-          <div key={user.id}>{user.name}</div>
-        ))}
-      </div>
-    </>
+    <QueryClientProvider client={queryClient}>
+      <FetchComponent />
+      {/* <ReactQueryComponent /> */}
+    </QueryClientProvider>
   );
 }
 
