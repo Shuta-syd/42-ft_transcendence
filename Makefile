@@ -4,16 +4,12 @@ all: $(NAME)
 
 $(NAME):
 	@printf "ft_transcendence Project Started!!!\n"
-	docker compose up
+	docker compose up -d
 
 clean:
 	docker compose down
 
 fclean:
-	docker stop $(docker ps -qa); \
-	docker rm $(docker ps -qa); \
-	docker rmi -f $(docker images -qa); \
-	docker volume rm $(docker volume ls -q); \
-	docker network rm $(docker network ls -q) 2>/dev/null
+	docker-compose -f ./docker-compose.yml down --rmi all --volumes --remove-orphans
 
 .PHONY: all clean fclean
