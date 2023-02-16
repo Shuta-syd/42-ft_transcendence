@@ -7,11 +7,13 @@ import { SendChatDto } from './dto/chat.dto';
 export class ChatService {
   constructor(private prisma: PrismaService) {}
 
-  async sendChat(userId: number, dto: SendChatDto): Promise<Message> {
+  async sendChat(dto: SendChatDto): Promise<Message> {
     return this.prisma.message.create({
       data: {
-        userId,
-        ...dto,
+        user: {
+          connect: { id: parseInt(dto.userId) },
+        },
+        message: dto.message,
       },
     });
   }

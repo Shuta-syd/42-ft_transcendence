@@ -1,4 +1,4 @@
 export class SendChatDto {
-  roomId: number;
+  userId: string;
   message: string;
 }

@@ -11,9 +11,8 @@ export class ChatController {
   @Post()
   async sendChat(
     // @Req() req: Request, jwt or passport使用する場合
-    @Body() userId: number,
-    dto: SendChatDto,
+    @Body() dto: SendChatDto,
   ): Promise<Message> {
-    return this.chatService.sendChat(userId, dto);
+    return this.chatService.sendChat(dto);
   }
 }
