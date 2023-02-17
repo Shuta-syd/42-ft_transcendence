@@ -4,9 +4,10 @@ import SendIcon from '@mui/icons-material/Send';
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import { WebsocketContext } from "../../contexts/WebsocketContext";
+import useQueryChat from "../../hooks/chat/useQueryChat";
+import useMutationMessage from "../../hooks/chat/useMutationMessage";
 
 type MessagePayload = {
-  socketId: string;
   time: string;
   text: string;
 };
@@ -17,6 +18,8 @@ type ChatLog = MessagePayload[];
  * @returns 実際にchatをするトーク画面のコンポーネント
  */
 export default function ChatWindowComponent() {
+  const { data } = useQueryChat(1);
+  const { createMessageMutation } = useMutationMessage(1);
   const [text, setText] = useState('');
   const [chatLog, setChatLog] = useState<ChatLog>([]);
   const socket: Socket = useContext(WebsocketContext);
@@ -26,6 +29,11 @@ export default function ChatWindowComponent() {
       console.log(`接続ID: ${socket.id}`);
     });
 
+    socket.on('chatToClient', (chat: MessagePayload) => {
+      const newChatLog = [...chatLog, chat];
+      setChatLog(newChatLog);
+    });
+
     return () => {
       console.log(`切断: ${socket.id}`);
       socket.disconnect();
@@ -33,12 +41,11 @@ export default function ChatWindowComponent() {
   }, [])
 
   useEffect(() => {
-    socket.on('chatToClient', (chat: MessagePayload) => {
-      console.log(`チャット受信:`, chat);
-      const newChatLog = [...chatLog, chat];
-      setChatLog(newChatLog);
-    });
-  }, [chatLog])
+    data?.map((obj) => {
+      const chat: MessagePayload = { time: obj.createdAt.toString(), text: obj.message };
+      setChatLog(prevChatLog => [...prevChatLog, chat]);
+    })
+  }, [])
 
   const getNow  = useCallback((): string => {
     const date = new Date();
@@ -48,11 +55,15 @@ export default function ChatWindowComponent() {
   }, []);
 
   const sendChat = useCallback(() => {
-    console.log('送信');
+    console.log('Message Emit');
     socket.emit('chatToServer', { text, time: getNow() })
+    createMessageMutation.mutate({
+      message: text,
+      roomId: 1,
+      userId: 1,
+    })
     setText('');
   }, [text]);
-
 
   return (
     <Grid item xs={9} height={"94vh"} position='relative'>
@@ -64,7 +75,7 @@ export default function ChatWindowComponent() {
           <Box>
             {chatLog.map((chat, idx) => (
               <div key={idx}>
-                <div>{chat.time}[{chat.socketId}]</div>
+                <div>{chat.time}</div>
                 <div>user: {chat.text}</div>
               </div>
             ))}
