@@ -8,25 +8,24 @@ datasource db {
 }
 
 model User {
-  id Int @id @default(autoincrement())
-  email String @unique
-  name String
+  id       Int       @id @default(autoincrement())
+  email    String    @unique
+  name     String
   password String
   messages Message[]
-  //image String //intraの画像を引っ張ってくると仮定
 }
 
 model ChatRoom {
-  id Int @id @default(autoincrement())
+  id       Int       @id @default(autoincrement())
   messages Message[]
 }
 
 model Message {
-  id Int @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
-  user User @relation(fields: [userId], references: [id])
-  userId Int
-  room ChatRoom @relation(fields: [roomId], references: [id])
-  roomId Int
-  message String
+  message   String
+  userId    Int
+  roomId    Int
+  room      ChatRoom @relation(fields: [roomId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }

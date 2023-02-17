@@ -38,7 +38,7 @@ services:
     networks:
       - back-tier
     volumes:
-      - db-vol:/var/lib/postgresql
+      - db-vol:/var/lib/postgresql/data
 
   swagger-editor:
     container_name: swagger-editor
