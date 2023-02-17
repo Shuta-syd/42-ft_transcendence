@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from "react";
 
-
 /* global variables */
 let context: CanvasRenderingContext2D | null;
 let canvas:  HTMLCanvasElement | null;
