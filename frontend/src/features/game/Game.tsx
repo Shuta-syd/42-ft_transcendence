@@ -121,11 +121,7 @@ const Canvas = () => {
         if (!context) {
             return ;
         }
-        // drawStaticObject();
-
-        canvas.addEventListener('mousemove', (e) => {
-                raf = window.requestAnimationFrame(draw);
-        });
+        raf = window.requestAnimationFrame(draw);
         canvas.addEventListener('mouseout', (e) => {
             window.cancelAnimationFrame(raf);
         });

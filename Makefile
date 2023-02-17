@@ -12,4 +12,10 @@ clean:
 fclean:
 	docker-compose -f ./docker-compose.yml down --rmi all --volumes --remove-orphans
 
+logs:
+	docker-compose logs
+
+ps:
+	docker-compose ps
+
 .PHONY: all clean fclean
