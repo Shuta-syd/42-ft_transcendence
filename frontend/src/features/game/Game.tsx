@@ -102,10 +102,10 @@ function draw() {
     const h = 790;
     const w = 890;
     if (h < ball.y + ball.vy || ball.y + ball.vy < 100) {
-        ball.vy = -ball.vy;
+        ball.vy = -ball.vy * 1.2;
     }
     if (ball.x + ball.vx < 5 || w < ball.x + ball.vx) {
-        ball.vx = -ball.vx;
+        ball.vx = -ball.vx * 1.2;
     }
     raf = window.requestAnimationFrame(draw);
 }
