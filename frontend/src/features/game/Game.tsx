@@ -15,8 +15,8 @@ const ball = {
     x: 255,
     y: 155,
     /* vx/vyはあくまで最初の段階での動きをrandomにしているだけ */
-    vx: Math.cos(randomInt(0, 360) * (Math.PI / 180)),
-    vy: Math.sin(randomInt(0, 360) * (Math.PI / 180)),
+    vx: Math.cos(randomInt(0, 360) * (Math.PI / 180)) * 8,
+    vy: Math.sin(randomInt(0, 360) * (Math.PI / 180)) * 8,
     radius: 25,
     color: "red",
     draw() {
@@ -89,6 +89,22 @@ function draw() {
     context?.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
     drawStaticObject();
     ball.draw();
+
+    const h = 790;
+    const w = 890;
+    if (ball.x - ball.radius <= leftPaddle.x + 50
+        && (ball.y - ball.radius <= leftPaddle.y + 200
+            && ball.y + ball.radius >= leftPaddle.y)){
+        console.log("left paddle x = %d", leftPaddle.x);
+        console.log("left paddle y = %d", leftPaddle.y);
+        ball.vx = -ball.vx;
+    } else if (h < ball.y || ball.y < 100) {
+        /* -------Ballでのconflict------- */
+        ball.vy = -ball.vy;
+    } else if (ball.x < 5 || w < ball.x) {
+        ball.vx = -ball.vx;
+    }
+
     ball.x += ball.vx;
     ball.y += ball.vy;
 
@@ -98,14 +114,6 @@ function draw() {
     /* judge conflict */
     if (canvas == null) {
         return ;
-    }
-    const h = 790;
-    const w = 890;
-    if (h < ball.y + ball.vy || ball.y + ball.vy < 100) {
-        ball.vy = -ball.vy * 1.2;
-    }
-    if (ball.x + ball.vx < 5 || w < ball.x + ball.vx) {
-        ball.vx = -ball.vx * 1.2;
     }
     raf = window.requestAnimationFrame(draw);
 }
