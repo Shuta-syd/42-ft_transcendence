@@ -5,7 +5,7 @@ let context: CanvasRenderingContext2D | null;
 let canvas:  HTMLCanvasElement | null;
 let raf : number;
 const middleLine = 450;
-
+let keycode = '';
 /*
 ballの情報をオブジェクト化して、drawで描けるようになってる
 -> ballのx, yを更新できるようにしていく
@@ -93,17 +93,38 @@ function draw() {
     const h = 790;
     const w = 890;
     if (ball.x - ball.radius <= leftPaddle.x + 50
-        && (ball.y - ball.radius <= leftPaddle.y + 200
-            && ball.y + ball.radius >= leftPaddle.y)){
-        console.log("left paddle x = %d", leftPaddle.x);
-        console.log("left paddle y = %d", leftPaddle.y);
+        && (ball.y <= leftPaddle.y + 200
+        && ball.y >= leftPaddle.y)){
+        ball.vx = -ball.vx;
+    }else if (ball.x + ball.radius >= rightPaddle.x
+        && (ball.y <= rightPaddle.y + 200
+        && ball.y >= rightPaddle.y)) {
         ball.vx = -ball.vx;
     } else if (h < ball.y || ball.y < 100) {
         /* -------Ballでのconflict------- */
         ball.vy = -ball.vy;
-    } else if (ball.x < 5 || w < ball.x) {
+    }
+    /* 本当はreset */
+    else if (ball.x < 5 || w < ball.x) {
         ball.vx = -ball.vx;
     }
+    console.log(keycode);
+    if (keycode == 'KeyW') {
+        if(leftPaddle.y  > 100) {
+            leftPaddle.y -= 50;
+        }
+        if (rightPaddle.y  > 100) {
+            rightPaddle.y -= 50;
+        }
+    }
+    if (keycode == 'KeyS') {
+        if(leftPaddle.y  + 200 < 800) {
+            leftPaddle.y += 50;
+        }if (rightPaddle.y + 200 < 800) {
+            rightPaddle.y += 50;
+        }
+    }
+    keycode = '';
 
     ball.x += ball.vx;
     ball.y += ball.vy;
@@ -121,6 +142,12 @@ function draw() {
 const Canvas = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     useEffect(() => {
+        const handleKeyUp = ():void => {
+            keycode =  '';
+        }
+        const handleKeyDown = (e:KeyboardEvent):void  => {
+            keycode = e.code;
+        }
         canvas = canvasRef.current;
         if (!canvas) {
             return ;
@@ -130,20 +157,20 @@ const Canvas = () => {
             return ;
         }
         raf = window.requestAnimationFrame(draw);
-        canvas.addEventListener('mouseout', (e) => {
-            window.cancelAnimationFrame(raf);
-        });
-        ball.draw();
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keyup', handleKeyUp);
     }, []);
 
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        leftPaddle.y += 100;
-    };
+    // const handleDown = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    //     leftPaddle.y += 100;
+    // };
+    // const handleUp = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    //     leftPaddle.y += -100;
+    // };
 
     return (
         <div>
             <canvas ref={canvasRef} height="900" width="1000"/>
-            <button onClick={handleClick}>Click</button>
         </div>
         );
 }
