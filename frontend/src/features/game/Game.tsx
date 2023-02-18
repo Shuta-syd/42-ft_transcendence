@@ -6,14 +6,17 @@ let canvas:  HTMLCanvasElement | null;
 let raf : number;
 const middleLine = 450;
 let keycode = '';
+let leftCount = 0;
+let rightCount = 0;
+
 /*
 ballの情報をオブジェクト化して、drawで描けるようになってる
 -> ballのx, yを更新できるようにしていく
  */
 
 const ball = {
-    x: 255,
-    y: 155,
+    x: 455,
+    y: 450,
     /* vx/vyはあくまで最初の段階での動きをrandomにしているだけ */
     vx: Math.cos(randomInt(0, 360) * (Math.PI / 180)) * 8,
     vy: Math.sin(randomInt(0, 360) * (Math.PI / 180)) * 8,
@@ -25,6 +28,10 @@ const ball = {
         context?.closePath();
         context?.fillStyle && (context.fillStyle = this.color);
         context?.fill();
+    },
+    init(){
+        this.x = 455;
+        this.y = 450;
     }
 }
 
@@ -103,12 +110,16 @@ function draw() {
     } else if (h < ball.y || ball.y < 100) {
         /* -------Ballでのconflict------- */
         ball.vy = -ball.vy;
+        /* -----------reset------------- */
+    } else if (ball.x < 5) {
+        rightCount += 1;
+        ball.init();
+    } else if (w < ball.x) {
+        leftCount += 1;
+        ball.init();
     }
-    /* 本当はreset */
-    else if (ball.x < 5 || w < ball.x) {
-        ball.vx = -ball.vx;
-    }
-    console.log(keycode);
+    console.log(leftCount);
+    // console.log(keycode);
     if (keycode == 'KeyW') {
         if(leftPaddle.y  > 100) {
             leftPaddle.y -= 50;
@@ -133,9 +144,14 @@ function draw() {
     rightPaddle.draw();
 
     /* judge conflict */
-    if (canvas == null) {
+    if (canvas == null || context == null) {
         return ;
     }
+    context.font = '48px serif';
+
+    context.strokeText(leftCount.toString() , 360, 50);
+    context.strokeText( 'VS', 415, 50);
+    context.strokeText( rightCount.toString(), 500, 50);
     raf = window.requestAnimationFrame(draw);
 }
 
@@ -161,15 +177,10 @@ const Canvas = () => {
         window.addEventListener('keyup', handleKeyUp);
     }, []);
 
-    // const handleDown = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    //     leftPaddle.y += 100;
-    // };
-    // const handleUp = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    //     leftPaddle.y += -100;
-    // };
 
     return (
         <div>
+            <h2>[PONG GAME]</h2>
             <canvas ref={canvasRef} height="900" width="1000"/>
         </div>
         );
