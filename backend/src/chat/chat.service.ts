@@ -21,14 +21,14 @@ export class ChatService {
     });
   }
 
-  async sendChat(dto: SendChatDto): Promise<Message> {
+  async sendChat(roomId: string, dto: SendChatDto): Promise<Message> {
     return this.prisma.message.create({
       data: {
         user: {
           connect: { id: parseInt(dto.userId) },
         },
         room: {
-          connect: { id: parseInt(dto.roomId) },
+          connect: { id: parseInt(roomId) },
         },
         message: dto.message,
       },
