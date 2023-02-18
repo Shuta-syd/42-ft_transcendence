@@ -155,7 +155,7 @@ function draw() {
     raf = window.requestAnimationFrame(draw);
 }
 
-const Canvas = () => {
+const Game = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     useEffect(() => {
         const handleKeyUp = ():void => {
@@ -186,4 +186,4 @@ const Canvas = () => {
         );
 }
 
-export default Canvas;
+export default Game;

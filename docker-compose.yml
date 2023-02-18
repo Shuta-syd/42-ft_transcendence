@@ -18,16 +18,56 @@ services:
       dockerfile: backend.Dockerfile
     volumes:
       - ./backend:/backend
+    env_file:
+      - ./backend/.env
     depends_on:
       - database
     ports:
       - 8080:8080
+      - 5555:5555
+    networks:
+      - back-tier
 
   database:
     container_name: database
-    image: "postgres:latest"
+    image: postgres:latest
     ports:
       - 5432:5432
+    env_file:
+      - ./backend/.env
+    networks:
+      - back-tier
+    volumes:
+      - db-vol:/var/lib/postgresql/data
+
+  swagger-editor:
+    container_name: swagger-editor
+    image: swaggerapi/swagger-editor
+    ports:
+      - 8000:8080
+
+  swagger-ui:
+    container_name: swagger-ui
+    image: swaggerapi/swagger-ui
+    volumes:
+      - ./swagger/openapi.yml:/openapi.yml
+    ports:
+      - 8001:8080
     environment:
-      - POSTGRES_PASSWORD=user42
-      
+      SWAGGER_JSON: /openapi.yml
+
+  swagger-api:
+    container_name: swagger-api
+    image: stoplight/prism:3
+    ports:
+      - 4010:4010
+    command: mock -h 0.0.0.0 /openapi.yml
+    volumes:
+      - ./swagger/openapi.yml:/openapi.yml
+
+networks:
+  back-tier:
+    driver: bridge
+
+volumes:
+  db-vol:
