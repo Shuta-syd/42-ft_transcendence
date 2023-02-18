@@ -3,24 +3,54 @@ import React, { useRef, useEffect } from "react";
 /* global variables */
 let context: CanvasRenderingContext2D | null;
 let canvas:  HTMLCanvasElement | null;
-let raf : number;
-const middleLine = 450;
+let raf;
 let keycode = '';
-let leftCount = 0;
-let rightCount = 0;
+let leftScore = 0;
+let rightScore = 0;
 
+/* Ball macro */
+const BALLX = 455;
+const BALLY = 450;
+const RADIUS = 25;
+
+/* Paddle macro */
+
+const PADDLEWIDTH = 20;
+const PADDLEWHEIGHT = 200;
+
+/* Field macro */
+const FIELDX = 5;
+const FIELDY = 100;
+const FIELDWIDTH = 900;
+const FIELDHEIGHT = 700;
+const MIDX = 450;
+const MIDY = 450;
+
+/* Left Paddle macro */
+const LPADDLEX = 5;
+const LPADDLEY = 100;
+
+/* Right Paddle macro */
+const RPADDLEX = FIELDX + FIELDWIDTH - PADDLEWIDTH;
+const RPADDLEY = 100;
+
+
+/* Display macro */
+
+const WIDTH = 1000;
+const HEIGHT = 900;
 /*
 ballの情報をオブジェクト化して、drawで描けるようになってる
 -> ballのx, yを更新できるようにしていく
  */
 
 const ball = {
-    x: 455,
-    y: 450,
+    x: BALLX,
+    y: BALLY,
     /* vx/vyはあくまで最初の段階での動きをrandomにしているだけ */
-    vx: Math.cos(randomInt(0, 360) * (Math.PI / 180)) * 8,
-    vy: Math.sin(randomInt(0, 360) * (Math.PI / 180)) * 8,
-    radius: 25,
+    vx: Math.cos(randomInt(0, 30) * (Math.PI / 180)) * 8,
+    vy: Math.sin(randomInt(0, 30) * (Math.PI / 180)) * 8,
+    radius: RADIUS,
     color: "red",
     draw() {
         context?.beginPath();// 自身を書く関数をpropertyのなかに格納
@@ -30,18 +60,20 @@ const ball = {
         context?.fill();
     },
     init(){
-        this.x = 455;
-        this.y = 450;
+        this.x = BALLX;
+        this.y = BALLY;
+        this.vx = Math.cos(randomInt(0, 360) * (Math.PI / 180)) * 8;
+        this.vy = Math.sin(randomInt(0, 360) * (Math.PI / 180)) * 8;
     }
 }
 
 const leftPaddle = {
-    x: 5,
-    y: 100,
+    x: LPADDLEX,
+    y: LPADDLEY,
     color: "black",
     draw() {
         context?.beginPath();
-        context?.rect(this.x, this.y, 50, 200);
+        context?.rect(this.x, this.y, PADDLEWIDTH, PADDLEWHEIGHT);
         context?.closePath();
         context?.fillStyle && (context.fillStyle = this.color);
         context?.fill();
@@ -49,12 +81,12 @@ const leftPaddle = {
 }
 
 const rightPaddle = {
-    x: 855,
-    y: 100,
+    x: RPADDLEX,
+    y: RPADDLEY,
     color: "black",
     draw() {
         context?.beginPath();
-        context?.rect(this.x, this.y, 50, 200);
+        context?.rect(this.x, this.y, PADDLEWIDTH, PADDLEWHEIGHT);
         context?.closePath();
         context?.fillStyle && (context.fillStyle = this.color);
         context?.fill();
@@ -78,13 +110,13 @@ function drawStaticObject() {
     rectangleの外枠だけを出力する関数
     x、 y(始点)、幅、高さ
      */
-    context?.strokeRect(5, 100, 900, 700);
+    context?.strokeRect(FIELDX, FIELDY, FIELDWIDTH, FIELDHEIGHT);
     /*
     strokeを用いて、設定情報からlineをひく
      */
     context?.beginPath();
-    context?.moveTo(middleLine, 100);
-    context?.lineTo(middleLine, 800);
+    context?.moveTo(MIDX, FIELDY);
+    context?.lineTo(MIDX, FIELDWIDTH);
     context?.stroke();
 }
 
@@ -95,43 +127,41 @@ function drawStaticObject() {
 function draw() {
     context?.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
     drawStaticObject();
-    ball.draw();
 
-    const h = 790;
-    const w = 890;
-    if (ball.x - ball.radius <= leftPaddle.x + 50
-        && (ball.y <= leftPaddle.y + 200
-        && ball.y >= leftPaddle.y)){
+    /* check collision */
+    if (ball.x - ball.radius <= leftPaddle.x + PADDLEWIDTH
+        && (ball.y <= leftPaddle.y + PADDLEWHEIGHT
+            && ball.y >= leftPaddle.y)){
         ball.vx = -ball.vx;
     }else if (ball.x + ball.radius >= rightPaddle.x
-        && (ball.y <= rightPaddle.y + 200
-        && ball.y >= rightPaddle.y)) {
+        && (ball.y <= rightPaddle.y + PADDLEWHEIGHT
+            && ball.y >= rightPaddle.y)) {
         ball.vx = -ball.vx;
-    } else if (h < ball.y || ball.y < 100) {
+    } else if (FIELDHEIGHT + FIELDY < ball.y || ball.y < FIELDY) {
         /* -------Ballでのconflict------- */
         ball.vy = -ball.vy;
         /* -----------reset------------- */
-    } else if (ball.x < 5) {
-        rightCount += 1;
+    } else if (ball.x < FIELDX) {
+        rightScore += 1;
         ball.init();
-    } else if (w < ball.x) {
-        leftCount += 1;
+    } else if (FIELDX + FIELDWIDTH < ball.x) {
+        leftScore += 1;
         ball.init();
     }
-    console.log(leftCount);
-    // console.log(keycode);
+
+    /* check keycode */
     if (keycode == 'KeyW') {
-        if(leftPaddle.y  > 100) {
+        if(leftPaddle.y  > FIELDY) {
             leftPaddle.y -= 50;
         }
-        if (rightPaddle.y  > 100) {
+        if (rightPaddle.y  > FIELDY) {
             rightPaddle.y -= 50;
         }
     }
     if (keycode == 'KeyS') {
-        if(leftPaddle.y  + 200 < 800) {
+        if(leftPaddle.y  + PADDLEWHEIGHT < FIELDHEIGHT + FIELDY) {
             leftPaddle.y += 50;
-        }if (rightPaddle.y + 200 < 800) {
+        }if (rightPaddle.y + PADDLEWHEIGHT < FIELDHEIGHT + FIELDY) {
             rightPaddle.y += 50;
         }
     }
@@ -140,22 +170,23 @@ function draw() {
     ball.x += ball.vx;
     ball.y += ball.vy;
 
+    /* draw part */
     leftPaddle.draw();
     rightPaddle.draw();
-
-    /* judge conflict */
+    ball.draw();
     if (canvas == null || context == null) {
         return ;
     }
-    context.font = '48px serif';
+    context.fillStyle = 'black';
+    context.font = "bold 50px 'ＭＳ 明朝'";
+    context.fillText(leftScore.toString() , 360, 50);
+    context.fillText( '-', 440, 50);
+    context.fillText( rightScore.toString(), 500, 50);
 
-    context.strokeText(leftCount.toString() , 360, 50);
-    context.strokeText( 'VS', 415, 50);
-    context.strokeText( rightCount.toString(), 500, 50);
     raf = window.requestAnimationFrame(draw);
 }
 
-const Game = () => {
+const Canvas = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     useEffect(() => {
         const handleKeyUp = ():void => {
@@ -181,9 +212,9 @@ const Game = () => {
     return (
         <div>
             <h2>[PONG GAME]</h2>
-            <canvas ref={canvasRef} height="900" width="1000"/>
+            <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
         </div>
-        );
+    );
 }
 
-export default Game;
+export default Canvas;
