@@ -8,12 +8,13 @@ import { SendChatDto } from './dto/chat.dto';
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
-  @Post('')
+  @Post('room/:id')
   async sendChat(
     // @Req() req: Request, jwt or passport使用する場合
+    @Param('id') roomId: string,
     @Body() dto: SendChatDto,
   ): Promise<Message> {
-    return this.chatService.sendChat(dto);
+    return this.chatService.sendChat(roomId, dto);
   }
 
   @Post('room')

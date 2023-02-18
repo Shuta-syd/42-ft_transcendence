@@ -3,13 +3,13 @@ import { useMutation, useQueryClient } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { Message } from "../../types/PrismaType";
 
-function useMutationMessage(roomId: number) {
+function useMutationMessage(roomId: string) {
   const queryClient = useQueryClient();
   const router = useNavigate();
 
   const createMessageMutation = useMutation(
-    async (message: Omit<Message, 'id' | 'createdAt'>) => {
-      const res = await axios.post('http://localhost:8080/chat', message);
+    async (message: Omit<Message, 'id' | 'createdAt' | 'roomId'>) => {
+      const res = await axios.post(`http://localhost:8080/chat/room/${roomId}` , message);
       return res.data;
     },
     {
