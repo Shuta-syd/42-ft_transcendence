@@ -5,3 +5,5 @@
 .DS_Store
 assets/study/
 node_modules/
+.node-version
+.env
