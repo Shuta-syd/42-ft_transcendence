@@ -7,6 +7,8 @@ import { WebsocketContext } from "../../contexts/WebsocketContext";
 import useQueryChat from "../../hooks/chat/useQueryChat";
 import useMutationMessage from "../../hooks/chat/useMutationMessage";
 
+const ChatRoomID = 1;
+
 type MessagePayload = {
   time: string;
   text: string;
@@ -18,7 +20,7 @@ type ChatLog = MessagePayload[];
  * @returns 実際にchatをするトーク画面のコンポーネント
  */
 export default function ChatWindowComponent() {
-  const { data } = useQueryChat(1);
+  const { data } = useQueryChat(ChatRoomID);
   const { createMessageMutation } = useMutationMessage(1);
   const [text, setText] = useState('');
   const [chatLog, setChatLog] = useState<ChatLog>([]);
@@ -26,26 +28,26 @@ export default function ChatWindowComponent() {
 
   useEffect(() => {
     socket.on('connect', () => {
-      console.log(`接続ID: ${socket.id}`);
+      console.log(`Connect: ${socket.id}`);
     });
 
     socket.on('chatToClient', (chat: MessagePayload) => {
-      const newChatLog = [...chatLog, chat];
-      setChatLog(newChatLog);
+      setChatLog(prevChatLog => [...prevChatLog, chat]);
     });
 
     return () => {
-      console.log(`切断: ${socket.id}`);
+      console.log(`Disconnect: ${socket.id}`);
       socket.disconnect();
     }
   }, [])
 
   useEffect(() => {
+    setChatLog([]);
     data?.map((obj) => {
       const chat: MessagePayload = { time: obj.createdAt.toString(), text: obj.message };
       setChatLog(prevChatLog => [...prevChatLog, chat]);
     })
-  }, [])
+  }, [data])
 
   const getNow  = useCallback((): string => {
     const date = new Date();
