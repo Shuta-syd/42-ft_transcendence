@@ -1,9 +1,8 @@
 import React, { useRef, useEffect } from "react";
 
-/* global variables */
+// global variables
 let context: CanvasRenderingContext2D | null;
 let canvas:  HTMLCanvasElement | null;
-let raf;
 let keycode = '';
 let leftScore = 0;
 let rightScore = 0;
@@ -24,7 +23,7 @@ const FIELDY = 100;
 const FIELDWIDTH = 900;
 const FIELDHEIGHT = 700;
 const MIDX = 450;
-const MIDY = 450;
+// const MIDY = 450;
 
 /* Left Paddle macro */
 const LPADDLEX = 5;
@@ -182,8 +181,7 @@ function draw() {
     context.fillText(leftScore.toString() , 360, 50);
     context.fillText( '-', 440, 50);
     context.fillText( rightScore.toString(), 500, 50);
-
-    raf = window.requestAnimationFrame(draw);
+    window.requestAnimationFrame(draw);
 }
 
 const Canvas = () => {
@@ -203,7 +201,7 @@ const Canvas = () => {
         if (!context) {
             return ;
         }
-        raf = window.requestAnimationFrame(draw);
+        window.requestAnimationFrame(draw);
         window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('keyup', handleKeyUp);
     }, []);
