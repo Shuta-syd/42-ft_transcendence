@@ -22,8 +22,8 @@ const FIELDX = 5;
 const FIELDY = 100;
 const FIELDWIDTH = 900;
 const FIELDHEIGHT = 700;
-const MIDX = 450;
-// const MIDY = 450;
+const MIDDLEX = 450;
+// const MIDDLEY = 450;
 
 /* Left Paddle macro */
 const LPADDLEX = 5;
@@ -32,7 +32,6 @@ const LPADDLEY = 100;
 /* Right Paddle macro */
 const RPADDLEX = FIELDX + FIELDWIDTH - PADDLEWIDTH;
 const RPADDLEY = 100;
-
 
 /* Display macro */
 
@@ -114,8 +113,8 @@ function drawStaticObject() {
     strokeを用いて、設定情報からlineをひく
      */
     context?.beginPath();
-    context?.moveTo(MIDX, FIELDY);
-    context?.lineTo(MIDX, FIELDWIDTH);
+    context?.moveTo(MIDDLEX, FIELDY);
+    context?.lineTo(MIDDLEX, FIELDWIDTH - 100);
     context?.stroke();
 }
 
