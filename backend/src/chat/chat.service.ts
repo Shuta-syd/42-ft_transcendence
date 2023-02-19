@@ -7,7 +7,11 @@ import { SendChatDto } from './dto/chat.dto';
 export class ChatService {
   constructor(private prisma: PrismaService) {}
 
-  async getChats(roomId: number): Promise<Message[] | null> {
+  /**
+   * @param roomId 取得したいチャットルームのRoomId
+   * @returns チャットルームのログ or null
+   */
+  async getChatLogByRoomId(roomId: number): Promise<Message[] | null> {
     const chatRoom = await this.prisma.chatRoom.findUnique({
       where: { id: roomId },
       include: { messages: true },
@@ -15,12 +19,20 @@ export class ChatService {
     return chatRoom?.messages ?? null;
   }
 
+  /**
+   * @returns 作成したChatRoomデータ
+   */
   async crateChatRoom(): Promise<ChatRoom> {
     return this.prisma.chatRoom.create({
       data: {},
     });
   }
 
+  /**
+   * @param roomId メッセージ送信先のroomId
+   * @param dto メッセージ送信に必要なSendChatDto
+   * @returns 送ったメッセージのデータ
+   */
   async sendChat(roomId: string, dto: SendChatDto): Promise<Message> {
     return this.prisma.message.create({
       data: {
