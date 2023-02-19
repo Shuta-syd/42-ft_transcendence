@@ -1,5 +1,5 @@
-import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
-import { ChatRoom, Message } from '@prisma/client';
+import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
+import { ChatRoom, Message, User } from '@prisma/client';
 import { Request } from 'express';
 import { ChatService } from './chat.service';
 import { SendChatDto } from './dto/chat.dto';

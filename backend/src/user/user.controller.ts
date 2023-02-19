@@ -1,4 +1,4 @@
-import { Body, Post } from '@nestjs/common';
+import { Body, Param, Post } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from '@prisma/client';
@@ -12,5 +12,13 @@ export class UserController {
     @Body() userData: { name: string; email: string; password: string },
   ): Promise<User> {
     return this.userService.createUser(userData);
+  }
+
+  @Post('friend/:id')
+  async follow(
+    @Param('id') friendId: string,
+    @Body() user: { userId: number },
+  ): Promise<User> {
+    return this.userService.addFriend(user, friendId);
   }
 }
