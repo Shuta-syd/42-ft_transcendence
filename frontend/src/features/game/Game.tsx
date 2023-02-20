@@ -209,31 +209,29 @@ const Canvas = () => {
         window.addEventListener('keyup', handleKeyUp);
     }, []);
 
-
+    /* player1 */
     const [name, setName] = useState('');
     const UserPromise = useQueryUserGame('1');
-    // promis object が返ってきてる
     useEffect(() => {
-        UserPromise.then((user:User) => {
+        UserPromise.then((user: User) => {
             setName(user.name);
         });
     }, [UserPromise]);
 
-    // const [name2, setName2] = useState('');
-    // const UserPromise2 = useQueryUserGame('2');
-    // promis object が返ってきてる
-    // useEffect(() => {
-    //     UserPromise2.then((user:User) => {
-    //         setName2(user.name);
-    //     });
-    // }, [UserPromise2]);
-
+    /* player2 */
+    const [name2, setName2] = useState('');
+    const UserPromise2 = useQueryUserGame('2');
+    useEffect(() => {
+        UserPromise2.then((user: User) => {
+            setName2(user.name);
+        });
+    }, [UserPromise2]);
 
     return (
         <div>
-            <h2>[PONG GAME]</h2>
+            <h1>[PONG GAME]</h1>
             <h2>player1:{name}</h2>
-            {/* <h2>player2:{name2}</h2> */}
+            <h2>player2:{name2}</h2>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
         </div>
     );
