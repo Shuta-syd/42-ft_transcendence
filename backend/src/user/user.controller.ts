@@ -19,10 +19,18 @@ export class UserController {
     return this.userService.createUser(userData);
   }
 
-  @Patch('friend/:id')
+  @Patch('friend')
   async addFriend(
-    @Body() data: { userId: number; friendId: number },
+    @Body() data: { userId: string; friendId: string },
   ): Promise<User> {
-    return this.userService.addFriend(data.userId, data.friendId);
+    return this.userService.addFriend(
+      parseInt(data.userId),
+      parseInt(data.friendId),
+    );
+  }
+
+  @Get('friend/:id')
+  async getFriend(@Param('id') userId: string): Promise<User[]> {
+    return this.userService.getFriend(parseInt(userId));
   }
 }

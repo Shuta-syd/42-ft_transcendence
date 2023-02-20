@@ -63,4 +63,18 @@ export class UserService {
       },
     });
   }
+
+  /**
+   * @param userId 取得したフレンドリストのuserId
+   * @returns userIdのユーザのフレンドリスト
+   */
+  async getFriend(userId: number): Promise<User[]> {
+    return this.prisma.user
+      .findUnique({
+        where: {
+          id: userId,
+        },
+      })
+      .friends();
+  }
 }
