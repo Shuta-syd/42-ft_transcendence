@@ -186,7 +186,6 @@ function draw() {
     window.requestAnimationFrame(draw);
 }
 
-
 const Canvas = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     useEffect(() => {
