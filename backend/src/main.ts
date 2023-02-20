@@ -12,7 +12,7 @@ async function bootstrap() {
     .build();
 
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('api', app, swaggerDocument);
+  SwaggerModule.setup('swagger', app, swaggerDocument);
 
   //app.userGlobalPipes(new ValidationPipe({ whitelist: true }} )) //dto, validateで使用
   app.enableCors({
