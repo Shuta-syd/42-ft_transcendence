@@ -23,7 +23,7 @@ export class ChatController {
   }
 
   @Get('room/:id')
-  async getChats(@Param('id') id: string): Promise<Message[] | null> {
+  async getChatLogByRoomId(@Param('id') id: string): Promise<Message[] | null> {
     return this.chatService.getChatLogByRoomId(parseInt(id));
   }
 }
