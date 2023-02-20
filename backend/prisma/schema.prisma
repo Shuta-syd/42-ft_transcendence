@@ -13,6 +13,8 @@ model User {
   name     String
   password String
   messages Message[]
+  friends   User[]    @relation("Friends")
+  friendRelation User[] @relation("Friends")
 }
 
 model ChatRoom {
@@ -29,3 +31,4 @@ model Message {
   room      ChatRoom @relation(fields: [roomId], references: [id])
   user      User     @relation(fields: [userId], references: [id])
 }
+// id系 String型してuuid()にしてもいいかも

@@ -3,17 +3,17 @@ import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { Message } from "../../types/PrismaType";
 
-function useQueryChat(roomId: number) {
+function useQueryChat(roomId: string) {
   const router = useNavigate();
 
-  const getChatlog = async () => {
-    const { data } = await axios.get<Message[]>(`http://localhost:8080/chat/room/${String(roomId)}`);
+  const getChatLog = async () => {
+    const { data } = await axios.get<Message[]>(`http://localhost:8080/chat/room/${roomId}`);
     return data;
   }
 
   return useQuery<Message[], Error>({
-    queryKey: `chatRoom${String(roomId)}`,
-    queryFn: getChatlog,
+    queryKey: `chatRoom${roomId}`,
+    queryFn: getChatLog,
     onError: (err: any) => {
       if (err.response.status === 401 || err.response.status === 403)
         router('/chat');

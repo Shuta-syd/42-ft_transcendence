@@ -40,31 +40,6 @@ services:
     volumes:
       - db-vol:/var/lib/postgresql/data
 
-  swagger-editor:
-    container_name: swagger-editor
-    image: swaggerapi/swagger-editor
-    ports:
-      - 8000:8080
-
-  swagger-ui:
-    container_name: swagger-ui
-    image: swaggerapi/swagger-ui
-    volumes:
-      - ./swagger/openapi.yml:/openapi.yml
-    ports:
-      - 8001:8080
-    environment:
-      SWAGGER_JSON: /openapi.yml
-
-  swagger-api:
-    container_name: swagger-api
-    image: stoplight/prism:3
-    ports:
-      - 4010:4010
-    command: mock -h 0.0.0.0 /openapi.yml
-    volumes:
-      - ./swagger/openapi.yml:/openapi.yml
-
 networks:
   back-tier:
     driver: bridge
