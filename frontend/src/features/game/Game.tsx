@@ -211,22 +211,22 @@ const Canvas = () => {
 
 
     const [name, setName] = useState('');
-    const UserPromis = useQueryUserGame('1');
+    const UserPromise = useQueryUserGame('1');
     // promis object が返ってきてる
     useEffect(() => {
-        UserPromis.then((user:User) => {
+        UserPromise.then((user:User) => {
             setName(user.name);
         });
-    }, [UserPromis]);
+    }, [UserPromise]);
 
     // const [name2, setName2] = useState('');
-    // const UserPromis2 = useQueryUserGame('2');
+    // const UserPromise2 = useQueryUserGame('2');
     // promis object が返ってきてる
     // useEffect(() => {
-    //     UserPromis2.then((user:User) => {
+    //     UserPromise2.then((user:User) => {
     //         setName2(user.name);
     //     });
-    // }, [UserPromis2]);
+    // }, [UserPromise2]);
 
 
     return (
