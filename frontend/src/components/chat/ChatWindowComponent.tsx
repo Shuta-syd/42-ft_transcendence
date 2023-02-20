@@ -3,11 +3,10 @@ import { Box, Stack } from "@mui/system";
 import SendIcon from '@mui/icons-material/Send';
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
+import { useParams } from "react-router-dom";
 import { WebsocketContext } from "../../contexts/WebsocketContext";
 import useQueryChat from "../../hooks/chat/useQueryChat";
 import useMutationMessage from "../../hooks/chat/useMutationMessage";
-
-const ChatRoomID = 1;
 
 type MessagePayload = {
   time: string;
@@ -20,8 +19,10 @@ type ChatLog = MessagePayload[];
  * @returns 実際にchatをするトーク画面のコンポーネント
  */
 export default function ChatWindowComponent() {
+  const { roomId } = useParams();
+  const ChatRoomID: string = roomId as string ;
   const { data } = useQueryChat(ChatRoomID);
-  const { createMessageMutation } = useMutationMessage(1);
+  const { createMessageMutation } = useMutationMessage(ChatRoomID);
   const [text, setText] = useState('');
   const [chatLog, setChatLog] = useState<ChatLog>([]);
   const socket: Socket = useContext(WebsocketContext);
@@ -43,10 +44,12 @@ export default function ChatWindowComponent() {
 
   useEffect(() => {
     setChatLog([]);
-    data?.map((obj) => {
-      const chat: MessagePayload = { time: obj.createdAt.toString(), text: obj.message };
-      setChatLog(prevChatLog => [...prevChatLog, chat]);
-    })
+    if (data) {
+      data?.map((obj) => {
+        const chat: MessagePayload = { time: obj.createdAt.toString(), text: obj.message };
+        setChatLog(prevChatLog => [...prevChatLog, chat]);
+      })
+    }
   }, [data])
 
   const getNow  = useCallback((): string => {
@@ -61,7 +64,6 @@ export default function ChatWindowComponent() {
     socket.emit('chatToServer', { text, time: getNow() })
     createMessageMutation.mutate({
       message: text,
-      roomId: 1,
       userId: 1,
     })
     setText('');
