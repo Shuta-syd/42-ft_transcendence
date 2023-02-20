@@ -12,7 +12,7 @@ function useQueryChat(roomId: string) {
   }
 
   return useQuery<Message[], Error>({
-    queryKey: `chatRoom${String(roomId)}`,
+    queryKey: `chatRoom${roomId}`,
     queryFn: getChatLog,
     onError: (err: any) => {
       if (err.response.status === 401 || err.response.status === 403)
