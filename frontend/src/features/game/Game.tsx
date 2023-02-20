@@ -1,4 +1,6 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
+import useQueryUserGame from "../../hooks/game/useQueryGame";
+import {User} from "../../types/PrismaType";
 
 // global variables
 let context: CanvasRenderingContext2D | null;
@@ -175,6 +177,7 @@ function draw() {
     if (canvas == null || context == null) {
         return ;
     }
+
     context.fillStyle = 'black';
     context.font = "bold 50px 'ＭＳ 明朝'";
     context.fillText(leftScore.toString() , 360, 50);
@@ -182,6 +185,7 @@ function draw() {
     context.fillText( rightScore.toString(), 500, 50);
     window.requestAnimationFrame(draw);
 }
+
 
 const Canvas = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -206,9 +210,30 @@ const Canvas = () => {
     }, []);
 
 
+    const [name, setName] = useState('');
+    const UserPromis = useQueryUserGame('1');
+    // promis object が返ってきてる
+    useEffect(() => {
+        UserPromis.then((user:User) => {
+            setName(user.name);
+        });
+    }, [UserPromis]);
+
+    // const [name2, setName2] = useState('');
+    // const UserPromis2 = useQueryUserGame('2');
+    // promis object が返ってきてる
+    // useEffect(() => {
+    //     UserPromis2.then((user:User) => {
+    //         setName2(user.name);
+    //     });
+    // }, [UserPromis2]);
+
+
     return (
         <div>
             <h2>[PONG GAME]</h2>
+            <h2>player1:{name}</h2>
+            {/* <h2>player2:{name2}</h2> */}
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
         </div>
     );
