@@ -33,21 +33,18 @@ export class UserService {
    * @param friendId フレンド申請先のフレンドID
    * @returns フレンド申請したUserデータ
    */
-  async addFriend(
-    userData: { userId: number },
-    friendId: string,
-  ): Promise<User> {
-    // const user = await this.getUserById(userData.userId);
-    // const friend = await this.getUserById(parseInt(friendId));
+  async addFriend(userId: number, friendId: number): Promise<User> {
+    // const user = await this.getUserById(userId);
+    // const friend = await this.getUserById(friendId);
 
     this.prisma.user.update({
       where: {
-        id: parseInt(friendId),
+        id: friendId,
       },
       data: {
         friends: {
           connect: {
-            id: userData.userId,
+            id: userId,
           },
         },
       },
@@ -55,12 +52,12 @@ export class UserService {
 
     return this.prisma.user.update({
       where: {
-        id: userData.userId,
+        id: userId,
       },
       data: {
         friends: {
           connect: {
-            id: parseInt(friendId),
+            id: friendId,
           },
         },
       },

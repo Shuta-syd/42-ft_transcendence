@@ -20,10 +20,9 @@ export class UserController {
   }
 
   @Patch('friend/:id')
-  async follow(
-    @Param('id') friendId: string,
-    @Body() user: { userId: number },
+  async addFriend(
+    @Body() data: { userId: number; friendId: number },
   ): Promise<User> {
-    return this.userService.addFriend(user, friendId);
+    return this.userService.addFriend(data.userId, data.friendId);
   }
 }
