@@ -1,6 +1,7 @@
 import { Avatar, Grid, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
 import PersonIcon from '@mui/icons-material/Person';
+import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import useQueryFriend from "../../hooks/user/useQueryFriend";
 
@@ -36,7 +37,9 @@ export default function ChatFriendsComponent() {
             <Avatar ><PersonIcon /></Avatar>
           </Grid>
           <Grid item>
-            <Typography variant="subtitle1">{friend.name}</Typography>
+            <Link to={`/chat/room/${friend.id}`}>
+              <Typography variant="subtitle1">{friend.name}</Typography>
+            </Link>
           </Grid>
         </Grid>
       ))}
