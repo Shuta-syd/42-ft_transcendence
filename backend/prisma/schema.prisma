@@ -32,3 +32,10 @@ model Message {
   user      User     @relation(fields: [userId], references: [id])
 }
 // id系 String型してuuid()にしてもいいかも
+
+model Game {
+  id        Int     @id @default(autoincrement())
+  player1   String
+  player2   String
+  winner_id Int
+}
