@@ -52,8 +52,8 @@ export class ChatController {
     description: 'The created chat room',
     type: PrismaChatRoom,
   })
-  async createRoom(): Promise<ChatRoom> {
-    return this.chatService.crateChatRoom();
+  async createRoom(@Body() isDM: boolean): Promise<ChatRoom> {
+    return this.chatService.crateChatRoom(isDM);
   }
 
   @Get('room/:id')
