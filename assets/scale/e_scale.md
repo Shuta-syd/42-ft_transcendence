@@ -109,3 +109,25 @@ Any solutions is acceptable. The only requirement is: the game should not crash.
 #### Additional features
 
 The user can enjoy extra features such as power-ups, different maps, achievements, and so forth.
+
+### Chat interface
+
+#### Join/leave channels
+
+A logged in user can access the website chat service. Joining/leaving channels is a manual action. For example, this means it must not be done on logout (the user has to click a "Leave channel" button or something else). The user can join channels (that can be already created) to have a chat. Some of them can be password-protected. If so, the user has to enter the correct password in order to join the channel.
+
+#### Chat usage
+
+The users can chat. Messages must be sent/received instantly.
+
+If the user blocked another user, the messages from the blocked person must be hidden. The user can access the user profile of other players from the chat interface and also invite them for a Pong duel.
+
+#### Creating channels
+
+The user can create new channels. The channel creator is set as the channel owner and has basic moderations rights (ban/mute users, add a password to protect the channel, set new administrators, and so forth).
+
+#### Channel roles
+
+A user who is an owner of a channel can kick, ban, mute other users and the channel administrators.
+
+A user who is an administrator of a channel can kick, ban mute other users, but not the channel owners.

@@ -1,4 +1,6 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
+import useQueryUserGame from "../../hooks/game/useQueryGame";
+import {User} from "../../types/PrismaType";
 
 // global variables
 let context: CanvasRenderingContext2D | null;
@@ -175,6 +177,7 @@ function draw() {
     if (canvas == null || context == null) {
         return ;
     }
+
     context.fillStyle = 'black';
     context.font = "bold 50px 'ＭＳ 明朝'";
     context.fillText(leftScore.toString() , 360, 50);
@@ -205,10 +208,29 @@ const Canvas = () => {
         window.addEventListener('keyup', handleKeyUp);
     }, []);
 
+    /* player1 */
+    const [name1, setName] = useState('');
+    const UserPromise1 = useQueryUserGame('1');
+    useEffect(() => {
+        UserPromise1.then((user: User) => {
+            setName(user.name);
+        });
+    }, [UserPromise1]);
+
+    /* player2 */
+    const [name2, setName2] = useState('');
+    const UserPromise2 = useQueryUserGame('2');
+    useEffect(() => {
+        UserPromise2.then((user: User) => {
+            setName2(user.name);
+        });
+    }, [UserPromise2]);
 
     return (
         <div>
-            <h2>[PONG GAME]</h2>
+            <h1>[PONG GAME]</h1>
+            <h2>player1:{name1}</h2>
+            <h2>player2:{name2}</h2>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
         </div>
     );
