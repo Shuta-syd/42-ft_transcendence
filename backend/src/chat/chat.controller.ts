@@ -74,4 +74,9 @@ export class ChatController {
   async addMember(@Body() dto: AddMemberDto): Promise<Member> {
     return this.chatService.addMember(dto.userId, dto.roomId);
   }
+
+  @Get('dm/:id')
+  async getUserDM(@Param('id') userId: string): Promise<ChatRoom[]> {
+    return this.chatService.getUserDM(userId);
+  }
 }
