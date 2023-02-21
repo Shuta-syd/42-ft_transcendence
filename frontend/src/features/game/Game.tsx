@@ -209,13 +209,13 @@ const Canvas = () => {
     }, []);
 
     /* player1 */
-    const [name, setName] = useState('');
-    const UserPromise = useQueryUserGame('1');
+    const [name1, setName] = useState('');
+    const UserPromise1 = useQueryUserGame('1');
     useEffect(() => {
-        UserPromise.then((user: User) => {
+        UserPromise1.then((user: User) => {
             setName(user.name);
         });
-    }, [UserPromise]);
+    }, [UserPromise1]);
 
     /* player2 */
     const [name2, setName2] = useState('');
@@ -229,7 +229,7 @@ const Canvas = () => {
     return (
         <div>
             <h1>[PONG GAME]</h1>
-            <h2>player1:{name}</h2>
+            <h2>player1:{name1}</h2>
             <h2>player2:{name2}</h2>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
         </div>
