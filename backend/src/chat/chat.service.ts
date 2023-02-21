@@ -8,24 +8,24 @@ export class ChatService {
   constructor(private prisma: PrismaService) {}
 
   /**
-   * @param roomId 取得したいチャットルームのRoomId
-   * @returns チャットルームのログ or null
-   */
-  async getChatLogByRoomId(roomId: number): Promise<Message[] | null> {
-    const chatRoom = await this.prisma.chatRoom.findUnique({
-      where: { id: roomId },
-      include: { messages: true },
-    });
-    return chatRoom?.messages ?? null;
-  }
-
-  /**
    * @returns 作成したChatRoomデータ
    */
   async crateChatRoom(): Promise<ChatRoom> {
     return this.prisma.chatRoom.create({
       data: {},
     });
+  }
+
+  /**
+   * @param roomId 取得したいチャットルームのRoomId
+   * @returns チャットルームのログ or null
+   */
+  async getChatLogByRoomId(roomId: string): Promise<Message[] | null> {
+    const chatRoom = await this.prisma.chatRoom.findUnique({
+      where: { id: roomId },
+      include: { messages: true },
+    });
+    return chatRoom?.messages || null;
   }
 
   /**
@@ -36,11 +36,11 @@ export class ChatService {
   async sendChat(roomId: string, dto: SendChatDto): Promise<Message> {
     return this.prisma.message.create({
       data: {
-        user: {
-          connect: { id: parseInt(dto.userId) },
+        member: {
+          connect: { id: dto.userId },
         },
         room: {
-          connect: { id: parseInt(roomId) },
+          connect: { id: roomId },
         },
         message: dto.message,
       },

@@ -67,6 +67,6 @@ export class ChatController {
     type: SwaggerMessages,
   })
   async getChatLogByRoomId(@Param('id') id: string): Promise<Message[] | null> {
-    return this.chatService.getChatLogByRoomId(parseInt(id));
+    return this.chatService.getChatLogByRoomId(id);
   }
 }

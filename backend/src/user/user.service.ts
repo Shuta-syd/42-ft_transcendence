@@ -11,7 +11,7 @@ export class UserService {
    * @param userId 探索したいユーザのID
    * @returns userIdに関連付けられたUserデータ
    */
-  async getUserById(userId: number): Promise<User | null> {
+  async getUserById(userId: string): Promise<User | null> {
     return this.prisma.user.findUnique({
       where: {
         id: userId,
@@ -34,7 +34,7 @@ export class UserService {
    * @param friendId フレンド申請先のフレンドID
    * @returns フレンド申請したUserデータ
    */
-  async addFriend(userId: number, friendId: number): Promise<User> {
+  async addFriend(userId: string, friendId: string): Promise<User> {
     // const user = await this.getUserById(userId);
     // const friend = await this.getUserById(friendId);
 
@@ -69,7 +69,7 @@ export class UserService {
    * @param userId 取得したフレンドリストのuserId
    * @returns userIdのユーザのフレンドリスト
    */
-  async getFriend(userId: number): Promise<User[]> {
+  async getFriend(userId: string): Promise<User[]> {
     return this.prisma.user
       .findUnique({
         where: {
