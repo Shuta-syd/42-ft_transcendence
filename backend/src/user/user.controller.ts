@@ -26,7 +26,7 @@ export class UserController {
     return this.userService.getUserById(userId);
   }
 
-  @Post()
+  @Post('')
   @ApiOperation({
     description: 'create user',
     summary: 'create user',

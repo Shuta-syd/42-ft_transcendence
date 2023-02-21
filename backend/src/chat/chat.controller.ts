@@ -9,7 +9,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ChatRoom, Message, User } from '@prisma/client';
+import { ChatRoom, Member, Message, User } from '@prisma/client';
 import { Request } from 'express';
 import {
   PrismaChatRoom,
@@ -17,7 +17,7 @@ import {
   SwaggerMessages,
 } from 'src/swagger/type';
 import { ChatService } from './chat.service';
-import { SendChatDto } from './dto/chat.dto';
+import { AddMemberDto, SendChatDto } from './dto/chat.dto';
 
 @Controller('chat')
 @ApiTags('chat')
@@ -68,5 +68,10 @@ export class ChatController {
   })
   async getChatLogByRoomId(@Param('id') id: string): Promise<Message[] | null> {
     return this.chatService.getChatLogByRoomId(id);
+  }
+
+  @Post('member/add')
+  async addMember(@Body() dto: AddMemberDto): Promise<Member> {
+    return this.chatService.addMember(dto.userId, dto.roomId);
   }
 }

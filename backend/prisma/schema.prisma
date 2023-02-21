@@ -30,6 +30,7 @@ model Member {
 
 model ChatRoom {
   id       String      @id @default(uuid())
+  isDM     Boolean     @default(false)
   messages Message[]
   members  Member[]
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ChatRoom, Message } from '@prisma/client';
+import { ChatRoom, Member, Message } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SendChatDto } from './dto/chat.dto';
 
@@ -14,6 +14,46 @@ export class ChatService {
     return this.prisma.chatRoom.create({
       data: {},
     });
+  }
+
+  /**
+   * @param userId 所属させたいuserID
+   * @param roomId 所属させたいChat RoomID
+   * @returns 作成したMember object
+   */
+  async addMember(userId: string, roomId: string): Promise<Member> {
+    return this.prisma.member.create({
+      data: {
+        room: {
+          connect: {
+            id: roomId,
+          },
+        },
+        user: {
+          connect: {
+            id: userId,
+          },
+        },
+      },
+    });
+  }
+
+  /**
+   * @param userId 取得したいDMのuserID
+   * @returns userIDのすべてのDM
+   */
+  async getUserDM(userId: string): Promise<ChatRoom[]> {
+    const DirectMessageRooms = this.prisma.chatRoom.findMany({
+      where: {
+        isDM: true,
+        members: {
+          some: {
+            userId: userId,
+          },
+        },
+      },
+    });
+    return DirectMessageRooms;
   }
 
   /**
@@ -37,7 +77,7 @@ export class ChatService {
     return this.prisma.message.create({
       data: {
         member: {
-          connect: { id: dto.userId },
+          connect: { id: dto.memberId },
         },
         room: {
           connect: { id: roomId },

@@ -6,18 +6,23 @@ import React, { useEffect, useState } from "react";
 import useQueryFriend from "../../hooks/user/useQueryFriend";
 
 type FriendPayload = {
-  id: number;
+  id: string;
   name: string;
 }
 
+// type ChatRoomPayload = {
+//   roomId: string;
+//   friendId: string;
+// }
 
 /**
  * @returns DirectMessage送信可能なフレンド一覧を表示するコンポーネント
  */
 export default function ChatFriendsComponent() {
-  const UserID = '1'; // tmp
+  const UserID = '32788a21-3d7c-4c2b-8727-e08133c3b293'; // tmp
   const { data } = useQueryFriend(UserID);
   const [friends, setFriends] = useState<FriendPayload[]>([]);
+  // const [rooms, setRooms] = useState<ChatRoomPayload[]>([]);
 
   useEffect(() => {
     setFriends([]);
