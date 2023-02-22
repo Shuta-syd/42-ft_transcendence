@@ -13,7 +13,7 @@ export type User = {
  *
  */
 export type ChatRoom = {
-  id: number
+  id: string
 }
 
 /**
@@ -21,9 +21,9 @@ export type ChatRoom = {
  *
  */
 export type Message = {
-  id: number
+  id: string
   createdAt: Date
   message: string
-  userId: number
-  roomId: number
+  memberId: string
+  roomId: string
 }

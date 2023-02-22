@@ -20,7 +20,7 @@ type ChatLog = MessagePayload[];
  */
 export default function ChatWindowComponent() {
   const { roomId } = useParams();
-  const ChatRoomID: string = roomId as string ;
+  const ChatRoomID: string = roomId as string;
   const { data } = useQueryChatLog(ChatRoomID);
   const { createMessageMutation } = useMutationMessage(ChatRoomID);
   const [text, setText] = useState('');
@@ -64,7 +64,7 @@ export default function ChatWindowComponent() {
     socket.emit('chatToServer', { text, time: getNow() })
     createMessageMutation.mutate({
       message: text,
-      userId: 1,
+      memberId: '444a24ce-fa63-424e-954c-3b1671cd64cc',
     })
     setText('');
   }, [text]);
