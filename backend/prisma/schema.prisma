@@ -21,8 +21,8 @@ model Member {
   id       String   @id @default(uuid())
   createAt DateTime @default(now())
   roomId   String
-  room     ChatRoom @relation(fields: [roomId], references: [id])
   userId   String
+  room     ChatRoom @relation(fields: [roomId], references: [id])
   user     User     @relation(fields: [userId], references: [id])
   messages Message[]
   //role   RoomRole

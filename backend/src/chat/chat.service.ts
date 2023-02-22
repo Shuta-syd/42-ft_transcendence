@@ -52,7 +52,9 @@ export class ChatService {
           },
         },
       },
+      include: { members: true },
     });
+
     return DirectMessageRooms;
   }
 

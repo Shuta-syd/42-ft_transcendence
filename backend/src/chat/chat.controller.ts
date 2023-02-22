@@ -70,11 +70,19 @@ export class ChatController {
     return this.chatService.getChatLogByRoomId(id);
   }
 
+  @ApiOperation({
+    description: 'Add a specific user to join a specific room as a member',
+    summary: 'Add a user to join a room',
+  })
   @Post('member/add')
   async addMember(@Body() dto: AddMemberDto): Promise<Member> {
     return this.chatService.addMember(dto.userId, dto.roomId);
   }
 
+  @ApiOperation({
+    description: 'Get all DM rooms to which the user belongs',
+    summary: "Get a user's DM rooms ",
+  })
   @Get('dm/:id')
   async getUserDM(@Param('id') userId: string): Promise<ChatRoom[]> {
     return this.chatService.getUserDM(userId);
