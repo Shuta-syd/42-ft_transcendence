@@ -2,7 +2,12 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class SendChatDto {
   @ApiProperty()
-  userId: string;
+  memberId: string;
   @ApiProperty()
   message: string;
+}
+
+export class AddMemberDto {
+  userId: string;
+  roomId: string;
 }

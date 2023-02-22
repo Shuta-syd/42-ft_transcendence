@@ -5,7 +5,7 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import { useParams } from "react-router-dom";
 import { WebsocketContext } from "../../contexts/WebsocketContext";
-import useQueryChat from "../../hooks/chat/useQueryChat";
+import useQueryChatLog from "../../hooks/chat/useQueryChatLog";
 import useMutationMessage from "../../hooks/chat/useMutationMessage";
 
 type MessagePayload = {
@@ -20,8 +20,8 @@ type ChatLog = MessagePayload[];
  */
 export default function ChatWindowComponent() {
   const { roomId } = useParams();
-  const ChatRoomID: string = roomId as string ;
-  const { data } = useQueryChat(ChatRoomID);
+  const ChatRoomID: string = roomId as string;
+  const { data } = useQueryChatLog(ChatRoomID);
   const { createMessageMutation } = useMutationMessage(ChatRoomID);
   const [text, setText] = useState('');
   const [chatLog, setChatLog] = useState<ChatLog>([]);
@@ -64,7 +64,7 @@ export default function ChatWindowComponent() {
     socket.emit('chatToServer', { text, time: getNow() })
     createMessageMutation.mutate({
       message: text,
-      userId: 1,
+      memberId: '444a24ce-fa63-424e-954c-3b1671cd64cc',
     })
     setText('');
   }, [text]);

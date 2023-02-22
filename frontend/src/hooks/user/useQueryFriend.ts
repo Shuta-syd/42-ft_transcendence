@@ -6,7 +6,7 @@ import { User } from "../../types/PrismaType";
 function useQueryFriend(userId: string) {
   const router = useNavigate();
 
-  const getFriends =async () => {
+  const getFriends = async () => {
     const { data } = await axios.get<User[]>(`http://localhost:8080/user/friend/${userId}`);
     return data;
   }

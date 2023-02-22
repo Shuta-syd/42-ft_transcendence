@@ -23,10 +23,10 @@ export class UserController {
     type: PrismaUser,
   })
   async getUserById(@Param('id') userId: string): Promise<User | null> {
-    return this.userService.getUserById(parseInt(userId));
+    return this.userService.getUserById(userId);
   }
 
-  @Post()
+  @Post('')
   @ApiOperation({
     description: 'create user',
     summary: 'create user',
@@ -49,10 +49,7 @@ export class UserController {
   async addFriend(
     @Body() data: { userId: string; friendId: string },
   ): Promise<User> {
-    return this.userService.addFriend(
-      parseInt(data.userId),
-      parseInt(data.friendId),
-    );
+    return this.userService.addFriend(data.userId, data.friendId);
   }
 
   @Get('friend/:id')
@@ -66,6 +63,6 @@ export class UserController {
     type: SwaggerFriends,
   })
   async getFriend(@Param('id') userId: string): Promise<User[]> {
-    return this.userService.getFriend(parseInt(userId));
+    return this.userService.getFriend(userId);
   }
 }

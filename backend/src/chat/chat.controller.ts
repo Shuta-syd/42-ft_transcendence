@@ -9,7 +9,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ChatRoom, Message, User } from '@prisma/client';
+import { ChatRoom, Member, Message, User } from '@prisma/client';
 import { Request } from 'express';
 import {
   PrismaChatRoom,
@@ -17,7 +17,7 @@ import {
   SwaggerMessages,
 } from 'src/swagger/type';
 import { ChatService } from './chat.service';
-import { SendChatDto } from './dto/chat.dto';
+import { AddMemberDto, SendChatDto } from './dto/chat.dto';
 
 @Controller('chat')
 @ApiTags('chat')
@@ -52,8 +52,8 @@ export class ChatController {
     description: 'The created chat room',
     type: PrismaChatRoom,
   })
-  async createRoom(): Promise<ChatRoom> {
-    return this.chatService.crateChatRoom();
+  async createRoom(@Body() isDM: boolean): Promise<ChatRoom> {
+    return this.chatService.crateChatRoom(isDM);
   }
 
   @Get('room/:id')
@@ -67,6 +67,24 @@ export class ChatController {
     type: SwaggerMessages,
   })
   async getChatLogByRoomId(@Param('id') id: string): Promise<Message[] | null> {
-    return this.chatService.getChatLogByRoomId(parseInt(id));
+    return this.chatService.getChatLogByRoomId(id);
+  }
+
+  @ApiOperation({
+    description: 'Add a specific user to join a specific room as a member',
+    summary: 'Add a user to join a room',
+  })
+  @Post('member/add')
+  async addMember(@Body() dto: AddMemberDto): Promise<Member> {
+    return this.chatService.addMember(dto.userId, dto.roomId);
+  }
+
+  @ApiOperation({
+    description: 'Get all DM rooms to which the user belongs',
+    summary: "Get a user's DM rooms ",
+  })
+  @Get('dm/:id')
+  async getUserDM(@Param('id') userId: string): Promise<ChatRoom[]> {
+    return this.chatService.getUserDM(userId);
   }
 }
