@@ -8,27 +8,39 @@ datasource db {
 }
 
 model User {
-  id       Int       @id @default(autoincrement())
-  email    String    @unique
-  name     String
-  password String
+  id              String   @id @default(uuid())
+  email           String   @unique
+  name            String
+  password        String
+  friends         User[]   @relation("Friends")
+  friendRelation  User[]   @relation("Friends")
+  memberships     Member[]
+}
+
+model Member {
+  id       String   @id @default(uuid())
+  createAt DateTime @default(now())
+  roomId   String
+  userId   String
+  room     ChatRoom @relation(fields: [roomId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
   messages Message[]
-  friends   User[]    @relation("Friends")
-  friendRelation User[] @relation("Friends")
+  //role   RoomRole
 }
 
 model ChatRoom {
-  id       Int       @id @default(autoincrement())
+  id       String      @id @default(uuid())
+  isDM     Boolean     @default(false)
   messages Message[]
+  members  Member[]
 }
 
 model Message {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   message   String
-  userId    Int
-  roomId    Int
+  roomId    String
   room      ChatRoom @relation(fields: [roomId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
+  memberId  String
+  member    Member   @relation(fields: [memberId], references: [id])
 }
-// id系 String型してuuid()にしてもいいかも
