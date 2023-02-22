@@ -13,7 +13,7 @@ model User {
   name     String
   password String
   messages Message[]
-  friends   User[]    @relation("Friends")
+     @relation("Friends")
   friendRelation User[] @relation("Friends")
 }
 
@@ -33,7 +33,7 @@ model Message {
 }
 // id系 String型してuuid()にしてもいいかも
 
-model Game {
+model Match {
   id        Int     @id @default(autoincrement())
   player1   String
   player2   String
