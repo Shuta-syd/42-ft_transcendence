@@ -17,7 +17,7 @@ type ChatRoomPayload = { [friendId: string]: string };
  * @returns DirectMessage送信可能なフレンド一覧を表示するコンポーネント
  */
 export default function ChatFriendsComponent() {
-  const UserID = '32788a21-3d7c-4c2b-8727-e08133c3b293'; // tmp
+  const UserID = 'ba822ee0-7a6e-43a8-98cc-eb93f7433bb5'; // tmp
   const { data: friendData } = useQueryFriend(UserID);
   const [friends, setFriends] = useState<FriendPayload[]>([]);
   const [rooms, setRooms] = useState<ChatRoomPayload>({});
@@ -40,11 +40,29 @@ export default function ChatFriendsComponent() {
     };
 
     getUserDM();
-  }, []);
+  }, [rooms]);
 
   useEffect(() => {
+    // const createDMRoom = async (userID: string, friendId: string) => {
+    //   try {
+    //     const roomCrateDto = { isDM: true, userId: userID };
+    //     const res = await axios.post(`http://localhost:8080/chat/room`, roomCrateDto).then(async (room) => {
+    //       const addMemberDto = { useId: friendId, roomId: room.data.id }
+    //       await axios.post(`http://localhost:8080/chat/member`, addMemberDto);
+    //     })
+    //     console.log(res);
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // }
+
     if (friendData && Object.keys(rooms).length > 0) {
-      const updatedFriends = friendData.map((obj) => ({ id: rooms[obj.id], name: obj.name }));
+      const updatedFriends = friendData.map((friend) => {
+        if (rooms[friend.id] === undefined) {
+            console.log(1);
+        }
+        return  {id: rooms[friend.id], name: friend.name}
+      });
       setFriends(updatedFriends);
     }
   }, [friendData, rooms]);

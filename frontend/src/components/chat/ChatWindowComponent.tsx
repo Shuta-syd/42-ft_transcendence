@@ -64,7 +64,7 @@ export default function ChatWindowComponent() {
     socket.emit('chatToServer', { text, time: getNow() })
     createMessageMutation.mutate({
       message: text,
-      memberId: '444a24ce-fa63-424e-954c-3b1671cd64cc',
+      memberId: 'ba822ee0-7a6e-43a8-98cc-eb93f7433bb5',
     })
     setText('');
   }, [text]);
