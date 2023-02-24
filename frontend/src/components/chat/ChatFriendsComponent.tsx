@@ -38,34 +38,38 @@ export default function ChatFriendsComponent() {
         console.log(error);
       }
     };
-
     getUserDM();
-  }, [rooms]);
+  }, []);
 
   useEffect(() => {
-    // const createDMRoom = async (userID: string, friendId: string) => {
-    //   try {
-    //     const roomCrateDto = { isDM: true, userId: userID };
-    //     const res = await axios.post(`http://localhost:8080/chat/room`, roomCrateDto).then(async (room) => {
-    //       const addMemberDto = { useId: friendId, roomId: room.data.id }
-    //       await axios.post(`http://localhost:8080/chat/member`, addMemberDto);
-    //     })
-    //     console.log(res);
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // }
+    const createDMRoom = async (userID: string, friendId: string): Promise<string> => {
+      try {
+        const roomCrateDto = { isDM: true, userId: userID };
+        const room = await axios.post(`http://localhost:8080/chat/room`, roomCrateDto);
+        const addMemberDto = { userId: friendId, roomId: room.data.id };
+        await axios.post(`http://localhost:8080/chat/member/add`, addMemberDto);
+        return room.data.id;
+      } catch (error) {
+        console.log(error);
+      }
+      return "";
+    };
 
-    if (friendData && Object.keys(rooms).length > 0) {
-      const updatedFriends = friendData.map((friend) => {
-        if (rooms[friend.id] === undefined) {
-            console.log(1);
+    if (friendData) {
+      const updatedFriends = friendData.map(async (friend) => {
+        const roomId: string | undefined = rooms[friend.id];
+        if (roomId === undefined) {
+          const newRoomId = await createDMRoom(UserID, friend.id);
+          return { id: newRoomId, name: friend.name };
         }
-        return  {id: rooms[friend.id], name: friend.name}
+        return { id: roomId, name: friend.name };
       });
-      setFriends(updatedFriends);
-    }
-  }, [friendData, rooms]);
+
+    Promise.all(updatedFriends).then((friendsArray) => {
+      setFriends(friendsArray);
+    });
+  }
+}, [friendData, rooms]);
 
   return (
     <Stack spacing={2} sx={{ backgroundColor: '#d1c4e9' }} height={'91vh'}>

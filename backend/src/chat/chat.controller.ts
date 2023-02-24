@@ -53,7 +53,6 @@ export class ChatController {
     type: PrismaChatRoom,
   })
   async createRoom(@Body() dto: CreateChatRoom): Promise<ChatRoom> {
-    console.log(dto.userId);
     return this.chatService.crateChatRoom(dto);
   }
 
