@@ -17,11 +17,17 @@ export class MatchService {
     });
   }
 
-  async getWinner(id: string): Promise<string | null> {
-    if (id == '1') {
-      return '1';
-    } else {
-      return '2';
-    }
+  /* 特定のMatchのresultに対してのgetterもいずれ用意する */
+  // async getMatch(matchId: string): Promise<Match | null> {
+  //   return this.prisma.match
+  //       .findUnique({
+  //     where: {
+  //       id: parseInt(matchId),
+  //     },
+  //   });
+  // }
+
+  async getAllMatches(): Promise<Match[] | null> {
+    return await this.prisma.match.findMany({});
   }
 }

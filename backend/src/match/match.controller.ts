@@ -11,8 +11,17 @@ export class MatchController {
   async setMatch(@Body() matchData: MatchDto): Promise<Match | null> {
     return this.matchService.createMatch(matchData);
   }
+  //最終的には個人のuserに対して、特定のgame result()
+  // @Get()
+  // async getMatch(
+  //   @Param('match_id') match_id: Match,
+  // ): Promise<string | null> {
+  //   return this.matchService.getWinner(match_id);
+  // }
+
+  /* 全てのMatch情報を返す関数 */
   @Get()
-  async getMatch(@Param('matchId') matchId: string): Promise<string | null> {
-    return this.matchService.getWinner(matchId);
+  async getAllMatches(): Promise<Match[] | null> {
+    return this.matchService.getAllMatches();
   }
 }
