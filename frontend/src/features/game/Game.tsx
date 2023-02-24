@@ -205,8 +205,8 @@ const Canvas = () => {
             return ;
         }
         window.requestAnimationFrame(draw);
-        window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('keyup', handleKeyUp);
+        window.addEventListener('keydown', handleKeyDown);
     }, []);
 
     /* player1 */
