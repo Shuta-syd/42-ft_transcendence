@@ -7,9 +7,13 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class MatchService {
   constructor(private prisma: PrismaService) {}
 
-  async createMatch(data: MatchDto): Promise<Match | null> {
+  async createMatch(dto: MatchDto): Promise<Match | null> {
     return this.prisma.match.create({
-      data,
+      data: {
+        player1: dto.player1,
+        player2: dto.player2,
+        winner_id: parseInt(dto.winner_id, 10),
+      },
     });
   }
 }
