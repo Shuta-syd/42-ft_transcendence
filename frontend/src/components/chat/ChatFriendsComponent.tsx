@@ -53,7 +53,7 @@ export default function ChatFriendsComponent() {
       return "";
     };
 
-    const fetchFriends = async () => {
+    const loadFriends = async () => {
       const updatedRooms = await getUserDM();
       if (friendData) {
         const updatedFriends = friendData.map(async (friend) => {
@@ -71,7 +71,7 @@ export default function ChatFriendsComponent() {
       }
     };
 
-    fetchFriends();
+    loadFriends();
   }, [friendData]);
 
   return (

@@ -58,6 +58,15 @@ export class ChatController {
 
   @Get('room/:id')
   @ApiOperation({
+    description: 'Get chat room by id',
+    summary: 'Get chat room by id',
+  })
+  async getChatRoomById(@Param('id') id: string): Promise<ChatRoom> {
+    return this.chatService.getChatRoomById(id);
+  }
+
+  @Get('room/log/:id')
+  @ApiOperation({
     description: 'Get chat logs of specified chat room',
     summary: 'Get chat logs',
   })

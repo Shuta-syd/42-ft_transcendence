@@ -22,6 +22,17 @@ export class ChatService {
   }
 
   /**
+   * @param roomId 取得したいroomのID
+   * @returns 取得したRoomデータ
+   */
+  async getChatRoomById(roomId: string): Promise<ChatRoom> {
+    return this.prisma.chatRoom.findUnique({
+      where: { id: roomId },
+      include: { members: true },
+    });
+  }
+
+  /**
    * @param userId 所属させたいuserID
    * @param roomId 所属させたいChat RoomID
    * @returns 作成したMember object

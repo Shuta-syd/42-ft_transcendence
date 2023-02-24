@@ -2,6 +2,7 @@ import { Grid , Typography, TextField, InputAdornment, IconButton} from "@mui/ma
 import { Box, Stack } from "@mui/system";
 import SendIcon from '@mui/icons-material/Send';
 import React, { useCallback, useContext, useEffect, useState } from "react";
+import axios from "axios";
 import { Socket } from "socket.io-client";
 import { useParams } from "react-router-dom";
 import { WebsocketContext } from "../../contexts/WebsocketContext";
@@ -19,6 +20,7 @@ type ChatLog = MessagePayload[];
  * @returns 実際にchatをするトーク画面のコンポーネント
  */
 export default function ChatWindowComponent() {
+  const UserID = 'ba822ee0-7a6e-43a8-98cc-eb93f7433bb5'; // tmp
   const { roomId } = useParams();
   const ChatRoomID: string = roomId as string;
   const { data } = useQueryChatLog(ChatRoomID);
@@ -42,6 +44,14 @@ export default function ChatWindowComponent() {
     }
   }, [])
 
+
+  const getMemberId = useCallback(async (): Promise<string> => {
+    const res = await axios.get(`http://localhost:8080/chat/room/${ChatRoomID}`);
+    const member = res.data.members.filter((val: any) => val.userId === UserID);
+    return member[0].id;
+  }, [ChatRoomID]);
+
+
   useEffect(() => {
     setChatLog([]);
     if (data) {
@@ -60,13 +70,15 @@ export default function ChatWindowComponent() {
   }, []);
 
   const sendChat = useCallback(() => {
-    console.log('Message Emit');
-    socket.emit('chatToServer', { text, time: getNow() })
-    createMessageMutation.mutate({
-      message: text,
-      memberId: 'ba822ee0-7a6e-43a8-98cc-eb93f7433bb5',
+    getMemberId().then((id) => {
+      console.log('Message Emit');
+      socket.emit('chatToServer', { text, time: getNow() })
+      createMessageMutation.mutate({
+        message: text,
+        memberId: id,
+      });
+      setText('');
     })
-    setText('');
   }, [text]);
 
   return (
