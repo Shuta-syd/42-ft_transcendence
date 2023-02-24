@@ -27,3 +27,10 @@ export type Message = {
   memberId: string
   roomId: string
 }
+
+export type Match = {
+  id: string
+  player1: string
+  player2: string
+  winner_id: string
+}
