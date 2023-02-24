@@ -20,21 +20,17 @@ export default function ChatFriendsComponent() {
   const UserID = 'ba822ee0-7a6e-43a8-98cc-eb93f7433bb5'; // tmp
   const { data: friendData } = useQueryFriend(UserID);
   const [friends, setFriends] = useState<FriendPayload[]>([]);
-  const [rooms, setRooms] = useState<ChatRoomPayload>({});
 
   const getUserDM = async (): Promise<ChatRoomPayload> => {
-    if (Object.keys(rooms).length === friends.length)
-      return rooms;
     try {
       const res = await axios.get(`http://localhost:8080/chat/dm/${UserID}`);
       const updatedRooms: ChatRoomPayload = {};
       res.data.map((room: any) => {
         room.members.map((member: any) => {
           if (UserID !== member.userId)
-            updatedRooms[member.userId] = room.id;
+          updatedRooms[member.userId] = room.id;
         });
       });
-      setRooms(updatedRooms);
       return updatedRooms;
     } catch (error) {
       console.log(error);
@@ -50,7 +46,6 @@ export default function ChatFriendsComponent() {
         const addMemberDto = { userId: friendId, roomId: room.data.id };
         await axios.post(`http://localhost:8080/chat/member/add`, addMemberDto);
         const newRoomId = room.data.id;
-        setRooms(prevRooms => ({ ...prevRooms, [friendId]: newRoomId }));
         return newRoomId;
       } catch (error) {
         console.log(error);
@@ -60,7 +55,6 @@ export default function ChatFriendsComponent() {
 
     const fetchFriends = async () => {
       const updatedRooms = await getUserDM();
-      console.log('rooms:', updatedRooms);
       if (friendData) {
         const updatedFriends = friendData.map(async (friend) => {
           const roomId: string | undefined = updatedRooms[friend.id];
