@@ -16,4 +16,12 @@ export class MatchService {
       },
     });
   }
+
+  async getWinner(id: string): Promise<string | null> {
+    if (id == '1') {
+      return '1';
+    } else {
+      return '2';
+    }
+  }
 }
