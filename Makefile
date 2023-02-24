@@ -24,6 +24,9 @@ front:
 back:
 	docker exec -it backend bash
 
+studio:
+	docker exec -it -d backend npx prisma studio
+
 logs:
 	docker-compose logs
 
