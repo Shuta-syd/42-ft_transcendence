@@ -4,7 +4,7 @@ import SendIcon from '@mui/icons-material/Send';
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { Socket } from "socket.io-client";
-import { useParams } from "react-router-dom";
+import { useOutletContext, useParams } from "react-router-dom";
 import { WebsocketContext } from "../../contexts/WebsocketContext";
 import useQueryChatLog from "../../hooks/chat/useQueryChatLog";
 import useMutationMessage from "../../hooks/chat/useMutationMessage";
@@ -15,14 +15,12 @@ type MessagePayload = {
 };
 
 type ChatLog = MessagePayload[];
-
 /**
  * @returns 実際にchatをするトーク画面のコンポーネント
  */
 export default function ChatWindowComponent() {
+  // const iam = useOutletContext();
   const UserID = 'ba822ee0-7a6e-43a8-98cc-eb93f7433bb5'; // tmp
-  // eslint-disable-next-line no-unused-vars
-  let iAm: {key: string};
   const { roomId } = useParams();
   const ChatRoomID: string = roomId as string;
   const { data } = useQueryChatLog(ChatRoomID);
@@ -32,23 +30,9 @@ export default function ChatWindowComponent() {
   const socket: Socket = useContext(WebsocketContext);
 
   useEffect(() => {
-    socket.on('connect', () => {
-      console.log(`Connect: ${socket.id}`);
-    });
-
-    socket.on('token', (token: {key: string}) => {
-      iAm = token;
-      console.log(token);
-    })
-
     socket.on('chatToClient', (chat: MessagePayload) => {
       setChatLog(prevChatLog => [...prevChatLog, chat]);
     });
-
-    return () => {
-      console.log(`Disconnect: ${socket.id}`);
-      socket.disconnect();
-    }
   }, [])
 
 
