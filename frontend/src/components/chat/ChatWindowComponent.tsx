@@ -21,6 +21,8 @@ type ChatLog = MessagePayload[];
  */
 export default function ChatWindowComponent() {
   const UserID = 'ba822ee0-7a6e-43a8-98cc-eb93f7433bb5'; // tmp
+  // eslint-disable-next-line no-unused-vars
+  let iAm: {key: string};
   const { roomId } = useParams();
   const ChatRoomID: string = roomId as string;
   const { data } = useQueryChatLog(ChatRoomID);
@@ -33,6 +35,11 @@ export default function ChatWindowComponent() {
     socket.on('connect', () => {
       console.log(`Connect: ${socket.id}`);
     });
+
+    socket.on('token', (token: {key: string}) => {
+      iAm = token;
+      console.log(token);
+    })
 
     socket.on('chatToClient', (chat: MessagePayload) => {
       setChatLog(prevChatLog => [...prevChatLog, chat]);
@@ -72,7 +79,7 @@ export default function ChatWindowComponent() {
   const sendChat = useCallback(() => {
     getMemberId().then((id) => {
       console.log('Message Emit');
-      socket.emit('chatToServer', { text, time: getNow() })
+      socket.emit('send_message', { text, time: getNow() })
       createMessageMutation.mutate({
         message: text,
         memberId: id,

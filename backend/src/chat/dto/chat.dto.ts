@@ -16,3 +16,12 @@ export class CreateChatRoom {
   isDM: string;
   userId: string;
 }
+
+export type ChatPayload = {
+  time: string;
+  text: string;
+};
+
+export type TokenPayload = {
+  key: string;
+};
