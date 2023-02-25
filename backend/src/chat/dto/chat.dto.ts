@@ -20,6 +20,7 @@ export class CreateChatRoom {
 export type ChatPayload = {
   time: string;
   text: string;
+  id: string;
 };
 
 export type TokenPayload = {

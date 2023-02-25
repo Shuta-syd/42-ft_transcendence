@@ -2,9 +2,11 @@ import { Avatar, Grid, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
 import PersonIcon from '@mui/icons-material/Person';
 import { Link } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { Socket } from "socket.io-client";
 import axios from "axios";
 import useQueryFriend from "../../hooks/user/useQueryFriend";
+import { WebsocketContext } from "../../contexts/WebsocketContext";
 
 type FriendPayload = {
   id: string;
@@ -17,6 +19,7 @@ type ChatRoomPayload = { [friendId: string]: string };
  * @returns DirectMessage送信可能なフレンド一覧を表示するコンポーネント
  */
 export default function ChatFriendsComponent() {
+  const socket: Socket = useContext(WebsocketContext);
   const UserID = 'ba822ee0-7a6e-43a8-98cc-eb93f7433bb5'; // tmp
   const { data: friendData } = useQueryFriend(UserID);
   const [friends, setFriends] = useState<FriendPayload[]>([]);
@@ -74,6 +77,17 @@ export default function ChatFriendsComponent() {
     loadFriends();
   }, [friendData]);
 
+  useEffect(() => {
+    socket.on('create_dmRoom', () => {
+      console.log('crateDMRoom');
+    })
+  }, [])
+
+  const handleClick = (roomId: string) => {
+    console.log('click friend button');
+    socket.emit('create_dmRoom', { id: roomId})
+  }
+
   return (
     <Stack spacing={2} sx={{ backgroundColor: '#d1c4e9' }} height={'91vh'}>
       {friends?.map((friend, idx) => (
@@ -82,7 +96,7 @@ export default function ChatFriendsComponent() {
             <Avatar ><PersonIcon /></Avatar>
           </Grid>
           <Grid item>
-            <Link to={`/chat/room/${friend.id}`}>
+            <Link to={`/chat/room/${friend.id}`} onClick={() => handleClick(friend.id)}>
               <Typography variant="subtitle1">{friend.name}</Typography>
             </Link>
           </Grid>

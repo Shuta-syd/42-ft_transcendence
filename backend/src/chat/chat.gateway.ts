@@ -25,18 +25,27 @@ export class ChatGateway
   private logger: Logger = new Logger('ChatGateway');
   private key = 0;
 
-  @SubscribeMessage('send_message') // to subscribeEvent
+  @SubscribeMessage('send_message_room') // to subscribeEvent
   //@MessageBody clientから送られてくるbody内容
-  handleMessage(
+  sendMessage(
     @MessageBody() payload: ChatPayload,
     @ConnectedSocket() client: Socket,
   ) {
     this.logger.log('Chat Received');
     this.logger.log(payload);
-    this.server.emit('chatToClient', {
+    this.server.to(payload.id).emit('chatToClient', {
       ...payload,
       socketId: client.id,
     });
+  }
+
+  @SubscribeMessage('create_dmRoom')
+  handleFriendId(
+    @MessageBody() payload: { id: string },
+    @ConnectedSocket() client: Socket,
+  ) {
+    this.logger.log('handleFriendId');
+    client.join(payload.id);
   }
 
   afterInit(server: Server) {

@@ -14,12 +14,14 @@ type MessagePayload = {
   text: string;
 };
 
+
 type ChatLog = MessagePayload[];
 /**
  * @returns 実際にchatをするトーク画面のコンポーネント
  */
 export default function ChatWindowComponent() {
-  // const iam = useOutletContext();
+  // eslint-disable-next-line no-unused-vars
+  const iam = useOutletContext();
   const UserID = 'ba822ee0-7a6e-43a8-98cc-eb93f7433bb5'; // tmp
   const { roomId } = useParams();
   const ChatRoomID: string = roomId as string;
@@ -63,7 +65,7 @@ export default function ChatWindowComponent() {
   const sendChat = useCallback(() => {
     getMemberId().then((id) => {
       console.log('Message Emit');
-      socket.emit('send_message', { text, time: getNow() })
+      socket.emit('send_message_room', { text, time: getNow(), id: roomId })
       createMessageMutation.mutate({
         message: text,
         memberId: id,
