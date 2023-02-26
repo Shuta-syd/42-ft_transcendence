@@ -3,3 +3,10 @@ body {
   margin: 0;
   font-family: 'Lato', sans-serif;
 }
+
+.NavbarLink {
+  text-decoration: none;
+  color: #EEEEEE;
+  font-weight: 700;
+  font-size: large;
+}

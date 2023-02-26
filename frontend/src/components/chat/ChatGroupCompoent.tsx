@@ -15,8 +15,8 @@ export default function ChatGroupComponent() {
           <Box sx={{ backgroundColor: '#141E61'}}>
             <Typography
               variant="h6"
-              borderTop={2.5} borderBottom={2.5} borderRight={2.5} borderColor={'#787A91'}
-              sx={{ fontFamily: 'Lato', color: '#e1e2e2' }}
+              borderTop={1} borderBottom={2.5} borderRight={2.5} borderColor={'#787A91'}
+              sx={{ fontFamily: 'Lato', color: '#e1e2e2', fontWeight: 700 }}
             >
               Direct Messages
             </Typography>

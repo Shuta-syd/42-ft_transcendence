@@ -98,7 +98,7 @@ export default function ChatFriendsComponent() {
               <Avatar ><PersonIcon /></Avatar>
             </Grid>
             <Grid item>
-              <Typography variant="subtitle1">{friend.name}</Typography>
+              <Typography variant="subtitle1" sx={{fontWeight: 700}} >{friend.name}</Typography>
             </Grid>
           </Grid>
         </Link>
