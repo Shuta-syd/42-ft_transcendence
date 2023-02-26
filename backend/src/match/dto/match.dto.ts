@@ -1,11 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-
-export class SignUpUserDto {
+export class MatchDto {
   @ApiProperty()
-  name: string;
+  player1: string;
   @ApiProperty()
-  email: string;
+  player2: string;
   @ApiProperty()
-  password: string;
+  winner_id: string;
 }
