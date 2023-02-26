@@ -84,6 +84,10 @@ export default function ChatFriendsComponent() {
     })
   }, [])
 
+  useEffect(() => {
+    socket.emit('create_dmRoom', { id: roomID });
+  }, [roomID])
+
   const handleClick = (roomId: string) => {
     console.log('click friend button');
     socket.emit('create_dmRoom', { id: roomId})

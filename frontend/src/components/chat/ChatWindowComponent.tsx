@@ -61,7 +61,6 @@ export default function ChatWindowComponent() {
     return member[0].id;
   }, [ChatRoomID]);
 
-
   useEffect(() => {
     setChatLog([]);
     if (data) {
@@ -80,6 +79,8 @@ export default function ChatWindowComponent() {
   }, []);
 
   const sendChat = useCallback(() => {
+    if (text === '')
+      return;
     getMemberId().then((id) => {
       console.log('Message Emit');
       socket.emit('send_message_room', { text, time: getNow(), id: roomId })
