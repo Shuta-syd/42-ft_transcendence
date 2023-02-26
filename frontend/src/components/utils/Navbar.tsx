@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 function Navbar() {
   return (
-    <AppBar position="static" sx={{backgroundColor: "#0F044C"}}>
+    <AppBar position="static" sx={{backgroundColor: "#0F044C", height: '6vh'}}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>

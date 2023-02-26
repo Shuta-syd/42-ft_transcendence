@@ -84,7 +84,7 @@ export default function ChatWindowComponent() {
   }, [text]);
 
   return (
-    <Grid item xs={9} height={"94vh"} position='relative'>
+    <Grid item xs={9} position='relative'>
       <Stack spacing={0}>
         <Box sx={{backgroundColor: '#141E61'}}>
           <Typography
@@ -96,7 +96,7 @@ export default function ChatWindowComponent() {
             @ {friendName}
           </Typography>
         </Box>
-        <Box sx={{ backgroundColor: '#0F044C', height: '91vh' }}>
+        <Box sx={{ backgroundColor: '#0F044C'}}>
           <Box sx={{color: '#EEEEEE'}}>
             {chatLog.map((chat, idx) => (
               <div key={idx}>

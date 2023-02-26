@@ -1,5 +1,4 @@
 import { Avatar, Grid, Typography } from "@mui/material";
-import { Stack } from "@mui/system";
 import PersonIcon from '@mui/icons-material/Person';
 import { Link, useLocation } from "react-router-dom";
 import React, { useContext, useEffect, useState } from "react";
@@ -91,7 +90,7 @@ export default function ChatFriendsComponent() {
   }
 
   return (
-    <Stack sx={{ backgroundColor: '#141E61' }} height={'91vh'} borderRight={2.5} borderColor={'#787A91'}>
+    <>
       {friends?.map((friend, idx) => (
         <Link to={`/chat/room/${friend.id}`} onClick={() => handleClick(friend.id)} className={'FriendLink'} key={idx}>
           {friend.id === roomID ? (
@@ -115,6 +114,6 @@ export default function ChatFriendsComponent() {
           )}
         </Link>
       ))}
-    </Stack>
+    </>
   )
 }
