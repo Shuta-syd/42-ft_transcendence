@@ -77,11 +77,17 @@ export default function ChatWindowComponent() {
   return (
     <Grid item xs={9} height={"94vh"} position='relative'>
       <Stack spacing={0}>
-        <Box sx={{backgroundColor: '#b39ddb'}}>
-          <Typography variant="h6">Chat Window</Typography>
+        <Box sx={{backgroundColor: '#141E61'}}>
+          <Typography
+              variant="h6"
+              border={2.5} borderColor={'#787A91'}
+              sx={{ fontFamily: 'Lato', color: '#e1e2e2' }}
+            >
+            Chat Window
+          </Typography>
         </Box>
-        <Box sx={{ backgroundColor: '#ede7f6', height: '91vh' }}>
-          <Box>
+        <Box sx={{ backgroundColor: '#0F044C', height: '91vh' }}>
+          <Box sx={{color: '#EEEEEE'}}>
             {chatLog.map((chat, idx) => (
               <div key={idx}>
                 <div>{chat.time}</div>

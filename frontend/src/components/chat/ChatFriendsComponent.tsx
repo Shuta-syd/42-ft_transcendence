@@ -89,7 +89,7 @@ export default function ChatFriendsComponent() {
   }
 
   return (
-    <Stack spacing={2} sx={{ backgroundColor: '#d1c4e9' }} height={'91vh'}>
+    <Stack spacing={2} sx={{ backgroundColor: '#141E61' }} height={'91vh'}>
       {friends?.map((friend, idx) => (
         <Grid container key={idx}>
           <Grid item mr={2}>
