@@ -16,7 +16,7 @@ front-log:
 	docker logs -f frontend
 
 back-log:
-	docker logs -f frontend
+	docker logs -f backend
 
 front:
 	docker exec -it frontend bash

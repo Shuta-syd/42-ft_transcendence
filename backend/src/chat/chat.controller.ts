@@ -17,7 +17,7 @@ import {
   SwaggerMessages,
 } from 'src/swagger/type';
 import { ChatService } from './chat.service';
-import { AddMemberDto, SendChatDto } from './dto/chat.dto';
+import { AddMemberDto, CreateChatRoom, SendChatDto } from './dto/chat.dto';
 
 @Controller('chat')
 @ApiTags('chat')
@@ -52,11 +52,20 @@ export class ChatController {
     description: 'The created chat room',
     type: PrismaChatRoom,
   })
-  async createRoom(@Body() isDM: boolean): Promise<ChatRoom> {
-    return this.chatService.crateChatRoom(isDM);
+  async createRoom(@Body() dto: CreateChatRoom): Promise<ChatRoom> {
+    return this.chatService.crateChatRoom(dto);
   }
 
   @Get('room/:id')
+  @ApiOperation({
+    description: 'Get chat room by id',
+    summary: 'Get chat room by id',
+  })
+  async getChatRoomById(@Param('id') id: string): Promise<ChatRoom> {
+    return this.chatService.getChatRoomById(id);
+  }
+
+  @Get('room/log/:id')
   @ApiOperation({
     description: 'Get chat logs of specified chat room',
     summary: 'Get chat logs',
@@ -66,7 +75,7 @@ export class ChatController {
     description: 'The chat logs',
     type: SwaggerMessages,
   })
-  async getChatLogByRoomId(@Param('id') id: string): Promise<Message[] | null> {
+  async getChatLogByRoomId(@Param('id') id: string): Promise<Message[]> {
     return this.chatService.getChatLogByRoomId(id);
   }
 

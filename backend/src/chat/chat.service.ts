@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ChatRoom, Member, Message } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { SendChatDto } from './dto/chat.dto';
+import { CreateChatRoom, SendChatDto } from './dto/chat.dto';
 
 @Injectable()
 export class ChatService {
@@ -10,9 +10,25 @@ export class ChatService {
   /**
    * @returns 作成したChatRoomデータ
    */
-  async crateChatRoom(isDm: boolean): Promise<ChatRoom> {
-    return this.prisma.chatRoom.create({
-      data: { isDM: isDm },
+  async crateChatRoom(dto: CreateChatRoom): Promise<ChatRoom> {
+    return this.prisma.chatRoom
+      .create({
+        data: { isDM: JSON.parse(dto.isDM) },
+      })
+      .then((room: ChatRoom): ChatRoom => {
+        this.addMember(dto.userId, room.id);
+        return room;
+      });
+  }
+
+  /**
+   * @param roomId 取得したいroomのID
+   * @returns 取得したRoomデータ
+   */
+  async getChatRoomById(roomId: string): Promise<ChatRoom> {
+    return this.prisma.chatRoom.findUnique({
+      where: { id: roomId },
+      include: { members: true },
     });
   }
 
@@ -62,12 +78,12 @@ export class ChatService {
    * @param roomId 取得したいチャットルームのRoomId
    * @returns チャットルームのログ or null
    */
-  async getChatLogByRoomId(roomId: string): Promise<Message[] | null> {
+  async getChatLogByRoomId(roomId: string): Promise<Message[]> {
     const chatRoom = await this.prisma.chatRoom.findUnique({
       where: { id: roomId },
       include: { messages: true },
     });
-    return chatRoom?.messages || null;
+    return chatRoom?.messages;
   }
 
   /**
