@@ -1,6 +1,5 @@
-import { Grid , Typography, TextField, InputAdornment, IconButton} from "@mui/material";
+import { Grid , Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
-import SendIcon from '@mui/icons-material/Send';
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { Socket } from "socket.io-client";
@@ -8,6 +7,7 @@ import { useOutletContext, useParams } from "react-router-dom";
 import { WebsocketContext } from "../../contexts/WebsocketContext";
 import useQueryChatLog from "../../hooks/chat/useQueryChatLog";
 import useMutationMessage from "../../hooks/chat/useMutationMessage";
+import TextFieldComponent from "../utils/TextFieldComponent";
 
 type MessagePayload = {
   time: string;
@@ -95,20 +95,7 @@ export default function ChatWindowComponent() {
               </div>
             ))}
           </Box>
-          <TextField fullWidth variant="outlined" placeholder="new message"
-            style={{position: 'absolute', bottom: 0}}
-            value={text}
-            onChange={(e) => { setText(e.target.value) }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton color="primary" onClick={sendChat}>
-                    <SendIcon/>
-                  </IconButton>
-                </InputAdornment>
-              )
-            }}
-            />
+          <TextFieldComponent handleOnChange={setText} handleOnClick={sendChat} value={text} />
         </Box>
       </Stack>
     </Grid>
