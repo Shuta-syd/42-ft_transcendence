@@ -9,7 +9,7 @@ import ChatFriendsComponent from "./ChatFriendsComponent";
  */
 export default function ChatGroupComponent() {
   const subtitleElm = useRef<HTMLInputElement>();
-  const [subtitleHeight, setSubtitleHeight] = useState<string>('0px');
+  const [subtitleHeight, setSubtitleHeight] = useState<string>('0');
 
 
   useEffect(() => {

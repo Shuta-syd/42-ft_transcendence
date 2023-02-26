@@ -1,6 +1,6 @@
 import { Grid , Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Socket } from "socket.io-client";
 import { useParams } from "react-router-dom";
@@ -28,6 +28,8 @@ export default function ChatWindowComponent() {
   const [friendName, setFriendName] = useState('');
   const [text, setText] = useState('');
   const [chatLog, setChatLog] = useState<ChatLog>([]);
+  const [subtitleHeight, setSubtitleHeight] = useState<string>('0');
+  const subtitleElm = useRef<HTMLInputElement>(null);
   const socket: Socket = useContext(WebsocketContext);
 
   useEffect(() => {
@@ -39,6 +41,12 @@ export default function ChatWindowComponent() {
   useEffect(() => {
     getFriendName().then((name) => { setFriendName(name); })
   }, [ChatRoomID])
+
+  useEffect(() => {
+    if (subtitleElm.current) {
+      setSubtitleHeight(`${subtitleElm.current.clientHeight.toString()}px`);
+    }
+  }, [subtitleElm, subtitleHeight])
 
 
   const getFriendName = useCallback(async (): Promise<string> => {
@@ -86,7 +94,7 @@ export default function ChatWindowComponent() {
   return (
     <Grid item xs={9} position='relative'>
       <Stack spacing={0}>
-        <Box sx={{backgroundColor: '#141E61'}}>
+        <Box sx={{backgroundColor: '#141E61'}} ref={subtitleElm}>
           <Typography
             variant="h6"
             borderTop={1} borderBottom={2.5} borderColor={'#787A91'}
@@ -96,7 +104,7 @@ export default function ChatWindowComponent() {
             @ {friendName}
           </Typography>
         </Box>
-        <Box sx={{ backgroundColor: '#0F044C'}}>
+        <Box sx={{ backgroundColor: '#0F044C'}} height={`calc(94vh - ${subtitleHeight})`}>
           <Box sx={{color: '#EEEEEE'}}>
             {chatLog.map((chat, idx) => (
               <div key={idx}>
