@@ -22,7 +22,7 @@ export default function ChatGroupComponent() {
             </Typography>
           </Box>
           <Box>
-            <ChatFriendsComponent />
+            <ChatFriendsComponent/>
           </Box>
         </Stack>
       </Box>
