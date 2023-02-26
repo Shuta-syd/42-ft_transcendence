@@ -7,6 +7,7 @@ import { Socket } from "socket.io-client";
 import axios from "axios";
 import useQueryFriend from "../../hooks/user/useQueryFriend";
 import { WebsocketContext } from "../../contexts/WebsocketContext";
+import '../../styles/Chat.css'
 
 type FriendPayload = {
   id: string;
@@ -96,7 +97,7 @@ export default function ChatFriendsComponent() {
             <Avatar ><PersonIcon /></Avatar>
           </Grid>
           <Grid item>
-            <Link to={`/chat/room/${friend.id}`} onClick={() => handleClick(friend.id)}>
+            <Link to={`/chat/room/${friend.id}`} onClick={() => handleClick(friend.id)} className={'FriendLink'}>
               <Typography variant="subtitle1">{friend.name}</Typography>
             </Link>
           </Grid>
