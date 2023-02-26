@@ -10,11 +10,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-
-type ChatPayload = {
-  time: string;
-  text: string;
-};
+import { ChatPayload, TokenPayload } from './dto/chat.dto';
 
 @WebSocketGateway({
   cors: {
@@ -27,19 +23,29 @@ export class ChatGateway
   @WebSocketServer()
   server: Server;
   private logger: Logger = new Logger('ChatGateway');
+  private key = 0;
 
-  @SubscribeMessage('chatToServer') // to subscribeEvent
+  @SubscribeMessage('send_message_room') // to subscribeEvent
   //@MessageBody clientから送られてくるbody内容
-  handleMessage(
+  sendMessage(
     @MessageBody() payload: ChatPayload,
     @ConnectedSocket() client: Socket,
   ) {
     this.logger.log('Chat Received');
     this.logger.log(payload);
-    this.server.emit('chatToClient', {
+    this.server.to(payload.id).emit('chatToClient', {
       ...payload,
       socketId: client.id,
     });
+  }
+
+  @SubscribeMessage('create_dmRoom')
+  handleFriendId(
+    @MessageBody() payload: { id: string },
+    @ConnectedSocket() client: Socket,
+  ) {
+    this.logger.log('handleFriendId');
+    client.join(payload.id);
   }
 
   afterInit(server: Server) {
@@ -52,5 +58,8 @@ export class ChatGateway
 
   handleConnection(client: Socket, ...args: any[]) {
     this.logger.log(`Client connected ${client.id}`);
+    const token: TokenPayload = { key: this.key.toString() };
+    this.server.to(client.id).emit('token', token);
+    this.key += 1;
   }
 }

@@ -2,8 +2,9 @@ import { Grid , Typography, TextField, InputAdornment, IconButton} from "@mui/ma
 import { Box, Stack } from "@mui/system";
 import SendIcon from '@mui/icons-material/Send';
 import React, { useCallback, useContext, useEffect, useState } from "react";
+import axios from "axios";
 import { Socket } from "socket.io-client";
-import { useParams } from "react-router-dom";
+import { useOutletContext, useParams } from "react-router-dom";
 import { WebsocketContext } from "../../contexts/WebsocketContext";
 import useQueryChatLog from "../../hooks/chat/useQueryChatLog";
 import useMutationMessage from "../../hooks/chat/useMutationMessage";
@@ -13,12 +14,15 @@ type MessagePayload = {
   text: string;
 };
 
-type ChatLog = MessagePayload[];
 
+type ChatLog = MessagePayload[];
 /**
  * @returns 実際にchatをするトーク画面のコンポーネント
  */
 export default function ChatWindowComponent() {
+  // eslint-disable-next-line no-unused-vars
+  const iam = useOutletContext();
+  const UserID = 'ba822ee0-7a6e-43a8-98cc-eb93f7433bb5'; // tmp
   const { roomId } = useParams();
   const ChatRoomID: string = roomId as string;
   const { data } = useQueryChatLog(ChatRoomID);
@@ -28,19 +32,18 @@ export default function ChatWindowComponent() {
   const socket: Socket = useContext(WebsocketContext);
 
   useEffect(() => {
-    socket.on('connect', () => {
-      console.log(`Connect: ${socket.id}`);
-    });
-
     socket.on('chatToClient', (chat: MessagePayload) => {
       setChatLog(prevChatLog => [...prevChatLog, chat]);
     });
-
-    return () => {
-      console.log(`Disconnect: ${socket.id}`);
-      socket.disconnect();
-    }
   }, [])
+
+
+  const getMemberId = useCallback(async (): Promise<string> => {
+    const res = await axios.get(`http://localhost:8080/chat/room/${ChatRoomID}`);
+    const member = res.data.members.filter((val: any) => val.userId === UserID);
+    return member[0].id;
+  }, [ChatRoomID]);
+
 
   useEffect(() => {
     setChatLog([]);
@@ -60,13 +63,15 @@ export default function ChatWindowComponent() {
   }, []);
 
   const sendChat = useCallback(() => {
-    console.log('Message Emit');
-    socket.emit('chatToServer', { text, time: getNow() })
-    createMessageMutation.mutate({
-      message: text,
-      memberId: '444a24ce-fa63-424e-954c-3b1671cd64cc',
+    getMemberId().then((id) => {
+      console.log('Message Emit');
+      socket.emit('send_message_room', { text, time: getNow(), id: roomId })
+      createMessageMutation.mutate({
+        message: text,
+        memberId: id,
+      });
+      setText('');
     })
-    setText('');
   }, [text]);
 
   return (
