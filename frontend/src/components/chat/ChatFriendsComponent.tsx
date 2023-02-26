@@ -90,18 +90,18 @@ export default function ChatFriendsComponent() {
   }
 
   return (
-    <Stack spacing={2} sx={{ backgroundColor: '#141E61' }} height={'91vh'}>
+    <Stack spacing={2} sx={{ backgroundColor: '#141E61' }} height={'91vh'} borderRight={2.5} borderColor={'#787A91'}>
       {friends?.map((friend, idx) => (
-        <Grid container key={idx}>
-          <Grid item mr={2}>
-            <Avatar ><PersonIcon /></Avatar>
-          </Grid>
-          <Grid item>
-            <Link to={`/chat/room/${friend.id}`} onClick={() => handleClick(friend.id)} className={'FriendLink'}>
+        <Link to={`/chat/room/${friend.id}`} onClick={() => handleClick(friend.id)} className={'FriendLink'} key={idx}>
+          <Grid container >
+            <Grid item mr={2}>
+              <Avatar ><PersonIcon /></Avatar>
+            </Grid>
+            <Grid item>
               <Typography variant="subtitle1">{friend.name}</Typography>
-            </Link>
+            </Grid>
           </Grid>
-        </Grid>
+        </Link>
       ))}
     </Stack>
   )
