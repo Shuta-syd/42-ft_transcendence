@@ -9,3 +9,11 @@ input[type=text]::placeholder {
   color: #EEEEEE;
   font-family: 'Lato',
 }
+
+.FriendList:hover {
+  background-color: #6A709A;
+}
+
+.FriendListActive {
+  background-color: #40487E;
+}

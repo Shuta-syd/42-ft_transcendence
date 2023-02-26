@@ -88,9 +88,10 @@ export default function ChatWindowComponent() {
       <Stack spacing={0}>
         <Box sx={{backgroundColor: '#141E61'}}>
           <Typography
-              variant="h6"
-              borderTop={1} borderBottom={2.5} borderColor={'#787A91'}
-              sx={{ fontFamily: 'Lato', color: '#e1e2e2', fontWeight:700 }}
+            variant="h6"
+            borderTop={1} borderBottom={2.5} borderColor={'#787A91'}
+            padding={0.5}
+            sx={{ fontFamily: 'Lato', color: '#e1e2e2', fontWeight:700 }}
             >
             @ {friendName}
           </Typography>
