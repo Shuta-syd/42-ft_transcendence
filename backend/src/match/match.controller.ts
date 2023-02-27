@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post} from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { MatchService } from './match.service';
 import { MatchDto } from './dto/match.dto';
 import { Match } from '@prisma/client';
