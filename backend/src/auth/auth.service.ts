@@ -37,7 +37,6 @@ export class AuthService {
         email: dto.email,
       },
     });
-
     if (!user) throw new Error("user couldn't be found");
     if (user.password !== dto.password) throw new Error('password is wrong');
     return this.generateJwt(user.id, user.name);

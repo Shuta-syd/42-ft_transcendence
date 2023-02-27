@@ -7,14 +7,15 @@ import {
   Post,
   Res,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { Response } from 'express';
 import { PrismaUser } from 'src/swagger/type';
 import { SignUpUserDto } from 'src/user/dto/user.dto';
 import { AuthService } from './auth.service';
-import { AuthDto } from './dto/auth.dto';
+import { AuthDto, Msg } from './dto/auth.dto';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -39,7 +40,10 @@ export class AuthController {
     description: 'login user',
     summary: 'login user',
   })
-  async login(@Body() dto: AuthDto, @Res() res: Response) {
+  async login(
+    @Body() dto: AuthDto,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<Msg> {
     const jwt = await this.authService.login(dto);
     res.cookie('access_token', jwt.accessToken, {
       httpOnly: true,
@@ -47,19 +51,26 @@ export class AuthController {
       sameSite: 'none',
       path: '/',
     });
+    return {
+      message: 'Login Success',
+    };
   }
 
   @Post('logout')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({
     description: 'logout user',
     summary: 'logout user',
   })
-  async logout(@Res() res: Response) {
+  async logout(@Res({ passthrough: true }) res: Response): Promise<Msg> {
     res.cookie('access_token', '', {
       httpOnly: true,
       secure: false,
       sameSite: 'none',
       path: '/',
     });
+    return {
+      message: 'Logout Success',
+    };
   }
 }
