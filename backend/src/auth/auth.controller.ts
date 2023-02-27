@@ -1,9 +1,19 @@
-import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Res,
+} from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { User } from '@prisma/client';
+import { Response } from 'express';
 import { PrismaUser } from 'src/swagger/type';
 import { SignUpUserDto } from 'src/user/dto/user.dto';
 import { AuthService } from './auth.service';
+import { AuthDto } from './dto/auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -21,5 +31,35 @@ export class AuthController {
   })
   async signupUser(@Body() userData: SignUpUserDto): Promise<User> {
     return this.authService.signupUser(userData);
+  }
+
+  @Post('login')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    description: 'login user',
+    summary: 'login user',
+  })
+  async login(@Body() dto: AuthDto, @Res() res: Response) {
+    const jwt = await this.authService.login(dto);
+    res.cookie('access_token', jwt.accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'none',
+      path: '/',
+    });
+  }
+
+  @Post('logout')
+  @ApiOperation({
+    description: 'logout user',
+    summary: 'logout user',
+  })
+  async logout(@Res() res: Response) {
+    res.cookie('access_token', '', {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'none',
+      path: '/',
+    });
   }
 }
