@@ -44,3 +44,11 @@ model Message {
   memberId  String
   member    Member   @relation(fields: [memberId], references: [id])
 }
+// id系 String型してuuid()にしてもいいかも
+
+model Match {
+  id        Int     @id @default(autoincrement())
+  player1   String
+  player2   String
+  winner_id Int
+}

@@ -16,8 +16,11 @@ function Navbar() {
             <Typography mr={5}>
               <Link to={"/chat/room"} className={'NavbarLink'}>Chat</Link>
             </Typography>
-            <Typography>
-              <Link to={"/game"} className={'NavbarLink'}>Game</Link>
+            <Typography mr={5}>
+            <Link to={"/game"} className={'NavbarLink'}>Game</Link>
+            </Typography>
+            <Typography mr={5}>
+               <Link to={"/match"} className={'NavbarLink'}>Match</Link>
             </Typography>
           </Box>
         </Toolbar>

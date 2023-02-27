@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import useQueryUserGame from "../../hooks/game/useQueryGame";
-import {User} from "../../types/PrismaType";
+import { User } from "../../types/PrismaType";
+
 
 // global variables
 let context: CanvasRenderingContext2D | null;
@@ -51,7 +52,7 @@ const ball = {
     vx: Math.cos(randomInt(0, 30) * (Math.PI / 180)) * 8,
     vy: Math.sin(randomInt(0, 30) * (Math.PI / 180)) * 8,
     radius: RADIUS,
-    color: "red",
+    color: "black",
     draw() {
         context?.beginPath();// 自身を書く関数をpropertyのなかに格納
         context?.arc(this.x, this.y, this.radius, 0, Math.PI * 2 );
@@ -150,7 +151,7 @@ function draw() {
     }
 
     /* check keycode */
-    if (keycode == 'KeyW') {
+    if (keycode === 'KeyW') {
         if(leftPaddle.y  > FIELDY) {
             leftPaddle.y -= 50;
         }
@@ -158,7 +159,7 @@ function draw() {
             rightPaddle.y -= 50;
         }
     }
-    if (keycode == 'KeyS') {
+    if (keycode === 'KeyS') {
         if(leftPaddle.y  + PADDLEWHEIGHT < FIELDHEIGHT + FIELDY) {
             leftPaddle.y += 50;
         }if (rightPaddle.y + PADDLEWHEIGHT < FIELDHEIGHT + FIELDY) {
@@ -204,8 +205,8 @@ const Canvas = () => {
             return ;
         }
         window.requestAnimationFrame(draw);
-        window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('keyup', handleKeyUp);
+        window.addEventListener('keydown', handleKeyDown);
     }, []);
 
     /* player1 */
@@ -230,7 +231,9 @@ const Canvas = () => {
         <div>
             <h1>[PONG GAME]</h1>
             <h2>player1:{name1}</h2>
-            <h2>player2:{name2}</h2>
+            <h2>
+                player2:{name2}
+            </h2>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
         </div>
     );

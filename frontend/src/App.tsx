@@ -5,6 +5,7 @@ import Chat from "./features/chat/Chat";
 import ChatComponent from "./components/chat/ChatComponent";
 import ChatWindowComponent from "./components/chat/ChatWindowComponent";
 import Canvas from "./features/game/Game";
+import Matches from "./features/match/Match";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
             </Route>
           </Route>
           <Route path="/game" element={<Canvas/>} />
+          <Route path="/match" element={<Matches/>}/>
         </Routes>
     </>
   )
