@@ -46,6 +46,7 @@ ballの情報をオブジェクト化して、drawで描けるようになって
 -> ballのx, yを更新できるようにしていく
  */
 
+
 const ball = {
     x: BALLX,
     y: BALLY,
@@ -67,10 +68,18 @@ const ball = {
         this.vx = Math.cos(randomInt(0, 360) * (Math.PI / 180)) * 8;
         this.vy = Math.sin(randomInt(0, 360) * (Math.PI / 180)) * 8;
     }
-}
+};
+
+// const [LeftPaddlePos, setLeftPaddlePos] = useState<number>(LPADDLEY);
 
 const leftPaddle = {
     x: LPADDLEX,
+    // get y() {
+    //     return LeftPaddlePos;
+    // },
+    // set y(value) {
+    //     setLeftPaddlePos(value);
+    // },
     y: LPADDLEY,
     color: "black",
     draw() {
@@ -81,6 +90,9 @@ const leftPaddle = {
         context?.fill();
     }
 }
+
+// eslint-disable-next-line react-hooks/rules-of-hooks
+// const [LeftPaddlePos, setLeftPaddlePos] = useState<number>(LPADDLEY);
 
 const rightPaddle = {
     x: RPADDLEX,
@@ -99,6 +111,7 @@ const rightPaddle = {
 function randomInt(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
 
 /*
 後に変更のないobject
@@ -151,22 +164,31 @@ function draw() {
         ball.init();
     }
 
+
     /* check keycode */
     if (keycode === 'KeyW') {
-        if(leftPaddle.y  > FIELDY) {
-            leftPaddle.y -= 50;
-        }
+        // if(leftPaddle.y  > FIELDY) {
+        //     leftPaddle.y -= 50;
+        // }
         if (rightPaddle.y  > FIELDY) {
             rightPaddle.y -= 50;
+            GameSocket.emit('GameToServer', rightPaddle.y);
         }
     }
     if (keycode === 'KeyS') {
-        if(leftPaddle.y  + PADDLEWHEIGHT < FIELDHEIGHT + FIELDY) {
-            leftPaddle.y += 50;
-        }if (rightPaddle.y + PADDLEWHEIGHT < FIELDHEIGHT + FIELDY) {
+        // if(leftPaddle.y  + PADDLEWHEIGHT < FIELDHEIGHT + FIELDY) {
+        //     leftPaddle.y += 50;
+        // }
+        if (rightPaddle.y + PADDLEWHEIGHT < FIELDHEIGHT + FIELDY) {
             rightPaddle.y += 50;
+            GameSocket.emit('GameToServer', rightPaddle.y);
         }
     }
+
+    // leftPaddle.y = LeftPaddlePos;
+
+
+
     keycode = '';
 
     ball.x += ball.vx;
@@ -240,8 +262,8 @@ const Canvas = () => {
         uname: string
         time: string
         text: string
-        PaddlePos: number
     }
+
 
     type ChatLog = Array<Chat>
 
@@ -249,47 +271,62 @@ const Canvas = () => {
         const [chatLog, setChatLog] = useState<ChatLog>([])
         const [uname, setUname] = useState<string>('')
         const [text, setText] = useState<string>('')
-        const [PaddlePos, setPaddlePos] = useState<number>(0)
 
+
+    // useEffect(() => {
+    //     setPaddlePos(rightPaddle.y);
+    // }, [rightPaddle.y]);
 
     useEffect(() => {
-        setPaddlePos(rightPaddle.y);
+        GameSocket.on('connect', () => {
+            console.log('接続ID : ', GameSocket.id)
+        })
+
+        return () => {
+            console.log('切断')
+            GameSocket.disconnect()
+        }
+    }, [])
+
+    useEffect(() => {
+        GameSocket.on('chatToClient', (chat: Chat) => {
+            console.log('chat受信', chat)
+            const newChatLog = [...chatLog]
+            newChatLog.push(chat)
+            setChatLog(newChatLog)
+        });
+    }, [chatLog])
+
+/*
+        GameSocket.on('GameToClient', (game: number) => {
+            console.log('chat receive game info', game)
+            leftPaddle.y = game;
+        });
+*/
+
+    const getNow = useCallback((): string => {
+        const datetime = new Date();
+        return `${datetime.getFullYear()}/${datetime.getMonth() + 1}/${datetime.getDate()} ${datetime.getHours()}:${datetime.getMinutes()}:${datetime.getSeconds()}`
+    }, [])
+
+        useEffect(() => {
     }, [rightPaddle.y]);
 
-        useEffect(() => {
-            GameSocket.on('connect', () => {
-                console.log('接続ID : ', GameSocket.id)
-            })
+    const sendChat = useCallback((): void => {
+        if (!uname) {
+            alert('ユーザー名を入れてください。')
+            return;
+        }
+        console.log('送信')
+        GameSocket.emit('chatToServer', { uname, text, time: getNow() });
+        setText('');
+    }, [uname, text])
 
-            return () => {
-                console.log('切断')
-                GameSocket.disconnect()
-            }
-        }, [])
+    GameSocket.on('GameToClient', (leftPaddley: number) => {
+        console.log('chat receive leftPaddley info', leftPaddley)
+        leftPaddle.y = leftPaddley;
+    });
 
-        useEffect(() => {
-            GameSocket.on('chatToClient', (chat: Chat) => {
-                console.log('chat受信', chat)
-                const newChatLog = [...chatLog]
-                newChatLog.push(chat)
-                setChatLog(newChatLog)
-            });
-        }, [chatLog])
-
-        const getNow = useCallback((): string => {
-            const datetime = new Date();
-            return `${datetime.getFullYear()}/${datetime.getMonth() + 1}/${datetime.getDate()} ${datetime.getHours()}:${datetime.getMinutes()}:${datetime.getSeconds()}`
-        }, [])
-
-        const sendChat = useCallback((): void => {
-            if (!uname) {
-                alert('ユーザー名を入れてください。')
-                return;
-            }
-            console.log('送信')
-            GameSocket.emit('chatToServer', { uname, text, time: getNow(), PaddlePos });
-            setText('');
-        }, [uname, text])
 
 
 
@@ -315,7 +352,6 @@ const Canvas = () => {
                             <li key={index} style={{ margin: uname === chat.uname ? '0 15px 0 auto ' : '0 auto 0 15px' }}>
                                 <div><small>{chat.time} [{chat.socketId}]</small></div>
                                 <div>【{chat.uname}】 : {chat.text}</div>
-                                <div>【{chat.uname}】 : {chat.PaddlePos}</div>
                             </li>
                         ))
                     }

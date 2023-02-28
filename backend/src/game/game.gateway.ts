@@ -12,7 +12,6 @@ type ChatRecieved = {
   uname: string;
   time: string;
   text: string;
-  PaddlePos: number;
 };
 
 @WebSocketGateway({
@@ -29,13 +28,26 @@ export class GameGateway {
 
   //クライアント側から「chatToServer」という名前のメッセージ（？）をリッスン（好きに命名できる）
   @SubscribeMessage('chatToServer')
-  chatting(@MessageBody() payload: ChatRecieved, @ConnectedSocket() client: Socket): void {
+  chatting(
+    @MessageBody() payload: ChatRecieved,
+    @ConnectedSocket() client: Socket,
+  ): void {
     //@MessageBody→受信したデータ
     //@ConnectedSocket→ユーザーのID（websocketで自動で割り当てられる）や、その他接続に関する情報など
     this.logger.log('chat受信');
     this.logger.log(payload);
     //emit()とすると、指定した名前をリッスンしているクライアントに情報をプッシュできる
     this.server.emit('chatToClient', { ...payload, socketId: client.id });
+  }
+
+  @SubscribeMessage('GameToServer')
+  ReceiveGameInfo(
+    @MessageBody() payload: number,
+    @ConnectedSocket() client: Socket,
+  ): void {
+    this.logger.log('game info received');
+    this.logger.log(payload);
+    this.server.emit('GameToClient', { payload, socketId: client.id });
   }
 
   afterInit(server: Server) {
