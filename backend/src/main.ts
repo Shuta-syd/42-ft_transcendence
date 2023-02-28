@@ -17,6 +17,7 @@ async function bootstrap() {
 
   //app.userGlobalPipes(new ValidationPipe({ whitelist: true }} )) //dto, validateで使用
   app.enableCors({
+    credentials: true,
     origin: ['http://localhost:3000'], //許可したいfrontsideのURL
   });
   app.use(cookieParser());

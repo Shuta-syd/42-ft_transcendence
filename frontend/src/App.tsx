@@ -1,5 +1,6 @@
 import React from "react";
 import {Route, Routes } from 'react-router-dom';
+import axios from "axios";
 import Auth from "./features/auth/Auth";
 import Chat from "./features/chat/Chat";
 import ChatComponent from "./components/chat/ChatComponent";
@@ -8,6 +9,7 @@ import Canvas from "./features/game/Game";
 import Matches from "./features/match/Match";
 
 function App() {
+  axios.defaults.withCredentials = true;
   return (
     <>
         <Routes>

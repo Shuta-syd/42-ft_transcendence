@@ -11,7 +11,7 @@ function FormController(props: FromControllerProps) {
       name={name}
       control={control}
       render={(
-        { field, }
+        { field }
       ) => (
         <TextField
           label={field.name}

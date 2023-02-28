@@ -17,9 +17,9 @@ import { PrismaUser, SwaggerFriends } from 'src/swagger/type';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 
-@UseGuards(AuthGuard('jwt'))
 @ApiTags('user')
 @Controller('user')
+@UseGuards(AuthGuard('jwt'))
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
@@ -34,7 +34,6 @@ export class UserController {
     type: PrismaUser,
   })
   getUser(@Req() req: Request): User {
-    console.log(req.user);
     return req.user;
   }
 
