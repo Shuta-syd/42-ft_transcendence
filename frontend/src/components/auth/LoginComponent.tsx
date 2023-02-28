@@ -16,10 +16,11 @@ function LoginComponent() {
 
   const onSubmit: SubmitHandler<LoginData> = async (data) => {
     try {
-      await axios.post('http://localhost:8080/auth/login', {
+      const res = await axios.post('http://localhost:8080/auth/login', {
         email: data.email,
         password: data.password,
       });
+      console.log(res.data);
       reset();
     } catch (error) {
       console.log(error);
