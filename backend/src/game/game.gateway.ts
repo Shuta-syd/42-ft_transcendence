@@ -12,6 +12,7 @@ type ChatRecieved = {
   uname: string;
   time: string;
   text: string;
+  PaddlePos: number;
 };
 
 @WebSocketGateway({

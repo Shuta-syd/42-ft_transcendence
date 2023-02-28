@@ -235,53 +235,26 @@ const Canvas = () => {
     }, [UserPromise2]);
 
 
-    /* websocket part */
-/*    useEffect(() => {
-        GameSocket.on('connect', () => {
-            console.log('接続ID : ', GameSocket.id)
-        })
-
-        return () => {
-            console.log('切断')
-            GameSocket.disconnect()
-        }
-    }, [])
-
-    const [gamelog, setChatLog] = useState<GameLog>([])
-    const [uname, setUname] = useState<string>('')
-    const [text, setText] = useState<string>('')
-
-    useEffect(() => {
-        GameSocket.on('GameToClient', (chat: Game) => {
-            console.log('gamelogt受信', chat)
-            const newChatLog = [...gamelog]
-            newChatLog.push(chat)
-            setChatLog(newChatLog)
-        });
-    }, [gamelog])
-
-    const sendGame = useCallback((): void => {
-        if (!uname) {
-            alert('ユーザー名を入れてください。')
-            return;
-        }
-        console.log('送信')
-        GameSocket.emit('chatToServer', { uname, text, time: getNow() });
-        setText('');
-    }, [uname, text]) */
-
     type Chat = {
         socketId: string
         uname: string
         time: string
         text: string
+        PaddlePos: number
     }
+
     type ChatLog = Array<Chat>
 
 
         const [chatLog, setChatLog] = useState<ChatLog>([])
         const [uname, setUname] = useState<string>('')
         const [text, setText] = useState<string>('')
+        const [PaddlePos, setPaddlePos] = useState<number>(0)
+
+
+    useEffect(() => {
+        setPaddlePos(rightPaddle.y);
+    }, [rightPaddle.y]);
 
         useEffect(() => {
             GameSocket.on('connect', () => {
@@ -314,7 +287,7 @@ const Canvas = () => {
                 return;
             }
             console.log('送信')
-            GameSocket.emit('chatToServer', { uname, text, time: getNow() });
+            GameSocket.emit('chatToServer', { uname, text, time: getNow(), PaddlePos });
             setText('');
         }, [uname, text])
 
@@ -322,22 +295,29 @@ const Canvas = () => {
 
     return (
         <div>
+            <h1>[PONG GAME]</h1>
+            <h2>player1:{name1}</h2>
+            <h2>
+                player2:{name2}
+            </h2>
+            <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
             <div>ユーザー名</div>
             <div>
                 <input type="text" value={uname} onChange={(event) => { setUname(event.target.value) }} />
             </div>
             <br />
             <section style={{ backgroundColor: 'rgba(30,130,80,0.3)', height: '50vh', overflow: 'scroll' }}>
-                <h2>チャット</h2>
+                <h2>GAME CHAT</h2>
                 <hr />
                 <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column' }}>
                     {
                         chatLog.map((chat, index) => (
-                                <li key={index} style={{ margin: uname === chat.uname ? '0 15px 0 auto ' : '0 auto 0 15px' }}>
-                                    <div><small>{chat.time} [{chat.socketId}]</small></div>
-                                    <div>【{chat.uname}】 : {chat.text}</div>
-                                </li>
-                            ))
+                            <li key={index} style={{ margin: uname === chat.uname ? '0 15px 0 auto ' : '0 auto 0 15px' }}>
+                                <div><small>{chat.time} [{chat.socketId}]</small></div>
+                                <div>【{chat.uname}】 : {chat.text}</div>
+                                <div>【{chat.uname}】 : {chat.PaddlePos}</div>
+                            </li>
+                        ))
                     }
                 </ul>
             </section>
@@ -353,12 +333,6 @@ const Canvas = () => {
                 <button onClick={sendChat}> send </button>
             </div>
             <br />
-            <h1>[PONG GAME]</h1>
-            <h2>player1:{name1}</h2>
-            <h2>
-                player2:{name2}
-            </h2>
-            <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
         </div>
     );
 }
