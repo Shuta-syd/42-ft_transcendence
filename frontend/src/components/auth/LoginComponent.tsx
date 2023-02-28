@@ -2,7 +2,7 @@ import { Button, Grid } from "@mui/material";
 import axios from "axios";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import FormController from "../utils/FormController";
 
 type LoginData = {
@@ -11,7 +11,7 @@ type LoginData = {
 }
 
 function LoginComponent() {
-  const router = useNavigate();
+  // const router = useNavigate();
   const { control, handleSubmit, reset } = useForm<LoginData>({ defaultValues: { email: '', password: '' } });
 
   const onSubmit: SubmitHandler<LoginData> = async (data) => {
@@ -21,7 +21,6 @@ function LoginComponent() {
         password: data.password,
       });
       reset();
-      router('/chat/room');
     } catch (error) {
       console.log(error);
     }

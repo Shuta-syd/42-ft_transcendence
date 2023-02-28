@@ -1,4 +1,5 @@
 import { Button, Grid} from "@mui/material";
+import axios from "axios";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import FormController from "../utils/FormController";
@@ -10,10 +11,20 @@ type SignupData = {
 }
 
 function SignupComponent() {
-  const { control, handleSubmit } = useForm<SignupData>({ defaultValues: { username: '', email: '', password: '' } });
+  const { control, handleSubmit, reset } = useForm<SignupData>({ defaultValues: { username: '', email: '', password: '' } });
 
-  const onSubmit: SubmitHandler<SignupData> = (data) => {
-    
+  const onSubmit: SubmitHandler<SignupData> = async (data) => {
+    try {
+      const res = await axios.post('http://localhost:8080/auth/signup', {
+        name: data.username,
+        email: data.email,
+        password: data.password,
+      });
+      console.log(res.data);
+      reset();
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
