@@ -1,13 +1,9 @@
 import { Grid } from "@mui/material";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { Socket } from "socket.io-client";
 import ChatGroupComponent from "./ChatGroupCompoent";
 import { WebsocketContext } from "../../contexts/WebsocketContext";
-
-type Props = {
-  iam: { key: string }
-}
 
 
 /**
@@ -15,7 +11,6 @@ type Props = {
  */
 export default function ChatComponent() {
   const socket: Socket = useContext(WebsocketContext);
-  const [iam, setIam] = useState<Props>();
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -23,7 +18,6 @@ export default function ChatComponent() {
     });
 
     socket.on('token', (token: {key: string}) => {
-      setIam({ iam: token });
       console.log(token);
     })
 
@@ -36,7 +30,7 @@ export default function ChatComponent() {
   return (
     <Grid container>
       <ChatGroupComponent />
-      <Outlet context={iam}/>
+      <Outlet />
     </Grid>
   )
 }

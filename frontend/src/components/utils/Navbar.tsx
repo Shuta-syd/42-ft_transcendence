@@ -6,21 +6,21 @@ import { Link } from "react-router-dom";
 
 function Navbar() {
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{backgroundColor: "#0F044C", height: '6vh'}}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             <Typography mr={5}>
-              <Link to={"/"}>Home</Link>
+              <Link to={"/"} className={'NavbarLink'}>Home</Link>
             </Typography>
             <Typography mr={5}>
-              <Link to={"/chat/room"}>Chat</Link>
+              <Link to={"/chat/room"} className={'NavbarLink'}>Chat</Link>
             </Typography>
             <Typography mr={5}>
-              <Link to={"/game"}>Game</Link>
+            <Link to={"/game"} className={'NavbarLink'}>Game</Link>
             </Typography>
             <Typography mr={5}>
-               <Link to={"/match"}>Match</Link>
+               <Link to={"/match"} className={'NavbarLink'}>Match</Link>
             </Typography>
           </Box>
         </Toolbar>
