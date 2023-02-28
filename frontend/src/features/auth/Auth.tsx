@@ -1,6 +1,6 @@
 import React from "react";
 
-function Home() {
+function Auth() {
   return (
     <h1>
       This is Home Page
@@ -8,4 +8,4 @@ function Home() {
   )
 }
 
-export default Home;
+export default Auth;

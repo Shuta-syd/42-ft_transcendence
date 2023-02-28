@@ -1,6 +1,6 @@
 import React from "react";
 import {Route, Routes } from 'react-router-dom';
-import Home from "./features/home/Home";
+import Auth from "./features/auth/Auth";
 import Chat from "./features/chat/Chat";
 import ChatComponent from "./components/chat/ChatComponent";
 import ChatWindowComponent from "./components/chat/ChatWindowComponent";
@@ -11,7 +11,7 @@ function App() {
   return (
     <>
         <Routes>
-          <Route index element={<Home/>} />
+          <Route index element={<Auth/>} />
           <Route path="/chat" element={<Chat />}>
             <Route path="room" element={<ChatComponent />}>
               <Route path=":roomId" element={<ChatWindowComponent />} />
