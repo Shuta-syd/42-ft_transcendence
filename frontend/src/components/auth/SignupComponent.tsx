@@ -13,7 +13,7 @@ function SignupComponent() {
   const { control, handleSubmit } = useForm<SignupData>({ defaultValues: { username: '', email: '', password: '' } });
 
   const onSubmit: SubmitHandler<SignupData> = (data) => {
-    console.log(data);
+    
   }
 
   return (
