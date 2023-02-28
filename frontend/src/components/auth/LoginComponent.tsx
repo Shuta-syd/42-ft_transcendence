@@ -3,15 +3,15 @@ import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import FormController from "../utils/FormController";
 
-type LoginForm = {
+type LoginData = {
   email: string;
   password: string;
 }
 
 function LoginComponent() {
-  const { control, handleSubmit } = useForm<LoginForm>({ defaultValues: { email: '', password: '' } });
+  const { control, handleSubmit } = useForm<LoginData>({ defaultValues: { email: '', password: '' } });
 
-  const onSubmit: SubmitHandler<LoginForm> = (data) => {
+  const onSubmit: SubmitHandler<LoginData> = (data) => {
     console.log(data);
   }
 
