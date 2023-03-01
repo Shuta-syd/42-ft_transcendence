@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { ChatRoom, Member, Message } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UserService } from 'src/user/user.service';
 import { CreateChatRoom, SendChatDto } from './dto/chat.dto';
 
 @Injectable()
 export class ChatService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly userService: UserService,
+  ) {}
 
   /**
    * @returns 作成したChatRoomデータ
@@ -32,6 +36,23 @@ export class ChatService {
         members: { include: { user: true } },
       },
     });
+  }
+
+  /**
+   * @param userId APIを叩いているユーザのID
+   * @param roomId 所属するroomID
+   */
+  async getFriendNameByDMId(userId: string, roomId: string): Promise<string> {
+    const members = await this.prisma.chatRoom
+      .findUnique({
+        where: { id: roomId },
+      })
+      .members();
+    const friendMember = members.filter(
+      (member: Member) => member.userId !== userId,
+    );
+    const friend = await this.userService.getUserById(friendMember[0].userId);
+    return friend.name;
   }
 
   /**
