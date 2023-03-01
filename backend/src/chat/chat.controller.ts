@@ -79,6 +79,14 @@ export class ChatController {
     return this.chatService.getFriendNameByDMId(req.user.id, roomId);
   }
 
+  @Get('room/:roomId/memberId')
+  async getMyMemberId(
+    @Req() req: Request,
+    @Param('roomId') roomId: string,
+  ): Promise<string> {
+    return this.chatService.getMyMemberId(req.user.id, roomId);
+  }
+
   @Get('room/log/:roomId')
   @ApiOperation({
     description: 'Get chat logs of specified chat room',

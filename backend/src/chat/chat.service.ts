@@ -56,6 +56,22 @@ export class ChatService {
   }
 
   /**
+   * @param userId APIを叩いているユーザのID
+   * @param roomId 所属するroomID
+   */
+  async getMyMemberId(userId: string, roomId: string): Promise<string> {
+    const members = await this.prisma.chatRoom
+      .findUnique({
+        where: { id: roomId },
+      })
+      .members();
+    const userMember = members.filter(
+      (member: Member) => member.userId === userId,
+    );
+    return userMember[0].id;
+  }
+
+  /**
    * @param userId 所属させたいuserID
    * @param roomId 所属させたいChat RoomID
    * @returns 作成したMember object

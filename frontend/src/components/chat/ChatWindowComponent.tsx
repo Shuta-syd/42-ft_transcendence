@@ -20,7 +20,6 @@ type ChatLog = MessagePayload[];
  * @returns 実際にchatをするトーク画面のコンポーネント
  */
 export default function ChatWindowComponent() {
-  const UserID = 'ba822ee0-7a6e-43a8-98cc-eb93f7433bb5'; // tmp
   const { roomId } = useParams();
   const ChatRoomID: string = roomId as string;
   const { data } = useQueryChatLog(ChatRoomID);
@@ -51,11 +50,7 @@ export default function ChatWindowComponent() {
 
   const getFriendName = useCallback(async (): Promise<string> => axios.get(`http://localhost:8080/chat/room/${ChatRoomID}/dm/friend`), [ChatRoomID]);
 
-  const getMemberId = useCallback(async (): Promise<string> => {
-    const res = await axios.get(`http://localhost:8080/chat/room/${ChatRoomID}`);
-    const member = res.data.members.filter((val: any) => val.userId === UserID);
-    return member[0].id;
-  }, [ChatRoomID]);
+  const getMemberId = useCallback(async (): Promise<string> => axios.get(`http://localhost:8080/chat/room/${ChatRoomID}/memberId`), [ChatRoomID]);
 
   useEffect(() => {
     setChatLog([]);
