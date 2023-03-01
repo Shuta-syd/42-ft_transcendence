@@ -19,7 +19,12 @@ import {
   SwaggerMessages,
 } from 'src/swagger/type';
 import { ChatService } from './chat.service';
-import { AddMemberDto, CreateChatRoom, SendChatDto } from './dto/chat.dto';
+import {
+  AddMemberDto,
+  ChatRoomPayload,
+  CreateChatRoom,
+  SendChatDto,
+} from './dto/chat.dto';
 
 @Controller('chat')
 @ApiTags('chat')
@@ -106,11 +111,8 @@ export class ChatController {
     summary: 'Add a user to join a room',
   })
   @Post('member/add')
-  async addMember(
-    @Req() req: Request,
-    @Body() dto: AddMemberDto,
-  ): Promise<Member> {
-    return this.chatService.addMember(req.user.id, dto.roomId);
+  async addMember(@Body() dto: AddMemberDto): Promise<Member> {
+    return this.chatService.addMember(dto.userId, dto.roomId);
   }
 
   @ApiOperation({
@@ -118,7 +120,7 @@ export class ChatController {
     summary: "Get a user's DM rooms ",
   })
   @Get('dm')
-  async getUserDM(@Req() req: Request): Promise<ChatRoom[]> {
+  async getUserDM(@Req() req: Request): Promise<ChatRoomPayload> {
     return this.chatService.getUserDM(req.user.id);
   }
 }

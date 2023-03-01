@@ -8,6 +8,7 @@ export class SendChatDto {
 }
 
 export class AddMemberDto {
+  userId: string;
   roomId: string;
 }
 
@@ -24,3 +25,10 @@ export type ChatPayload = {
 export type TokenPayload = {
   key: string;
 };
+
+export type FriendPayload = {
+  id: string;
+  name: string;
+};
+
+export type ChatRoomPayload = { [friendId: string]: string };

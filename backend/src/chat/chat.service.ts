@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ChatRoom, Member, Message } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
-import { CreateChatRoom, SendChatDto } from './dto/chat.dto';
+import { ChatRoomPayload, CreateChatRoom, SendChatDto } from './dto/chat.dto';
 
 @Injectable()
 export class ChatService {
@@ -97,8 +97,9 @@ export class ChatService {
    * @param userId 取得したいDMのuserID
    * @returns userIDのすべてのDM
    */
-  async getUserDM(userId: string): Promise<ChatRoom[]> {
-    const DirectMessageRooms = this.prisma.chatRoom.findMany({
+  async getUserDM(userId: string): Promise<ChatRoomPayload> {
+    const DMRooms: ChatRoomPayload = {};
+    const DirectMessageRooms = await this.prisma.chatRoom.findMany({
       where: {
         isDM: true,
         members: {
@@ -110,7 +111,12 @@ export class ChatService {
       include: { members: true },
     });
 
-    return DirectMessageRooms;
+    DirectMessageRooms.map((room: ChatRoom & { members: Member[] }) => {
+      room.members.map((member: Member) => {
+        if (member.userId !== userId) DMRooms[member.id] = room.id;
+      });
+    });
+    return DMRooms;
   }
 
   /**
