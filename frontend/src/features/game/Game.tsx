@@ -3,7 +3,6 @@ import useQueryUserGame from "../../hooks/game/useQueryGame";
 import { User } from "../../types/PrismaType";
 import { GameSocket } from "../../contexts/WebsocketContext";
 
-
 // global variables
 let context: CanvasRenderingContext2D | null;
 let canvas:  HTMLCanvasElement | null;
@@ -41,6 +40,7 @@ const RPADDLEY = 100;
 
 const WIDTH = 1000;
 const HEIGHT = 900;
+
 /*
 ballの情報をオブジェクト化して、drawで描けるようになってる
 -> ballのx, yを更新できるようにしていく
@@ -83,8 +83,6 @@ const leftPaddle = {
     color: "black",
     draw() {
         context?.beginPath();
-        // console.log("x = ", this.x)
-        // console.log("y = ", this.y)
         context?.rect(this.x, this.y, PADDLEWIDTH, PADDLEWHEIGHT);
         context?.closePath();
         context?.fillStyle && (context.fillStyle = this.color);
@@ -92,8 +90,6 @@ const leftPaddle = {
     }
 }
 
-// eslint-disable-next-line react-hooks/rules-of-hooks
-// const [LeftPaddlePos, setLeftPaddlePos] = useState<number>(LPADDLEY);
 
 const rightPaddle = {
     x: RPADDLEX,
@@ -168,23 +164,20 @@ function draw() {
 
     /* check keycode */
     if (keycode === 'KeyW') {
-        // if(leftPaddle.y  > FIELDY) {
-        //     leftPaddle.y -= 50;
-        // }
         if (rightPaddle.y  > FIELDY) {
             rightPaddle.y -= 50;
             GameSocket.emit('GameToServer', rightPaddle.y);
         }
     }
     if (keycode === 'KeyS') {
-        // if(leftPaddle.y  + PADDLEWHEIGHT < FIELDHEIGHT + FIELDY) {
-        //     leftPaddle.y += 50;
-        // }
         if (rightPaddle.y + PADDLEWHEIGHT < FIELDHEIGHT + FIELDY) {
             rightPaddle.y += 50;
             GameSocket.emit('GameToServer', rightPaddle.y);
         }
     }
+
+
+
 
     keycode = '';
 
@@ -207,12 +200,29 @@ function draw() {
     window.requestAnimationFrame(draw);
 }
 
-const Canvas = () => {
 
-    // const [LeftPaddlePos, setLeftPaddlePos] = useState<number>(LPADDLEY);
-
-
+const Game = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
+    useEffect(() => {
+        const handleKeyUp = ():void => {
+            keycode =  '';
+        }
+        const handleKeyDown = (e:KeyboardEvent):void  => {
+            keycode = e.code;
+        }
+        canvas = canvasRef.current;
+        if (!canvas) {
+            return ;
+        }
+        context = canvas.getContext('2d');
+        if (!context) {
+            return ;
+        }
+        window.requestAnimationFrame(draw);
+        window.addEventListener('keyup', handleKeyUp);
+        window.addEventListener('keydown', handleKeyDown);
+    }, []);
+
     /* player1 */
     const [name1, setName] = useState('');
     const UserPromise1 = useQueryUserGame('1');
@@ -231,19 +241,22 @@ const Canvas = () => {
         });
     }, [UserPromise2]);
 
+
     type Chat = {
         socketId: string
         uname: string
         time: string
         text: string
     }
+
+
     type ChatLog = Array<Chat>
+
+
         const [chatLog, setChatLog] = useState<ChatLog>([])
         const [uname, setUname] = useState<string>('')
         const [text, setText] = useState<string>('')
-    // useEffect(() => {
-    //     setPaddlePos(rightPaddle.y);
-    // }, [rightPaddle.y]);
+
 
     useEffect(() => {
         GameSocket.on('connect', () => {
@@ -265,17 +278,14 @@ const Canvas = () => {
         });
     }, [chatLog])
 
-/*
-        GameSocket.on('GameToClient', (game: number) => {
-            console.log('chat receive game info', game)
-            leftPaddle.y = game;
-        });
-*/
 
     const getNow = useCallback((): string => {
         const datetime = new Date();
         return `${datetime.getFullYear()}/${datetime.getMonth() + 1}/${datetime.getDate()} ${datetime.getHours()}:${datetime.getMinutes()}:${datetime.getSeconds()}`
     }, [])
+
+        useEffect(() => {
+    }, [rightPaddle.y]);
 
     const sendChat = useCallback((): void => {
         if (!uname) {
@@ -287,47 +297,12 @@ const Canvas = () => {
         setText('');
     }, [uname, text])
 
+    GameSocket.on('GameToClient', (leftPaddley: number, socketid: string) => {
+        console.log('chat receive leftPaddley info', leftPaddley)
+        if (GameSocket.id != socketid)
+        leftPaddle.y = leftPaddley;
+    });
 
-    useEffect(() => {
-        const handleKeyUp = ():void => {
-            keycode =  '';
-        }
-        const handleKeyDown = (e:KeyboardEvent):void  => {
-            keycode = e.code;
-        }
-        canvas = canvasRef.current;
-        if (!canvas) {
-            return ;
-        }
-        context = canvas.getContext('2d');
-        if (!context) {
-            return ;
-        }
-        window.requestAnimationFrame(draw);
-        window.addEventListener('keyup', handleKeyUp);
-        window.addEventListener('keydown', handleKeyDown);
-
-            // ballのrendering自体は
-            // leftPaddle.y += 100;
-            // としたときに正常に動作するので問題ないはず。
-    }, []);
-
-        GameSocket.on('GameToClient', ( payload: number, socketId: string ) => {
-            // console.log('---')
-            // console.log('rightPaddleY', rightPaddleY)
-            // const tmp: number = rightPaddleY.valueOf();
-            // console.log('leftPaddle.y', leftPaddle.y)
-            // console.log('---')
-            // console.log(tmp)
-            // console.log(payload);
-            // console.log(100);
-            if (GameSocket.id != socketId)
-                leftPaddle.y = payload.valueOf();
-            // leftPaddle.y += 100;
-            // console.log('before rightPaddleY', rightPaddleY)
-            // console.log('after leftPaddle.y = ', leftPaddle.y)
-            // console.log('---')
-        });
 
     return (
         <div>
@@ -372,4 +347,4 @@ const Canvas = () => {
     );
 }
 
-export default Canvas;
+export default Game;
