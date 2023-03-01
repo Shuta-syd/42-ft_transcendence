@@ -8,7 +8,7 @@ import { ChatRoomPayload, CreateChatRoom, SendChatDto } from './dto/chat.dto';
 export class ChatService {
   constructor(
     private prisma: PrismaService,
-    private readonly userService: UserService,
+    private userService: UserService,
   ) {}
 
   /**
