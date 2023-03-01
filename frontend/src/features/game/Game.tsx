@@ -185,10 +185,6 @@ function draw() {
         }
     }
 
-    // leftPaddle.y = LeftPaddlePos;
-
-
-
     keycode = '';
 
     ball.x += ball.vx;
@@ -210,44 +206,8 @@ function draw() {
     window.requestAnimationFrame(draw);
 }
 
-// type Game = {
-//     paddleTopleft: number;
-// };
-//
-// type GameLog = Array<Game>
-
 const Canvas = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    useEffect(() => {
-        const handleKeyUp = ():void => {
-            keycode =  '';
-        }
-        const handleKeyDown = (e:KeyboardEvent):void  => {
-            keycode = e.code;
-        }
-        canvas = canvasRef.current;
-        if (!canvas) {
-            return ;
-        }
-        context = canvas.getContext('2d');
-        if (!context) {
-            return ;
-        }
-        window.requestAnimationFrame(draw);
-        window.addEventListener('keyup', handleKeyUp);
-        window.addEventListener('keydown', handleKeyDown);
-
-
-        GameSocket.on('GameToClient', (leftPaddley: number) => {
-            console.log('---')
-            console.log('leftPaddley', leftPaddley)
-            console.log('leftPaddle.y', leftPaddle.y)
-            console.log('---')
-            leftPaddle.y = leftPaddley;
-        });
-
-    }, []);
-
     /* player1 */
     const [name1, setName] = useState('');
     const UserPromise1 = useQueryUserGame('1');
@@ -325,6 +285,37 @@ const Canvas = () => {
         setText('');
     }, [uname, text])
 
+
+    useEffect(() => {
+        const handleKeyUp = ():void => {
+            keycode =  '';
+        }
+        const handleKeyDown = (e:KeyboardEvent):void  => {
+            keycode = e.code;
+        }
+        canvas = canvasRef.current;
+        if (!canvas) {
+            return ;
+        }
+        context = canvas.getContext('2d');
+        if (!context) {
+            return ;
+        }
+        window.requestAnimationFrame(draw);
+        window.addEventListener('keyup', handleKeyUp);
+        window.addEventListener('keydown', handleKeyDown);
+
+        GameSocket.on('GameToClient', (leftPaddley: number) => {
+            console.log('---')
+            console.log('leftPaddley', leftPaddley.valueOf())
+            console.log('leftPaddle.y', leftPaddle.y)
+            console.log('---')
+            // leftPaddle.y = leftPaddley.valueOf();
+            console.log('before rightPaddle.x', rightPaddle.x)
+            console.log('after leftPaddle.y', leftPaddle.y)
+            console.log('---')
+        });
+    }, []);
 
     return (
         <div>
