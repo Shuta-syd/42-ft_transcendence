@@ -10,13 +10,13 @@ export class ChatService {
   /**
    * @returns 作成したChatRoomデータ
    */
-  async crateChatRoom(dto: CreateChatRoom): Promise<ChatRoom> {
+  async crateChatRoom(userId: string, dto: CreateChatRoom): Promise<ChatRoom> {
     return this.prisma.chatRoom
       .create({
         data: { isDM: JSON.parse(dto.isDM) },
       })
       .then((room: ChatRoom): ChatRoom => {
-        this.addMember(dto.userId, room.id);
+        this.addMember(userId, room.id);
         return room;
       });
   }
