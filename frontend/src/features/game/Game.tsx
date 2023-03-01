@@ -236,6 +236,16 @@ const Canvas = () => {
         window.requestAnimationFrame(draw);
         window.addEventListener('keyup', handleKeyUp);
         window.addEventListener('keydown', handleKeyDown);
+
+
+        GameSocket.on('GameToClient', (leftPaddley: number) => {
+            console.log('---')
+            console.log('leftPaddley', leftPaddley)
+            console.log('leftPaddle.y', leftPaddle.y)
+            console.log('---')
+            leftPaddle.y = leftPaddley;
+        });
+
     }, []);
 
     /* player1 */
@@ -256,23 +266,16 @@ const Canvas = () => {
         });
     }, [UserPromise2]);
 
-
     type Chat = {
         socketId: string
         uname: string
         time: string
         text: string
     }
-
-
     type ChatLog = Array<Chat>
-
-
         const [chatLog, setChatLog] = useState<ChatLog>([])
         const [uname, setUname] = useState<string>('')
         const [text, setText] = useState<string>('')
-
-
     // useEffect(() => {
     //     setPaddlePos(rightPaddle.y);
     // }, [rightPaddle.y]);
@@ -321,13 +324,6 @@ const Canvas = () => {
         GameSocket.emit('chatToServer', { uname, text, time: getNow() });
         setText('');
     }, [uname, text])
-
-    GameSocket.on('GameToClient', (leftPaddley: number) => {
-        console.log('chat receive leftPaddley info', leftPaddley)
-        leftPaddle.y = leftPaddley;
-    });
-
-
 
 
     return (
