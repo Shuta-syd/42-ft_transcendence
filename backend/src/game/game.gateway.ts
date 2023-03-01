@@ -14,6 +14,11 @@ type ChatRecieved = {
   text: string;
 };
 
+type BallPos = {
+  x: number;
+  y: number;
+};
+
 @WebSocketGateway({
   cors: {
     origin: '*',
@@ -49,6 +54,17 @@ export class GameGateway {
     this.logger.log(payload);
     console.log(payload);
     this.server.emit('GameToClient', payload, client.id);
+  }
+
+  @SubscribeMessage('BallPosToServer')
+  ReceiveBallPosInfo(
+    @MessageBody() payload: BallPos,
+    @ConnectedSocket() client: Socket,
+  ): void {
+    this.logger.log('game info received');
+    this.logger.log(payload);
+    console.log(payload);
+    this.server.emit('BallPosToClient', payload, client.id);
   }
 
   afterInit(server: Server) {

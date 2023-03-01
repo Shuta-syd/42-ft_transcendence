@@ -46,10 +46,13 @@ ballの情報をオブジェクト化して、drawで描けるようになって
 -> ballのx, yを更新できるようにしていく
  */
 
+const ANONYMOUS = 0;
 const PLAYER1 = 1;
 const PLAYER2 = 2;
 const OBSERVER = 3;
 
+
+let PlayerType = ANONYMOUS;
 
 
 const ball = {
@@ -140,32 +143,37 @@ function drawStaticObject() {
 /*
 後があるobject
  */
+type BallPos = {
+    x: number;
+    y: number;
+};
+
 
 function draw() {
     context?.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
     drawStaticObject();
 
-    /* check collision */
-    if (ball.x - ball.radius <= leftPaddle.x + PADDLEWIDTH
-        && (ball.y <= leftPaddle.y + PADDLEWHEIGHT
-            && ball.y >= leftPaddle.y)){
-        ball.vx = -ball.vx;
-    }else if (ball.x + ball.radius >= rightPaddle.x
-        && (ball.y <= rightPaddle.y + PADDLEWHEIGHT
-            && ball.y >= rightPaddle.y)) {
-        ball.vx = -ball.vx;
-    } else if (FIELDHEIGHT + FIELDY < ball.y || ball.y < FIELDY) {
-        /* -------Ballでのconflict------- */
-        ball.vy = -ball.vy;
-        /* -----------reset------------- */
-    } else if (ball.x < FIELDX) {
-        rightScore += 1;
-        ball.init();
-    } else if (FIELDX + FIELDWIDTH < ball.x) {
-        leftScore += 1;
-        ball.init();
-    }
+    if (PlayerType !== PLAYER1) {
+        /* check collision */
+        if (ball.x - ball.radius <= leftPaddle.x + PADDLEWIDTH
+            && (ball.y <= leftPaddle.y + PADDLEWHEIGHT
+                && ball.y >= leftPaddle.y)){
+            ball.vx = -ball.vx;
+        }else if (ball.x + ball.radius >= rightPaddle.x
+            && (ball.y <= rightPaddle.y + PADDLEWHEIGHT
+                && ball.y >= rightPaddle.y)) {
+            ball.vx = -ball.vx;
+        } else if (FIELDHEIGHT + FIELDY < ball.y || ball.y < FIELDY) {
+            ball.vy = -ball.vy;
+        } else if (ball.x < FIELDX) {
+            rightScore += 1;
+            ball.init();
+        } else if (FIELDX + FIELDWIDTH < ball.x) {
+            leftScore += 1;
+            ball.init();
+        }
 
+    }
 
     /* check keycode */
     if (keycode === 'KeyW') {
@@ -182,71 +190,18 @@ function draw() {
     }
     keycode = '';
 
-    ball.x += ball.vx;
-    ball.y += ball.vy;
-
-    /* draw part */
-    leftPaddle.draw();
-    rightPaddle.draw();
-    ball.draw();
-    if (canvas == null || context == null) {
-        return ;
-    }
-
-    context.fillStyle = 'black';
-    context.font = "bold 50px 'ＭＳ 明朝'";
-    context.fillText(leftScore.toString() , 360, 50);
-    context.fillText( '-', 440, 50);
-    context.fillText( rightScore.toString(), 500, 50);
-    window.requestAnimationFrame(draw);
-}
-
-function Player1Draw() {
-    context?.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
-    drawStaticObject();
-
-    /* check collision */
-    if (ball.x - ball.radius <= leftPaddle.x + PADDLEWIDTH
-        && (ball.y <= leftPaddle.y + PADDLEWHEIGHT
-            && ball.y >= leftPaddle.y)){
-        ball.vx = -ball.vx;
-    }else if (ball.x + ball.radius >= rightPaddle.x
-        && (ball.y <= rightPaddle.y + PADDLEWHEIGHT
-            && ball.y >= rightPaddle.y)) {
-        ball.vx = -ball.vx;
-    } else if (FIELDHEIGHT + FIELDY < ball.y || ball.y < FIELDY) {
-        /* -------Ballでのconflict------- */
-        ball.vy = -ball.vy;
-        /* -----------reset------------- */
-    } else if (ball.x < FIELDX) {
-        rightScore += 1;
-        ball.init();
-    } else if (FIELDX + FIELDWIDTH < ball.x) {
-        leftScore += 1;
-        ball.init();
-    }
-
-
-    /* check keycode */
-    if (keycode === 'KeyW') {
-        if (rightPaddle.y  > FIELDY) {
-            rightPaddle.y -= 50;
-            GameSocket.emit('GameToServer', rightPaddle.y);
-        }
-    }
-    if (keycode === 'KeyS') {
-        if (rightPaddle.y + PADDLEWHEIGHT < FIELDHEIGHT + FIELDY) {
-            rightPaddle.y += 50;
-            GameSocket.emit('GameToServer', rightPaddle.y);
-        }
-    }
-    keycode = '';
-
-    ball.x += ball.vx;
-    ball.y += ball.vy;
 
     /* send ball pos to server */
-    GameSocket.emit('BallPosToServer', ball.x, ball.y);
+    if (PlayerType === PLAYER1) {
+        ball.x += ball.vx;
+        ball.y += ball.vy;
+        const BallPos:BallPos = {
+            x: ball.x,
+            y:ball.y,
+        }
+        GameSocket.emit('BallPosToServer', BallPos);
+    }
+
     /* draw part */
     leftPaddle.draw();
     rightPaddle.draw();
@@ -262,10 +217,13 @@ function Player1Draw() {
     context.fillText( rightScore.toString(), 500, 50);
     window.requestAnimationFrame(draw);
 }
+
+
+
 const Game = () => {
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const [playerType, setPlayerType] = useState<number>(0);
+
 
 
     useEffect(() => {
@@ -283,10 +241,8 @@ const Game = () => {
         if (!context) {
             return ;
         }
-        if (playerType === PLAYER1)
-            window.requestAnimationFrame(Player1Draw);
-        else
-            window.requestAnimationFrame(draw);
+
+        window.requestAnimationFrame(draw);
         window.addEventListener('keyup', handleKeyUp);
         window.addEventListener('keydown', handleKeyDown);
     }, []);
@@ -367,13 +323,20 @@ const Game = () => {
 
     GameSocket.on('GameToClient', (leftPaddley: number, socketid: string) => {
         console.log('chat receive leftPaddley info', leftPaddley)
-        if (GameSocket.id != socketid)
+        if (GameSocket.id !== socketid)
         leftPaddle.y = leftPaddley;
+    });
+    GameSocket.on('BallPosToClient', (BallPos: BallPos, SocketId: string) => {
+        console.log('chat receive BallPos info', BallPos)
+            if (PlayerType !== PLAYER1) {
+                ball.y = BallPos.y;
+                ball.x = BallPos.x;
+            }
     });
 
     const isPlayer1 = () => {
         console.log('isPlayer1!')
-        setPlayerType(PLAYER1);
+        PlayerType = PLAYER1;
         return <div>
             isPlayer1!
         </div>
@@ -381,7 +344,7 @@ const Game = () => {
 
     const isPlayer2 = () => {
         console.log('isPlayer2!')
-        setPlayerType(PLAYER2);
+        PlayerType = PLAYER2;
         return <div>
             isPlayer2!
         </div>
@@ -389,21 +352,26 @@ const Game = () => {
 
     const isObserver = () => {
         console.log('isObserver!')
-        setPlayerType(OBSERVER);
+        PlayerType = OBSERVER;
         return <div>
             isObserver!
         </div>
     }
     
     const show = () => {
-        if (playerType === PLAYER1) {
+        if (PlayerType === PLAYER1) {
             return 'PLAYER1';
         }
-        if (playerType === PLAYER2) {
+        if (PlayerType === PLAYER2) {
             return 'PLAYER2';
-        } 
-        return 'OBSERVER';
+        }
+        if (PlayerType === OBSERVER) {
+            return 'OBSERVER';
+        }
+        return 'ANONYMOUS';
     }
+
+
     return (
         <div>
             <h1>[PONG GAME]</h1>
