@@ -46,6 +46,11 @@ ballの情報をオブジェクト化して、drawで描けるようになって
 -> ballのx, yを更新できるようにしていく
  */
 
+const PLAYER1 = 1;
+const PLAYER2 = 2;
+const OBSERVER = 3;
+
+
 
 const ball = {
     x: BALLX,
@@ -175,10 +180,6 @@ function draw() {
             GameSocket.emit('GameToServer', rightPaddle.y);
         }
     }
-
-
-
-
     keycode = '';
 
     ball.x += ball.vx;
@@ -200,9 +201,73 @@ function draw() {
     window.requestAnimationFrame(draw);
 }
 
+function Player1Draw() {
+    context?.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
+    drawStaticObject();
 
+    /* check collision */
+    if (ball.x - ball.radius <= leftPaddle.x + PADDLEWIDTH
+        && (ball.y <= leftPaddle.y + PADDLEWHEIGHT
+            && ball.y >= leftPaddle.y)){
+        ball.vx = -ball.vx;
+    }else if (ball.x + ball.radius >= rightPaddle.x
+        && (ball.y <= rightPaddle.y + PADDLEWHEIGHT
+            && ball.y >= rightPaddle.y)) {
+        ball.vx = -ball.vx;
+    } else if (FIELDHEIGHT + FIELDY < ball.y || ball.y < FIELDY) {
+        /* -------Ballでのconflict------- */
+        ball.vy = -ball.vy;
+        /* -----------reset------------- */
+    } else if (ball.x < FIELDX) {
+        rightScore += 1;
+        ball.init();
+    } else if (FIELDX + FIELDWIDTH < ball.x) {
+        leftScore += 1;
+        ball.init();
+    }
+
+
+    /* check keycode */
+    if (keycode === 'KeyW') {
+        if (rightPaddle.y  > FIELDY) {
+            rightPaddle.y -= 50;
+            GameSocket.emit('GameToServer', rightPaddle.y);
+        }
+    }
+    if (keycode === 'KeyS') {
+        if (rightPaddle.y + PADDLEWHEIGHT < FIELDHEIGHT + FIELDY) {
+            rightPaddle.y += 50;
+            GameSocket.emit('GameToServer', rightPaddle.y);
+        }
+    }
+    keycode = '';
+
+    ball.x += ball.vx;
+    ball.y += ball.vy;
+
+    /* send ball pos to server */
+    GameSocket.emit('BallPosToServer', ball.x, ball.y);
+    /* draw part */
+    leftPaddle.draw();
+    rightPaddle.draw();
+    ball.draw();
+    if (canvas == null || context == null) {
+        return ;
+    }
+
+    context.fillStyle = 'black';
+    context.font = "bold 50px 'ＭＳ 明朝'";
+    context.fillText(leftScore.toString() , 360, 50);
+    context.fillText( '-', 440, 50);
+    context.fillText( rightScore.toString(), 500, 50);
+    window.requestAnimationFrame(draw);
+}
 const Game = () => {
+
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
+    const [playerType, setPlayerType] = useState<number>(0);
+
+
     useEffect(() => {
         const handleKeyUp = ():void => {
             keycode =  '';
@@ -218,7 +283,10 @@ const Game = () => {
         if (!context) {
             return ;
         }
-        window.requestAnimationFrame(draw);
+        if (playerType === PLAYER1)
+            window.requestAnimationFrame(Player1Draw);
+        else
+            window.requestAnimationFrame(draw);
         window.addEventListener('keyup', handleKeyUp);
         window.addEventListener('keydown', handleKeyDown);
     }, []);
@@ -303,14 +371,49 @@ const Game = () => {
         leftPaddle.y = leftPaddley;
     });
 
+    const isPlayer1 = () => {
+        console.log('isPlayer1!')
+        setPlayerType(PLAYER1);
+        return <div>
+            isPlayer1!
+        </div>
+    }
 
+    const isPlayer2 = () => {
+        console.log('isPlayer2!')
+        setPlayerType(PLAYER2);
+        return <div>
+            isPlayer2!
+        </div>
+    }
+
+    const isObserver = () => {
+        console.log('isObserver!')
+        setPlayerType(OBSERVER);
+        return <div>
+            isObserver!
+        </div>
+    }
+    
+    const show = () => {
+        if (playerType === PLAYER1) {
+            return 'PLAYER1';
+        }
+        if (playerType === PLAYER2) {
+            return 'PLAYER2';
+        } 
+        return 'OBSERVER';
+    }
     return (
         <div>
             <h1>[PONG GAME]</h1>
+            <h2>YOU ARE {show()}!!</h2>
             <h2>player1:{name1}</h2>
-            <h2>
-                player2:{name2}
-            </h2>
+            <button onClick={isPlayer1}> isPlayer1</button>
+            <h2>player2:{name2}</h2>
+            <button onClick={isPlayer2}> isPlayer2</button>
+            <h2>observer: ?</h2>
+            <button onClick={isObserver}> isObserver</button>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
             <div>ユーザー名</div>
             <div>
@@ -342,7 +445,6 @@ const Game = () => {
             <div>
                 <button onClick={sendChat}> send </button>
             </div>
-            <br />
         </div>
     );
 }
