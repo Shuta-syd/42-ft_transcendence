@@ -28,7 +28,9 @@ export class ChatService {
   async getChatRoomById(roomId: string): Promise<ChatRoom> {
     return this.prisma.chatRoom.findUnique({
       where: { id: roomId },
-      include: { members: true },
+      include: {
+        members: { include: { user: true } },
+      },
     });
   }
 

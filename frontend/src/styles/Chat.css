@@ -1,0 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
+
+.FriendLink {
+  text-decoration: none;
+  color: #EEEEEE;
+}
+
+input[type=text]::placeholder {
+  font-weight: 700;
+  color: #EEEEEE;
+  font-family: 'Lato',
+}
+
+.FriendList:hover {
+  background-color: #6A709A;
+}
+
+.FriendListActive {
+  background-color: #40487E;
+}
