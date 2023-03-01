@@ -70,7 +70,6 @@ const ball = {
     }
 };
 
-// const [LeftPaddlePos, setLeftPaddlePos] = useState<number>(LPADDLEY);
 
 const leftPaddle = {
     x: LPADDLEX,
@@ -84,6 +83,8 @@ const leftPaddle = {
     color: "black",
     draw() {
         context?.beginPath();
+        // console.log("x = ", this.x)
+        // console.log("y = ", this.y)
         context?.rect(this.x, this.y, PADDLEWIDTH, PADDLEWHEIGHT);
         context?.closePath();
         context?.fillStyle && (context.fillStyle = this.color);
@@ -207,6 +208,10 @@ function draw() {
 }
 
 const Canvas = () => {
+
+    // const [LeftPaddlePos, setLeftPaddlePos] = useState<number>(LPADDLEY);
+
+
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     /* player1 */
     const [name1, setName] = useState('');
@@ -272,9 +277,6 @@ const Canvas = () => {
         return `${datetime.getFullYear()}/${datetime.getMonth() + 1}/${datetime.getDate()} ${datetime.getHours()}:${datetime.getMinutes()}:${datetime.getSeconds()}`
     }, [])
 
-        useEffect(() => {
-    }, [rightPaddle.y]);
-
     const sendChat = useCallback((): void => {
         if (!uname) {
             alert('ユーザー名を入れてください。')
@@ -305,17 +307,26 @@ const Canvas = () => {
         window.addEventListener('keyup', handleKeyUp);
         window.addEventListener('keydown', handleKeyDown);
 
-        GameSocket.on('GameToClient', (leftPaddley: number) => {
-            console.log('---')
-            console.log('leftPaddley', leftPaddley.valueOf())
-            console.log('leftPaddle.y', leftPaddle.y)
-            console.log('---')
-            // leftPaddle.y = leftPaddley.valueOf();
-            console.log('before rightPaddle.x', rightPaddle.x)
-            console.log('after leftPaddle.y', leftPaddle.y)
-            console.log('---')
-        });
+            // ballのrendering自体は
+            // leftPaddle.y += 100;
+            // としたときに正常に動作するので問題ないはず。
     }, []);
+
+        GameSocket.on('GameToClient', ( payload: number, socketId: string ) => {
+            // console.log('---')
+            // console.log('rightPaddleY', rightPaddleY)
+            // const tmp: number = rightPaddleY.valueOf();
+            // console.log('leftPaddle.y', leftPaddle.y)
+            // console.log('---')
+            // console.log(tmp)
+            // console.log(payload);
+            // console.log(100);
+            leftPaddle.y = payload.valueOf();
+            // leftPaddle.y += 100;
+            // console.log('before rightPaddleY', rightPaddleY)
+            // console.log('after leftPaddle.y = ', leftPaddle.y)
+            // console.log('---')
+        });
 
     return (
         <div>

@@ -47,7 +47,8 @@ export class GameGateway {
   ): void {
     this.logger.log('game info received');
     this.logger.log(payload);
-    this.server.emit('GameToClient', { payload, socketId: client.id });
+    console.log(payload);
+    this.server.emit('GameToClient', payload, client.id );
   }
 
   afterInit(server: Server) {
