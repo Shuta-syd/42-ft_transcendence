@@ -321,7 +321,8 @@ const Canvas = () => {
             // console.log(tmp)
             // console.log(payload);
             // console.log(100);
-            leftPaddle.y = payload.valueOf();
+            if (GameSocket.id != socketId)
+                leftPaddle.y = payload.valueOf();
             // leftPaddle.y += 100;
             // console.log('before rightPaddleY', rightPaddleY)
             // console.log('after leftPaddle.y = ', leftPaddle.y)
