@@ -30,9 +30,7 @@ export default function ChatWindowComponent() {
   const [text, setText] = useState('');
   const [chatLog, setChatLog] = useState<ChatLog>([]);
   const [subtitleHeight, setSubtitleHeight] = useState<string>('0');
-  const [formHeight, setFormHeight] = useState<string>('0');
   const subtitleElm = useRef<HTMLInputElement>(null);
-  const formElm = useRef<HTMLInputElement>(null);
   const socket: Socket = useContext(WebsocketContext);
 
   useEffect(() => {
@@ -50,12 +48,7 @@ export default function ChatWindowComponent() {
     if (subtitleElm.current) {
       setSubtitleHeight(`${subtitleElm.current.clientHeight.toString()}px`);
     }
-
-    if (formElm.current) {
-      setFormHeight(`${formElm.current.clientHeight.toString()}px`);
-    }
-  }, [subtitleElm, subtitleHeight, formElm, formHeight])
-
+  }, [subtitleElm, subtitleHeight])
 
   const getUserName = useCallback(async (): Promise<string> => {
     const res = await axios.get(`http://localhost:8080/user`);
@@ -125,11 +118,9 @@ export default function ChatWindowComponent() {
           </Typography>
         </Box>
         <Box
-          sx={{ backgroundColor: '#0F044C', overflow: 'auto'}}
-          height={`calc(94vh - ${subtitleHeight})`}
-          maxHeight={`calc(94vh - ${subtitleHeight} - ${formHeight})`}
+          maxHeight={`calc(94vh - ${subtitleHeight})`}
         >
-          <Box sx={{color: '#EEEEEE'}}>
+          <Box sx={{color: '#EEEEEE', backgroundColor: '#0F044C', overflow: 'auto'}} height={`calc(85vh - ${subtitleHeight})`}>
             {chatLog.map((chat, idx) => (
               <div key={idx}>
                 <div>{chat.time}</div>
@@ -137,9 +128,9 @@ export default function ChatWindowComponent() {
               </div>
             ))}
           </Box>
-          <div ref={formElm}>
-            <TextFieldComponent handleOnChange={setText} handleOnClick={sendChat} value={text} />
-          </div>
+          <Box height={'9vh'} sx={{ backgroundColor: '#0F044C' }}>
+            <TextFieldComponent handleOnChange={setText} handleOnClick={sendChat} value={text}/>
+          </Box>
         </Box>
       </Stack>
     </Grid>
