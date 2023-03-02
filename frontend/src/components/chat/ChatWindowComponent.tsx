@@ -25,6 +25,7 @@ export default function ChatWindowComponent() {
   const { data } = useQueryChatLog(ChatRoomID);
   const { createMessageMutation } = useMutationMessage(ChatRoomID);
   const [friendName, setFriendName] = useState('');
+  const [userName, setUserName] = useState('');
   const [text, setText] = useState('');
   const [chatLog, setChatLog] = useState<ChatLog>([]);
   const [subtitleHeight, setSubtitleHeight] = useState<string>('0');
@@ -42,11 +43,20 @@ export default function ChatWindowComponent() {
   }, [ChatRoomID])
 
   useEffect(() => {
+    getUserName().then((name) => { setUserName(name); })
+  }, [])
+
+  useEffect(() => {
     if (subtitleElm.current) {
       setSubtitleHeight(`${subtitleElm.current.clientHeight.toString()}px`);
     }
   }, [subtitleElm, subtitleHeight])
 
+
+  const getUserName = useCallback(async (): Promise<string> => {
+    const res = await axios.get(`http://localhost:8080/user`);
+    return res.data.name;
+  }, []);
 
   const getFriendName = useCallback(async (): Promise<string> => {
     const res = await axios.get(`http://localhost:8080/chat/room/${ChatRoomID}/dm/friend`);
@@ -107,7 +117,7 @@ export default function ChatWindowComponent() {
             {chatLog.map((chat, idx) => (
               <div key={idx}>
                 <div>{chat.time}</div>
-                <div>user: {chat.text}</div>
+                <div>{userName}: {chat.text}</div>
               </div>
             ))}
           </Box>
