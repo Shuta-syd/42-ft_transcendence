@@ -145,6 +145,7 @@ export class ChatService {
         room: {
           connect: { id: roomId },
         },
+        senderName: dto.senderName,
         message: dto.message,
       },
     });

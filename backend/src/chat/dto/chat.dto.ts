@@ -4,6 +4,8 @@ export class SendChatDto {
   @ApiProperty()
   memberId: string;
   @ApiProperty()
+  senderName: string;
+  @ApiProperty()
   message: string;
 }
 

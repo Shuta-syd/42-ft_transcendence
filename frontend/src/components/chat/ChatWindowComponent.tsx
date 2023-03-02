@@ -11,6 +11,7 @@ import TextFieldComponent from "../utils/TextFieldComponent";
 
 type MessagePayload = {
   time: string;
+  senderName: string;
   text: string;
 };
 
@@ -40,11 +41,8 @@ export default function ChatWindowComponent() {
 
   useEffect(() => {
     getFriendName().then((name) => { setFriendName(name); })
-  }, [ChatRoomID])
-
-  useEffect(() => {
     getUserName().then((name) => { setUserName(name); })
-  }, [])
+  }, [ChatRoomID])
 
   useEffect(() => {
     if (subtitleElm.current) {
@@ -56,7 +54,7 @@ export default function ChatWindowComponent() {
   const getUserName = useCallback(async (): Promise<string> => {
     const res = await axios.get(`http://localhost:8080/user`);
     return res.data.name;
-  }, []);
+  }, [ChatRoomID]);
 
   const getFriendName = useCallback(async (): Promise<string> => {
     const res = await axios.get(`http://localhost:8080/chat/room/${ChatRoomID}/dm/friend`);
@@ -72,7 +70,7 @@ export default function ChatWindowComponent() {
     setChatLog([]);
     if (data) {
       data?.map((obj) => {
-        const chat: MessagePayload = { time: convertDate(obj.createdAt), text: obj.message };
+        const chat: MessagePayload = { senderName: obj.senderName, time: convertDate(obj.createdAt), text: obj.message };
         setChatLog(prevChatLog => [...prevChatLog, chat]);
       })
     }
@@ -100,6 +98,7 @@ export default function ChatWindowComponent() {
       socket.emit('send_message_room', { text, time: getNow(), id: roomId })
       createMessageMutation.mutate({
         message: text,
+        senderName: userName,
         memberId: id,
       });
       setText('');
@@ -124,7 +123,7 @@ export default function ChatWindowComponent() {
             {chatLog.map((chat, idx) => (
               <div key={idx}>
                 <div>{chat.time}</div>
-                <div>{userName}: {chat.text}</div>
+                <div>{chat.senderName}: {chat.text}</div>
               </div>
             ))}
           </Box>
