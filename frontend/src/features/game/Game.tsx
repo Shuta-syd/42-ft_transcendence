@@ -46,12 +46,10 @@ ballの情報をオブジェクト化して、drawで描けるようになって
 -> ballのx, yを更新できるようにしていく
  */
 
-const ANONYMOUS = 0;
+// const ANONYMOUS = 0;
 const PLAYER1 = 1;
 const PLAYER2 = 2;
 const OBSERVER = 3;
-
-
 
 // let PlayerType = ANONYMOUS;
 
@@ -223,16 +221,17 @@ function draw(PlayerType: number) {
 
 const Game = () => {
 
+
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const [PlayerType, setPlayerType] = useState<number>(ANONYMOUS);
+    const [PlayerType, setPlayerType] = useState<number>(PLAYER1);
 
-
+    // setPlayerType(PLAYER1);
     function draw() {
         context?.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
         drawStaticObject();
 
+        console.log(PlayerType);
             if (PlayerType === PLAYER1) {
-
             /* check collision */
             if (ball.x - ball.radius <= leftPaddle.x + PADDLEWIDTH
                 && (ball.y <= leftPaddle.y + PADDLEWHEIGHT
@@ -251,7 +250,6 @@ const Game = () => {
                 leftScore += 1;
                 ball.init();
             }
-
         }
 
         /* check keycode */
@@ -268,7 +266,6 @@ const Game = () => {
             }
         }
         keycode = '';
-
 
         /* send ball pos to server */
         if (PlayerType === PLAYER1) {
@@ -288,7 +285,6 @@ const Game = () => {
         if (canvas == null || context == null) {
             return ;
         }
-
         context.fillStyle = 'black';
         context.font = "bold 50px 'ＭＳ 明朝'";
         context.fillText(leftScore.toString() , 360, 50);
@@ -431,19 +427,7 @@ const Game = () => {
     }
 
     // useEffect(() => {
-    //     const show = () => {
-    //         if (PlayerType === PLAYER1) {
-    //             console.log("hoge")
-    //             return 'PLAYER1';
-    //         }
-    //         if (PlayerType === PLAYER2) {
-    //             return 'PLAYER2';
-    //         }
-    //         if (PlayerType === OBSERVER) {
-    //             return 'OBSERVER';
-    //         }
-    //         return 'ANONYMOUS';
-    //     }
+
     // }, [PlayerType]);
 
 
