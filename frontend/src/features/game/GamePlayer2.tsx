@@ -25,7 +25,7 @@ const GamePlayer2 = () => {
     const FIELDWIDTH = 900;
     const FIELDHEIGHT = 700;
     const MIDDLEX = 450;
-// const MIDDLEY = 450;
+    // const MIDDLEY = 450;
 
     /* Left Paddle macro */
     const LPADDLEX = 5;
@@ -297,9 +297,17 @@ const GamePlayer2 = () => {
     GameSocket.on('BallPosToClient', (BallPos: BallPos, SocketId: string) => {
         console.log('chat receive BallPos info', BallPos)
 
-            ball.y = BallPos.y;
-            ball.x = BallPos.x;
+        // const vectorMiddleTo1X = BallPos.x - MIDDLEX;
+        // const vectorMiddleTo1Y = BallPos.y - MIDDLEY;
+        //
+        // const reverseVectorMiddleTo1X = -vectorMiddleTo1X;
+        // const reverseVectorMiddleTo1Y = -vectorMiddleTo1Y;
+        //
+        // ball.x = MIDDLEX + reverseVectorMiddleTo1X;
+        // ball.y = MIDDLEY + reverseVectorMiddleTo1Y;
 
+        ball.x = BallPos.x;
+        ball.y = BallPos.y;
     });
 
     return (
