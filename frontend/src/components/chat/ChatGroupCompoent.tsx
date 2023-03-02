@@ -34,7 +34,7 @@ export default function ChatGroupComponent() {
           </Box>
           <Stack
             height={`calc(94vh - ${subtitleHeight})`}
-            sx={{ backgroundColor: '#141E61' }} borderRight={2.5} borderColor={'#787A91'}
+            sx={{ backgroundColor: '#141E61', overflow: 'scroll' }} borderRight={2.5} borderColor={'#787A91'}
           >
             <ChatFriendsComponent/>
           </Stack>

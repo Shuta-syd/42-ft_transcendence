@@ -120,7 +120,7 @@ export default function ChatWindowComponent() {
         <Box
           maxHeight={`calc(94vh - ${subtitleHeight})`}
         >
-          <Box sx={{color: '#EEEEEE', backgroundColor: '#0F044C', overflow: 'auto'}} height={`calc(85vh - ${subtitleHeight})`}>
+          <Box sx={{color: '#EEEEEE', backgroundColor: '#0F044C', overflow: 'scroll'}} height={`calc(85vh - ${subtitleHeight})`}>
             {chatLog.map((chat, idx) => (
               <div key={idx}>
                 <div>{chat.time}</div>
