@@ -72,11 +72,18 @@ export default function ChatWindowComponent() {
     setChatLog([]);
     if (data) {
       data?.map((obj) => {
-        const chat: MessagePayload = { time: obj.createdAt.toString(), text: obj.message };
+        const chat: MessagePayload = { time: convertDate(obj.createdAt), text: obj.message };
         setChatLog(prevChatLog => [...prevChatLog, chat]);
       })
     }
   }, [data])
+
+  // eslint-disable-next-line no-unused-vars
+  const convertDate = (str: Date): string => {
+    const date = new Date(str);
+    return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}
+    ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+  }
 
   const getNow  = useCallback((): string => {
     const date = new Date();
