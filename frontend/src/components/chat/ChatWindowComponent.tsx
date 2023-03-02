@@ -71,6 +71,7 @@ export default function ChatWindowComponent() {
 
   useLayoutEffect(() => {
     const fetchChat = async () => {
+      setChatLog([]);
       const { data } = await axios.get<Message[]>(`http://localhost:8080/chat/room/log/${ChatRoomID}`);
       if (data) {
         data?.map((obj) => {
@@ -81,7 +82,7 @@ export default function ChatWindowComponent() {
     }
 
     fetchChat();
-  }, [])
+  }, [ChatRoomID])
 
   useEffect(() => {
     getFriendName().then((name) => { setFriendName(name); })
