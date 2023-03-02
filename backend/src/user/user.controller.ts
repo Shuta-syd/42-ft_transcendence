@@ -1,18 +1,29 @@
-import { Body, Get, HttpStatus, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Get,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from '@prisma/client';
-import { SignUpUserDto } from './dto/user.dto';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ApiOperation } from '@nestjs/swagger';
 import { PrismaUser, SwaggerFriends } from 'src/swagger/type';
+import { AuthGuard } from '@nestjs/passport';
+import { Request } from 'express';
 
 @ApiTags('user')
 @Controller('user')
+@UseGuards(AuthGuard('jwt'))
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get(':id')
+  @Get('')
   @ApiOperation({
     description: 'find user by userId',
     summary: 'find user by userId',
@@ -22,22 +33,8 @@ export class UserController {
     description: 'The found the user',
     type: PrismaUser,
   })
-  async getUserById(@Param('id') userId: string): Promise<User | null> {
-    return this.userService.getUserById(userId);
-  }
-
-  @Post('')
-  @ApiOperation({
-    description: 'create user',
-    summary: 'create user',
-  })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'The created the user',
-    type: PrismaUser,
-  })
-  async signupUser(@Body() userData: SignUpUserDto): Promise<User> {
-    return this.userService.signupUser(userData);
+  getUser(@Req() req: Request): User {
+    return req.user;
   }
 
   @Patch('friend')

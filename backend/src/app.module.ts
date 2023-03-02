@@ -6,9 +6,10 @@ import { PrismaService } from './prisma/prisma.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
 import { MatchModule } from './match/match.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [ChatModule, PrismaModule, UserModule, MatchModule],
+  imports: [ChatModule, PrismaModule, UserModule, MatchModule, AuthModule],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })

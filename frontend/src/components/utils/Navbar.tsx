@@ -11,7 +11,7 @@ function Navbar() {
         <Toolbar disableGutters>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             <Typography mr={5}>
-              <Link to={"/"} className={'NavbarLink'}>Home</Link>
+              <Link to={"/"} className={'NavbarLink'}>Login</Link>
             </Typography>
             <Typography mr={5}>
               <Link to={"/chat/room"} className={'NavbarLink'}>Chat</Link>
