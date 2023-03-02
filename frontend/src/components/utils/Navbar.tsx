@@ -19,7 +19,7 @@ function Navbar() {
             <Link to={"/game"} className={'NavbarLink'}>Game</Link>
             </Typography>
             <Typography mr={5}>
-               <Link to={"/match"} className={'NavbarLink'}>Match</Link>
+              <Link to={"/match"} className={'NavbarLink'}>Match</Link>
             </Typography>
           </Box>
         </Toolbar>

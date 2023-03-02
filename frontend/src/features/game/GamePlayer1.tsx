@@ -24,8 +24,7 @@ const GamePlayer1 = () => {
     const FIELDY = 100;
     const FIELDWIDTH = 900;
     const FIELDHEIGHT = 700;
-    const MIDDLEX = 450;
-    // const MIDDLEY = 450;
+    const MIDDLEX = 455;
 
     /* Left Paddle macro */
     const LPADDLEX = 5;
@@ -40,13 +39,11 @@ const GamePlayer1 = () => {
     const WIDTH = 1000;
     const HEIGHT = 900;
 
-
     const ball = {
         x: BALLX,
         y: BALLY,
-        /* vx/vyはあくまで最初の段階での動きをrandomにしているだけ */
-        vx: Math.cos(randomInt(0, 30) * (Math.PI / 180)) * 8,
-        vy: Math.sin(randomInt(0, 30) * (Math.PI / 180)) * 8,
+        vx: 2,
+        vy: 2,
         radius: RADIUS,
         color: "black",
         draw() {
@@ -59,8 +56,8 @@ const GamePlayer1 = () => {
         init(){
             this.x = BALLX;
             this.y = BALLY;
-            this.vx = Math.cos(randomInt(0, 360) * (Math.PI / 180)) * 8;
-            this.vy = Math.sin(randomInt(0, 360) * (Math.PI / 180)) * 8;
+            this.vx = 2;
+            this.vy = 2;
         }
     };
 
@@ -93,9 +90,9 @@ const GamePlayer1 = () => {
     }
 
     /* Helper */
-    function randomInt(min: number, max: number): number {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
+    // function randomInt(min: number, max: number): number {
+    //     return Math.floor(Math.random() * (max - min + 1)) + min;
+    // }
 
 
     /*
@@ -160,15 +157,14 @@ const GamePlayer1 = () => {
         if (keycode === 'KeyW') {
             if (rightPaddle.y  > FIELDY) {
                 rightPaddle.y -= 50;
-                GameSocket.emit('GameToServer', rightPaddle.y);
             }
         }
         if (keycode === 'KeyS') {
             if (rightPaddle.y + PADDLEWHEIGHT < FIELDHEIGHT + FIELDY) {
                 rightPaddle.y += 50;
-                GameSocket.emit('GameToServer', rightPaddle.y);
             }
         }
+        GameSocket.emit('GameToServer', rightPaddle.y);
         keycode = '';
 
         /* send ball pos to server */
@@ -226,25 +222,6 @@ const GamePlayer1 = () => {
         window.addEventListener('keydown', handleKeyDown);
     }, []);
 
-
-    // /* player1 */
-    // const [name1, setName] = useState('');
-    // const UserPromise1 = useQueryUserGame('1');
-    // useEffect(() => {
-    //     UserPromise1.then((user: User) => {
-    //         setName(user.name);
-    //     });
-    // }, [UserPromise1]);
-    //
-    // /* player2 */
-    // const [name2, setName2] = useState('');
-    // const UserPromise2 = useQueryUserGame('2');
-    // useEffect(() => {
-    //     UserPromise2.then((user: User) => {
-    //         setName2(user.name);
-    //     });
-    // }, [UserPromise2]);
-    //
     type Chat = {
         socketId: string
         uname: string
@@ -299,7 +276,7 @@ const GamePlayer1 = () => {
     }, [uname, text])
 
     GameSocket.on('GameToClient', (leftPaddley: number, socketid: string) => {
-        console.log('chat receive leftPaddley info', leftPaddley)
+        // console.log('chat receive leftPaddley info', leftPaddley)
         if (GameSocket.id !== socketid)
             leftPaddle.y = leftPaddley;
     });

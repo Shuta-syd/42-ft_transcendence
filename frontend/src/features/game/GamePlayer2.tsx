@@ -159,15 +159,14 @@ const GamePlayer2 = () => {
         if (keycode === 'KeyW') {
             if (rightPaddle.y  > FIELDY) {
                 rightPaddle.y -= 50;
-                GameSocket.emit('GameToServer', rightPaddle.y);
             }
         }
         if (keycode === 'KeyS') {
             if (rightPaddle.y + PADDLEWHEIGHT < FIELDHEIGHT + FIELDY) {
                 rightPaddle.y += 50;
-                GameSocket.emit('GameToServer', rightPaddle.y);
             }
         }
+        GameSocket.emit('GameToServer', rightPaddle.y);
         keycode = '';
 
         /* send ball pos to server */
@@ -289,13 +288,12 @@ const GamePlayer2 = () => {
     }, [uname, text])
 
     GameSocket.on('GameToClient', (leftPaddley: number, socketid: string) => {
-        console.log('chat receive leftPaddley info', leftPaddley)
+        // console.log('chat receive leftPaddley info', leftPaddley)
         if (GameSocket.id !== socketid)
             leftPaddle.y = leftPaddley;
     });
     GameSocket.on('BallPosToClient', (BallPos: BallPos, SocketId: string) => {
-        console.log('chat receive BallPos info', BallPos)
-
+        // console.log('chat receive BallPos info', BallPos)
         ball.x = BallPos.x;
         ball.y = BallPos.y;
     });

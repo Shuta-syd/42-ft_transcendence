@@ -1,52 +1,19 @@
 import React from "react";
-// import {Link, Routes} from "react-router-dom";
-// import {Typography} from "@mui/material";
-// import GameObserver from "./GameObserver";
-// import GamePlayer2 from "./GamePlayer2";
-// import GamePlayer1 from "./GamePlayer1";
-//
-/*
-const GamePlayer1 = () => {
-    console.log('I\'m Player1');
-    return (
-        <div>
-            I'm Player1
-        </div>
-    )
-}
+import { Link } from "react-router-dom";
 
-const GamePlayer2 = () => {
-    console.log('I\'m Player2');
-    return (
-        <div>
-            I'm Player2
-        </div>
-    )
-}
-
-const GameObserver = () => {
-    console.log('I\'m Observer');
-        return (
-            <div>
-                I'm Observer
-            </div>
-        )
-}
-*/
 const GameMatching = () => {
     console.log('start');
     return (
     <div>
         <h1>[Matching Page]</h1>
-        {/* <h2>YOU ARE {showPlayerType()}!!</h2> */}
         <h2>Who are you?</h2>
-        <a href="http://localhost:3000/game/player1">Player1</a>
+        {/* <a href="http://localhost:3000/game/player1">Player1</a> */}
+        <Link to={"/game/player1"}>Player1</Link>
         <p></p>
-        <a href="http://localhost:3000/game/player2">Player2</a>
+        <Link to={"/game/player2"}>Player2</Link>
         <p></p>
-        <a href="http://localhost:3000/game/observer">Observer</a>
+        <Link to={"/game/observer"}>Observer</Link>
         <p></p>
-
     </div>
     )
 }
