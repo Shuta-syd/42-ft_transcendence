@@ -1,6 +1,6 @@
 import { Grid , Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
-import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
+import React, { createRef, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Socket } from "socket.io-client";
 import { useParams } from "react-router-dom";
@@ -21,6 +21,7 @@ type ChatLog = MessagePayload[];
  * @returns 実際にchatをするトーク画面のコンポーネント
  */
 export default function ChatWindowComponent() {
+  const socket: Socket = useContext(WebsocketContext);
   const { roomId } = useParams();
   const ChatRoomID: string = roomId as string;
   const { data } = useQueryChatLog(ChatRoomID);
@@ -31,7 +32,22 @@ export default function ChatWindowComponent() {
   const [chatLog, setChatLog] = useState<ChatLog>([]);
   const [subtitleHeight, setSubtitleHeight] = useState<string>('0');
   const subtitleElm = useRef<HTMLInputElement>(null);
-  const socket: Socket = useContext(WebsocketContext);
+  const latestChatRef = createRef<HTMLDivElement>();
+
+  const getUserName = useCallback(async (): Promise<string> => {
+    const res = await axios.get(`http://localhost:8080/user`);
+    return res.data.name;
+  }, [ChatRoomID]);
+
+  const getFriendName = useCallback(async (): Promise<string> => {
+    const res = await axios.get(`http://localhost:8080/chat/room/${ChatRoomID}/dm/friend`);
+    return res.data;
+  }, [ChatRoomID]);
+
+  const getMemberId = useCallback(async (): Promise<string> => {
+    const res = await axios.get(`http://localhost:8080/chat/room/${ChatRoomID}/memberId`)
+    return res.data;
+  }, [ChatRoomID]);
 
   useEffect(() => {
     socket.on('chatToClient', (chat: MessagePayload) => {
@@ -50,20 +66,6 @@ export default function ChatWindowComponent() {
     }
   }, [subtitleElm, subtitleHeight])
 
-  const getUserName = useCallback(async (): Promise<string> => {
-    const res = await axios.get(`http://localhost:8080/user`);
-    return res.data.name;
-  }, [ChatRoomID]);
-
-  const getFriendName = useCallback(async (): Promise<string> => {
-    const res = await axios.get(`http://localhost:8080/chat/room/${ChatRoomID}/dm/friend`);
-    return res.data;
-  }, [ChatRoomID]);
-
-  const getMemberId = useCallback(async (): Promise<string> => {
-    const res = await axios.get(`http://localhost:8080/chat/room/${ChatRoomID}/memberId`)
-    return res.data;
-  }, [ChatRoomID]);
 
   useEffect(() => {
     setChatLog([]);
@@ -75,7 +77,10 @@ export default function ChatWindowComponent() {
     }
   }, [data])
 
-  // eslint-disable-next-line no-unused-vars
+  useLayoutEffect(() => {
+    latestChatRef.current?.scrollIntoView();
+  }, [chatLog])
+
   const convertDate = (str: Date): string => {
     const date = new Date(str);
     return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}
@@ -127,6 +132,7 @@ export default function ChatWindowComponent() {
                 <div>{chat.senderName}: {chat.text}</div>
               </div>
             ))}
+            <div ref={latestChatRef} />
           </Box>
           <Box height={'9vh'} sx={{ backgroundColor: '#0F044C' }}>
             <TextFieldComponent handleOnChange={setText} handleOnClick={sendChat} value={text}/>
