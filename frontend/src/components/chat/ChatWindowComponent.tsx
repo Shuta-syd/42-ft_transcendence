@@ -30,7 +30,9 @@ export default function ChatWindowComponent() {
   const [text, setText] = useState('');
   const [chatLog, setChatLog] = useState<ChatLog>([]);
   const [subtitleHeight, setSubtitleHeight] = useState<string>('0');
+  const [formHeight, setFormHeight] = useState<string>('0');
   const subtitleElm = useRef<HTMLInputElement>(null);
+  const formElm = useRef<HTMLInputElement>(null);
   const socket: Socket = useContext(WebsocketContext);
 
   useEffect(() => {
@@ -48,7 +50,11 @@ export default function ChatWindowComponent() {
     if (subtitleElm.current) {
       setSubtitleHeight(`${subtitleElm.current.clientHeight.toString()}px`);
     }
-  }, [subtitleElm, subtitleHeight])
+
+    if (formElm.current) {
+      setFormHeight(`${formElm.current.clientHeight.toString()}px`);
+    }
+  }, [subtitleElm, subtitleHeight, formElm, formHeight])
 
 
   const getUserName = useCallback(async (): Promise<string> => {
@@ -95,7 +101,7 @@ export default function ChatWindowComponent() {
       return;
     getMemberId().then((id) => {
       console.log('Message Emit');
-      socket.emit('send_message_room', { text, time: getNow(), id: roomId })
+      socket.emit('send_message_room', { senderName: userName , text, time: getNow(), id: roomId })
       createMessageMutation.mutate({
         message: text,
         senderName: userName,
@@ -118,7 +124,11 @@ export default function ChatWindowComponent() {
             @ {friendName}
           </Typography>
         </Box>
-        <Box sx={{ backgroundColor: '#0F044C'}} height={`calc(94vh - ${subtitleHeight})`}>
+        <Box
+          sx={{ backgroundColor: '#0F044C', overflow: 'auto'}}
+          height={`calc(94vh - ${subtitleHeight})`}
+          maxHeight={`calc(94vh - ${subtitleHeight} - ${formHeight})`}
+        >
           <Box sx={{color: '#EEEEEE'}}>
             {chatLog.map((chat, idx) => (
               <div key={idx}>
@@ -127,7 +137,9 @@ export default function ChatWindowComponent() {
               </div>
             ))}
           </Box>
-          <TextFieldComponent handleOnChange={setText} handleOnClick={sendChat} value={text} />
+          <div ref={formElm}>
+            <TextFieldComponent handleOnChange={setText} handleOnClick={sendChat} value={text} />
+          </div>
         </Box>
       </Stack>
     </Grid>
