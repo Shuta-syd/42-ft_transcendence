@@ -5,9 +5,9 @@ import axios from "axios";
 import { Socket } from "socket.io-client";
 import { useParams } from "react-router-dom";
 import { WebsocketContext } from "../../contexts/WebsocketContext";
-import useQueryChatLog from "../../hooks/chat/useQueryChatLog";
 import useMutationMessage from "../../hooks/chat/useMutationMessage";
 import TextFieldComponent from "../utils/TextFieldComponent";
+import { Message } from "../../types/PrismaType";
 
 type MessagePayload = {
   time: string;
@@ -17,6 +17,13 @@ type MessagePayload = {
 
 
 type ChatLog = MessagePayload[];
+
+const convertDate = (str: Date): string => {
+  const date = new Date(str);
+  return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}
+  ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+}
+
 /**
  * @returns 実際にchatをするトーク画面のコンポーネント
  */
@@ -24,7 +31,6 @@ export default function ChatWindowComponent() {
   const socket: Socket = useContext(WebsocketContext);
   const { roomId } = useParams();
   const ChatRoomID: string = roomId as string;
-  const { data } = useQueryChatLog(ChatRoomID);
   const { createMessageMutation } = useMutationMessage(ChatRoomID);
   const [friendName, setFriendName] = useState('');
   const [userName, setUserName] = useState('');
@@ -33,6 +39,7 @@ export default function ChatWindowComponent() {
   const [subtitleHeight, setSubtitleHeight] = useState<string>('0');
   const subtitleElm = useRef<HTMLInputElement>(null);
   const latestChatRef = createRef<HTMLDivElement>();
+
 
   const getUserName = useCallback(async (): Promise<string> => {
     const res = await axios.get(`http://localhost:8080/user`);
@@ -49,10 +56,31 @@ export default function ChatWindowComponent() {
     return res.data;
   }, [ChatRoomID]);
 
+  const getNow  = useCallback((): string => {
+    const date = new Date();
+    return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}
+     ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}
+    `
+  }, []);
+
   useEffect(() => {
     socket.on('chatToClient', (chat: MessagePayload) => {
       setChatLog(prevChatLog => [...prevChatLog, chat]);
     });
+  }, [])
+
+  useLayoutEffect(() => {
+    const fetchChat = async () => {
+      const { data } = await axios.get<Message[]>(`http://localhost:8080/chat/room/log/${ChatRoomID}`);
+      if (data) {
+        data?.map((obj) => {
+          const chat: MessagePayload = { senderName: obj.senderName, time: convertDate(obj.createdAt), text: obj.message };
+          setChatLog(prevChatLog => [...prevChatLog, chat]);
+        })
+      }
+    }
+
+    fetchChat();
   }, [])
 
   useEffect(() => {
@@ -66,33 +94,10 @@ export default function ChatWindowComponent() {
     }
   }, [subtitleElm, subtitleHeight])
 
-
-  useEffect(() => {
-    setChatLog([]);
-    if (data) {
-      data?.map((obj) => {
-        const chat: MessagePayload = { senderName: obj.senderName, time: convertDate(obj.createdAt), text: obj.message };
-        setChatLog(prevChatLog => [...prevChatLog, chat]);
-      })
-    }
-  }, [data])
-
   useLayoutEffect(() => {
     latestChatRef.current?.scrollIntoView();
   }, [chatLog])
 
-  const convertDate = (str: Date): string => {
-    const date = new Date(str);
-    return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}
-    ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-  }
-
-  const getNow  = useCallback((): string => {
-    const date = new Date();
-    return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}
-     ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}
-    `
-  }, []);
 
   const sendChat = useCallback(() => {
     if (text === '')
