@@ -113,7 +113,7 @@ export class ChatService {
 
     DirectMessageRooms.map((room: ChatRoom & { members: Member[] }) => {
       room.members.map((member: Member) => {
-        if (member.userId !== userId) DMRooms[member.id] = room.id;
+        if (member.userId !== userId) DMRooms[member.userId] = room.id;
       });
     });
     return DMRooms;

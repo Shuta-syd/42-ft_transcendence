@@ -48,9 +48,15 @@ export default function ChatWindowComponent() {
   }, [subtitleElm, subtitleHeight])
 
 
-  const getFriendName = useCallback(async (): Promise<string> => axios.get(`http://localhost:8080/chat/room/${ChatRoomID}/dm/friend`), [ChatRoomID]);
+  const getFriendName = useCallback(async (): Promise<string> => {
+    const res = await axios.get(`http://localhost:8080/chat/room/${ChatRoomID}/dm/friend`);
+    return res.data;
+  }, [ChatRoomID]);
 
-  const getMemberId = useCallback(async (): Promise<string> => axios.get(`http://localhost:8080/chat/room/${ChatRoomID}/memberId`), [ChatRoomID]);
+  const getMemberId = useCallback(async (): Promise<string> => {
+    const res = await axios.get(`http://localhost:8080/chat/room/${ChatRoomID}/memberId`)
+    return res.data;
+  }, [ChatRoomID]);
 
   useEffect(() => {
     setChatLog([]);
