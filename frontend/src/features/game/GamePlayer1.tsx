@@ -25,7 +25,7 @@ const GamePlayer1 = () => {
     const FIELDWIDTH = 900;
     const FIELDHEIGHT = 700;
     const MIDDLEX = 450;
-// const MIDDLEY = 450;
+    // const MIDDLEY = 450;
 
     /* Left Paddle macro */
     const LPADDLEX = 5;
@@ -172,13 +172,22 @@ const GamePlayer1 = () => {
         keycode = '';
 
         /* send ball pos to server */
-            ball.x += ball.vx;
-            ball.y += ball.vy;
-            const BallPos:BallPos = {
-                x: ball.x,
-                y:ball.y,
-            }
-            GameSocket.emit('BallPosToServer', BallPos);
+        ball.x += ball.vx;
+        ball.y += ball.vy;
+        const BallPos:BallPos = {
+            x: ball.x,
+            y:ball.y,
+        }
+
+        const vectorMiddleTo1X = BallPos.x - MIDDLEX;
+        // const vectorMiddleTo1Y = BallPos.y - MIDDLEY;
+
+        const reverseVectorMiddleTo1X = -vectorMiddleTo1X;
+        // const reverseVectorMiddleTo1Y = -vectorMiddleTo1Y;
+
+        BallPos.x = MIDDLEX + reverseVectorMiddleTo1X;
+        // BallPos.y = MIDDLEY + reverseVectorMiddleTo1Y;
+        GameSocket.emit('BallPosToServer', BallPos);
 
         /* draw part */
         leftPaddle.draw();
@@ -294,13 +303,6 @@ const GamePlayer1 = () => {
         if (GameSocket.id !== socketid)
             leftPaddle.y = leftPaddley;
     });
-    // GameSocket.on('BallPosToClient', (BallPos: BallPos, SocketId: string) => {
-    //     console.log('chat receive BallPos info', BallPos)
-    //
-    //         ball.y = BallPos.y;
-    //         ball.x = BallPos.x;
-    //
-    // });
 
     return (
         <div>

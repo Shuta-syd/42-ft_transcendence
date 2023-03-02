@@ -40,7 +40,6 @@ const GamePlayer2 = () => {
     const WIDTH = 1000;
     const HEIGHT = 900;
 
-
     const ball = {
         x: BALLX,
         y: BALLY,
@@ -296,15 +295,6 @@ const GamePlayer2 = () => {
     });
     GameSocket.on('BallPosToClient', (BallPos: BallPos, SocketId: string) => {
         console.log('chat receive BallPos info', BallPos)
-
-        // const vectorMiddleTo1X = BallPos.x - MIDDLEX;
-        // const vectorMiddleTo1Y = BallPos.y - MIDDLEY;
-        //
-        // const reverseVectorMiddleTo1X = -vectorMiddleTo1X;
-        // const reverseVectorMiddleTo1Y = -vectorMiddleTo1Y;
-        //
-        // ball.x = MIDDLEX + reverseVectorMiddleTo1X;
-        // ball.y = MIDDLEY + reverseVectorMiddleTo1Y;
 
         ball.x = BallPos.x;
         ball.y = BallPos.y;
