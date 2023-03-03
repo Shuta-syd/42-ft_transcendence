@@ -29,9 +29,31 @@ const convertDate = (str: Date): string => {
  * @returns 実際にchatをするトーク画面のコンポーネント
  */
 export default function ChannelWindowComponent() {
+  const { roomId } = useParams();
+  const ChatRoomID: string = roomId as string;
+  const { createMessageMutation } = useMutationMessage(ChatRoomID);
   const [subtitleHeight, setSubtitleHeight] = useState<string>('0');
   const subtitleElm = useRef<HTMLInputElement>(null);
+  const [text, setText] = useState('');
+  const [userName, setUserName] = useState('');
+  const [chatLog, setChatLog] = useState<ChatLog>([]);
 
+  const getUserName = useCallback(async (): Promise<string> => {
+    const res = await axios.get(`http://localhost:8080/user`);
+    return res.data.name;
+  }, [ChatRoomID]);
+
+  const getNow  = useCallback((): string => {
+    const date = new Date();
+    return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}
+     ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}
+    `
+  }, []);
+
+  const getMemberId = useCallback(async (): Promise<string> => {
+    const res = await axios.get(`http://localhost:8080/chat/room/${ChatRoomID}/memberId`)
+    return res.data;
+  }, [ChatRoomID]);
 
   useEffect(() => {
     if (subtitleElm.current) {
@@ -39,6 +61,39 @@ export default function ChannelWindowComponent() {
     }
   }, [subtitleElm, subtitleHeight])
 
+  useEffect(() => {
+    getUserName().then((name) => { setUserName(name); })
+  }, [ChatRoomID])
+
+  useLayoutEffect(() => {
+    const fetchChat = async () => {
+      setChatLog([]);
+      const { data } = await axios.get<Message[]>(`http://localhost:8080/chat/room/log/${ChatRoomID}`);
+      if (data) {
+        data?.map((obj) => {
+          const chat: MessagePayload = { senderName: obj.senderName, time: convertDate(obj.createdAt), text: obj.message };
+          setChatLog(prevChatLog => [...prevChatLog, chat]);
+        })
+      }
+    }
+
+    fetchChat();
+  }, [ChatRoomID])
+
+  const sendChat = useCallback(() => {
+    if (text === '')
+      return;
+    getMemberId().then((id) => {
+      console.log('Message Emit');
+      // socket.emit('send_message_room', { senderName: userName , text, time: getNow(), id: roomId })
+      createMessageMutation.mutate({
+        message: text,
+        senderName: userName,
+        memberId: id,
+      });
+      setText('');
+    })
+  }, [text]);
 
   return (
     <Grid item xs={9} position='relative'>
@@ -56,10 +111,16 @@ export default function ChannelWindowComponent() {
         <Box
           maxHeight={`calc(94vh - ${subtitleHeight})`}
         >
-          <Box sx={{color: '#EEEEEE', backgroundColor: '#0F044C', overflow: 'auto'}} height={`calc(85vh - ${subtitleHeight})`}>
+          <Box sx={{ color: '#EEEEEE', backgroundColor: '#0F044C', overflow: 'auto' }} height={`calc(85vh - ${subtitleHeight})`}>
+          {chatLog.map((chat, idx) => (
+              <div key={idx}>
+                <div>{chat.time}</div>
+                <div>{chat.senderName}: {chat.text}</div>
+              </div>
+            ))}
           </Box>
           <Box height={'9vh'} sx={{ backgroundColor: '#0F044C' }}>
-            {/* <TextFieldComponent handleOnChange={setText} handleOnClick={sendChat} value={text}/> */}
+            <TextFieldComponent handleOnChange={setText} handleOnClick={sendChat} value={text}/>
           </Box>
         </Box>
       </Stack>

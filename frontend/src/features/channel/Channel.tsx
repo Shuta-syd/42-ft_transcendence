@@ -1,11 +1,15 @@
 import React from "react";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { Outlet } from "react-router-dom";
 
-function Channel() {
+const queryClient = new QueryClient();
 
+function Channel() {
   return (
     <>
-      <Outlet />
+      <QueryClientProvider client={queryClient}>
+        <Outlet />
+      </QueryClientProvider>
     </>
   )
 }
