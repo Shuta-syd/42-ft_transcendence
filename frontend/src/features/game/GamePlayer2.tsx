@@ -170,13 +170,13 @@ const GamePlayer2 = () => {
         keycode = '';
 
         /* send ball pos to server */
-        ball.x += ball.vx;
-        ball.y += ball.vy;
-        const BallPos:BallPos = {
-            x: ball.x,
-            y:ball.y,
-        }
-        GameSocket.emit('BallPosToServer', BallPos);
+        // ball.x += ball.vx;
+        // ball.y += ball.vy;
+        // const BallPos:BallPos = {
+        //     x: ball.x,
+        //     y:ball.y,
+        // }
+        // GameSocket.emit('BallPosToServer', BallPos);
 
         /* draw part */
         leftPaddle.draw();
@@ -215,25 +215,6 @@ const GamePlayer2 = () => {
         window.addEventListener('keydown', handleKeyDown);
     }, []);
 
-
-    // /* player1 */
-    // const [name1, setName] = useState('');
-    // const UserPromise1 = useQueryUserGame('1');
-    // useEffect(() => {
-    //     UserPromise1.then((user: User) => {
-    //         setName(user.name);
-    //     });
-    // }, [UserPromise1]);
-    //
-    // /* player2 */
-    // const [name2, setName2] = useState('');
-    // const UserPromise2 = useQueryUserGame('2');
-    // useEffect(() => {
-    //     UserPromise2.then((user: User) => {
-    //         setName2(user.name);
-    //     });
-    // }, [UserPromise2]);
-    //
     type Chat = {
         socketId: string
         uname: string
@@ -294,6 +275,7 @@ const GamePlayer2 = () => {
     });
     GameSocket.on('BallPosToClient', (BallPos: BallPos, SocketId: string) => {
         // console.log('chat receive BallPos info', BallPos)
+        // console.log(BallPos.y);
         ball.x = BallPos.x;
         ball.y = BallPos.y;
     });

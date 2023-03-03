@@ -13,7 +13,6 @@ const GamePlayer1 = () => {
     const BALLX = 455;
     const BALLY = 450;
     const RADIUS = 25;
-
     /* Paddle macro */
 
     const PADDLEWIDTH = 20;
@@ -134,24 +133,24 @@ const GamePlayer1 = () => {
         drawStaticObject();
 
 
-            /* check collision */
-            if (ball.x - ball.radius <= leftPaddle.x + PADDLEWIDTH
-                && (ball.y <= leftPaddle.y + PADDLEWHEIGHT
-                    && ball.y >= leftPaddle.y)){
-                ball.vx = -ball.vx;
-            }else if (ball.x + ball.radius >= rightPaddle.x
-                && (ball.y <= rightPaddle.y + PADDLEWHEIGHT
-                    && ball.y >= rightPaddle.y)) {
-                ball.vx = -ball.vx;
-            } else if (FIELDHEIGHT + FIELDY < ball.y || ball.y < FIELDY) {
-                ball.vy = -ball.vy;
-            } else if (ball.x < FIELDX) {
-                rightScore += 1;
-                ball.init();
-            } else if (FIELDX + FIELDWIDTH < ball.x) {
-                leftScore += 1;
-                ball.init();
-            }
+        /* check collision */
+        if (ball.x - ball.radius <= leftPaddle.x + PADDLEWIDTH
+            && (ball.y <= leftPaddle.y + PADDLEWHEIGHT
+                && ball.y >= leftPaddle.y)){
+            ball.vx = -ball.vx;
+        }else if (ball.x + ball.radius >= rightPaddle.x
+            && (ball.y <= rightPaddle.y + PADDLEWHEIGHT
+                && ball.y >= rightPaddle.y)) {
+            ball.vx = -ball.vx;
+        } else if (FIELDHEIGHT + FIELDY < ball.y || ball.y < FIELDY) {
+            ball.vy = -ball.vy;
+        } else if (ball.x < FIELDX) {
+            rightScore += 1;
+            ball.init();
+        } else if (FIELDX + FIELDWIDTH < ball.x) {
+            leftScore += 1;
+            ball.init();
+        }
 
         /* check keycode */
         if (keycode === 'KeyW') {
@@ -176,13 +175,8 @@ const GamePlayer1 = () => {
         }
 
         const vectorMiddleTo1X = BallPos.x - MIDDLEX;
-        // const vectorMiddleTo1Y = BallPos.y - MIDDLEY;
-
         const reverseVectorMiddleTo1X = -vectorMiddleTo1X;
-        // const reverseVectorMiddleTo1Y = -vectorMiddleTo1Y;
-
         BallPos.x = MIDDLEX + reverseVectorMiddleTo1X;
-        // BallPos.y = MIDDLEY + reverseVectorMiddleTo1Y;
         GameSocket.emit('BallPosToServer', BallPos);
 
         /* draw part */
