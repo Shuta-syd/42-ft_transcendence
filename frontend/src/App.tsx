@@ -5,7 +5,7 @@ import Auth from "./features/auth/Auth";
 import Chat from "./features/chat/Chat";
 import ChatComponent from "./components/chat/ChatComponent";
 import ChatWindowComponent from "./components/chat/ChatWindowComponent";
-import Canvas from "./features/game/Game";
+import Game from "./features/game/Game";
 import Matches from "./features/match/Match";
 
 function App() {
@@ -19,7 +19,7 @@ function App() {
               <Route path=":roomId" element={<ChatWindowComponent />} />
             </Route>
           </Route>
-          <Route path="/game" element={<Canvas/>} />
+          <Route path="/game" element={<Game/>} />
           <Route path="/match" element={<Matches/>}/>
         </Routes>
     </>
