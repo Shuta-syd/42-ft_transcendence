@@ -9,6 +9,7 @@ import Canvas from "./features/game/Game";
 import Matches from "./features/match/Match";
 import Channel from "./features/channel/Channel";
 import ChannelComponent from "./components/channel/ChannelComponent";
+import ChannelWindowComponent from "./components/channel/ChannelWindowComponent";
 
 function App() {
   axios.defaults.withCredentials = true;
@@ -23,6 +24,7 @@ function App() {
           </Route>
           <Route path="/channel" element={<Channel />}>
             <Route path="room" element={<ChannelComponent />}>
+              <Route path=":roomId" element={<ChannelWindowComponent />} />
             </Route>
           </Route>
           <Route path="/game" element={<Canvas/>} />
