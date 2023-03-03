@@ -50,7 +50,7 @@ export class GameGateway {
     @MessageBody() payload: number,
     @ConnectedSocket() client: Socket,
   ): void {
-    this.logger.log('game info received');
+    this.logger.log('message info received');
     this.logger.log(payload);
     console.log(payload);
     this.server.emit('GameToClient', payload, client.id);
