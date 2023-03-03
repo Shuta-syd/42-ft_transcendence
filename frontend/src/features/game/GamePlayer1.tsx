@@ -88,46 +88,21 @@ const GamePlayer1 = () => {
         }
     }
 
-    /* Helper */
-    // function randomInt(min: number, max: number): number {
-    //     return Math.floor(Math.random() * (max - min + 1)) + min;
-    // }
-
-
-    /*
-    後に変更のないobject
-    (ex) line
-     */
     function drawStaticObject() {
-        // create a field of game
-        /* lineを出す */
         context?.beginPath();
-        /*
-        rectangleの外枠だけを出力する関数
-        x、 y(始点)、幅、高さ
-         */
         context?.strokeRect(FIELDX, FIELDY, FIELDWIDTH, FIELDHEIGHT);
-        /*
-        strokeを用いて、設定情報からlineをひく
-         */
         context?.beginPath();
         context?.moveTo(MIDDLEX, FIELDY);
         context?.lineTo(MIDDLEX, FIELDWIDTH - 100);
         context?.stroke();
     }
 
-    /*
-    後があるobject
-     */
     type BallPos = {
         x: number;
         y: number;
     };
-
-
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-    // setPlayerType(PLAYER1);
     function draw() {
         context?.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
         drawStaticObject();
@@ -223,7 +198,6 @@ const GamePlayer1 = () => {
         text: string
     }
     type ChatLog = Array<Chat>
-
 
     const [chatLog, setChatLog] = useState<ChatLog>([])
     const [uname, setUname] = useState<string>('')

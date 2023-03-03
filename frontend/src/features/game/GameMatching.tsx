@@ -7,7 +7,6 @@ const GameMatching = () => {
     <div>
         <h1>[Matching Page]</h1>
         <h2>Who are you?</h2>
-        {/* <a href="http://localhost:3000/game/player1">Player1</a> */}
         <Link to={"/game/player1"}>Player1</Link>
         <p></p>
         <Link to={"/game/player2"}>Player2</Link>
