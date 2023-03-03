@@ -1,7 +1,7 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useCallback } from "react";
 import useQueryUserGame from "../../hooks/game/useQueryGame";
 import { User } from "../../types/PrismaType";
-
+import { GameSocket } from "../../contexts/WebsocketContext";
 
 // global variables
 let context: CanvasRenderingContext2D | null;
@@ -40,10 +40,12 @@ const RPADDLEY = 100;
 
 const WIDTH = 1000;
 const HEIGHT = 900;
+
 /*
 ballの情報をオブジェクト化して、drawで描けるようになってる
 -> ballのx, yを更新できるようにしていく
  */
+
 
 const ball = {
     x: BALLX,
@@ -66,10 +68,17 @@ const ball = {
         this.vx = Math.cos(randomInt(0, 360) * (Math.PI / 180)) * 8;
         this.vy = Math.sin(randomInt(0, 360) * (Math.PI / 180)) * 8;
     }
-}
+};
+
 
 const leftPaddle = {
     x: LPADDLEX,
+    // get y() {
+    //     return LeftPaddlePos;
+    // },
+    // set y(value) {
+    //     setLeftPaddlePos(value);
+    // },
     y: LPADDLEY,
     color: "black",
     draw() {
@@ -80,6 +89,7 @@ const leftPaddle = {
         context?.fill();
     }
 }
+
 
 const rightPaddle = {
     x: RPADDLEX,
@@ -98,6 +108,7 @@ const rightPaddle = {
 function randomInt(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
 
 /*
 後に変更のないobject
@@ -150,22 +161,24 @@ function draw() {
         ball.init();
     }
 
+
     /* check keycode */
     if (keycode === 'KeyW') {
-        if(leftPaddle.y  > FIELDY) {
-            leftPaddle.y -= 50;
-        }
         if (rightPaddle.y  > FIELDY) {
             rightPaddle.y -= 50;
+            GameSocket.emit('GameToServer', rightPaddle.y);
         }
     }
     if (keycode === 'KeyS') {
-        if(leftPaddle.y  + PADDLEWHEIGHT < FIELDHEIGHT + FIELDY) {
-            leftPaddle.y += 50;
-        }if (rightPaddle.y + PADDLEWHEIGHT < FIELDHEIGHT + FIELDY) {
+        if (rightPaddle.y + PADDLEWHEIGHT < FIELDHEIGHT + FIELDY) {
             rightPaddle.y += 50;
+            GameSocket.emit('GameToServer', rightPaddle.y);
         }
     }
+
+
+
+
     keycode = '';
 
     ball.x += ball.vx;
@@ -187,7 +200,8 @@ function draw() {
     window.requestAnimationFrame(draw);
 }
 
-const Canvas = () => {
+
+const Game = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     useEffect(() => {
         const handleKeyUp = ():void => {
@@ -227,6 +241,69 @@ const Canvas = () => {
         });
     }, [UserPromise2]);
 
+
+    type Chat = {
+        socketId: string
+        uname: string
+        time: string
+        text: string
+    }
+
+
+    type ChatLog = Array<Chat>
+
+
+        const [chatLog, setChatLog] = useState<ChatLog>([])
+        const [uname, setUname] = useState<string>('')
+        const [text, setText] = useState<string>('')
+
+
+    useEffect(() => {
+        GameSocket.on('connect', () => {
+            console.log('接続ID : ', GameSocket.id)
+        })
+
+        return () => {
+            console.log('切断')
+            GameSocket.disconnect()
+        }
+    }, [])
+
+    useEffect(() => {
+        GameSocket.on('chatToClient', (chat: Chat) => {
+            console.log('chat受信', chat)
+            const newChatLog = [...chatLog]
+            newChatLog.push(chat)
+            setChatLog(newChatLog)
+        });
+    }, [chatLog])
+
+
+    const getNow = useCallback((): string => {
+        const datetime = new Date();
+        return `${datetime.getFullYear()}/${datetime.getMonth() + 1}/${datetime.getDate()} ${datetime.getHours()}:${datetime.getMinutes()}:${datetime.getSeconds()}`
+    }, [])
+
+        useEffect(() => {
+    }, [rightPaddle.y]);
+
+    const sendChat = useCallback((): void => {
+        if (!uname) {
+            alert('ユーザー名を入れてください。')
+            return;
+        }
+        console.log('送信')
+        GameSocket.emit('chatToServer', { uname, text, time: getNow() });
+        setText('');
+    }, [uname, text])
+
+    GameSocket.on('GameToClient', (leftPaddley: number, socketid: string) => {
+        console.log('chat receive leftPaddley info', leftPaddley)
+        if (GameSocket.id != socketid)
+        leftPaddle.y = leftPaddley;
+    });
+
+
     return (
         <div>
             <h1>[PONG GAME]</h1>
@@ -235,8 +312,39 @@ const Canvas = () => {
                 player2:{name2}
             </h2>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
+            <div>ユーザー名</div>
+            <div>
+                <input type="text" value={uname} onChange={(event) => { setUname(event.target.value) }} />
+            </div>
+            <br />
+            <section style={{ backgroundColor: 'rgba(30,130,80,0.3)', height: '50vh', overflow: 'scroll' }}>
+                <h2>GAME CHAT</h2>
+                <hr />
+                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column' }}>
+                    {
+                        chatLog.map((chat, index) => (
+                            <li key={index} style={{ margin: uname === chat.uname ? '0 15px 0 auto ' : '0 auto 0 15px' }}>
+                                <div><small>{chat.time} [{chat.socketId}]</small></div>
+                                <div>【{chat.uname}】 : {chat.text}</div>
+                            </li>
+                        ))
+                    }
+                </ul>
+            </section>
+            <br />
+            <div>
+                送信内容
+            </div>
+            <div>
+                <input type="text" value={text} onChange={(event) => { setText(event.target.value) }} />
+            </div>
+            <br />
+            <div>
+                <button onClick={sendChat}> send </button>
+            </div>
+            <br />
         </div>
     );
 }
 
-export default Canvas;
+export default Game;
