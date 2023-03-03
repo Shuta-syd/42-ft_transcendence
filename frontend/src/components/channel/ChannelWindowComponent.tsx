@@ -5,6 +5,7 @@ import React, { createRef, useCallback, useContext, useEffect, useLayoutEffect, 
 import axios from "axios";
 import { Socket } from "socket.io-client";
 import { useParams } from "react-router-dom";
+import { WebsocketContext } from "../../contexts/WebsocketContext";
 import useMutationMessage from "../../hooks/chat/useMutationMessage";
 import TextFieldComponent from "../utils/TextFieldComponent";
 import { Message } from "../../types/PrismaType";
@@ -27,7 +28,7 @@ const convertDate = (str: Date): string => {
 }
 
 /**
- * @returns 実際にchatをするトーク画面のコンポーネント (Channel用)
+ * @returns 実際にchatをするトーク画面のコンポーネント
  */
 export default function ChannelWindowComponent() {
   const { roomId } = useParams();
