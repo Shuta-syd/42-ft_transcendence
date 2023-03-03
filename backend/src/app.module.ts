@@ -7,10 +7,9 @@ import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
 import { MatchModule } from './match/match.module';
 import { AuthModule } from './auth/auth.module';
-import { ChannelModule } from './channel/channel.module';
 
 @Module({
-  imports: [ChatModule, PrismaModule, UserModule, MatchModule, AuthModule, ChannelModule],
+  imports: [ChatModule, PrismaModule, UserModule, MatchModule, AuthModule],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })

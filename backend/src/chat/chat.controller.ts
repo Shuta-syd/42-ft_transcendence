@@ -123,4 +123,16 @@ export class ChatController {
   async getUserDM(@Req() req: Request): Promise<ChatRoomPayload> {
     return this.chatService.getUserDM(req.user.id);
   }
+
+  /**
+   * Channel Controller
+   */
+  @Get('group')
+  @ApiOperation({
+    description: 'get channel user belongs to',
+    summary: 'get channel user belongs to',
+  })
+  async getChannels(@Req() req: Request): Promise<ChatRoom[]> {
+    return this.chatService.getChannels(req.user.id);
+  }
 }

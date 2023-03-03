@@ -17,7 +17,10 @@ export class ChatService {
   async crateChatRoom(userId: string, dto: CreateChatRoom): Promise<ChatRoom> {
     return this.prisma.chatRoom
       .create({
-        data: { isDM: JSON.parse(dto.isDM) },
+        data: {
+          isDM: JSON.parse(dto.isDM),
+          name: dto.name === undefined ? 'unknown' : dto.name,
+        },
       })
       .then((room: ChatRoom): ChatRoom => {
         this.addMember(userId, room.id);
@@ -149,5 +152,26 @@ export class ChatService {
         message: dto.message,
       },
     });
+  }
+
+  /**
+   * Channel service
+   */
+  /**
+   * @param userId 所属しているuserId
+   * @returns userが所属しているChannelを全て返す
+   */
+  async getChannels(userId: string): Promise<ChatRoom[]> {
+    const channels = await this.prisma.chatRoom.findMany({
+      where: {
+        isDM: false,
+        members: {
+          some: {
+            userId: userId,
+          },
+        },
+      },
+    });
+    return channels;
   }
 }

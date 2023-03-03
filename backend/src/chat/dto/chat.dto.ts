@@ -16,6 +16,7 @@ export class AddMemberDto {
 
 export class CreateChatRoom {
   isDM: string;
+  name: string;
 }
 
 export type ChatPayload = {
