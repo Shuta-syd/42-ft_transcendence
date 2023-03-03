@@ -28,9 +28,7 @@ export class GameGateway {
   @WebSocketServer()
   server: Server;
 
-  //ログ出力用
   private logger: Logger = new Logger('EventsGateway');
-
   //クライアント側から「chatToServer」という名前のメッセージ（？）をリッスン（好きに命名できる）
   @SubscribeMessage('chatToServer')
   chatting(
@@ -66,7 +64,6 @@ export class GameGateway {
     console.log(payload);
     this.server.emit('BallPosToClient', payload, client.id);
   }
-
   afterInit(server: Server) {
     //初期化
     this.logger.log('初期化しました。');

@@ -224,7 +224,6 @@ const GamePlayer1 = () => {
         });
     }, [chatLog])
 
-
     const getNow = useCallback((): string => {
         const datetime = new Date();
         return `${datetime.getFullYear()}/${datetime.getMonth() + 1}/${datetime.getDate()} ${datetime.getHours()}:${datetime.getMinutes()}:${datetime.getSeconds()}`
@@ -245,8 +244,9 @@ const GamePlayer1 = () => {
 
     GameSocket.on('GameToClient', (leftPaddley: number, socketid: string) => {
         // console.log('chat receive leftPaddley info', leftPaddley)
-        if (GameSocket.id !== socketid)
+        if (GameSocket.id !== socketid) {
             leftPaddle.y = leftPaddley;
+        }
     });
 
     return (
