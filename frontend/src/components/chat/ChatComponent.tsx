@@ -2,7 +2,7 @@ import { Grid } from "@mui/material";
 import React, { useContext, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { Socket } from "socket.io-client";
-import ChatGroupComponent from "./ChatGroupCompoent";
+import ChatGroupComponent from "./ChatGroupComponent";
 import { WebsocketContext } from "../../contexts/WebsocketContext";
 
 

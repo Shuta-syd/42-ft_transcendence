@@ -1,5 +1,4 @@
 import React from "react";
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Outlet } from "react-router-dom";
 import { socket, WebsocketProvider } from "../../contexts/WebsocketContext";
