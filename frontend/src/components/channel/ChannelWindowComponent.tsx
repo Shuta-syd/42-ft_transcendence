@@ -9,6 +9,8 @@ import { WebsocketContext } from "../../contexts/WebsocketContext";
 import useMutationMessage from "../../hooks/chat/useMutationMessage";
 import TextFieldComponent from "../utils/TextFieldComponent";
 import { Message } from "../../types/PrismaType";
+import getUserName from "../../utils/getUserName";
+import getMemberId from "../../utils/getMemberId";
 
 type MessagePayload = {
   time: string;
@@ -38,22 +40,6 @@ export default function ChannelWindowComponent() {
   const [userName, setUserName] = useState('');
   const [chatLog, setChatLog] = useState<ChatLog>([]);
 
-  const getUserName = useCallback(async (): Promise<string> => {
-    const res = await axios.get(`http://localhost:8080/user`);
-    return res.data.name;
-  }, [ChatRoomID]);
-
-  const getNow  = useCallback((): string => {
-    const date = new Date();
-    return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}
-     ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}
-    `
-  }, []);
-
-  const getMemberId = useCallback(async (): Promise<string> => {
-    const res = await axios.get(`http://localhost:8080/chat/room/${ChatRoomID}/memberId`)
-    return res.data;
-  }, [ChatRoomID]);
 
   useEffect(() => {
     if (subtitleElm.current) {
@@ -83,7 +69,7 @@ export default function ChannelWindowComponent() {
   const sendChat = useCallback(() => {
     if (text === '')
       return;
-    getMemberId().then((id) => {
+    getMemberId(ChatRoomID).then((id) => {
       console.log('Message Emit');
       // socket.emit('send_message_room', { senderName: userName , text, time: getNow(), id: roomId })
       createMessageMutation.mutate({

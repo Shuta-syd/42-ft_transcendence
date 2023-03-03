@@ -8,6 +8,9 @@ import { WebsocketContext } from "../../contexts/WebsocketContext";
 import useMutationMessage from "../../hooks/chat/useMutationMessage";
 import TextFieldComponent from "../utils/TextFieldComponent";
 import { Message } from "../../types/PrismaType";
+import getUserName from "../../utils/getUserName";
+import getNow from "../../utils/getNow";
+import getMemberId from "../../utils/getMemberId";
 
 type MessagePayload = {
   time: string;
@@ -40,28 +43,10 @@ export default function ChatWindowComponent() {
   const subtitleElm = useRef<HTMLInputElement>(null);
   const latestChatRef = createRef<HTMLDivElement>();
 
-
-  const getUserName = useCallback(async (): Promise<string> => {
-    const res = await axios.get(`http://localhost:8080/user`);
-    return res.data.name;
-  }, [ChatRoomID]);
-
   const getFriendName = useCallback(async (): Promise<string> => {
     const res = await axios.get(`http://localhost:8080/chat/room/${ChatRoomID}/dm/friend`);
     return res.data;
   }, [ChatRoomID]);
-
-  const getMemberId = useCallback(async (): Promise<string> => {
-    const res = await axios.get(`http://localhost:8080/chat/room/${ChatRoomID}/memberId`)
-    return res.data;
-  }, [ChatRoomID]);
-
-  const getNow  = useCallback((): string => {
-    const date = new Date();
-    return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}
-     ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}
-    `
-  }, []);
 
   useEffect(() => {
     socket.on('chatToClient', (chat: MessagePayload) => {
@@ -103,7 +88,7 @@ export default function ChatWindowComponent() {
   const sendChat = useCallback(() => {
     if (text === '')
       return;
-    getMemberId().then((id) => {
+    getMemberId(ChatRoomID).then((id) => {
       console.log('Message Emit');
       socket.emit('send_message_room', { senderName: userName , text, time: getNow(), id: roomId })
       createMessageMutation.mutate({
