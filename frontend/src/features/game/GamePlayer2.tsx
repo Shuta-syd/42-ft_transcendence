@@ -25,7 +25,6 @@ const GamePlayer2 = () => {
     const FIELDWIDTH = 900;
     const FIELDHEIGHT = 700;
     const MIDDLEX = 450;
-    // const MIDDLEY = 450;
 
     /* Left Paddle macro */
     const LPADDLEX = 5;
@@ -43,9 +42,8 @@ const GamePlayer2 = () => {
     const ball = {
         x: BALLX,
         y: BALLY,
-        /* vx/vyはあくまで最初の段階での動きをrandomにしているだけ */
-        vx: Math.cos(randomInt(0, 30) * (Math.PI / 180)) * 8,
-        vy: Math.sin(randomInt(0, 30) * (Math.PI / 180)) * 8,
+        vx: 2,
+        vy: 2,
         radius: RADIUS,
         color: "black",
         draw() {
@@ -58,8 +56,8 @@ const GamePlayer2 = () => {
         init(){
             this.x = BALLX;
             this.y = BALLY;
-            this.vx = Math.cos(randomInt(0, 360) * (Math.PI / 180)) * 8;
-            this.vy = Math.sin(randomInt(0, 360) * (Math.PI / 180)) * 8;
+            this.vx = 2;
+            this.vy = 2;
         }
     };
 
@@ -91,50 +89,23 @@ const GamePlayer2 = () => {
         }
     }
 
-    /* Helper */
-    function randomInt(min: number, max: number): number {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-
-
-    /*
-    後に変更のないobject
-    (ex) line
-     */
     function drawStaticObject() {
-        // create a field of game
-        /* lineを出す */
         context?.beginPath();
-        /*
-        rectangleの外枠だけを出力する関数
-        x、 y(始点)、幅、高さ
-         */
         context?.strokeRect(FIELDX, FIELDY, FIELDWIDTH, FIELDHEIGHT);
-        /*
-        strokeを用いて、設定情報からlineをひく
-         */
         context?.beginPath();
         context?.moveTo(MIDDLEX, FIELDY);
         context?.lineTo(MIDDLEX, FIELDWIDTH - 100);
         context?.stroke();
     }
-
-    /*
-    後があるobject
-     */
     type BallPos = {
         x: number;
         y: number;
     };
 
-
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
-    // setPlayerType(PLAYER1);
     function draw() {
         context?.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
         drawStaticObject();
-
 
         /* check collision */
         if (ball.x - ball.radius <= leftPaddle.x + PADDLEWIDTH
@@ -168,15 +139,6 @@ const GamePlayer2 = () => {
         }
         GameSocket.emit('GameToServer', rightPaddle.y);
         keycode = '';
-
-        /* send ball pos to server */
-        // ball.x += ball.vx;
-        // ball.y += ball.vy;
-        // const BallPos:BallPos = {
-        //     x: ball.x,
-        //     y:ball.y,
-        // }
-        // GameSocket.emit('BallPosToServer', BallPos);
 
         /* draw part */
         leftPaddle.draw();
@@ -242,13 +204,12 @@ const GamePlayer2 = () => {
 
     useEffect(() => {
         GameSocket.on('chatToClient', (chat: Chat) => {
-            console.log('chat受信', chat)
+            console.log('GAME CHAT受信', chat)
             const newChatLog = [...chatLog]
             newChatLog.push(chat)
             setChatLog(newChatLog)
         });
     }, [chatLog])
-
 
     const getNow = useCallback((): string => {
         const datetime = new Date();
@@ -269,13 +230,11 @@ const GamePlayer2 = () => {
     }, [uname, text])
 
     GameSocket.on('GameToClient', (leftPaddley: number, socketid: string) => {
-        // console.log('chat receive leftPaddley info', leftPaddley)
-        if (GameSocket.id !== socketid)
+        if (GameSocket.id !== socketid) {
             leftPaddle.y = leftPaddley;
+        }
     });
     GameSocket.on('BallPosToClient', (BallPos: BallPos, SocketId: string) => {
-        // console.log('chat receive BallPos info', BallPos)
-        // console.log(BallPos.y);
         ball.x = BallPos.x;
         ball.y = BallPos.y;
     });
