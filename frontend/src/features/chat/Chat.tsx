@@ -1,16 +1,16 @@
 import React from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { Outlet } from "react-router-dom";
-import { socket, WebsocketProvider } from "../../contexts/WebsocketContext";
+import { DMsocket, WebDMsocketProvider } from "../../contexts/WebsocketContext";
 
 const queryClient = new QueryClient();
 
 function Chat() {
   return (
     <QueryClientProvider client={queryClient}>
-      <WebsocketProvider value={socket}>
+      <WebDMsocketProvider value={DMsocket}>
         <Outlet />
-      </WebsocketProvider>
+      </WebDMsocketProvider>
     </QueryClientProvider>
   );
 }

@@ -3,14 +3,14 @@ import React, { useContext, useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { Socket } from "socket.io-client";
 import ChatGroupComponent from "./ChatGroupComponent";
-import { WebsocketContext } from "../../contexts/WebsocketContext";
+import { WebDMsocketContext } from "../../contexts/WebsocketContext";
 
 
 /**
  * @returns chat画面のコンポーネント
  */
 export default function ChatComponent() {
-  const socket: Socket = useContext(WebsocketContext);
+  const socket: Socket = useContext(WebDMsocketContext);
 
   useEffect(() => {
     socket.on('connect', () => {
