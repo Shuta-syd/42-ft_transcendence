@@ -1,6 +1,6 @@
 import { Grid , Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
-import React, { createRef, useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { createRef, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Socket } from "socket.io-client";
 import { useOutletContext, useParams } from "react-router-dom";
@@ -22,7 +22,7 @@ type MessagePayload = {
 type ChatLog = MessagePayload[];
 
 /**
- * @returns 実際にchatをするトーク画面のコンポーネント
+ * @returns 実際にchatをするトーク画面のコンポーネント (Channel用P)
  */
 export default function ChannelWindowComponent() {
   const socket: Socket = useOutletContext();
@@ -33,8 +33,19 @@ export default function ChannelWindowComponent() {
   const subtitleElm = useRef<HTMLInputElement>(null);
   const [text, setText] = useState('');
   const [userName, setUserName] = useState('');
+  const [roomName, setRoomName] = useState('');
   const [chatLog, setChatLog] = useState<ChatLog>([]);
   const latestChatRef = createRef<HTMLDivElement>();
+
+  const getRoomName = useCallback(async (): Promise<string> => {
+    try {
+      const res = await axios.get(`http://localhost:8080/chat/room/${ChatRoomID}`);
+      return res.data.name;
+    } catch (error) {
+      console.log(error);
+    }
+    return '';
+  }, [ChatRoomID])
 
   useEffect(() => {
     socket.on('chatToClient', (chat: MessagePayload) => {
@@ -49,7 +60,8 @@ export default function ChannelWindowComponent() {
   }, [subtitleElm, subtitleHeight])
 
   useEffect(() => {
-    getUserName().then((name) => { setUserName(name); })
+    getUserName().then((name) => { setUserName(name); });
+    getRoomName().then((name) => { setRoomName(name); })
   }, [ChatRoomID])
 
   useLayoutEffect(() => {
@@ -96,7 +108,7 @@ export default function ChannelWindowComponent() {
             padding={0.5}
             sx={{ fontFamily: 'Lato', color: '#e1e2e2', fontWeight:700 }}
             >
-            @ TEST
+            @ {roomName}
           </Typography>
         </Box>
         <Box
