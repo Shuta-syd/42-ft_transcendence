@@ -1,5 +1,7 @@
-import { Grid , Typography } from "@mui/material";
+/* eslint-disable no-unused-vars */
+import { Grid , IconButton, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import React, { createRef, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Socket } from "socket.io-client";
@@ -55,7 +57,7 @@ export default function ChannelWindowComponent() {
 
   useEffect(() => {
     if (subtitleElm.current) {
-      setSubtitleHeight(`${subtitleElm.current.clientHeight.toString()}px`);
+      setSubtitleHeight(`${(subtitleElm.current.clientHeight + 3.5).toString()}px`);
     }
   }, [subtitleElm, subtitleHeight])
 
@@ -101,15 +103,29 @@ export default function ChannelWindowComponent() {
   return (
     <Grid item xs={9} position='relative'>
       <Stack spacing={0}>
-        <Box sx={{backgroundColor: '#141E61'}} ref={subtitleElm}>
+        <Box
+          borderTop={1} borderBottom={2.5} borderColor={'#787A91'}
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            backgroundColor: '#141E61'
+          }}
+          ref={subtitleElm}
+        >
           <Typography
             variant="h6"
-            borderTop={1} borderBottom={2.5} borderColor={'#787A91'}
             padding={0.5}
             sx={{ fontFamily: 'Lato', color: '#e1e2e2', fontWeight:700 }}
             >
             @ {roomName}
           </Typography>
+          <Box sx={{
+            marginRight: '1vh'
+          }}>
+            <IconButton color="error">
+              <MoreHorizIcon />
+            </IconButton>
+          </Box>
         </Box>
         <Box
           maxHeight={`calc(94vh - ${subtitleHeight})`}
