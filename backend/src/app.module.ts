@@ -19,6 +19,6 @@ import { GameGateway } from './game/game.gateway';
     GameGateway,
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService, GameGateway],
+  providers: [AppService, PrismaService],
 })
 export class AppModule {}
