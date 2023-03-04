@@ -16,7 +16,6 @@ import { ChatPayload } from './dto/chat.dto';
   cors: {
     origin: ['http://localhost:3000'],
   },
-  namespace: '/chat',
 })
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -38,8 +37,6 @@ export class ChatGateway
     @MessageBody() payload: ChatPayload,
     @ConnectedSocket() client: Socket,
   ) {
-    this.logger.log('Chat Received');
-    this.logger.log(payload);
     this.server.to(payload.id).emit('chatToClient', {
       ...payload,
       socketId: client.id,
@@ -58,5 +55,4 @@ export class ChatGateway
   afterInit(server: Server) {
     this.logger.log('Init');
   }
-
 }

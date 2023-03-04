@@ -72,7 +72,6 @@ export default function ChatFriendsComponent() {
 
   useEffect(() => {
     socket.on('joinRoom', () => {
-      console.log('crateDMRoom');
     })
   }, [])
 

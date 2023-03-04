@@ -17,7 +17,7 @@ export default function ChannelListComponent() {
   const socket: Socket = useContext(WebsocketContext);
   const [channels, setChannels] = useState<ChatRoom[]>([]);
 
-  const getChannels = async ():Promise<ChatRoom[]> => {
+  const getChannels = async (): Promise<ChatRoom[]> => {
     try {
       const res = await axios.get(`http://localhost:8080/chat/group`);
       return res.data;
@@ -28,8 +28,12 @@ export default function ChannelListComponent() {
   }
 
   useEffect(() => {
-    
+    socket.on('joinRoom', () => {})
   }, []);
+
+  useEffect(() => {
+    socket.emit('joinRoom', { id: roomID });
+  }, [roomID]);
 
   useLayoutEffect(() => {
     getChannels().then((data) => { setChannels(data); })
@@ -37,7 +41,7 @@ export default function ChannelListComponent() {
 
     const handleClick = (roomId: string) => {
       console.log('click channel button');
-      // socket.emit('create_dmRoom', { id: roomId})
+      socket.emit('joinRoom', { id: roomId });
     }
 
   return (

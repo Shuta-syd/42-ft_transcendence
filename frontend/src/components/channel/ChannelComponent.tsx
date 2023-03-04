@@ -13,7 +13,14 @@ export default function ChannelComponent() {
   const socket: Socket = useContext(WebsocketContext);
 
   useEffect(() => {
-    socket.on('connect')
+    socket.on('connect', () => {
+      console.log(`Connect: ${socket.id}`);
+    })
+
+    return () => {
+      console.log(`Disconnect: ${socket.id}`);
+      socket.disconnect();
+    }
   })
 
 

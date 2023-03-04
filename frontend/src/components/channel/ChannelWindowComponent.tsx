@@ -11,6 +11,7 @@ import TextFieldComponent from "../utils/TextFieldComponent";
 import { Message } from "../../types/PrismaType";
 import getUserName from "../../utils/getUserName";
 import getMemberId from "../../utils/getMemberId";
+import getNow from "../../utils/getNow";
 
 type MessagePayload = {
   time: string;
@@ -40,7 +41,13 @@ export default function ChannelWindowComponent() {
   const [text, setText] = useState('');
   const [userName, setUserName] = useState('');
   const [chatLog, setChatLog] = useState<ChatLog>([]);
+  const latestChatRef = createRef<HTMLDivElement>();
 
+  useEffect(() => {
+    socket.on('chatToClient', (chat: MessagePayload) => {
+      setChatLog(prevChatLog => [...prevChatLog, chat]);
+    });
+  }, [])
 
   useEffect(() => {
     if (subtitleElm.current) {
@@ -67,12 +74,16 @@ export default function ChannelWindowComponent() {
     fetchChat();
   }, [ChatRoomID])
 
+  useLayoutEffect(() => {
+    latestChatRef.current?.scrollIntoView();
+  }, [chatLog])
+
   const sendChat = useCallback(() => {
     if (text === '')
       return;
     getMemberId(ChatRoomID).then((id) => {
       console.log('Message Emit');
-      // socket.emit('send_message_room', { senderName: userName , text, time: getNow(), id: roomId })
+      socket.emit('send_message_room', { senderName: userName , text, time: getNow(), id: roomId })
       createMessageMutation.mutate({
         message: text,
         senderName: userName,
@@ -105,6 +116,7 @@ export default function ChannelWindowComponent() {
                 <div>{chat.senderName}: {chat.text}</div>
               </div>
             ))}
+            <div ref={latestChatRef} />
           </Box>
           <Box height={'9vh'} sx={{ backgroundColor: '#0F044C' }}>
             <TextFieldComponent handleOnChange={setText} handleOnClick={sendChat} value={text}/>
