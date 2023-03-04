@@ -35,3 +35,5 @@ export type Match = {
   player2: string
   winner_id: string
 }
+
+

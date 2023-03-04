@@ -52,3 +52,4 @@ model Match {
   player2   String
   winner_id Int
 }
+

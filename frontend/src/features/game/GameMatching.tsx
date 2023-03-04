@@ -13,6 +13,8 @@ const GameMatching = () => {
         <p></p>
         <Link to={"/game/observer"}>Observer</Link>
         <p></p>
+        <Link to={"/game/startGame"}>StartGame</Link>
+        <p></p>
     </div>
     )
 }
