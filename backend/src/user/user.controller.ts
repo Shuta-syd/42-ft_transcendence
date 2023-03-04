@@ -44,12 +44,13 @@ export class UserController {
     summary: 'Friend Request',
   })
   async addFriend(
-    @Body() data: { userId: string; friendId: string },
+    @Req() req: Request,
+    @Body() data: { friendId: string },
   ): Promise<User> {
-    return this.userService.addFriend(data.userId, data.friendId);
+    return this.userService.addFriend(req.user.id, data.friendId);
   }
 
-  @Get('friend/:id')
+  @Get('friend')
   @ApiOperation({
     description: 'Get the friend list of the userID user',
     summary: "get user's friends",
@@ -59,7 +60,7 @@ export class UserController {
     description: "The user's friends",
     type: SwaggerFriends,
   })
-  async getFriend(@Param('id') userId: string): Promise<User[]> {
-    return this.userService.getFriend(userId);
+  async getFriend(@Req() req: Request): Promise<User[]> {
+    return this.userService.getFriend(req.user.id);
   }
 }

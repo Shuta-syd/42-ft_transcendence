@@ -7,7 +7,9 @@ import {
   Patch,
   Post,
   Req,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ChatRoom, Member, Message, User } from '@prisma/client';
 import { Request } from 'express';
@@ -17,10 +19,16 @@ import {
   SwaggerMessages,
 } from 'src/swagger/type';
 import { ChatService } from './chat.service';
-import { AddMemberDto, CreateChatRoom, SendChatDto } from './dto/chat.dto';
+import {
+  AddMemberDto,
+  ChatRoomPayload,
+  CreateChatRoom,
+  SendChatDto,
+} from './dto/chat.dto';
 
 @Controller('chat')
 @ApiTags('chat')
+@UseGuards(AuthGuard('jwt'))
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
@@ -52,20 +60,39 @@ export class ChatController {
     description: 'The created chat room',
     type: PrismaChatRoom,
   })
-  async createRoom(@Body() dto: CreateChatRoom): Promise<ChatRoom> {
-    return this.chatService.crateChatRoom(dto);
+  async createRoom(
+    @Req() req: Request,
+    @Body() dto: CreateChatRoom,
+  ): Promise<ChatRoom> {
+    return this.chatService.crateChatRoom(req.user.id, dto);
   }
 
-  @Get('room/:id')
+  @Get('room/:roomId')
   @ApiOperation({
     description: 'Get chat room by id',
     summary: 'Get chat room by id',
   })
-  async getChatRoomById(@Param('id') id: string): Promise<ChatRoom> {
+  async getChatRoomById(@Param('roomId') id: string): Promise<ChatRoom> {
     return this.chatService.getChatRoomById(id);
   }
 
-  @Get('room/log/:id')
+  @Get('room/:roomId/dm/friend')
+  async getFriendNameByDMId(
+    @Req() req: Request,
+    @Param('roomId') roomId: string,
+  ): Promise<string> {
+    return this.chatService.getFriendNameByDMId(req.user.id, roomId);
+  }
+
+  @Get('room/:roomId/memberId')
+  async getMyMemberId(
+    @Req() req: Request,
+    @Param('roomId') roomId: string,
+  ): Promise<string> {
+    return this.chatService.getMyMemberId(req.user.id, roomId);
+  }
+
+  @Get('room/log/:roomId')
   @ApiOperation({
     description: 'Get chat logs of specified chat room',
     summary: 'Get chat logs',
@@ -75,7 +102,7 @@ export class ChatController {
     description: 'The chat logs',
     type: SwaggerMessages,
   })
-  async getChatLogByRoomId(@Param('id') id: string): Promise<Message[]> {
+  async getChatLogByRoomId(@Param('roomId') id: string): Promise<Message[]> {
     return this.chatService.getChatLogByRoomId(id);
   }
 
@@ -92,8 +119,8 @@ export class ChatController {
     description: 'Get all DM rooms to which the user belongs',
     summary: "Get a user's DM rooms ",
   })
-  @Get('dm/:id')
-  async getUserDM(@Param('id') userId: string): Promise<ChatRoom[]> {
-    return this.chatService.getUserDM(userId);
+  @Get('dm')
+  async getUserDM(@Req() req: Request): Promise<ChatRoomPayload> {
+    return this.chatService.getUserDM(req.user.id);
   }
 }

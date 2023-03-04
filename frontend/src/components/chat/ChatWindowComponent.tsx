@@ -11,6 +11,7 @@ import TextFieldComponent from "../utils/TextFieldComponent";
 
 type MessagePayload = {
   time: string;
+  senderName: string;
   text: string;
 };
 
@@ -20,12 +21,12 @@ type ChatLog = MessagePayload[];
  * @returns 実際にchatをするトーク画面のコンポーネント
  */
 export default function ChatWindowComponent() {
-  const UserID = 'ba822ee0-7a6e-43a8-98cc-eb93f7433bb5'; // tmp
   const { roomId } = useParams();
   const ChatRoomID: string = roomId as string;
   const { data } = useQueryChatLog(ChatRoomID);
   const { createMessageMutation } = useMutationMessage(ChatRoomID);
   const [friendName, setFriendName] = useState('');
+  const [userName, setUserName] = useState('');
   const [text, setText] = useState('');
   const [chatLog, setChatLog] = useState<ChatLog>([]);
   const [subtitleHeight, setSubtitleHeight] = useState<string>('0');
@@ -40,6 +41,7 @@ export default function ChatWindowComponent() {
 
   useEffect(() => {
     getFriendName().then((name) => { setFriendName(name); })
+    getUserName().then((name) => { setUserName(name); })
   }, [ChatRoomID])
 
   useEffect(() => {
@@ -49,27 +51,37 @@ export default function ChatWindowComponent() {
   }, [subtitleElm, subtitleHeight])
 
 
+  const getUserName = useCallback(async (): Promise<string> => {
+    const res = await axios.get(`http://localhost:8080/user`);
+    return res.data.name;
+  }, [ChatRoomID]);
+
   const getFriendName = useCallback(async (): Promise<string> => {
-    const res = await axios.get(`http://localhost:8080/chat/room/${ChatRoomID}`);
-    const member = res.data.members.filter((val: any) => val.userId !== UserID);
-    return member[0].user.name;
+    const res = await axios.get(`http://localhost:8080/chat/room/${ChatRoomID}/dm/friend`);
+    return res.data;
   }, [ChatRoomID]);
 
   const getMemberId = useCallback(async (): Promise<string> => {
-    const res = await axios.get(`http://localhost:8080/chat/room/${ChatRoomID}`);
-    const member = res.data.members.filter((val: any) => val.userId === UserID);
-    return member[0].id;
+    const res = await axios.get(`http://localhost:8080/chat/room/${ChatRoomID}/memberId`)
+    return res.data;
   }, [ChatRoomID]);
 
   useEffect(() => {
     setChatLog([]);
     if (data) {
       data?.map((obj) => {
-        const chat: MessagePayload = { time: obj.createdAt.toString(), text: obj.message };
+        const chat: MessagePayload = { senderName: obj.senderName, time: convertDate(obj.createdAt), text: obj.message };
         setChatLog(prevChatLog => [...prevChatLog, chat]);
       })
     }
   }, [data])
+
+  // eslint-disable-next-line no-unused-vars
+  const convertDate = (str: Date): string => {
+    const date = new Date(str);
+    return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}
+    ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+  }
 
   const getNow  = useCallback((): string => {
     const date = new Date();
@@ -86,6 +98,7 @@ export default function ChatWindowComponent() {
       socket.emit('send_message_room', { text, time: getNow(), id: roomId })
       createMessageMutation.mutate({
         message: text,
+        senderName: userName,
         memberId: id,
       });
       setText('');
@@ -110,7 +123,7 @@ export default function ChatWindowComponent() {
             {chatLog.map((chat, idx) => (
               <div key={idx}>
                 <div>{chat.time}</div>
-                <div>user: {chat.text}</div>
+                <div>{chat.senderName}: {chat.text}</div>
               </div>
             ))}
           </Box>

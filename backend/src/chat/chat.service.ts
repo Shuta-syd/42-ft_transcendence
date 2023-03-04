@@ -1,22 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { ChatRoom, Member, Message } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateChatRoom, SendChatDto } from './dto/chat.dto';
+import { UserService } from 'src/user/user.service';
+import { ChatRoomPayload, CreateChatRoom, SendChatDto } from './dto/chat.dto';
 
 @Injectable()
 export class ChatService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private userService: UserService,
+  ) {}
 
   /**
    * @returns 作成したChatRoomデータ
    */
-  async crateChatRoom(dto: CreateChatRoom): Promise<ChatRoom> {
+  async crateChatRoom(userId: string, dto: CreateChatRoom): Promise<ChatRoom> {
     return this.prisma.chatRoom
       .create({
         data: { isDM: JSON.parse(dto.isDM) },
       })
       .then((room: ChatRoom): ChatRoom => {
-        this.addMember(dto.userId, room.id);
+        this.addMember(userId, room.id);
         return room;
       });
   }
@@ -32,6 +36,39 @@ export class ChatService {
         members: { include: { user: true } },
       },
     });
+  }
+
+  /**
+   * @param userId APIを叩いているユーザのID
+   * @param roomId 所属するroomID
+   */
+  async getFriendNameByDMId(userId: string, roomId: string): Promise<string> {
+    const members = await this.prisma.chatRoom
+      .findUnique({
+        where: { id: roomId },
+      })
+      .members();
+    const friendMember = members.filter(
+      (member: Member) => member.userId !== userId,
+    );
+    const friend = await this.userService.getUserById(friendMember[0].userId);
+    return friend.name;
+  }
+
+  /**
+   * @param userId APIを叩いているユーザのID
+   * @param roomId 所属するroomID
+   */
+  async getMyMemberId(userId: string, roomId: string): Promise<string> {
+    const members = await this.prisma.chatRoom
+      .findUnique({
+        where: { id: roomId },
+      })
+      .members();
+    const userMember = members.filter(
+      (member: Member) => member.userId === userId,
+    );
+    return userMember[0].id;
   }
 
   /**
@@ -60,8 +97,9 @@ export class ChatService {
    * @param userId 取得したいDMのuserID
    * @returns userIDのすべてのDM
    */
-  async getUserDM(userId: string): Promise<ChatRoom[]> {
-    const DirectMessageRooms = this.prisma.chatRoom.findMany({
+  async getUserDM(userId: string): Promise<ChatRoomPayload> {
+    const DMRooms: ChatRoomPayload = {};
+    const DirectMessageRooms = await this.prisma.chatRoom.findMany({
       where: {
         isDM: true,
         members: {
@@ -73,7 +111,12 @@ export class ChatService {
       include: { members: true },
     });
 
-    return DirectMessageRooms;
+    DirectMessageRooms.map((room: ChatRoom & { members: Member[] }) => {
+      room.members.map((member: Member) => {
+        if (member.userId !== userId) DMRooms[member.userId] = room.id;
+      });
+    });
+    return DMRooms;
   }
 
   /**
@@ -102,6 +145,7 @@ export class ChatService {
         room: {
           connect: { id: roomId },
         },
+        senderName: dto.senderName,
         message: dto.message,
       },
     });
