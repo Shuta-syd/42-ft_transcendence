@@ -43,7 +43,6 @@ export class ChatController {
     type: PrismaMessage,
   })
   async sendChat(
-    // @Req() req: Request, jwt or passport使用する場合
     @Param('id') roomId: string,
     @Body() dto: SendChatDto,
   ): Promise<Message> {
