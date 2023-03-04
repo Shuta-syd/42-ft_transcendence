@@ -1,20 +1,23 @@
 /* eslint-disable no-unused-vars */
 import { Avatar, Grid, Typography } from "@mui/material";
 import axios from "axios";
-import React, { useContext, useEffect, useLayoutEffect, useState } from "react"
+import React, { useEffect, useLayoutEffect, useState } from "react"
 import { Socket } from "socket.io-client";
 import { Link, useLocation } from "react-router-dom";
 import PersonIcon from '@mui/icons-material/Person';
 import { ChatRoom } from "../../types/PrismaType";
-import { WebsocketContext } from "../../contexts/WebsocketContext";
 import '../../styles/Chat.css'
+
+type ChannelListComponentProps = {
+  socket: Socket;
+}
 
 /**
  * @returns Message送信可能なChannel一覧を表示するコンポーネント
  */
-export default function ChannelListComponent() {
+export default function ChannelListComponent(props: ChannelListComponentProps) {
+  const { socket } = props;
   const roomID = useLocation().pathname.split('/')[3];
-  const socket: Socket = useContext(WebsocketContext);
   const [channels, setChannels] = useState<ChatRoom[]>([]);
 
   const getChannels = async (): Promise<ChatRoom[]> => {

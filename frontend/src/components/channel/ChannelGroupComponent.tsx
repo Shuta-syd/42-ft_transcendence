@@ -1,13 +1,18 @@
 import { Grid, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import React, { useEffect, useRef, useState } from "react";
+import { Socket } from "socket.io-client";
 import ChannelListComponent from "./ChannleListComponent";
+
+type ChannelGroupComponentProps = {
+  socket: Socket;
+}
 
 
 /**
  * @returns 所属中のChannelリストを表示するコンポーネント
  */
-export default function ChannelGroupComponent() {
+export default function ChannelGroupComponent(props: ChannelGroupComponentProps) {
   const subtitleElm = useRef<HTMLInputElement>();
   const [subtitleHeight, setSubtitleHeight] = useState<string>('0');
 
@@ -36,7 +41,7 @@ export default function ChannelGroupComponent() {
             height={`calc(94vh - ${subtitleHeight})`}
             sx={{ backgroundColor: '#141E61', overflow: 'auto' }} borderColor={'#787A91'}
           >
-            <ChannelListComponent />
+            <ChannelListComponent socket={props.socket} />
           </Stack>
         </Stack>
       </Box>

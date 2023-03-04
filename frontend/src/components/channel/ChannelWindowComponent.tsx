@@ -1,11 +1,10 @@
 /* eslint-disable no-unused-vars */
 import { Grid , Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
-import React, { createRef, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { createRef, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Socket } from "socket.io-client";
-import { useParams } from "react-router-dom";
-import { WebsocketContext } from "../../contexts/WebsocketContext";
+import { useOutletContext, useParams } from "react-router-dom";
 import useMutationMessage from "../../hooks/chat/useMutationMessage";
 import TextFieldComponent from "../utils/TextFieldComponent";
 import { Message } from "../../types/PrismaType";
@@ -32,7 +31,7 @@ const convertDate = (str: Date): string => {
  * @returns 実際にchatをするトーク画面のコンポーネント
  */
 export default function ChannelWindowComponent() {
-  const socket: Socket = useContext(WebsocketContext);
+  const socket: Socket = useOutletContext();
   const { roomId } = useParams();
   const ChatRoomID: string = roomId as string;
   const { createMessageMutation } = useMutationMessage(ChatRoomID);

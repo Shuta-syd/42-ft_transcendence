@@ -16,6 +16,7 @@ import { ChatPayload } from './dto/chat.dto';
   cors: {
     origin: ['http://localhost:3000'],
   },
+  namespace: '/chat',
 })
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect

@@ -1,8 +1,7 @@
 import { Grid } from "@mui/material";
-import React, { useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Outlet } from "react-router-dom";
-import { Socket } from "socket.io-client";
-import { WebsocketContext } from "../../contexts/WebsocketContext";
+import { io, Socket } from "socket.io-client";
 import ChannelGroupComponent from "./ChannelGroupComponent";
 
 
@@ -10,7 +9,7 @@ import ChannelGroupComponent from "./ChannelGroupComponent";
  * @returns Channel画面のコンポーネント
  */
 export default function ChannelComponent() {
-  const socket: Socket = useContext(WebsocketContext);
+  const socket: Socket = io('http://localhost:8080/chat')
 
   useEffect(() => {
     socket.on('connect', () => {
@@ -21,14 +20,14 @@ export default function ChannelComponent() {
       console.log(`Disconnect: ${socket.id}`);
       socket.disconnect();
     }
-  })
+  }, [socket])
 
 
   return (
     <>
       <Grid container>
-        <ChannelGroupComponent />
-        <Outlet />
+        <ChannelGroupComponent socket={socket} />
+        <Outlet context={socket}/>
       </Grid>
     </>
   )
