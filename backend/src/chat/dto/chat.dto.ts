@@ -26,10 +26,6 @@ export type ChatPayload = {
   id: string;
 };
 
-export type TokenPayload = {
-  key: string;
-};
-
 export type FriendPayload = {
   id: string;
   name: string;

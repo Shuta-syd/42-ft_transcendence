@@ -71,18 +71,18 @@ export default function ChatFriendsComponent() {
   }, [friendData]);
 
   useEffect(() => {
-    socket.on('create_dmRoom', () => {
+    socket.on('joinRoom', () => {
       console.log('crateDMRoom');
     })
   }, [])
 
   useEffect(() => {
-    socket.emit('create_dmRoom', { id: roomID });
+    socket.emit('joinRoom', { id: roomID });
   }, [roomID])
 
   const handleClick = (roomId: string) => {
     console.log('click friend button');
-    socket.emit('create_dmRoom', { id: roomId})
+    socket.emit('joinRoom', { id: roomId})
   }
 
   return (

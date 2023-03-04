@@ -31,6 +31,7 @@ const convertDate = (str: Date): string => {
  * @returns 実際にchatをするトーク画面のコンポーネント
  */
 export default function ChannelWindowComponent() {
+  const socket: Socket = useContext(WebsocketContext);
   const { roomId } = useParams();
   const ChatRoomID: string = roomId as string;
   const { createMessageMutation } = useMutationMessage(ChatRoomID);

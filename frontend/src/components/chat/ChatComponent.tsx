@@ -17,9 +17,6 @@ export default function ChatComponent() {
       console.log(`Connect: ${socket.id}`);
     });
 
-    socket.on('token', (token: {key: string}) => {
-      console.log(token);
-    })
 
     return () => {
       console.log(`Disconnect: ${socket.id}`);

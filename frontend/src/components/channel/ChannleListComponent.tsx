@@ -1,10 +1,12 @@
 /* eslint-disable no-unused-vars */
 import { Avatar, Grid, Typography } from "@mui/material";
 import axios from "axios";
-import React, { useEffect, useLayoutEffect, useState } from "react"
+import React, { useContext, useEffect, useLayoutEffect, useState } from "react"
+import { Socket } from "socket.io-client";
 import { Link, useLocation } from "react-router-dom";
 import PersonIcon from '@mui/icons-material/Person';
 import { ChatRoom } from "../../types/PrismaType";
+import { WebsocketContext } from "../../contexts/WebsocketContext";
 import '../../styles/Chat.css'
 
 /**
@@ -12,6 +14,7 @@ import '../../styles/Chat.css'
  */
 export default function ChannelListComponent() {
   const roomID = useLocation().pathname.split('/')[3];
+  const socket: Socket = useContext(WebsocketContext);
   const [channels, setChannels] = useState<ChatRoom[]>([]);
 
   const getChannels = async ():Promise<ChatRoom[]> => {
@@ -24,6 +27,9 @@ export default function ChannelListComponent() {
     return [];
   }
 
+  useEffect(() => {
+    
+  }, []);
 
   useLayoutEffect(() => {
     getChannels().then((data) => { setChannels(data); })

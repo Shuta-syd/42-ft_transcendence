@@ -10,12 +10,13 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { ChatPayload, TokenPayload } from './dto/chat.dto';
+import { ChatPayload } from './dto/chat.dto';
 
 @WebSocketGateway({
   cors: {
     origin: ['http://localhost:3000'],
   },
+  namespace: '/chat',
 })
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -23,10 +24,16 @@ export class ChatGateway
   @WebSocketServer()
   server: Server;
   private logger: Logger = new Logger('ChatGateway');
-  private key = 0;
 
-  @SubscribeMessage('send_message_room') // to subscribeEvent
-  //@MessageBody clientから送られてくるbody内容
+  handleDisconnect(client: Socket) {
+    this.logger.log(`Client disconnected: ${client.id}`);
+  }
+
+  handleConnection(client: Socket, ...args: any[]) {
+    this.logger.log(`Client connected ${client.id}`);
+  }
+
+  @SubscribeMessage('send_message_room')
   sendMessage(
     @MessageBody() payload: ChatPayload,
     @ConnectedSocket() client: Socket,
@@ -39,12 +46,12 @@ export class ChatGateway
     });
   }
 
-  @SubscribeMessage('create_dmRoom')
-  handleFriendId(
+  @SubscribeMessage('joinRoom')
+  handleJoinRoom(
     @MessageBody() payload: { id: string },
     @ConnectedSocket() client: Socket,
   ) {
-    this.logger.log('handleFriendId');
+    this.logger.log('JoinRoom');
     client.join(payload.id);
   }
 
@@ -52,14 +59,4 @@ export class ChatGateway
     this.logger.log('Init');
   }
 
-  handleDisconnect(client: Socket) {
-    this.logger.log(`Client disconnected: ${client.id}`);
-  }
-
-  handleConnection(client: Socket, ...args: any[]) {
-    this.logger.log(`Client connected ${client.id}`);
-    const token: TokenPayload = { key: this.key.toString() };
-    this.server.to(client.id).emit('token', token);
-    this.key += 1;
-  }
 }
