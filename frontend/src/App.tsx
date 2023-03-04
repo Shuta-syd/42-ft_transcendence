@@ -9,7 +9,7 @@ import GameMatching from "./features/game/GameMatching";
 import GamePlayer1 from "./features/game/GamePlayer1";
 import GamePlayer2 from "./features/game/GamePlayer2";
 import GameObserver from "./features/game/GameObserver";
-import StartGame from "./features/game/StartGame";
+import CreateGameRoom from "./features/game/CreateGameRoom";
 
 function App() {
   axios.defaults.withCredentials = true;
@@ -26,7 +26,7 @@ function App() {
           <Route path="/game/player1" element={<GamePlayer1/>} />
           <Route path="/game/player2" element={<GamePlayer2/>} />
           <Route path="/game/observer" element={<GameObserver/>} />
-          <Route path="/game/startGame" element={<StartGame/>} />
+          <Route path="/game/CreateGameRoom" element={<CreateGameRoom/>} />
         </Routes>
     </>
   )

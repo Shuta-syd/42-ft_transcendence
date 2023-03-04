@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {User} from "../../types/PrismaType";
 import useGameUser from "../../hooks/game/useGameuser";
 
-const StartGame = () => {
+const CreateGameRoom = () => {
 
     const [user, setUser] = useState<User>();
     const UserPromises = useGameUser();
@@ -14,7 +14,7 @@ const StartGame = () => {
 
     return (
         <div>
-            <h1>[Start Game]</h1>
+            <h1>[Create Game]</h1>
             <h2>You are {user?.name}!!!</h2>
             <h2>Wating for someone </h2>
             <p></p>
@@ -22,4 +22,4 @@ const StartGame = () => {
     )
 }
 
-export default StartGame;
+export default CreateGameRoom;
