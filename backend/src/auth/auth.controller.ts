@@ -66,7 +66,7 @@ export class AuthController {
     res.cookie('access_token', '', {
       httpOnly: true,
       secure: false,
-      sameSite: 'none',
+      sameSite: 'lax',
       path: '/',
     });
     return {

@@ -21,21 +21,13 @@ type ChatRoomPayload = { [friendId: string]: string };
 export default function ChatFriendsComponent() {
   const roomID = useLocation().pathname.split('/')[3];
   const socket: Socket = useContext(WebsocketContext);
-  const UserID = 'ba822ee0-7a6e-43a8-98cc-eb93f7433bb5'; // tmp
-  const { data: friendData } = useQueryFriend(UserID);
+  const { data: friendData } = useQueryFriend();
   const [friends, setFriends] = useState<FriendPayload[]>([]);
 
   const getUserDM = async (): Promise<ChatRoomPayload> => {
     try {
-      const res = await axios.get(`http://localhost:8080/chat/dm/${UserID}`);
-      const updatedRooms: ChatRoomPayload = {};
-      res.data.map((room: any) => {
-        room.members.map((member: any) => {
-          if (UserID !== member.userId)
-          updatedRooms[member.userId] = room.id;
-        });
-      });
-      return updatedRooms;
+      const res = await axios.get(`http://localhost:8080/chat/dm`);
+      return res.data;
     } catch (error) {
       console.log(error);
     }
@@ -43,9 +35,9 @@ export default function ChatFriendsComponent() {
   };
 
   useEffect(() => {
-    const createDMRoom = async (userID: string, friendId: string): Promise<string> => {
+    const createDMRoom = async (friendId: string): Promise<string> => {
       try {
-        const roomCrateDto = { isDM: true, userId: userID };
+        const roomCrateDto = { isDM: true };
         const room = await axios.post(`http://localhost:8080/chat/room`, roomCrateDto);
         const addMemberDto = { userId: friendId, roomId: room.data.id };
         await axios.post(`http://localhost:8080/chat/member/add`, addMemberDto);
@@ -63,7 +55,7 @@ export default function ChatFriendsComponent() {
         const updatedFriends = friendData.map(async (friend) => {
           const roomId: string | undefined = updatedRooms[friend.id];
           if (roomId === undefined) {
-            const newRoomId = await createDMRoom(UserID, friend.id);
+            const newRoomId = await createDMRoom(friend.id);
             return { id: newRoomId, name: friend.name };
           }
           return { id: roomId, name: friend.name };

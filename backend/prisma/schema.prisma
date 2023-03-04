@@ -41,10 +41,10 @@ model Message {
   message   String
   roomId    String
   room      ChatRoom @relation(fields: [roomId], references: [id])
+  senderName String
   memberId  String
   member    Member   @relation(fields: [memberId], references: [id])
 }
-// id系 String型してuuid()にしてもいいかも
 
 model Match {
   id        Int     @id @default(autoincrement())

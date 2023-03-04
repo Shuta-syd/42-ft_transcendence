@@ -4,6 +4,8 @@ export class SendChatDto {
   @ApiProperty()
   memberId: string;
   @ApiProperty()
+  senderName: string;
+  @ApiProperty()
   message: string;
 }
 
@@ -14,7 +16,6 @@ export class AddMemberDto {
 
 export class CreateChatRoom {
   isDM: string;
-  userId: string;
 }
 
 export type ChatPayload = {
@@ -26,3 +27,10 @@ export type ChatPayload = {
 export type TokenPayload = {
   key: string;
 };
+
+export type FriendPayload = {
+  id: string;
+  name: string;
+};
+
+export type ChatRoomPayload = { [friendId: string]: string };

@@ -7,7 +7,7 @@ function useQueryChatLog(roomId: string) {
   const router = useNavigate();
 
    const getChatLog = async () => {
-    const { data } = await axios.get<Message[]>(`http://localhost:8080/chat/room/log/${roomId}`);
+     const { data } = await axios.get<Message[]>(`http://localhost:8080/chat/room/log/${roomId}`);
     return data;
   }
 

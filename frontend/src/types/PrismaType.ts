@@ -23,6 +23,7 @@ export type ChatRoom = {
 export type Message = {
   id: string
   createdAt: Date
+  senderName: string
   message: string
   memberId: string
   roomId: string
