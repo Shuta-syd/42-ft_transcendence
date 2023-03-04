@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
-import { Grid , IconButton, Typography } from "@mui/material";
+import { Grid , Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import React, { createRef, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Socket } from "socket.io-client";
@@ -13,6 +12,7 @@ import getUserName from "../../utils/getUserName";
 import getMemberId from "../../utils/getMemberId";
 import getNow from "../../utils/getNow";
 import convertDate from "../../utils/convertDate";
+import MoreOptionButton from "../utils/MoreOptionButton";
 
 type MessagePayload = {
   time: string;
@@ -36,6 +36,7 @@ export default function ChannelWindowComponent() {
   const [text, setText] = useState('');
   const [userName, setUserName] = useState('');
   const [roomName, setRoomName] = useState('');
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [chatLog, setChatLog] = useState<ChatLog>([]);
   const latestChatRef = createRef<HTMLDivElement>();
 
@@ -122,9 +123,7 @@ export default function ChannelWindowComponent() {
           <Box sx={{
             marginRight: '1vh'
           }}>
-            <IconButton color="error">
-              <MoreHorizIcon />
-            </IconButton>
+            <MoreOptionButton isOpen={isOpen} setIsOpen={setIsOpen} />
           </Box>
         </Box>
         <Box
