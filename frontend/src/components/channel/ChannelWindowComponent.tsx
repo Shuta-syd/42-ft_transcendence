@@ -1,7 +1,6 @@
-/* eslint-disable no-unused-vars */
 import { Grid , Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
-import React, { createRef, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { createRef, useEffect, useLayoutEffect, useRef, useState } from "react";
 import axios from "axios";
 import { Socket } from "socket.io-client";
 import { useOutletContext, useParams } from "react-router-dom";
@@ -11,6 +10,7 @@ import { Message } from "../../types/PrismaType";
 import getUserName from "../../utils/getUserName";
 import getMemberId from "../../utils/getMemberId";
 import getNow from "../../utils/getNow";
+import convertDate from "../../utils/convertDate";
 
 type MessagePayload = {
   time: string;
@@ -20,12 +20,6 @@ type MessagePayload = {
 
 
 type ChatLog = MessagePayload[];
-
-const convertDate = (str: Date): string => {
-  const date = new Date(str);
-  return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}
-  ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-}
 
 /**
  * @returns 実際にchatをするトーク画面のコンポーネント
@@ -77,7 +71,7 @@ export default function ChannelWindowComponent() {
     latestChatRef.current?.scrollIntoView();
   }, [chatLog])
 
-  const sendChat = useCallback(() => {
+  const sendChat = () => {
     if (text === '')
       return;
     getMemberId(ChatRoomID).then((id) => {
@@ -90,7 +84,7 @@ export default function ChannelWindowComponent() {
       });
       setText('');
     })
-  }, [text]);
+  };
 
   return (
     <Grid item xs={9} position='relative'>

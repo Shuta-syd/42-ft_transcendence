@@ -10,6 +10,7 @@ import { Message } from "../../types/PrismaType";
 import getUserName from "../../utils/getUserName";
 import getNow from "../../utils/getNow";
 import getMemberId from "../../utils/getMemberId";
+import convertDate from "../../utils/convertDate";
 
 type MessagePayload = {
   time: string;
@@ -19,12 +20,6 @@ type MessagePayload = {
 
 
 type ChatLog = MessagePayload[];
-
-const convertDate = (str: Date): string => {
-  const date = new Date(str);
-  return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}
-  ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-}
 
 /**
  * @returns 実際にchatをするトーク画面のコンポーネント
@@ -84,12 +79,12 @@ export default function ChatWindowComponent() {
   }, [chatLog])
 
 
-  const sendChat = useCallback(() => {
+  const sendChat = () => {
     if (text === '')
       return;
     getMemberId(ChatRoomID).then((id) => {
       console.log('Message Emit');
-      socket.emit('send_message_room', { senderName: userName , text, time: getNow(), id: roomId })
+      socket.emit('send_message_room', { senderName: userName, text, time: getNow(), id: roomId })
       createMessageMutation.mutate({
         message: text,
         senderName: userName,
@@ -97,7 +92,7 @@ export default function ChatWindowComponent() {
       });
       setText('');
     })
-  }, [text]);
+  };
 
   return (
     <Grid item xs={9} position='relative'>
