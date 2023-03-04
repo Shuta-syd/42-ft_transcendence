@@ -1,5 +1,6 @@
 import { IconButton, InputAdornment, TextField } from "@mui/material";
 import SendIcon from '@mui/icons-material/Send';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 import React from "react";
 
 type Props = {
@@ -29,7 +30,14 @@ function TextFieldComponent(props: Props) {
           }
         }}
         InputProps={{
-          style: {color: '#EEEEEE' },
+          style: { color: '#EEEEEE' },
+          startAdornment: (
+            <InputAdornment position="start">
+              <IconButton color="primary">
+                <AddCircleIcon fontSize="medium"/>
+              </IconButton>
+            </InputAdornment>
+          ),
           endAdornment: (
             <InputAdornment position="end">
               <IconButton color="primary" onClick={handleOnClick}>
