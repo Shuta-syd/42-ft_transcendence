@@ -7,9 +7,17 @@ import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
 import { MatchModule } from './match/match.module';
 import { AuthModule } from './auth/auth.module';
+import { GameGateway } from './game/game.gateway';
 
 @Module({
-  imports: [ChatModule, PrismaModule, UserModule, MatchModule, AuthModule],
+  imports: [
+    ChatModule,
+    PrismaModule,
+    UserModule,
+    MatchModule,
+    AuthModule,
+    GameGateway,
+  ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
 })
