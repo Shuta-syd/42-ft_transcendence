@@ -111,8 +111,11 @@ export class ChatController {
     summary: 'Add a user to join a room',
   })
   @Post('member/add')
-  async addMember(@Body() dto: AddMemberDto): Promise<Member> {
-    return this.chatService.addMember(dto.userId, dto.roomId);
+  async addMember(
+    @Req() req: Request,
+    @Body() dto: AddMemberDto,
+  ): Promise<Member> {
+    return this.chatService.addMember(req.user.id, dto.roomId);
   }
 
   @ApiOperation({
