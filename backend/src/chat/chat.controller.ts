@@ -114,7 +114,7 @@ export class ChatController {
     @Req() req: Request,
     @Body() dto: AddMemberDto,
   ): Promise<Member> {
-    return this.chatService.addMember(req.user.id, dto.roomId);
+    return this.chatService.addMember(req.user.id, dto.roomId, dto.status);
   }
 
   @ApiOperation({
