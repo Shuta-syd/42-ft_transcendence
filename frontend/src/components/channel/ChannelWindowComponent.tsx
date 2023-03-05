@@ -13,6 +13,7 @@ import getMemberId from "../../utils/getMemberId";
 import getNow from "../../utils/getNow";
 import convertDate from "../../utils/convertDate";
 import MoreOptionButton from "../utils/MoreOptionButton";
+import UserParticipant from "./UserParticipants";
 
 type MessagePayload = {
   time: string;
@@ -31,8 +32,9 @@ export default function ChannelWindowComponent() {
   const { roomId } = useParams();
   const ChatRoomID: string = roomId as string;
   const { createMessageMutation } = useMutationMessage(ChatRoomID);
-  const [subtitleHeight, setSubtitleHeight] = useState<string>('0');
+  const [subtitleHeight, setSubtitleHeight] = useState<string>('0px');
   const subtitleElm = useRef<HTMLInputElement>(null);
+  const [GridWidth, setGridWidth] = useState<string>('100%');
   const [text, setText] = useState('');
   const [userName, setUserName] = useState('');
   const [roomName, setRoomName] = useState('');
@@ -60,7 +62,7 @@ export default function ChannelWindowComponent() {
     if (subtitleElm.current) {
       setSubtitleHeight(`${(subtitleElm.current.clientHeight + 3.5).toString()}px`);
     }
-  }, [subtitleElm, subtitleHeight])
+  }, [subtitleElm, subtitleHeight, isOpen])
 
   useEffect(() => {
     getUserName().then((name) => { setUserName(name); });
@@ -105,6 +107,7 @@ export default function ChannelWindowComponent() {
     <Grid item xs={9} position='relative'>
       <Stack spacing={0}>
         <Box
+          width={GridWidth}
           borderTop={1} borderBottom={2.5} borderColor={'#787A91'}
           sx={{
             display: 'flex',
@@ -120,16 +123,21 @@ export default function ChannelWindowComponent() {
             >
             @ {roomName}
           </Typography>
-          <Box sx={{
-            marginRight: '1vh'
-          }}>
-            <MoreOptionButton isOpen={isOpen} setIsOpen={setIsOpen} />
+          <Box
+            sx={{
+            marginRight: '1.5vw'
+            }}
+          >
+            <MoreOptionButton isOpen={isOpen} setIsOpen={setIsOpen} DrawerElement={<UserParticipant />} setGridWidth={setGridWidth} />
           </Box>
         </Box>
         <Box
-          maxHeight={`calc(94vh - ${subtitleHeight})`}
+          maxHeight={`calc(94vh - ${subtitleHeight}px)`}
         >
-          <Box sx={{ color: '#EEEEEE', backgroundColor: '#0F044C', overflow: 'auto' }} height={`calc(85vh - ${subtitleHeight})`}>
+          <Box
+            sx={{ color: '#EEEEEE', backgroundColor: '#0F044C', overflow: 'auto' ,overflowWrap: 'break-word', wordWrap: 'break-word' }}
+            maxWidth={GridWidth} height={`calc(85vh - ${subtitleHeight})`}
+          >
           {chatLog.map((chat, idx) => (
               <div key={idx}>
                 <div>{chat.time}</div>
@@ -139,7 +147,7 @@ export default function ChannelWindowComponent() {
             <div ref={latestChatRef} />
           </Box>
           <Box height={'9vh'} sx={{ backgroundColor: '#0F044C' }}>
-            <TextFieldComponent handleOnChange={setText} handleOnClick={sendChat} value={text}/>
+            <TextFieldComponent textFieldWidth={GridWidth} handleOnChange={setText} handleOnClick={sendChat} value={text} />
           </Box>
         </Box>
       </Stack>

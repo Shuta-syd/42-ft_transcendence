@@ -3,19 +3,20 @@ import SendIcon from '@mui/icons-material/Send';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import React from "react";
 
-type Props = {
+type TextFieldComponentProps = {
+  textFieldWidth?: string ;
   handleOnChange: any;
   handleOnClick: any;
   value: string;
 }
 
 
-function TextFieldComponent(props: Props) {
-  const { handleOnChange, handleOnClick, value } = props;
+function TextFieldComponent(props: TextFieldComponentProps) {
+  const { handleOnChange, handleOnClick, value, textFieldWidth } = props;
 
   return (
     <div>
-      <TextField fullWidth
+      <TextField
         type={"text"}
         variant="outlined"
         placeholder="new message"
@@ -23,6 +24,7 @@ function TextFieldComponent(props: Props) {
         value={value}
         onChange={(e) => { handleOnChange(e.target.value) }}
         sx={{
+          width: textFieldWidth === undefined ? '100%' : textFieldWidth,
           '& .MuiInputBase-root': {
             border: '2px solid #787A91',
             overflow: 'hidden',
