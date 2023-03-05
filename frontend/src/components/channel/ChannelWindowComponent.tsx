@@ -128,7 +128,11 @@ export default function ChannelWindowComponent() {
             marginRight: '1.5vw'
             }}
           >
-            <MoreOptionButton isOpen={isOpen} setIsOpen={setIsOpen} DrawerElement={<UserParticipant />} setGridWidth={setGridWidth} />
+            <MoreOptionButton
+              isOpen={isOpen} setIsOpen={setIsOpen}
+              DrawerElement={<UserParticipant roomId={ChatRoomID} />}
+              setGridWidth={setGridWidth}
+            />
           </Box>
         </Box>
         <Box

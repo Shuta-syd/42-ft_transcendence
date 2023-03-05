@@ -12,14 +12,14 @@ type MoreOptionButtonProps = {
 export default function MoreOptionButton(props: MoreOptionButtonProps) {
   const { isOpen, setIsOpen, DrawerElement, setGridWidth } = props;
 
-  const handleOnOpen = () => {
-    setGridWidth(`calc(100% - 18vw)`);
-    setIsOpen(true);
-  }
-
-  const handleOnClose = () => {
-    setGridWidth(`100%`);
-    setIsOpen(false);
+  const handleOnClick = () => {
+    if (isOpen === false) {
+      setGridWidth(`calc(100% - 18vw)`);
+      setIsOpen(true);
+    } else {
+      setGridWidth(`100%`);
+      setIsOpen(false);
+    }
   }
 
   return (
@@ -28,18 +28,19 @@ export default function MoreOptionButton(props: MoreOptionButtonProps) {
         color="error"
         edge='end'
         aria-label="open user list"
-        onClick={handleOnOpen}
+        onClick={handleOnClick}
         >
         <MoreHorizIcon />
       </IconButton>
       <Drawer
         open={isOpen}
-        onClick={handleOnClose}
         anchor="right"
         variant="persistent"
         sx={{
           '& .MuiDrawer-paper': {
+            top: '6vh',
             width: '18vw',
+            background: '#141E61',
           },
         }}
       >
