@@ -4,7 +4,9 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 
 type MemberPayload = {
+  id: string;
   name: string;
+  isMute: boolean;
 }
 
 type UserParticipantProps = {
@@ -15,17 +17,18 @@ export default function UserParticipant(props: UserParticipantProps) {
   const { roomId } = props;
   const [members, setMembers] = useState<MemberPayload[]>([]);
 
-  useEffect(() => {
-    const loadMember = async () => {
-      setMembers([]);
-      const { data } = await axios.get(`http://localhost:8080/chat/room/${roomId}`);
-      if (data.members) {
-        data.members.map((member: any) => {
-          const newMember: MemberPayload = { name: member.user.name };
-          setMembers(prevMembers => [...prevMembers, newMember]);
-        })
-      }
+  const loadMember = async () => {
+    setMembers([]);
+    const { data } = await axios.get(`http://localhost:8080/chat/room/${roomId}`);
+    if (data.members) {
+      data.members.map((member: any) => {
+        const newMember: MemberPayload = { id: member.id, name: member.user.name, isMute: member.isMute };
+        setMembers(prevMembers => [...prevMembers, newMember]);
+      })
     }
+  }
+
+  useEffect(() => {
     loadMember();
   }, [roomId])
 
@@ -33,8 +36,14 @@ export default function UserParticipant(props: UserParticipantProps) {
     console.log('Kick button');
   }
 
-  const handleMute = async () => {
-    console.log('Mute button');
+  const handleMute = async (memberId: string, isMute: boolean) => {
+    try {
+      const res = await axios.patch(`http://localhost:8080/chat/channel/mute`, { roomId, memberId, status: !isMute });
+      await loadMember();
+      console.log(res.data);
+    } catch (error) {
+      console.log(error)
+    }
   }
 
 
@@ -62,7 +71,13 @@ export default function UserParticipant(props: UserParticipantProps) {
           </Grid>
           <Grid>
             <Button variant="contained" size="small" onClick={handleKick}>Kick</Button>
-            <Button variant="contained" size="small" onClick={handleMute}>Mute</Button>
+            <Button
+              variant="contained"
+              size="small"
+              onClick={async () => { await handleMute(member.id, member.isMute); }}
+            >
+              {member.isMute ? 'unMute' : 'Mute'}
+            </Button>
           </Grid>
         </Grid>
       ))}

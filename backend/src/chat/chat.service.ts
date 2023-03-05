@@ -214,11 +214,9 @@ export class ChatService {
       };
     }
 
-    this.prisma.member.update({
+    await this.prisma.member.update({
       where: { id: memberId },
-      data: {
-        isMute: status,
-      },
+      data: { isMute: status === true ? true : false },
     });
 
     return {
