@@ -1,8 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { ChatRoom, Member, MemberRole, Message } from '@prisma/client';
+import { Msg } from 'src/auth/dto/auth.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
-import { ChatRoomPayload, CreateChatRoom, SendChatDto } from './dto/chat.dto';
+import {
+  ChatRoomPayload,
+  CreateChatRoom,
+  muteMemberDto,
+  SendChatDto,
+} from './dto/chat.dto';
 
 @Injectable()
 export class ChatService {
@@ -72,6 +78,22 @@ export class ChatService {
       (member: Member) => member.userId === userId,
     );
     return userMember[0].id;
+  }
+
+  /**
+   * @param userId APIを叩いているユーザのID
+   * @param roomId 所属するroomID
+   */
+  async getMyMember(userId: string, roomId: string): Promise<Member> {
+    const members = await this.prisma.chatRoom
+      .findUnique({
+        where: { id: roomId },
+      })
+      .members();
+    const userMember = members.filter(
+      (member: Member) => member.userId === userId,
+    );
+    return userMember[0];
   }
 
   /**
@@ -178,5 +200,29 @@ export class ChatService {
       },
     });
     return channels;
+  }
+
+  /**
+   * @description 特定のメンバーをMuteもしくはunMuteにする（Owner or Adminのみ）
+   */
+  async muteMember(userId: string, dto: muteMemberDto): Promise<Msg> {
+    const { roomId, memberId, status } = dto;
+    const executor = await this.getMyMember(userId, roomId);
+    if (executor.role !== 'OWNER' && executor.role !== 'ADMIN') {
+      return {
+        message: 'You are not Admin or Owner',
+      };
+    }
+
+    this.prisma.member.update({
+      where: { id: memberId },
+      data: {
+        isMute: status,
+      },
+    });
+
+    return {
+      message: 'Mute status update',
+    };
   }
 }

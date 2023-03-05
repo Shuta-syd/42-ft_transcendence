@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-import { Avatar, Box, Grid, Typography } from "@mui/material";
+import { Avatar, Box, Button, Grid, Typography } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -30,6 +29,14 @@ export default function UserParticipant(props: UserParticipantProps) {
     loadMember();
   }, [roomId])
 
+  const handleKick = async () => {
+    console.log('Kick button');
+  }
+
+  const handleMute = async () => {
+    console.log('Mute button');
+  }
+
 
   return (
     <Box>
@@ -43,11 +50,19 @@ export default function UserParticipant(props: UserParticipantProps) {
       </Typography>
       {members.map((member, idx) => (
         <Grid container padding={1} key={idx}>
-          <Grid item mr={2}>
-            <Avatar ><PersonIcon /></Avatar>
+          <Grid item xs={5}>
+            <Grid container>
+              <Grid item mr={2}>
+                <Avatar ><PersonIcon /></Avatar>
+              </Grid>
+              <Grid item>
+                <Typography variant="subtitle1" sx={{fontWeight: 700, color: '#EEEEEE'}} >{member.name}</Typography>
+              </Grid>
+            </Grid>
           </Grid>
-          <Grid item>
-            <Typography variant="subtitle1" sx={{fontWeight: 700, color: '#EEEEEE'}} >{member.name}</Typography>
+          <Grid>
+            <Button variant="contained" size="small" onClick={handleKick}>Kick</Button>
+            <Button variant="contained" size="small" onClick={handleMute}>Mute</Button>
           </Grid>
         </Grid>
       ))}

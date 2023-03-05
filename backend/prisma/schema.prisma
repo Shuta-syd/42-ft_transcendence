@@ -26,6 +26,7 @@ model Member {
   user     User     @relation(fields: [userId], references: [id])
   messages Message[]
   role   MemberRole  @default(NORMAL)
+  isMute Boolean @default(false)
 }
 
 model ChatRoom {

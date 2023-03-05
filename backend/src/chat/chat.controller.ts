@@ -13,6 +13,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ChatRoom, Member, Message, User } from '@prisma/client';
 import { Request } from 'express';
+import { Msg } from 'src/auth/dto/auth.dto';
 import {
   PrismaChatRoom,
   PrismaMessage,
@@ -23,6 +24,7 @@ import {
   AddMemberDto,
   ChatRoomPayload,
   CreateChatRoom,
+  muteMemberDto,
   SendChatDto,
 } from './dto/chat.dto';
 
@@ -136,5 +138,17 @@ export class ChatController {
   })
   async getChannels(@Req() req: Request): Promise<ChatRoom[]> {
     return this.chatService.getChannels(req.user.id);
+  }
+
+  @Patch('channel/mute')
+  @ApiOperation({
+    description: 'admin or owner mute the member',
+    summary: 'admin or owner mute the member',
+  })
+  async muteMember(
+    @Req() req: Request,
+    @Body() dto: muteMemberDto,
+  ): Promise<Msg> {
+    return this.chatService.muteMember(req.user.id, dto);
   }
 }
