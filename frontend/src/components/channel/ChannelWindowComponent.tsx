@@ -9,7 +9,6 @@ import useMutationMessage from "../../hooks/chat/useMutationMessage";
 import TextFieldComponent from "../utils/TextFieldComponent";
 import { Message } from "../../types/PrismaType";
 import getUserName from "../../utils/getUserName";
-import getNow from "../../utils/getNow";
 import convertDate from "../../utils/convertDate";
 import MoreOptionButton from "../utils/MoreOptionButton";
 import UserParticipant from "./UserParticipants";
@@ -30,7 +29,7 @@ export default function ChannelWindowComponent() {
   const socket: Socket = useOutletContext();
   const { roomId } = useParams();
   const ChatRoomID: string = roomId as string;
-  const { createMessageMutation } = useMutationMessage(ChatRoomID);
+  const { createMessageMutation } = useMutationMessage(socket, ChatRoomID);
   const [subtitleHeight, setSubtitleHeight] = useState<string>('0px');
   const subtitleElm = useRef<HTMLInputElement>(null);
   const [GridWidth, setGridWidth] = useState<string>('100%');
@@ -91,7 +90,6 @@ export default function ChannelWindowComponent() {
     if (text === '')
       return;
     console.log('Message Emit');
-    socket.emit('send_message_room', { senderName: userName , text, time: getNow(), id: roomId })
     createMessageMutation.mutate({
       message: text,
       senderName: userName,

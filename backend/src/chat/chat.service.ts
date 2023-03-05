@@ -154,9 +154,9 @@ export class ChatService {
     userId: string,
     roomId: string,
     dto: SendChatDto,
-  ): Promise<Message> {
+  ): Promise<Message | undefined> {
     const member = await this.getMyMember(userId, roomId);
-    if (member.isMute === true) return null;
+    if (member.isMute === true) throw new Error('You are not right');
 
     return this.prisma.message.create({
       data: {
