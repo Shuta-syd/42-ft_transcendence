@@ -166,11 +166,18 @@ export class ChatService {
    * @param dto メッセージ送信に必要なSendChatDto
    * @returns 送ったメッセージのデータ
    */
-  async sendChat(roomId: string, dto: SendChatDto): Promise<Message> {
+  async sendChat(
+    userId: string,
+    roomId: string,
+    dto: SendChatDto,
+  ): Promise<Message> {
+    const member = await this.getMyMember(userId, roomId);
+    if (member.isMute === true) return null;
+
     return this.prisma.message.create({
       data: {
         member: {
-          connect: { id: dto.memberId },
+          connect: { id: member.id },
         },
         room: {
           connect: { id: roomId },

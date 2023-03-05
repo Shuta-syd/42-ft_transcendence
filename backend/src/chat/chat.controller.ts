@@ -45,10 +45,11 @@ export class ChatController {
     type: PrismaMessage,
   })
   async sendChat(
+    @Req() req: Request,
     @Param('id') roomId: string,
     @Body() dto: SendChatDto,
   ): Promise<Message> {
-    return this.chatService.sendChat(roomId, dto);
+    return this.chatService.sendChat(req.user.id, roomId, dto);
   }
 
   @Post('room')

@@ -7,8 +7,13 @@ function useMutationMessage(roomId: string) {
   const queryClient = useQueryClient();
   const router = useNavigate();
 
+  type SendMessageDto = {
+    senderName: string
+    message: string
+  }
+
   const createMessageMutation = useMutation(
-    async (message: Omit<Message, 'id' | 'createdAt' | 'roomId'>) => {
+    async (message: SendMessageDto) => {
       const res = await axios.post(`http://localhost:8080/chat/room/${roomId}` , message);
       return res.data;
     },
