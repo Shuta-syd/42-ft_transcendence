@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Avatar, Box, Button, Grid, Typography } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
@@ -7,6 +8,8 @@ type MemberPayload = {
   id: string;
   name: string;
   isMute: boolean;
+  userId: string;
+  role: string;
 }
 
 type UserParticipantProps = {
@@ -15,6 +18,7 @@ type UserParticipantProps = {
 
 export default function UserParticipant(props: UserParticipantProps) {
   const { roomId } = props;
+  const [userId, setUserId] = useState<string>();
   const [members, setMembers] = useState<MemberPayload[]>([]);
 
   const loadMember = async () => {
@@ -22,14 +26,25 @@ export default function UserParticipant(props: UserParticipantProps) {
     const { data } = await axios.get(`http://localhost:8080/chat/room/${roomId}`);
     if (data.members) {
       data.members.map((member: any) => {
-        const newMember: MemberPayload = { id: member.id, name: member.user.name, isMute: member.isMute };
+        const newMember: MemberPayload = {
+          id: member.id, name: member.user.name, isMute: member.isMute,
+          userId: member.user.id, role: member.role
+        };
         setMembers(prevMembers => [...prevMembers, newMember]);
       })
     }
   }
 
+  const getUserId = async () => {
+    const { data } = await axios.get(`http://localhost:8080/user`);
+    if (data){
+      setUserId(data.id);
+    }
+  }
+
   useEffect(() => {
     loadMember();
+    getUserId();
   }, [roomId])
 
   const handleKick = async () => {
@@ -69,16 +84,19 @@ export default function UserParticipant(props: UserParticipantProps) {
               </Grid>
             </Grid>
           </Grid>
-          <Grid>
-            <Button variant="contained" size="small" onClick={handleKick}>Kick</Button>
-            <Button
-              variant="contained"
-              size="small"
-              onClick={async () => { await handleMute(member.id, member.isMute); }}
-            >
-              {member.isMute ? 'unMute' : 'Mute'}
-            </Button>
-          </Grid>
+          {member.userId === userId || member.role !== 'NORMAL' ?
+            (<></>) : (
+              <Grid>
+                <Button variant="contained" size="small" onClick={handleKick}>Kick</Button>
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={async () => { await handleMute(member.id, member.isMute); }}
+                >
+                  {member.isMute ? 'unMute' : 'Mute'}
+                </Button>
+              </Grid>
+            )}
         </Grid>
       ))}
     </Box>
