@@ -154,7 +154,7 @@ export class ChatService {
     userId: string,
     roomId: string,
     dto: SendChatDto,
-  ): Promise<Message | undefined> {
+  ): Promise<Message> {
     const member = await this.getMyMember(userId, roomId);
     if (member.isMute === true) throw new Error('You are not right');
 

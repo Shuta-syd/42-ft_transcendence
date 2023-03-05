@@ -80,13 +80,20 @@ export default function UserParticipant(props: UserParticipantProps) {
                 <Avatar ><PersonIcon /></Avatar>
               </Grid>
               <Grid item>
-                <Typography variant="subtitle1" sx={{fontWeight: 700, color: '#EEEEEE'}} >{member.name}</Typography>
+                <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#EEEEEE' }} >
+                  {member.name}
+                </Typography>
+                {member.userId === userId ? (
+                  <Typography variant="subtitle2" sx={{ fontWeight: 500, color: '#EEEEEE' }} >
+                    You
+                  </Typography>
+                ) : (<></>)}
               </Grid>
             </Grid>
           </Grid>
           {member.userId === userId || member.role !== 'NORMAL' ?
             (<></>) : (
-              <Grid>
+              <Grid item>
                 <Button variant="contained" size="small" onClick={handleKick}>Kick</Button>
                 <Button
                   variant="contained"
