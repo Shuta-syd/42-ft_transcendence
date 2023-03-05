@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ChatRoom, Member, Message, RoomRole } from '@prisma/client';
+import { ChatRoom, Member, MemberRole, Message } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import { ChatRoomPayload, CreateChatRoom, SendChatDto } from './dto/chat.dto';
@@ -82,7 +82,7 @@ export class ChatService {
   async addMember(
     userId: string,
     roomId: string,
-    status: RoomRole,
+    status: MemberRole,
   ): Promise<Member> {
     return this.prisma.member.create({
       data: {
