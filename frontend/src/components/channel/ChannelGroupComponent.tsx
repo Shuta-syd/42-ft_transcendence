@@ -2,7 +2,8 @@ import { Grid, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import React, { useEffect, useRef, useState } from "react";
 import { Socket } from "socket.io-client";
-import CustomPlusButton from "../utils/CustomPlusButton";
+import CustomDialogButton from "../utils/CustomDialogButton";
+import ChannelCreateDialog from "./ChannelCreateDialog";
 import ChannelListComponent from "./ChannleListComponent";
 
 type ChannelGroupComponentProps = {
@@ -51,7 +52,7 @@ export default function ChannelGroupComponent(props: ChannelGroupComponentProps)
                 marginRight: '0.5vw'
               }}
             >
-              <CustomPlusButton />
+              <CustomDialogButton DialogComponent={ChannelCreateDialog} />
             </Box>
           </Box>
           <Stack
