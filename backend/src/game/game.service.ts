@@ -19,7 +19,9 @@ export class GameService {
           player2: '',
         },
       });
+      // ここの処理は改善できそう
       tmpGame = await game;
+      return game;
     } else {
       return this.prisma.game.update({
         where: {
