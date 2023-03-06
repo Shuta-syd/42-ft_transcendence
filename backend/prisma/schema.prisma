@@ -53,3 +53,9 @@ model Match {
   winner_id Int
 }
 
+
+model Game {
+  id        Int     @id @default(autoincrement())
+  player1   String
+  player2   String
+}
