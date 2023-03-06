@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { assignPlayerReq, assignPlayerRes } from './dto/game.dto';
+import { assignPlayerReq } from './dto/game.dto';
 import { Game } from '@prisma/client';
-let playerId = 0;
 
+let playerId = 0;
+let tmpGame: Game;
 
 @Injectable()
 export class GameService {
@@ -12,14 +13,22 @@ export class GameService {
     playerId += 1;
     // player id is odd number then create new game
     if (playerId % 2 != 0) {
-      return this.prisma.game.create({
+      const game = this.prisma.game.create({
         data: {
           player1: dto.playerName,
           player2: '',
         },
       });
+      tmpGame = await game;
     } else {
-      return this.prisma.game.
+      return this.prisma.game.update({
+        where: {
+          id: tmpGame.id,
+        },
+        data: {
+          player2: dto.playerName,
+        },
+      });
     }
   }
 }
