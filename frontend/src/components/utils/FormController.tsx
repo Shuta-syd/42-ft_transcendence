@@ -1,7 +1,7 @@
 import { TextField } from "@mui/material";
 import React from "react";
 import { Controller } from "react-hook-form";
-import { FromControllerProps } from "./type/FormController";
+import { FromControllerProps } from "../../types/FormController";
 
 function FormController(props: FromControllerProps) {
   const { name, control, placeholder } = props;
