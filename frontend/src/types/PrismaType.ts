@@ -36,4 +36,9 @@ export type Match = {
   winner_id: string
 }
 
+export type Game = {
+  id:      number
+  player1:  String
+  player2:  String
+}
 

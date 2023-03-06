@@ -1,5 +1,5 @@
 import axios from "axios";
-import {User} from "../../types/PrismaType";
+import { User, Game} from "../../types/PrismaType";
 
 function useGameUser() {
     const getMatches = async () => {
@@ -9,4 +9,15 @@ function useGameUser() {
     return getMatches();
 }
 
+function GameRoomReq(playerName: string | undefined) {
+        const getMatches = async () => {
+            const { data } = await axios.post<Game>(`http://localhost:8080/game/newplayer`, {
+                playerName,
+            });
+            return data;
+        }
+        return getMatches();
+}
+
 export default useGameUser;
+export { GameRoomReq };

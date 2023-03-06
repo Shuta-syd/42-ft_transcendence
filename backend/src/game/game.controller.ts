@@ -9,7 +9,7 @@ export class GameController {
 
   @Post('newplayer')
   async setplayer(
-    @Body() assignPlayerReqDto: assignPlayerReq | any, // assignPlayerReq の型もしくは any を指定
+    @Body() assignPlayerReqDto: string | any, // assignPlayerReq の型もしくは any を指定
   ): Promise<Game | null> {
     return this.gameService.handleAssignPlayerReq(assignPlayerReqDto);
   }
