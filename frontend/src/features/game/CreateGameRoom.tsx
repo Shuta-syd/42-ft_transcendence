@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useRef} from "react";
 import {Link} from "react-router-dom";
 import {Game, User} from "../../types/PrismaType";
-import useGameUser, { GameRoomReq } from '../../hooks/game/useGameuser';
+import { GameRoomReq, useGameUser } from '../../hooks/game/useGameuser';
 
 
 // let PlayerType: number;
@@ -43,7 +43,7 @@ const CreateGameRoom = () => {
                 </div>
             );
         if (PlayerType === 2)
-            return(
+            return (
                 <div>
                     <Link to={"/game/player2"}>Player2</Link>
                 </div>
@@ -54,8 +54,8 @@ const CreateGameRoom = () => {
             <h1>[Create Game]</h1>
             <h2>You are {user?.name}!!!</h2>
             <h2>You are in {game?.id}!!!</h2>
-            <h2>Player1 is  {game?.player1.valueOf()}!!!</h2>
-            <h2>Player2 is  {game?.player2.valueOf()}!!!</h2>
+            <h2>Player1 is  {game?.player1.toString()}!!!</h2>
+            <h2>Player2 is  {game?.player2.toString()}!!!</h2>
             <h2>Wating for someone </h2>
             <div>
                 <Link to={"/game/player1"}>Player1</Link>

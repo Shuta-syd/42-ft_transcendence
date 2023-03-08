@@ -8,10 +8,12 @@ let tmpGame: Game;
 @Injectable()
 export class GameService {
   constructor(private prisma: PrismaService) {}
-  async handleAssignPlayerReq(dto: string): Promise<Game | null> {
+  async handleAssignPlayerReq(
+    assignPlayerReqDto: string,
+  ): Promise<Game | null> {
     playerId += 1;
     // player id is odd number then create new game
-    const tmp = String(dto.valueOf());
+    const tmp = String(assignPlayerReqDto);
     if (playerId % 2 != 0) {
       const game = this.prisma.game.create({
         data: {
