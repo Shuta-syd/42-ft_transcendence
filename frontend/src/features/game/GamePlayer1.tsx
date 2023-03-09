@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import { GameSocket } from "../../contexts/WebsocketContext";
+import { roomId } from "./CreateGameRoom";
 
 const GamePlayer1 = () => {
     // global variables
@@ -100,7 +101,9 @@ const GamePlayer1 = () => {
     type BallPos = {
         x: number;
         y: number;
+        room: string | undefined;
     };
+
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
     function draw() {
@@ -138,7 +141,12 @@ const GamePlayer1 = () => {
                 rightPaddle.y += 50;
             }
         }
-        GameSocket.emit('GameToServer', rightPaddle.y);
+
+        const paddleAndRoom = {
+            paddleHeight: rightPaddle.y,
+            room: roomId,
+        }
+        GameSocket.emit('GameToServer', paddleAndRoom);
         keycode = '';
 
         /* send ball pos to server */
@@ -147,6 +155,7 @@ const GamePlayer1 = () => {
         const BallPos:BallPos = {
             x: ball.x,
             y:ball.y,
+            room: roomId?.toString(),
         }
 
         const vectorMiddleTo1X = BallPos.x - MIDDLEX;
@@ -192,10 +201,11 @@ const GamePlayer1 = () => {
     }, []);
 
     type Chat = {
-        socketId: string
-        uname: string
-        time: string
-        text: string
+        socketId: string,
+        uname: string,
+        time: string,
+        text: string,
+        room: string | undefined,
     }
     type ChatLog = Array<Chat>
 
@@ -238,9 +248,10 @@ const GamePlayer1 = () => {
             return;
         }
         console.log('送信')
-        GameSocket.emit('chatToServer', { uname, text, time: getNow() });
+        GameSocket.emit('chatToServer', { uname, text, time: getNow(), room: roomId?.toString()});
         setText('');
     }, [uname, text])
+
 
     GameSocket.on('GameToClient', (leftPaddley: number, socketid: string) => {
         // console.log('chat receive leftPaddley info', leftPaddley)
@@ -248,6 +259,12 @@ const GamePlayer1 = () => {
             leftPaddle.y = leftPaddley;
         }
     });
+
+    useEffect(() => {
+        GameSocket.emit('JoinRoom', roomId?.toString);
+        console.log('ROOM ID : ', roomId?.toString());
+    }, []);
+
 
     return (
         <div>

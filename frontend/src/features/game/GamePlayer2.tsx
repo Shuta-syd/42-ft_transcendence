@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import { GameSocket } from "../../contexts/WebsocketContext";
+import { roomId } from "./CreateGameRoom";
 
 const GamePlayer2 = () => {
     // global variables
@@ -100,6 +101,7 @@ const GamePlayer2 = () => {
     type BallPos = {
         x: number;
         y: number;
+        room: string | undefined;
     };
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -137,7 +139,12 @@ const GamePlayer2 = () => {
                 rightPaddle.y += 50;
             }
         }
-        GameSocket.emit('GameToServer', rightPaddle.y);
+
+        const paddleAndRoom = {
+            paddleHeight: rightPaddle.y,
+            room: roomId,
+        }
+        GameSocket.emit('GameToServer', paddleAndRoom);
         keycode = '';
 
         /* draw part */
@@ -178,10 +185,11 @@ const GamePlayer2 = () => {
     }, []);
 
     type Chat = {
-        socketId: string
-        uname: string
-        time: string
+        socketId: string,
+        uname: string,
+        time: string,
         text: string
+        room: string,
     }
     type ChatLog = Array<Chat>
 
@@ -225,7 +233,7 @@ const GamePlayer2 = () => {
             return;
         }
         console.log('送信')
-        GameSocket.emit('chatToServer', { uname, text, time: getNow() });
+        GameSocket.emit('chatToServer', { uname, text, time: getNow(), room: roomId});
         setText('');
     }, [uname, text])
 
@@ -239,9 +247,14 @@ const GamePlayer2 = () => {
         ball.y = BallPos.y;
     });
 
-    return (
+    useEffect(() => {
+        GameSocket.emit('JoinRoom', roomId?.toString);
+    }, []);
+
+return (
         <div>
             <h1>[PONG GAME]</h1>
+            <h2>Room:{roomId}</h2>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
             <div>
                 <input type="text" value={uname} onChange={(event) => { setUname(event.target.value) }} />

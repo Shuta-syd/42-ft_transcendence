@@ -1,3 +1,4 @@
+
 import {
   ConnectedSocket,
   MessageBody,
@@ -7,16 +8,24 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
+import { anyNumber } from "jest-mock-extended";
 
 type ChatRecieved = {
   uname: string;
   time: string;
   text: string;
+  room: string;
 };
 
 type BallPos = {
   x: number;
   y: number;
+  room: string;
+};
+
+type PaddleAndRoom = {
+  paddleHeight: number;
+  room: string;
 };
 
 @WebSocketGateway({
@@ -37,24 +46,25 @@ export class GameGateway {
     @MessageBody() payload: ChatRecieved,
     @ConnectedSocket() client: Socket,
   ): void {
-    //@MessageBody→受信したデータ
+    //@MessageBody受信したデータ
     //@ConnectedSocket→ユーザーのID（websocketで自動で割り当てられる）や、その他接続に関する情報など
     this.logger.log('chat受信');
     this.logger.log(payload);
     //emit()とすると、指定した名前をリッスンしているクライアントに情報をプッシュできる
-    this.server.emit('chatToClient', { ...payload, socketId: client.id });
+    this.server
+      .to(payload.room)
+      .emit('chatToClient', { ...payload, socketId: client.id });
   }
   @SubscribeMessage('GameToServer')
   ReceiveGameInfo(
-    @MessageBody() payload: number,
+    @MessageBody() payload: PaddleAndRoom,
     @ConnectedSocket() client: Socket,
   ): void {
     this.logger.log('message info received');
     this.logger.log(payload);
     console.log(payload);
-    this.server.emit('GameToClient', payload, client.id);
+    this.server.to(payload.room).emit('GameToClient', payload, client.id);
   }
-
   @SubscribeMessage('BallPosToServer')
   ReceiveBallPosInfo(
     @MessageBody() payload: BallPos,
@@ -63,12 +73,15 @@ export class GameGateway {
     this.logger.log('game info received');
     this.logger.log(payload);
     console.log(payload);
-    this.server.emit('BallPosToClient', payload, client.id);
+    this.server.to(payload.room).emit('BallPosToClient', payload, client.id);
   }
 
-  // ユーザーがルームに参加するためのイベントを定義します
-  @SubscribeMessage('join room')
-  handleJoinRoom(socket: any, room: string) {
+  // ユーザーがルームに参加するたnめのイベントを定義します
+  @SubscribeMessage('JoinRoom')
+  handleJoinRoom(
+    @MessageBody() room: string,
+    @ConnectedSocket() socket: Socket,
+  ): void {
     // ユーザーをルームに参加させます
     socket.join(room);
     // ルームが存在しない場合は、新しいルームを作成します
@@ -82,8 +95,11 @@ export class GameGateway {
   }
 
   // ユーザーがルームから離脱するためのイベントを定義します
-  @SubscribeMessage('leave room')
-  handleLeaveRoom(socket: any, room: string) {
+  @SubscribeMessage('LeaveRoom')
+  handleLeaveRoom(
+    @ConnectedSocket() socket: any,
+    @MessageBody() room: string,
+  ): void {
     // ユーザーをルームから削除します
     socket.leave(room);
     if (this.rooms[room]) {
