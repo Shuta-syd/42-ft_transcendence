@@ -66,7 +66,7 @@ export default function ChannelCreateDialog(props: ChannelCreateDialogProps) {
                 name="type"
                 control={control}
                 RenderComponent={(field: any) => (
-                  <CustomRadioGroup field={field} label="Channel Create" formControlLabels={["PUBLIC", "PROTECTED", "PRIVATE"]} />
+                  <CustomRadioGroup field={field} label="Channel Create" formControlLabels={["PUBLIC", "PROTECT", "PRIVATE"]} />
                 )}
               />
               <FormController
