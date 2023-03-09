@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { Grid , Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import React, { createRef, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
@@ -11,8 +10,6 @@ import { Message } from "../../types/PrismaType";
 import MoreOptionButton from "../utils/MoreOptionButton";
 import UserParticipant from "./UserParticipants";
 import getUserName from "../../utils/getUserName";
-import getMemberId from "../../utils/getMemberId";
-import getNow from "../../utils/getNow";
 import convertDate from "../../utils/convertDate";
 
 type MessagePayload = {
