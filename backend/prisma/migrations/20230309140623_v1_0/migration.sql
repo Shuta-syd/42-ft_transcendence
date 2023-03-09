@@ -21,6 +21,7 @@ CREATE TABLE "Member" (
     "roomId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "role" "MemberRole" NOT NULL DEFAULT 'NORMAL',
+    "isMute" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "Member_pkey" PRIMARY KEY ("id")
 );
