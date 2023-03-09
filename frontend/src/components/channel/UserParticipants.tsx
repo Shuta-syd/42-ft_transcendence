@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
+import React, { useEffect, useState } from "react";
 import { Avatar, Box, Button, Grid, Typography } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
-import React, { useEffect, useState } from "react";
 
 type MemberPayload = {
   id: string;
@@ -19,6 +19,7 @@ type UserParticipantProps = {
 export default function UserParticipant(props: UserParticipantProps) {
   const { roomId } = props;
   const [userId, setUserId] = useState<string>();
+  const [myMember, setMyMember] = useState<MemberPayload>();
   const [members, setMembers] = useState<MemberPayload[]>([]);
 
   const loadMember = async () => {
@@ -35,16 +36,25 @@ export default function UserParticipant(props: UserParticipantProps) {
     }
   }
 
-  const getUserId = async () => {
+  const getUserId = async ()=> {
     const { data } = await axios.get(`http://localhost:8080/user`);
     if (data){
       setUserId(data.id);
     }
   }
 
+  const getMyMember = async ()=> {
+    const { data } = await axios.get(`http://localhost:8080/chat/${roomId}/myMember`);
+    if (data) {
+      console.log(data);
+      setMyMember(data);
+    }
+  }
+
   useEffect(() => {
-    loadMember();
     getUserId();
+    getMyMember();
+    loadMember();
   }, [roomId])
 
   const handleKick = async () => {
@@ -72,7 +82,7 @@ export default function UserParticipant(props: UserParticipantProps) {
       >
       @ Participants
       </Typography>
-      {members.map((member, idx) => (
+      {members.map((member: MemberPayload, idx) => (
         <Grid container padding={1} key={idx}>
           <Grid item xs={5}>
             <Grid container>
@@ -91,8 +101,8 @@ export default function UserParticipant(props: UserParticipantProps) {
               </Grid>
             </Grid>
           </Grid>
-          {member.userId === userId || member.role !== 'NORMAL' ?
-            (<></>) : (
+          {myMember?.role !== 'NORMAL' && member.userId !== userId ?
+            (
               <Grid item>
                 <Button variant="contained" size="small" onClick={handleKick}>Kick</Button>
                 <Button
@@ -103,7 +113,7 @@ export default function UserParticipant(props: UserParticipantProps) {
                   {member.isMute ? 'unMute' : 'Mute'}
                 </Button>
               </Grid>
-            )}
+            ): (<></>)}
         </Grid>
       ))}
     </Box>
