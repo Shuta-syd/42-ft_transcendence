@@ -17,6 +17,7 @@ export class CreateChatRoom {
   isDM: string;
   name: string;
 }
+
 export class muteMemberDto {
   roomId: string;
   memberId: string;
