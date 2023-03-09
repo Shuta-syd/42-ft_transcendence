@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Button } from "@mui/material";
 import axios from "axios";
 import React from "react";

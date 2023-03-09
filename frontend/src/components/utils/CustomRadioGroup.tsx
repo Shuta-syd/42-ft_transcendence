@@ -2,10 +2,15 @@ import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@mu
 import React from "react";
 
 type CustomRadioGroupProps = {
+  fields?: any; // useFormを使用するときのfields
+  value?: any;
   label: string;
-  fromControlLabels: string[];
+  formControlLabels: string[];
 }
 
+/**
+ * @returns formControlLabelsを展開したRadioGroupコンポーネント
+ */
 export default function CustomRadioGroup(props: CustomRadioGroupProps) {
   return (
     <>
@@ -13,8 +18,9 @@ export default function CustomRadioGroup(props: CustomRadioGroupProps) {
         <FormLabel>{props.label}</FormLabel>
         <RadioGroup
           row
+          value={props.value}
         >
-          {props.fromControlLabels.map((label, idx) => (
+          {props.formControlLabels.map((label, idx) => (
             <FormControlLabel key={idx}  value={label} control={<Radio />} label={label} />
           ))}
         </RadioGroup>
