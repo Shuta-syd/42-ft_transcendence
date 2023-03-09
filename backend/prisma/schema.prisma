@@ -31,8 +31,9 @@ model Member {
 
 model ChatRoom {
   id       String      @id @default(uuid())
-  isDM     Boolean     @default(false)
   name     String      @default("unknown")
+  password String      @default("")
+  type     RoomType
   messages Message[]
   members  Member[]
 }
@@ -61,8 +62,9 @@ enum MemberRole {
   NORMAL
 }
 
-enum RoomRole {
+enum RoomType {
   PUBLIC
   PROTECT
   PRIVATE
+  DM
 }
