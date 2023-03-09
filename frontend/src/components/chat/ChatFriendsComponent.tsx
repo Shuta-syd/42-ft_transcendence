@@ -1,11 +1,10 @@
 import { Avatar, Grid, Typography } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import { Link, useLocation } from "react-router-dom";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import axios from "axios";
 import useQueryFriend from "../../hooks/user/useQueryFriend";
-import { WebsocketContext } from "../../contexts/WebsocketContext";
 import '../../styles/Chat.css'
 
 type FriendPayload = {
@@ -15,12 +14,16 @@ type FriendPayload = {
 
 type ChatRoomPayload = { [friendId: string]: string };
 
+type ChatFriendsComponentProps = {
+  socket: Socket;
+}
+
 /**
  * @returns DirectMessage送信可能なフレンド一覧を表示するコンポーネント
  */
-export default function ChatFriendsComponent() {
+export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
+  const { socket } = props;
   const roomID = useLocation().pathname.split('/')[3];
-  const socket: Socket = useContext(WebsocketContext);
   const { data: friendData } = useQueryFriend();
   const [friends, setFriends] = useState<FriendPayload[]>([]);
 
@@ -71,18 +74,17 @@ export default function ChatFriendsComponent() {
   }, [friendData]);
 
   useEffect(() => {
-    socket.on('create_dmRoom', () => {
-      console.log('crateDMRoom');
+    socket.on('joinRoom', () => {
     })
   }, [])
 
   useEffect(() => {
-    socket.emit('create_dmRoom', { id: roomID });
+    socket.emit('joinRoom', { id: roomID });
   }, [roomID])
 
   const handleClick = (roomId: string) => {
     console.log('click friend button');
-    socket.emit('create_dmRoom', { id: roomId})
+    socket.emit('joinRoom', { id: roomId})
   }
 
   return (

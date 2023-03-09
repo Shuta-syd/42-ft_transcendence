@@ -8,8 +8,8 @@ import useMutationMessage from "../../hooks/chat/useMutationMessage";
 import TextFieldComponent from "../utils/TextFieldComponent";
 import { Message } from "../../types/PrismaType";
 import getUserName from "../../utils/getUserName";
-import getNow from "../../utils/getNow";
 import getMemberId from "../../utils/getMemberId";
+import getNow from "../../utils/getNow";
 import convertDate from "../../utils/convertDate";
 
 type MessagePayload = {
@@ -22,31 +22,47 @@ type MessagePayload = {
 type ChatLog = MessagePayload[];
 
 /**
- * @returns 実際にchatをするトーク画面のコンポーネント
+ * @returns 実際にchatをするトーク画面のコンポーネント (Channel用P)
  */
-export default function ChatWindowComponent() {
+export default function ChannelWindowComponent() {
   const socket: Socket = useOutletContext();
   const { roomId } = useParams();
   const ChatRoomID: string = roomId as string;
   const { createMessageMutation } = useMutationMessage(ChatRoomID);
-  const [friendName, setFriendName] = useState('');
-  const [userName, setUserName] = useState('');
-  const [text, setText] = useState('');
-  const [chatLog, setChatLog] = useState<ChatLog>([]);
   const [subtitleHeight, setSubtitleHeight] = useState<string>('0');
   const subtitleElm = useRef<HTMLInputElement>(null);
+  const [text, setText] = useState('');
+  const [userName, setUserName] = useState('');
+  const [roomName, setRoomName] = useState('');
+  const [chatLog, setChatLog] = useState<ChatLog>([]);
   const latestChatRef = createRef<HTMLDivElement>();
 
-  const getFriendName = useCallback(async (): Promise<string> => {
-    const res = await axios.get(`http://localhost:8080/chat/room/${ChatRoomID}/dm/friend`);
-    return res.data;
-  }, [ChatRoomID]);
+  const getRoomName = useCallback(async (): Promise<string> => {
+    try {
+      const res = await axios.get(`http://localhost:8080/chat/room/${ChatRoomID}`);
+      return res.data.name;
+    } catch (error) {
+      console.log(error);
+    }
+    return '';
+  }, [ChatRoomID])
 
   useEffect(() => {
     socket.on('chatToClient', (chat: MessagePayload) => {
       setChatLog(prevChatLog => [...prevChatLog, chat]);
     });
   }, [])
+
+  useEffect(() => {
+    if (subtitleElm.current) {
+      setSubtitleHeight(`${subtitleElm.current.clientHeight.toString()}px`);
+    }
+  }, [subtitleElm, subtitleHeight])
+
+  useEffect(() => {
+    getUserName().then((name) => { setUserName(name); });
+    getRoomName().then((name) => { setRoomName(name); })
+  }, [ChatRoomID])
 
   useLayoutEffect(() => {
     const fetchChat = async () => {
@@ -63,28 +79,16 @@ export default function ChatWindowComponent() {
     fetchChat();
   }, [ChatRoomID])
 
-  useEffect(() => {
-    getFriendName().then((name) => { setFriendName(name); })
-    getUserName().then((name) => { setUserName(name); })
-  }, [ChatRoomID])
-
-  useEffect(() => {
-    if (subtitleElm.current) {
-      setSubtitleHeight(`${subtitleElm.current.clientHeight.toString()}px`);
-    }
-  }, [subtitleElm, subtitleHeight])
-
   useLayoutEffect(() => {
     latestChatRef.current?.scrollIntoView();
   }, [chatLog])
-
 
   const sendChat = () => {
     if (text === '')
       return;
     getMemberId(ChatRoomID).then((id) => {
       console.log('Message Emit');
-      socket.emit('send_message_room', { senderName: userName, text, time: getNow(), id: roomId })
+      socket.emit('send_message_room', { senderName: userName , text, time: getNow(), id: roomId })
       createMessageMutation.mutate({
         message: text,
         senderName: userName,
@@ -104,14 +108,14 @@ export default function ChatWindowComponent() {
             padding={0.5}
             sx={{ fontFamily: 'Lato', color: '#e1e2e2', fontWeight:700 }}
             >
-            @ {friendName}
+            @ {roomName}
           </Typography>
         </Box>
         <Box
           maxHeight={`calc(94vh - ${subtitleHeight})`}
         >
-          <Box sx={{color: '#EEEEEE', backgroundColor: '#0F044C', overflow: 'auto'}} height={`calc(85vh - ${subtitleHeight})`}>
-            {chatLog.map((chat, idx) => (
+          <Box sx={{ color: '#EEEEEE', backgroundColor: '#0F044C', overflow: 'auto' }} height={`calc(85vh - ${subtitleHeight})`}>
+          {chatLog.map((chat, idx) => (
               <div key={idx}>
                 <div>{chat.time}</div>
                 <div>{chat.senderName}: {chat.text}</div>

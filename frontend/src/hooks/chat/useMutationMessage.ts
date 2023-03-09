@@ -9,7 +9,6 @@ function useMutationMessage(roomId: string) {
 
   const createMessageMutation = useMutation(
     async (message: Omit<Message, 'id' | 'createdAt' | 'roomId'>) => {
-      console.log(message);
       const res = await axios.post(`http://localhost:8080/chat/room/${roomId}` , message);
       return res.data;
     },

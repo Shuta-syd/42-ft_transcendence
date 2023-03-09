@@ -1,13 +1,18 @@
 import { Grid, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import React, { useEffect, useRef, useState } from "react";
-import ChatFriendsComponent from "./ChatFriendsComponent";
+import { Socket } from "socket.io-client";
+import ChannelListComponent from "./ChannleListComponent";
+
+type ChannelGroupComponentProps = {
+  socket: Socket;
+}
 
 
 /**
- * @returns chatの会話中のフレンド、グループを表示するコンポーネント
+ * @returns 所属中のChannelリストを表示するコンポーネント
  */
-export default function ChatGroupComponent() {
+export default function ChannelGroupComponent(props: ChannelGroupComponentProps) {
   const subtitleElm = useRef<HTMLInputElement>();
   const [subtitleHeight, setSubtitleHeight] = useState<string>('0');
 
@@ -29,14 +34,14 @@ export default function ChatGroupComponent() {
               padding={0.5}
               sx={{ fontFamily: 'Lato', color: '#e1e2e2', fontWeight: 700 }}
             >
-              Direct Messages
+              Channels
             </Typography>
           </Box>
           <Stack
             height={`calc(94vh - ${subtitleHeight})`}
-            sx={{ backgroundColor: '#141E61', overflow: 'auto' }} borderRight={2.5} borderColor={'#787A91'}
+            sx={{ backgroundColor: '#141E61', overflow: 'auto' }} borderColor={'#787A91'}
           >
-            <ChatFriendsComponent/>
+            <ChannelListComponent socket={props.socket} />
           </Stack>
         </Stack>
       </Box>
