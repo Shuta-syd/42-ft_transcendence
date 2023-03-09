@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
 import { Stack } from "@mui/system";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -8,6 +9,7 @@ import FormController from "../utils/FormController";
 type ChannelCreateDialogProps = {
   isOpen: boolean;
   handleClose: any;
+  setChannels: any; // useState setter
 }
 
 type CreateChannelDto = {
@@ -20,16 +22,24 @@ type CreateChannelDto = {
  * @return Channel作成画面のコンポーネント
  */
 export default function ChannelCreateDialog(props: ChannelCreateDialogProps) {
-  const { isOpen, handleClose } = props;
+  const { isOpen, handleClose, setChannels } = props;
   const { control, handleSubmit } = useForm<CreateChannelDto>({
     defaultValues: {
       name: '',
       type: 'PUBLIC',
+      password: '',
     }
   })
 
   const onSubmit: SubmitHandler<CreateChannelDto> = async (data) => {
-    console.log(data);
+    try {
+      console.log(data);
+      const res = await axios.post(`http://localhost:8080/chat/room`, { type: data.type, name: data.name, password: data.password })
+      setChannels((prev: any) => [...prev, { name: data.name, id:res.data.id }])
+      handleClose();
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (

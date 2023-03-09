@@ -14,7 +14,6 @@ export type User = {
  */
 export type ChatRoom = {
   id: string
-  isDM: boolean
   name: string
 }
 

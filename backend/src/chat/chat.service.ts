@@ -183,7 +183,11 @@ export class ChatService {
   async getChannels(userId: string): Promise<ChatRoom[]> {
     const channels = await this.prisma.chatRoom.findMany({
       where: {
-        type: 'DM',
+        NOT: [
+          {
+            type: 'DM',
+          },
+        ],
         members: {
           some: {
             userId: userId,

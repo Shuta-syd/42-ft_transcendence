@@ -2,6 +2,7 @@ import { Grid, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import React, { useEffect, useRef, useState } from "react";
 import { Socket } from "socket.io-client";
+import { ChatRoom } from "../../types/PrismaType";
 import CustomDialogButton from "../utils/CustomDialogButton";
 import ChannelCreateDialog from "./ChannelCreateDialog";
 import ChannelListComponent from "./ChannleListComponent";
@@ -10,13 +11,13 @@ type ChannelGroupComponentProps = {
   socket: Socket;
 }
 
-
 /**
  * @returns 所属中のChannelリストを表示するコンポーネント
  */
 export default function ChannelGroupComponent(props: ChannelGroupComponentProps) {
   const subtitleElm = useRef<HTMLInputElement>();
   const [subtitleHeight, setSubtitleHeight] = useState<string>('0');
+  const [channels, setChannels] = useState<ChatRoom[]>([]);
 
 
   useEffect(() => {
@@ -52,14 +53,14 @@ export default function ChannelGroupComponent(props: ChannelGroupComponentProps)
                 marginRight: '0.5vw'
               }}
             >
-              <CustomDialogButton DialogComponent={ChannelCreateDialog} />
+              <CustomDialogButton DialogComponent={ChannelCreateDialog} setChannels={setChannels} />
             </Box>
           </Box>
           <Stack
             height={`calc(94vh - ${subtitleHeight})`}
             sx={{ backgroundColor: '#141E61', overflow: 'auto' }} borderColor={'#787A91'}
           >
-            <ChannelListComponent socket={props.socket} />
+            <ChannelListComponent socket={props.socket} channels={channels} setChannels={setChannels} />
           </Stack>
         </Stack>
       </Box>

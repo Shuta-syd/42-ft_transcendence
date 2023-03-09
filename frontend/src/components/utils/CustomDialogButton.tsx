@@ -4,13 +4,14 @@ import AddIcon from '@mui/icons-material/Add';
 
 type CustomDialogButtonProps = {
   DialogComponent: any;
+  setChannels: any; // useState setter
 }
 
 /**
  * @returns MUIのDialogComponentを開くAddボタンコンポーネント
  */
 export default function CustomDialogButton(props: CustomDialogButtonProps) {
-  const { DialogComponent } = props;
+  const { DialogComponent, setChannels } = props;
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const handleOpen = () => {
@@ -30,7 +31,7 @@ export default function CustomDialogButton(props: CustomDialogButtonProps) {
         >
           <AddIcon />
       </IconButton>
-      <DialogComponent isOpen={isOpen} handleClose={handleClose} />
+      <DialogComponent isOpen={isOpen} handleClose={handleClose} setChannels={setChannels} />
     </>
   )
 }
