@@ -206,7 +206,7 @@ const GamePlayer1 = () => {
 
     useEffect(() => {
         GameSocket.on('connect', () => {
-            console.log('接続ID : ', GameSocket.id)
+            console.log('接続ID : ', GameSocket.id);
         })
 
         return () => {

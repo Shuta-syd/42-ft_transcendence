@@ -28,6 +28,8 @@ export class GameGateway {
   @WebSocketServer()
   server: Server;
 
+  private rooms = {};
+
   private logger: Logger = new Logger('EventsGateway');
   //クライアント側から「chatToServer」という名前のメッセージ（？）をリッスン（好きに命名できる）
   @SubscribeMessage('chatToServer')
@@ -42,7 +44,6 @@ export class GameGateway {
     //emit()とすると、指定した名前をリッスンしているクライアントに情報をプッシュできる
     this.server.emit('chatToClient', { ...payload, socketId: client.id });
   }
-
   @SubscribeMessage('GameToServer')
   ReceiveGameInfo(
     @MessageBody() payload: number,
@@ -64,6 +65,46 @@ export class GameGateway {
     console.log(payload);
     this.server.emit('BallPosToClient', payload, client.id);
   }
+
+  // ユーザーがルームに参加するためのイベントを定義します
+  @SubscribeMessage('join room')
+  handleJoinRoom(socket: any, room: string) {
+    // ユーザーをルームに参加させます
+    socket.join(room);
+    // ルームが存在しない場合は、新しいルームを作成します
+    if (!this.rooms[room]) {
+      this.rooms[room] = [];
+    }
+    // ユーザーをルームの参加者リストに追加します
+    this.rooms[room].push(socket.id);
+    // ルームの参加者リストをルームの全員に送信します
+    this.server.to(room).emit('update room', this.rooms[room]);
+  }
+
+  // ユーザーがルームから離脱するためのイベントを定義します
+  @SubscribeMessage('leave room')
+  handleLeaveRoom(socket: any, room: string) {
+    // ユーザーをルームから削除します
+    socket.leave(room);
+    if (this.rooms[room]) {
+      // ユーザーをルームの参加者リストから削除します
+      this.rooms[room] = this.rooms[room].filter((id) => id !== socket.id);
+      // ルームの参加者リストをルームの全員に送信します
+      this.server.to(room).emit('update room', this.rooms[room]);
+    }
+  }
+
+  // 接続が切断されたときの処理
+  handleDisconnect(socket: any) {
+    console.log(`Client disconnected: ${socket.id}`);
+    // ルームからユーザーを削除します
+    Object.keys(this.rooms).forEach((room) => {
+      this.rooms[room] = this.rooms[room].filter((id) => id !== socket.id);
+      // ルームの参加者リストをルームの全員に送信します
+      this.server.to(room).emit('update room', this.rooms[room]);
+    });
+  }
+
   afterInit(server: Server) {
     //初期化
     this.logger.log('初期化しました。');
@@ -72,10 +113,5 @@ export class GameGateway {
   handleConnection(client: Socket, ...args: any[]) {
     //クライアント接続時
     this.logger.log(`Client connected: ${client.id}`);
-  }
-
-  handleDisconnect(@ConnectedSocket() client: Socket) {
-    //クライアント切断時
-    this.logger.log(`Client disconnected: ${client.id}`);
   }
 }
