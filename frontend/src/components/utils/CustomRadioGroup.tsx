@@ -1,8 +1,8 @@
-import { FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from "@mui/material";
+import { FormControlLabel, FormLabel, Radio, RadioGroup } from "@mui/material";
 import React from "react";
 
 type CustomRadioGroupProps = {
-  fields?: any; // useFormを使用するときのfields
+  field?: any; // useFormを使用するときのfields
   value?: any;
   label: string;
   formControlLabels: string[];
@@ -14,17 +14,16 @@ type CustomRadioGroupProps = {
 export default function CustomRadioGroup(props: CustomRadioGroupProps) {
   return (
     <>
-      <FormControl>
-        <FormLabel>{props.label}</FormLabel>
-        <RadioGroup
-          row
-          value={props.value}
-        >
-          {props.formControlLabels.map((label, idx) => (
-            <FormControlLabel key={idx}  value={label} control={<Radio />} label={label} />
-          ))}
-        </RadioGroup>
-      </FormControl>
+      <FormLabel>{props.label}</FormLabel>
+      <RadioGroup
+        row
+        value={props.value}
+        {...props.field}
+      >
+        {props.formControlLabels.map((label, idx) => (
+          <FormControlLabel key={idx}  value={label} control={<Radio />} label={label} />
+        ))}
+      </RadioGroup>
     </>
   )
 }
