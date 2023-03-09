@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
 import { Stack } from "@mui/system";
@@ -23,6 +23,7 @@ type CreateChannelDto = {
  */
 export default function ChannelCreateDialog(props: ChannelCreateDialogProps) {
   const { isOpen, handleClose, setChannels } = props;
+  const [type, setType] = useState<string>('PUBLIC');
   const { control, handleSubmit } = useForm<CreateChannelDto>({
     defaultValues: {
       name: '',
@@ -66,7 +67,12 @@ export default function ChannelCreateDialog(props: ChannelCreateDialogProps) {
                 name="type"
                 control={control}
                 RenderComponent={(field: any) => (
-                  <CustomRadioGroup field={field} label="Channel Create" formControlLabels={["PUBLIC", "PROTECT", "PRIVATE"]} />
+                  <CustomRadioGroup
+                    field={field}
+                    label="Channel Create"
+                    setType={setType}
+                    formControlLabels={["PUBLIC", "PROTECT", "PRIVATE"]}
+                  />
                 )}
               />
               <FormController
@@ -75,7 +81,7 @@ export default function ChannelCreateDialog(props: ChannelCreateDialogProps) {
                 RenderComponent={(field: any) => (
                   <TextField
                     {...field}
-                    disabled
+                    disabled={type !== 'PROTECT'}
                     fullWidth
                     label={'password'}
                     variant='standard'
