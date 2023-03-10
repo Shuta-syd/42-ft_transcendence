@@ -3,6 +3,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import InvitationButton from "./InvitationButton";
+// import CustomMenu from "../utils/CustomMenu";
 
 type MemberPayload = {
   id: string;
@@ -104,6 +105,7 @@ export default function UserParticipant(props: UserParticipantProps) {
           </Grid>
           {member.userId === userId || member.role !== 'NORMAL' ?
             (<></>) : (
+              // <CustomMenu />
               <Grid item>
                 <Button variant="contained" size="small" onClick={async () => { await handleKick(member.id) }}>Kick</Button>
                 <Button
