@@ -19,7 +19,7 @@ export class CreateChatRoom {
   name: string;
   password?: string;
 }
-export class muteMemberDto {
+export class MemberDto {
   roomId: string;
   memberId: string;
   status: boolean;

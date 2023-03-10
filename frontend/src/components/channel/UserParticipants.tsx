@@ -47,14 +47,25 @@ export default function UserParticipant(props: UserParticipantProps) {
     getUserId();
   }, [roomId])
 
-  const handleKick = async () => {
-    console.log('Kick button');
+  const handleKick = async (memberId: string) => {
+    try {
+      const res = await axios.delete(`http://localhost:8080/chat/member/kick`, { data: { roomId, memberId } })
+      const newMembers = members.filter(member => member.id !== memberId);
+      setMembers(newMembers);
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   const handleMute = async (memberId: string, isMute: boolean) => {
     try {
       const res = await axios.patch(`http://localhost:8080/chat/channel/mute`, { roomId, memberId, status: !isMute });
-      await loadMember();
+      setMembers(prev => prev.map(member => {
+        if (member.id === memberId)
+          return { ...member, isMute: !isMute };
+        return member;
+      }))
       console.log(res.data);
     } catch (error) {
       console.log(error)
@@ -94,7 +105,7 @@ export default function UserParticipant(props: UserParticipantProps) {
           {member.userId === userId || member.role !== 'NORMAL' ?
             (<></>) : (
               <Grid item>
-                <Button variant="contained" size="small" onClick={handleKick}>Kick</Button>
+                <Button variant="contained" size="small" onClick={async () => { await handleKick(member.id) }}>Kick</Button>
                 <Button
                   variant="contained"
                   size="small"

@@ -6,7 +6,7 @@ import { UserService } from 'src/user/user.service';
 import {
   ChatRoomPayload,
   CreateChatRoom,
-  muteMemberDto,
+  MemberDto,
   SendChatDto,
 } from './dto/chat.dto';
 
@@ -204,7 +204,7 @@ export class ChatService {
   /**
    * @description 特定のメンバーをMuteもしくはunMuteにする（Owner or Adminのみ）
    */
-  async muteMember(userId: string, dto: muteMemberDto): Promise<Msg> {
+  async muteMember(userId: string, dto: MemberDto): Promise<Msg> {
     const { roomId, memberId, status } = dto;
     const executor = await this.getMyMember(userId, roomId);
     if (executor.role !== 'OWNER' && executor.role !== 'ADMIN') {
@@ -220,6 +220,31 @@ export class ChatService {
 
     return {
       message: 'Mute status update',
+    };
+  }
+
+  /**
+   * @description 特定のメンバーをルームから削除する（KICK同様）（Owner or Adminのみ）
+   */
+  async deleteMember(userId: string, dto: MemberDto): Promise<Msg> {
+    const { roomId, memberId, status } = dto;
+    const executor = await this.getMyMember(userId, roomId);
+    if (executor.role !== 'OWNER' && executor.role !== 'ADMIN') {
+      return {
+        message: 'You are not Admin or Owner',
+      };
+    }
+
+    await this.prisma.message.deleteMany({
+      where: { memberId },
+    });
+
+    await this.prisma.member.delete({
+      where: { id: memberId },
+    });
+
+    return {
+      message: 'Kick the member',
     };
   }
 }
