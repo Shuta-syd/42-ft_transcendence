@@ -19,10 +19,15 @@ export class CreateChatRoom {
   name: string;
   password?: string;
 }
+export class MuteMemberDto {
+  roomId: string;
+  memberId: string;
+  isMute: boolean;
+}
+
 export class MemberDto {
   roomId: string;
   memberId: string;
-  status: boolean;
 }
 
 export type ChatPayload = {
