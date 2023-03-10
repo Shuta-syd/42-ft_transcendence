@@ -32,7 +32,7 @@ export default function CustomMenu(props: CustomMenuProps) {
         onClick={() => { setAnchorEl(null); }}
       >
         {menuItems.map((item, idx) => (
-          <MenuItem onClick={() => { setAnchorEl(null); item.handleOnClick(); }} key={idx}>
+          <MenuItem onClick={async () => { setAnchorEl(null); item.handleOnClick(); }} key={idx}>
             {item.name}
           </MenuItem>
         ))

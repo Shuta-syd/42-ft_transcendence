@@ -1,9 +1,10 @@
-import { Avatar, Box, Button, Grid, Typography } from "@mui/material";
+import { Avatar, Box, Grid, Typography } from "@mui/material";
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import InvitationButton from "./InvitationButton";
-// import CustomMenu from "../utils/CustomMenu";
+import CustomMenu from "../utils/CustomMenu";
 
 type MemberPayload = {
   id: string;
@@ -59,6 +60,17 @@ export default function UserParticipant(props: UserParticipantProps) {
     }
   }
 
+  const handleBan = async (memberId: string) => {
+    try {
+      const res = await axios.post(`http://localhost:8080/chat/channel/member/ban`, { roomId, memberId });
+      const newMembers = members.filter(member => member.id !== memberId);
+      setMembers(newMembers);
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   const handleMute = async (memberId: string, isMute: boolean) => {
     try {
       const res = await axios.patch(`http://localhost:8080/chat/channel/mute`, { roomId, memberId, status: !isMute });
@@ -85,7 +97,7 @@ export default function UserParticipant(props: UserParticipantProps) {
       @ Participants
       </Typography>
       {members.map((member, idx) => (
-        <Grid container padding={1} key={idx}>
+        <Grid container padding={1} key={idx} sx={{}}>
           <Grid item xs={5}>
             <Grid container>
               <Grid item mr={2}>
@@ -105,16 +117,15 @@ export default function UserParticipant(props: UserParticipantProps) {
           </Grid>
           {member.userId === userId || member.role !== 'NORMAL' ?
             (<></>) : (
-              // <CustomMenu />
-              <Grid item>
-                <Button variant="contained" size="small" onClick={async () => { await handleKick(member.id) }}>Kick</Button>
-                <Button
-                  variant="contained"
-                  size="small"
-                  onClick={async () => { await handleMute(member.id, member.isMute); }}
-                >
-                  {member.isMute ? 'unMute' : 'Mute'}
-                </Button>
+              <Grid item  xs={7} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <CustomMenu
+                ButtonIcon={<MoreVertIcon />}
+                menuItems={[
+                  { name: member.isMute ? 'unMute' : 'Mute', handleOnClick: async () => { await handleMute(member.id, member.isMute) } },
+                  { name: 'Kick', handleOnClick: async () => { await handleKick(member.id) } },
+                  { name: 'Ban',  handleOnClick: async () => { await handleBan(member.id) } }
+                ]}
+                />
               </Grid>
             )}
         </Grid>

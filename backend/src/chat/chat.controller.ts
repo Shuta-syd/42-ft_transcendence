@@ -165,6 +165,6 @@ export class ChatController {
     @Req() req: Request,
     @Body() dto: MemberDto,
   ): Promise<Msg> {
-    return this.chatService.deleteMember(req.user.id, dto);
+    return this.chatService.banUserOnChatRoom(req.user.id, dto);
   }
 }
