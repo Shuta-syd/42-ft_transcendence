@@ -19,7 +19,6 @@ type MessagePayload = {
   text: string;
 };
 
-
 type ChatLog = MessagePayload[];
 
 /**
