@@ -105,6 +105,9 @@ export class ChatService {
         },
         role: status,
       },
+      include: {
+        user: true,
+      },
     });
   }
 

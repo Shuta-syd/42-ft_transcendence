@@ -9,6 +9,7 @@ export class SendChatDto {
 }
 
 export class AddMemberDto {
+  userId: string;
   roomId: string;
   status: MemberRole;
 }
