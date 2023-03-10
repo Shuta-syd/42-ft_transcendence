@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { IconButton } from "@mui/material";
+import { IconButton, Menu, MenuItem } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 
 type CustomDialogButtonProps = {
@@ -12,26 +12,40 @@ type CustomDialogButtonProps = {
  */
 export default function CustomDialogButton(props: CustomDialogButtonProps) {
   const { DialogComponent, setChannels } = props;
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [dialogIsOpen, setDialogIsOpen] = useState<boolean>(false);
 
-  const handleOpen = () => {
-    setIsOpen(true);
+  const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
   }
 
-  const handleClose = () => {
-    setIsOpen(false);
+  const handleCloseDialog = () => {
+    setDialogIsOpen(false);
   }
 
   return (
     <>
       <IconButton
+        id="basic-button"
         color="error"
         aria-label="create channel"
         onClick={handleOpen}
         >
           <AddIcon />
       </IconButton>
-      <DialogComponent isOpen={isOpen} handleClose={handleClose} setChannels={setChannels} />
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClick={() => { setAnchorEl(null); }}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+      >
+        <MenuItem onClick={() => { setDialogIsOpen(true); setAnchorEl(null); }}>
+          Create Channel
+        </MenuItem>
+      </Menu>
+      <DialogComponent isOpen={dialogIsOpen} handleClose={handleCloseDialog} setChannels={setChannels} />
     </>
   )
 }
