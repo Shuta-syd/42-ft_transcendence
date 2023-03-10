@@ -24,7 +24,7 @@ type CreateChannelDto = {
 export default function ChannelCreateDialog(props: ChannelCreateDialogProps) {
   const { isOpen, handleClose, setChannels } = props;
   const [type, setType] = useState<string>('PUBLIC');
-  const { control, handleSubmit } = useForm<CreateChannelDto>({
+  const { control, handleSubmit, reset } = useForm<CreateChannelDto>({
     defaultValues: {
       name: '',
       type: 'PUBLIC',
@@ -36,7 +36,8 @@ export default function ChannelCreateDialog(props: ChannelCreateDialogProps) {
     try {
       console.log(data);
       const res = await axios.post(`http://localhost:8080/chat/room`, { type: data.type, name: data.name, password: data.password })
-      setChannels((prev: any) => [...prev, { name: data.name, id:res.data.id }])
+      setChannels((prev: any) => [...prev, { name: data.name, id: res.data.id }])
+      reset();
       handleClose();
     } catch (error) {
       console.log(error);
