@@ -62,7 +62,7 @@ export class GameGateway {
     @MessageBody() payload: PaddleAndRoom,
     @ConnectedSocket() client: Socket,
   ): void {
-    // console.log('game to server', payload.room);
+    console.log('THIS!!!!!', payload.room);
     this.server.to(payload.room).emit('GameToClient', payload, client.id);
   }
   @SubscribeMessage('BallPosToServer')
