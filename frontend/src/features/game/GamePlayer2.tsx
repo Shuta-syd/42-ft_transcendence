@@ -1,8 +1,11 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import { GameSocket } from "../../contexts/WebsocketContext";
-import { roomId } from "./CreateGameRoom";
 
-const GamePlayer2 = () => {
+type Props = {
+    roomId?: number;
+}
+
+const GamePlayer2 = ({ roomId }: Props) => {
     // global variables
     let context: CanvasRenderingContext2D | null;
     let canvas:  HTMLCanvasElement | null;
@@ -254,6 +257,7 @@ const GamePlayer2 = () => {
 return (
         <div>
             <h1>[PONG GAME]</h1>
+            <h1>[Player 2]</h1>
             <h2>Room:{roomId}</h2>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
             <div>
