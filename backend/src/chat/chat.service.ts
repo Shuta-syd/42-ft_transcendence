@@ -187,6 +187,17 @@ export class ChatService {
     roomId: string,
     status: MemberRole,
   ): Promise<Member> {
+    const banedList = await this.prisma.user
+      .findUnique({
+        where: {
+          id: userId,
+        },
+      })
+      .banned();
+
+    const isBan = banedList.filter((val) => val.roomId === roomId);
+    if (isBan.length !== 0) throw new Error("You couldn't enter the room");
+
     return this.prisma.member.create({
       data: {
         room: {
