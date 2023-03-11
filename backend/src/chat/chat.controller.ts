@@ -139,6 +139,7 @@ export class ChatController {
     summary: 'get channel related to name',
   })
   async searchChannel(@Query('name') name: string): Promise<ChatRoom[]> {
+    console.log(name);
     return this.chatService.searchChannel(name);
   }
 
