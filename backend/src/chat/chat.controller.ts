@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -137,8 +138,8 @@ export class ChatController {
     description: 'get channel related to name',
     summary: 'get channel related to name',
   })
-  async searchChannel(@Body() dto: { name: string }): Promise<ChatRoom[]> {
-    return this.chatService.searchChannel(dto.name);
+  async searchChannel(@Query('name') name: string): Promise<ChatRoom[]> {
+    return this.chatService.searchChannel(name);
   }
 
   @Patch('channel/mute')

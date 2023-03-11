@@ -97,7 +97,7 @@ export default function UserParticipant(props: UserParticipantProps) {
       @ Participants
       </Typography>
       {members.map((member, idx) => (
-        <Grid container padding={1} key={idx} sx={{}}>
+        <Grid container padding={1} key={idx} >
           <Grid item xs={5}>
             <Grid container>
               <Grid item mr={2}>
