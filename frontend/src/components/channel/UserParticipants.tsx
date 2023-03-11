@@ -137,7 +137,7 @@ export default function UserParticipant(props: UserParticipantProps) {
                 ]}
                 />
               </Grid>
-            ): (<></>)}
+            )}
         </Grid>
       ))}
       <InvitationButton roomId={roomId} setMembers={setMembers} members={members} />
