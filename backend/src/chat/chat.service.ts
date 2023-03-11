@@ -174,6 +174,20 @@ export class ChatService {
   }
 
   /**
+   * @description 与えられたnameからチャンネルを検索する（部分一致）
+   */
+  async SearchChannel(name: string): Promise<ChatRoom[]> {
+    const rooms = this.prisma.chatRoom.findMany({
+      where: {
+        name: {
+          contains: name,
+        },
+      },
+    });
+    return rooms;
+  }
+
+  /**
    * ===Member CRUD===
    */
 
