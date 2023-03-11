@@ -112,6 +112,18 @@ export class ChatController {
   }
 
   @ApiOperation({
+    description: 'search my member in room',
+    summary: 'search my member in room',
+  })
+  @Get(':roomId/myMember')
+  async getMyMember(
+    @Req() req: Request,
+    @Param('roomId') roomId: string,
+  ): Promise<Member> {
+    return this.chatService.getMyMember(req.user.id, roomId);
+  }
+
+  @ApiOperation({
     description: 'Get all DM rooms to which the user belongs',
     summary: "Get a user's DM rooms ",
   })

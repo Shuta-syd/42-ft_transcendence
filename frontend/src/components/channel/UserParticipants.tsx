@@ -21,6 +21,7 @@ type UserParticipantProps = {
 export default function UserParticipant(props: UserParticipantProps) {
   const { roomId } = props;
   const [userId, setUserId] = useState<string>();
+  const [myMember, setMyMember] = useState<MemberPayload>();
   const [members, setMembers] = useState<MemberPayload[]>([]);
 
   const loadMember = async () => {
@@ -37,16 +38,25 @@ export default function UserParticipant(props: UserParticipantProps) {
     }
   }
 
-  const getUserId = async () => {
+  const getUserId = async ()=> {
     const { data } = await axios.get(`http://localhost:8080/user`);
     if (data){
       setUserId(data.id);
     }
   }
 
+  const getMyMember = async ()=> {
+    const { data } = await axios.get(`http://localhost:8080/chat/${roomId}/myMember`);
+    if (data) {
+      console.log(data);
+      setMyMember(data);
+    }
+  }
+
   useEffect(() => {
-    loadMember();
     getUserId();
+    getMyMember();
+    loadMember();
   }, [roomId])
 
   const handleKick = async (memberId: string) => {
@@ -127,7 +137,7 @@ export default function UserParticipant(props: UserParticipantProps) {
                 ]}
                 />
               </Grid>
-            )}
+            ): (<></>)}
         </Grid>
       ))}
       <InvitationButton roomId={roomId} setMembers={setMembers} members={members} />
