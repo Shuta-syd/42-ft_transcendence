@@ -149,10 +149,11 @@ const GamePlayer1 = ({ roomId }: Props) => {
 
         const paddleAndRoom = {
             paddleHeight: rightPaddle.y,
-            room: roomId,
+            room: roomId?.toString(),
         }
+        console.log('paddleAndRoom roomID', paddleAndRoom.room);
         GameSocket.emit('GameToServer', paddleAndRoom);
-        console.log(paddleAndRoom.room);
+        // console.log(paddleAndRoom.room);
         keycode = '';
 
         /* send ball pos to server */
@@ -266,12 +267,6 @@ const GamePlayer1 = ({ roomId }: Props) => {
         }
     });
 
-    useEffect(() => {
-        GameSocket.emit('JoinRoom', roomId?.toString);
-        console.log('ROOM ID : ', roomId?.toString());
-    }, []);
-
-    console.log("player1", roomId);
     return (
         <div>
             <h1>[PONG GAME]</h1>

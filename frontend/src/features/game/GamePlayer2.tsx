@@ -149,7 +149,7 @@ const GamePlayer2 = ({ roomId }: Props) => {
         }
         GameSocket.emit('GameToServer', paddleAndRoom);
         keycode = '';
-        console.log(paddleAndRoom.room);
+        // console.log(paddleAndRoom.room);
 
         /* draw part */
         leftPaddle.draw();
@@ -251,9 +251,9 @@ const GamePlayer2 = ({ roomId }: Props) => {
         ball.y = BallPos.y;
     });
 
-    useEffect(() => {
-        GameSocket.emit('JoinRoom', roomId?.toString);
-    }, []);
+    // useEffect(() => {
+    //     GameSocket.emit('JoinRoom', roomId?.toString);
+    // }, []);
 
 return (
         <div>

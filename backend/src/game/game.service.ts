@@ -12,9 +12,7 @@ export class GameService {
     assignPlayerReqDto: string,
   ): Promise<Game | null> {
     playerId += 1;
-    // player id is odd number then create new game
     console.log('before', assignPlayerReqDto);
-    // const tmp = assignPlayerReqDto;
     const jsonString = JSON.stringify(assignPlayerReqDto);
     console.log('middle, jsonString', jsonString);
     const tmp = JSON.parse(jsonString);

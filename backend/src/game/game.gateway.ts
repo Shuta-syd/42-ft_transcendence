@@ -26,6 +26,10 @@ type PaddleAndRoom = {
   room: string;
 };
 
+type RoomId = {
+  room: string;
+};
+
 @WebSocketGateway({
   cors: {
     origin: '*',
@@ -49,47 +53,45 @@ export class GameGateway {
     // this.logger.log('chat受信');
     // this.logger.log(payload);
     //emit()とすると、指定した名前をリッスンしているクライアントに情報をプッシュできる
-    this.server.emit('chatToClient', { ...payload, socketId: client.id });
+    this.server
+      .to(payload.room)
+      .emit('chatToClient', { ...payload, socketId: client.id });
   }
   @SubscribeMessage('GameToServer')
   ReceiveGameInfo(
     @MessageBody() payload: PaddleAndRoom,
     @ConnectedSocket() client: Socket,
   ): void {
-    // this.logger.log('message info received');
-    // this.logger.log(payload);
-    // console.log(payload);
-    this.server.emit('GameToClient', payload, client.id);
+    // console.log('game to server', payload.room);
+    this.server.to(payload.room).emit('GameToClient', payload, client.id);
   }
   @SubscribeMessage('BallPosToServer')
   ReceiveBallPosInfo(
     @MessageBody() payload: BallPos,
     @ConnectedSocket() client: Socket,
   ): void {
-    // this.logger.log('game info received');
-    // this.logger.log(payload);
-    // console.log('hoge');
-    // console.log(payload.room);
-    // console.log('piyo');
-    this.server.emit('BallPosToClient', payload, client.id);
+    console.log('ball pos to server', payload.room);
+    this.server.to(payload.room).emit('BallPosToClient', payload, client.id);
   }
-
   // ユーザーがルームに参加するたnめのイベントを定義します
   @SubscribeMessage('JoinRoom')
   handleJoinRoom(
-    @MessageBody() room: string,
+    @MessageBody() payload: RoomId,
     @ConnectedSocket() socket: Socket,
   ): void {
     // ユーザーをルームに参加させます
-    socket.join(room);
+    console.log('payload is ', payload.room);
+    socket.join(payload.room);
     // ルームが存在しない場合は、新しいルームを作成します
-    if (!this.rooms[room]) {
-      this.rooms[room] = [];
+    if (!this.rooms[payload.room]) {
+      this.rooms[payload.room] = [];
     }
     // ユーザーをルームの参加者リストに追加します
-    this.rooms[room].push(socket.id);
+    this.rooms[payload.room].push(socket.id);
     // ルームの参加者リストをルームの全員に送信します
-    this.server.emit('update room', this.rooms[room]);
+    this.server
+      .to(payload.room)
+      .emit('update room.room', this.rooms[payload.room]);
   }
 
   // ユーザーがルームから離脱するためのイベントを定義します
@@ -104,7 +106,7 @@ export class GameGateway {
       // ユーザーをルームの参加者リストから削除します
       this.rooms[room] = this.rooms[room].filter((id) => id !== socket.id);
       // ルームの参加者リストをルームの全員に送信します
-      this.server.emit('update room', this.rooms[room]);
+      this.server.to(room).emit('update room', this.rooms[room]);
     }
   }
 
@@ -115,7 +117,7 @@ export class GameGateway {
     Object.keys(this.rooms).forEach((room) => {
       this.rooms[room] = this.rooms[room].filter((id) => id !== socket.id);
       // ルームの参加者リストをルームの全員に送信します
-      this.server.emit('update room', this.rooms[room]);
+      this.server.to(room).emit('update room', this.rooms[room]);
     });
   }
 

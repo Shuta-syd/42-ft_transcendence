@@ -4,6 +4,7 @@ import { Game, User } from "../../types/PrismaType";
 import { GameRoomReq, useGameUser } from "../../hooks/game/useGameuser";
 import GamePlayer1 from "./GamePlayer1";
 import GamePlayer2 from "./GamePlayer2";
+import {GameSocket} from "../../contexts/WebsocketContext";
 
 const CreateGameRoom = () => {
     const [user, setUser] = useState<User>();
@@ -23,6 +24,13 @@ const CreateGameRoom = () => {
         gamePromisesRef.current?.then((Gamedto: Game) => {
             setGame(Gamedto);
             setRoomId(Gamedto?.id); // roomIdを更新する
+            type RoomId = {
+                room: string | undefined,
+            }
+            const roomid: RoomId = {
+                room: Gamedto.id.toString(),
+            }
+            GameSocket.emit('JoinRoom', roomid);
         });
     }, [user]);
 
@@ -40,11 +48,10 @@ const CreateGameRoom = () => {
             </div>
             {
                 (() => {
-                    if (game?.player2 == '') {
+                    if (game?.player2 === '') {
                         return <GamePlayer1 roomId={roomId}></GamePlayer1>
                     }
                     return <GamePlayer2 roomId={roomId}></GamePlayer2>
-
                 })()
             }
         </div>
