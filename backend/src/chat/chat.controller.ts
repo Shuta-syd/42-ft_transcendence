@@ -150,9 +150,12 @@ export class ChatController {
     description: 'get channel related to name',
     summary: 'get channel related to name',
   })
-  async searchChannel(@Query('name') name: string): Promise<ChatRoom[]> {
+  async searchChannel(
+    @Req() req: Request,
+    @Query('name') name: string,
+  ): Promise<ChatRoom[]> {
     console.log(name);
-    return this.chatService.searchChannel(name);
+    return this.chatService.searchChannel(req.user.id, name);
   }
 
   @Patch('channel/mute')

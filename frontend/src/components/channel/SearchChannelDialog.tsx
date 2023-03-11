@@ -14,7 +14,6 @@ type SearchChannelType = {
   id: string;
   name: string;
   description?: string;
-  isJoined: boolean;
 }
 
 export default function SearchChannelDialog(props: SearchChannelDialogProps) {
@@ -34,7 +33,6 @@ export default function SearchChannelDialog(props: SearchChannelDialogProps) {
     }
   }
 
-  // useEffect(() => { getUserId() }, []);
 
   useEffect(() => {
     const searchChannel = async () => {
@@ -42,12 +40,9 @@ export default function SearchChannelDialog(props: SearchChannelDialogProps) {
       const { data } = await axios.get(`http://localhost:8080/chat/channel/search`, {
         params: { name: text }
       });
-      await getUserId(); // tmp
 
       data.map((room: any) => {
-        const userIds = room.members.map((member: any) => member.userId);
-        const isJoined = userIds.includes(userId);;
-        setSearchResult(prev => [...prev, { id: room.id, name: room.name, isJoined}]);
+        setSearchResult(prev => [...prev, { id: room.id, name: room.name}]);
       })
     }
 
@@ -94,8 +89,8 @@ export default function SearchChannelDialog(props: SearchChannelDialogProps) {
             {result.name}
           </Grid>
           <Grid item>
-            <Button disabled={result.isJoined} onClick={async () => {await handleOnClick(result.id)}}>
-                {result.isJoined === true ? (<>JOINED</>) : (<>JOIN</>)}
+            <Button onClick={async () => {await handleOnClick(result.id)}}>
+                JOIN
             </Button>
           </Grid>
         </Grid>

@@ -176,18 +176,20 @@ export class ChatService {
   /**
    * @description 与えられたnameからチャンネルを検索する（部分一致）
    */
-  async searchChannel(name: string): Promise<ChatRoom[]> {
+  async searchChannel(userId: string, name: string): Promise<ChatRoom[]> {
     if (name === undefined) return [];
 
     const rooms = this.prisma.chatRoom.findMany({
       where: {
         NOT: [{ type: 'DM' }, { type: 'PRIVATE' }],
+        members: {
+          none: {
+            userId,
+          },
+        },
         name: {
           contains: name,
         },
-      },
-      include: {
-        members: true,
       },
     });
     return rooms;
