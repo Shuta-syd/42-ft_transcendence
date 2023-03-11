@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { IconButton } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
+import CustomMenu from "./CustomMenu";
 
 type CustomDialogButtonProps = {
   DialogComponent: any;
@@ -12,26 +12,24 @@ type CustomDialogButtonProps = {
  */
 export default function CustomDialogButton(props: CustomDialogButtonProps) {
   const { DialogComponent, setChannels } = props;
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [dialogIsOpen, setDialogIsOpen] = useState<boolean>(false);
 
-  const handleOpen = () => {
-    setIsOpen(true);
+
+  const handleOpenDialog = () => {
+    setDialogIsOpen(true);
   }
 
-  const handleClose = () => {
-    setIsOpen(false);
+  const handleCloseDialog = () => {
+    setDialogIsOpen(false);
   }
 
   return (
     <>
-      <IconButton
-        color="error"
-        aria-label="create channel"
-        onClick={handleOpen}
-        >
-          <AddIcon />
-      </IconButton>
-      <DialogComponent isOpen={isOpen} handleClose={handleClose} setChannels={setChannels} />
+      <CustomMenu
+        ButtonIcon={<AddIcon/>}
+        menuItems={[{ name: 'Create Channel', handleOnClick: handleOpenDialog}]}
+      />
+      <DialogComponent isOpen={dialogIsOpen} handleClose={handleCloseDialog} setChannels={setChannels} />
     </>
   )
 }

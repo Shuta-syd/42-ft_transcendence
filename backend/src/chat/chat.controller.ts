@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Param,
@@ -22,10 +23,11 @@ import {
 import { ChatService } from './chat.service';
 import {
   AddMemberDto,
+  MuteMemberDto,
   ChatRoomPayload,
   CreateChatRoom,
-  muteMemberDto,
   SendChatDto,
+  MemberDto,
 } from './dto/chat.dto';
 
 @Controller('chat')
@@ -149,8 +151,32 @@ export class ChatController {
   })
   async muteMember(
     @Req() req: Request,
-    @Body() dto: muteMemberDto,
+    @Body() dto: MuteMemberDto,
   ): Promise<Msg> {
     return this.chatService.muteMember(req.user.id, dto);
+  }
+
+  @Delete('channel/member/kick')
+  @ApiOperation({
+    description: 'admin or owner kick the member',
+    summary: 'admin or owner kick the member',
+  })
+  async deleteMember(
+    @Req() req: Request,
+    @Body() dto: MemberDto,
+  ): Promise<Msg> {
+    return this.chatService.deleteMember(req.user.id, dto);
+  }
+
+  @Post('channel/member/ban')
+  @ApiOperation({
+    description: 'admin or owner ban the user',
+    summary: 'admin or owner ban the user',
+  })
+  async banUserOnChatRoom(
+    @Req() req: Request,
+    @Body() dto: MemberDto,
+  ): Promise<Msg> {
+    return this.chatService.banUserOnChatRoom(req.user.id, dto);
   }
 }

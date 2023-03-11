@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { ChatRoom, Member, MemberRole, Message } from '@prisma/client';
+import { ChatRoom, Member, MemberRole, Message, User } from '@prisma/client';
 import { Msg } from 'src/auth/dto/auth.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import {
   ChatRoomPayload,
   CreateChatRoom,
-  muteMemberDto,
+  MemberDto,
+  MuteMemberDto,
   SendChatDto,
 } from './dto/chat.dto';
 
@@ -82,36 +83,6 @@ export class ChatService {
   }
 
   /**
-   * @param userId 所属させたいuserID
-   * @param roomId 所属させたいChat RoomID
-   * @returns 作成したMember object
-   */
-  async addMember(
-    userId: string,
-    roomId: string,
-    status: MemberRole,
-  ): Promise<Member> {
-    return this.prisma.member.create({
-      data: {
-        room: {
-          connect: {
-            id: roomId,
-          },
-        },
-        user: {
-          connect: {
-            id: userId,
-          },
-        },
-        role: status,
-      },
-      include: {
-        user: true,
-      },
-    });
-  }
-
-  /**
    * @param userId 取得したいDMのuserID
    * @returns userIDのすべてのDM
    */
@@ -177,8 +148,9 @@ export class ChatService {
   }
 
   /**
-   * Channel service
+   * ===Channel service==
    */
+
   /**
    * @param userId 所属しているuserId
    * @returns userが所属しているChannelを全て返す
@@ -202,10 +174,55 @@ export class ChatService {
   }
 
   /**
+   * ===Member CRUD===
+   */
+
+  /**
+   * @param userId 所属させたいuserID
+   * @param roomId 所属させたいChat RoomID
+   * @returns 作成したMember object
+   */
+  async addMember(
+    userId: string,
+    roomId: string,
+    status: MemberRole,
+  ): Promise<Member> {
+    const banedList = await this.prisma.user
+      .findUnique({
+        where: {
+          id: userId,
+        },
+      })
+      .banned();
+
+    const isBan = banedList.filter((val) => val.roomId === roomId);
+    if (isBan.length !== 0) throw new Error("You couldn't enter the room");
+
+    return this.prisma.member.create({
+      data: {
+        room: {
+          connect: {
+            id: roomId,
+          },
+        },
+        user: {
+          connect: {
+            id: userId,
+          },
+        },
+        role: status,
+      },
+      include: {
+        user: true,
+      },
+    });
+  }
+
+  /**
    * @description 特定のメンバーをMuteもしくはunMuteにする（Owner or Adminのみ）
    */
-  async muteMember(userId: string, dto: muteMemberDto): Promise<Msg> {
-    const { roomId, memberId, status } = dto;
+  async muteMember(userId: string, dto: MuteMemberDto): Promise<Msg> {
+    const { roomId, memberId, isMute } = dto;
     const executor = await this.getMyMember(userId, roomId);
     if (executor.role !== 'OWNER' && executor.role !== 'ADMIN') {
       return {
@@ -215,11 +232,66 @@ export class ChatService {
 
     await this.prisma.member.update({
       where: { id: memberId },
-      data: { isMute: status === true ? true : false },
+      data: { isMute: isMute === true ? true : false },
     });
 
     return {
       message: 'Mute status update',
     };
+  }
+
+  /**
+   * @description 特定のメンバーをルームから削除する（KICK同様）（Owner or Adminのみ）
+   */
+  async deleteMember(userId: string, dto: MemberDto): Promise<Msg> {
+    const { roomId, memberId } = dto;
+    const executor = await this.getMyMember(userId, roomId);
+    if (executor.role !== 'OWNER' && executor.role !== 'ADMIN') {
+      return {
+        message: 'You are not Admin or Owner',
+      };
+    }
+
+    await this.prisma.message.deleteMany({
+      where: { memberId },
+    });
+
+    await this.prisma.member.delete({
+      where: { id: memberId },
+    });
+
+    return {
+      message: 'Kick the member',
+    };
+  }
+
+  async banUserOnChatRoom(userId: string, dto: MemberDto): Promise<Msg> {
+    const { roomId, memberId } = dto;
+
+    const user = await this.getUserByMemberId(memberId);
+    await this.deleteMember(userId, dto);
+    await this.prisma.banUserOnChatRoom.create({
+      data: {
+        baned_userId: user.id,
+        roomId: roomId,
+      },
+    });
+
+    return {
+      message: 'ban the member',
+    };
+  }
+
+  /**
+   * @description MemberIdから紐付けられたUserデータを取得
+   */
+  async getUserByMemberId(memberId: string): Promise<User> {
+    return this.prisma.member
+      .findUnique({
+        where: {
+          id: memberId,
+        },
+      })
+      .user();
   }
 }
