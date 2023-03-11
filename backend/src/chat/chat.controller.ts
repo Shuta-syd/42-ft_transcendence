@@ -123,13 +123,22 @@ export class ChatController {
   /**
    * Channel Controller
    */
-  @Get('group')
+  @Get('channel')
   @ApiOperation({
     description: 'get channel user belongs to',
     summary: 'get channel user belongs to',
   })
   async getChannels(@Req() req: Request): Promise<ChatRoom[]> {
     return this.chatService.getChannels(req.user.id);
+  }
+
+  @Get('channel/search')
+  @ApiOperation({
+    description: 'get channel related to name',
+    summary: 'get channel related to name',
+  })
+  async searchChannel(@Body() dto: { name: string }): Promise<ChatRoom[]> {
+    return this.chatService.searchChannel(dto.name);
   }
 
   @Patch('channel/mute')
