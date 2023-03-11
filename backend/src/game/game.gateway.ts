@@ -1,4 +1,3 @@
-
 import {
   ConnectedSocket,
   MessageBody,
@@ -50,9 +49,7 @@ export class GameGateway {
     this.logger.log('chat受信');
     this.logger.log(payload);
     //emit()とすると、指定した名前をリッスンしているクライアントに情報をプッシュできる
-    this.server
-      .to(payload.room)
-      .emit('chatToClient', { ...payload, socketId: client.id });
+    this.server.emit('chatToClient', { ...payload, socketId: client.id });
   }
   @SubscribeMessage('GameToServer')
   ReceiveGameInfo(
@@ -61,8 +58,8 @@ export class GameGateway {
   ): void {
     this.logger.log('message info received');
     this.logger.log(payload);
-    console.log(payload);
-    this.server.to(payload.room).emit('GameToClient', payload, client.id);
+    // console.log(payload);
+    this.server.emit('GameToClient', payload, client.id);
   }
   @SubscribeMessage('BallPosToServer')
   ReceiveBallPosInfo(
@@ -71,8 +68,10 @@ export class GameGateway {
   ): void {
     this.logger.log('game info received');
     this.logger.log(payload);
-    console.log(payload);
-    this.server.to(payload.room).emit('BallPosToClient', payload, client.id);
+    console.log('hoge');
+    console.log(payload.room);
+    console.log('piyo');
+    this.server.emit('BallPosToClient', payload, client.id);
   }
 
   // ユーザーがルームに参加するたnめのイベントを定義します
@@ -90,7 +89,7 @@ export class GameGateway {
     // ユーザーをルームの参加者リストに追加します
     this.rooms[room].push(socket.id);
     // ルームの参加者リストをルームの全員に送信します
-    this.server.to(room).emit('update room', this.rooms[room]);
+    this.server.emit('update room', this.rooms[room]);
   }
 
   // ユーザーがルームから離脱するためのイベントを定義します
@@ -105,7 +104,7 @@ export class GameGateway {
       // ユーザーをルームの参加者リストから削除します
       this.rooms[room] = this.rooms[room].filter((id) => id !== socket.id);
       // ルームの参加者リストをルームの全員に送信します
-      this.server.to(room).emit('update room', this.rooms[room]);
+      this.server.emit('update room', this.rooms[room]);
     }
   }
 
@@ -116,7 +115,7 @@ export class GameGateway {
     Object.keys(this.rooms).forEach((room) => {
       this.rooms[room] = this.rooms[room].filter((id) => id !== socket.id);
       // ルームの参加者リストをルームの全員に送信します
-      this.server.to(room).emit('update room', this.rooms[room]);
+      this.server.emit('update room', this.rooms[room]);
     });
   }
 

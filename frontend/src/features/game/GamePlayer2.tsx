@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState, useCallback } from "react";
 import { GameSocket } from "../../contexts/WebsocketContext";
 
 type Props = {
-    roomId?: number;
+    roomId: number | undefined;
 }
 
 const GamePlayer2 = ({ roomId }: Props) => {
@@ -149,6 +149,7 @@ const GamePlayer2 = ({ roomId }: Props) => {
         }
         GameSocket.emit('GameToServer', paddleAndRoom);
         keycode = '';
+        console.log(paddleAndRoom.room);
 
         /* draw part */
         leftPaddle.draw();
@@ -168,7 +169,7 @@ const GamePlayer2 = ({ roomId }: Props) => {
 
     useEffect(() => {
         const handleKeyUp = ():void => {
-            keycode =  '';
+            keycode = '';
         }
         const handleKeyDown = (e:KeyboardEvent):void  => {
             keycode = e.code;

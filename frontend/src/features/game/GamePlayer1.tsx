@@ -4,7 +4,7 @@ import { GameSocket } from "../../contexts/WebsocketContext";
 
 
 type Props = {
-    roomId?: number;
+    roomId: number | undefined;
 }
 
 const GamePlayer1 = ({ roomId }: Props) => {
@@ -125,7 +125,7 @@ const GamePlayer1 = ({ roomId }: Props) => {
             && (ball.y <= rightPaddle.y + PADDLEWHEIGHT
                 && ball.y >= rightPaddle.y)) {
             ball.vx = -ball.vx;
-        } else if (FIELDHEIGHT + FIELDY < ball.y || ball.y < FIELDY) {
+        } else if (FIELDHEIGHT + FIELDY < ball.y + ball.radius || ball.y - ball.radius < FIELDY ) {
             ball.vy = -ball.vy;
         } else if (ball.x < FIELDX) {
             rightScore += 1;
@@ -152,6 +152,7 @@ const GamePlayer1 = ({ roomId }: Props) => {
             room: roomId,
         }
         GameSocket.emit('GameToServer', paddleAndRoom);
+        console.log(paddleAndRoom.room);
         keycode = '';
 
         /* send ball pos to server */
