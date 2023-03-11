@@ -1,7 +1,6 @@
-/* eslint-disable no-unused-vars */
 import { Avatar, Grid, Typography } from "@mui/material";
 import axios from "axios";
-import React, { useEffect, useLayoutEffect, useState } from "react"
+import React, { useEffect, useLayoutEffect } from "react"
 import { Socket } from "socket.io-client";
 import { Link, useLocation } from "react-router-dom";
 import PersonIcon from '@mui/icons-material/Person';
@@ -10,15 +9,16 @@ import '../../styles/Chat.css'
 
 type ChannelListComponentProps = {
   socket: Socket;
+  channels: any;
+  setChannels: any; // useState setter
 }
 
 /**
  * @returns Message送信可能なChannel一覧を表示するコンポーネント
  */
 export default function ChannelListComponent(props: ChannelListComponentProps) {
-  const { socket } = props;
+  const { socket, channels, setChannels } = props;
   const roomID = useLocation().pathname.split('/')[3];
-  const [channels, setChannels] = useState<ChatRoom[]>([]);
 
   const getChannels = async (): Promise<ChatRoom[]> => {
     try {
@@ -49,7 +49,7 @@ export default function ChannelListComponent(props: ChannelListComponentProps) {
 
   return (
     <>
-      {channels.map((room, idx) => (
+      {channels.map((room: ChatRoom, idx: number) => (
         <Link to={`/channel/room/${room.id}`} onClick={() => handleClick(room.id)} key={idx} className={'ChannelLink'}>
           {room.id === roomID ? (
             <Grid container padding={1} className={'ChannelListActive'}>

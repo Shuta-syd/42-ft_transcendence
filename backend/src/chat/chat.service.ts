@@ -24,7 +24,8 @@ export class ChatService {
     return this.prisma.chatRoom
       .create({
         data: {
-          isDM: JSON.parse(dto.isDM),
+          type: dto.type,
+          password: dto.password,
           name: dto.name === undefined ? 'unknown' : dto.name,
         },
       })
@@ -104,6 +105,9 @@ export class ChatService {
         },
         role: status,
       },
+      include: {
+        user: true,
+      },
     });
   }
 
@@ -115,7 +119,7 @@ export class ChatService {
     const DMRooms: ChatRoomPayload = {};
     const DirectMessageRooms = await this.prisma.chatRoom.findMany({
       where: {
-        isDM: true,
+        type: 'DM',
         members: {
           some: {
             userId: userId,
@@ -182,7 +186,11 @@ export class ChatService {
   async getChannels(userId: string): Promise<ChatRoom[]> {
     const channels = await this.prisma.chatRoom.findMany({
       where: {
-        isDM: false,
+        NOT: [
+          {
+            type: 'DM',
+          },
+        ],
         members: {
           some: {
             userId: userId,

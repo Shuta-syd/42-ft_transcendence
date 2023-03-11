@@ -1,8 +1,8 @@
-/* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from "react";
 import { Avatar, Box, Button, Grid, Typography } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+import InvitationButton from "./InvitationButton";
 
 type MemberPayload = {
   id: string;
@@ -116,6 +116,7 @@ export default function UserParticipant(props: UserParticipantProps) {
             ): (<></>)}
         </Grid>
       ))}
+      <InvitationButton roomId={roomId} setMembers={setMembers} members={members} />
     </Box>
   )
 }

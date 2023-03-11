@@ -40,7 +40,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
   useEffect(() => {
     const createDMRoom = async (friendId: string): Promise<string> => {
       try {
-        const roomCrateDto = { isDM: true };
+        const roomCrateDto = { type: 'DM' };
         const room = await axios.post(`http://localhost:8080/chat/room`, roomCrateDto);
         const addMemberDto = { userId: friendId, roomId: room.data.id };
         await axios.post(`http://localhost:8080/chat/member/add`, addMemberDto);
