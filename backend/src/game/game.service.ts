@@ -13,11 +13,17 @@ export class GameService {
   ): Promise<Game | null> {
     playerId += 1;
     // player id is odd number then create new game
-    const tmp = String(assignPlayerReqDto);
+    console.log('before', assignPlayerReqDto);
+    // const tmp = assignPlayerReqDto;
+    const jsonString = JSON.stringify(assignPlayerReqDto);
+    console.log('middle, jsonString', jsonString);
+    const tmp = JSON.parse(jsonString);
+    const playerName = tmp.playerName;
+    console.log('after', playerName);
     if (playerId % 2 != 0) {
       const game = this.prisma.game.create({
         data: {
-          player1: tmp,
+          player1: playerName,
           player2: '',
         },
       });
@@ -30,7 +36,7 @@ export class GameService {
           id: tmpGame.id,
         },
         data: {
-          player2: tmp,
+          player2: playerName,
         },
       });
     }

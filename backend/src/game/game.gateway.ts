@@ -46,8 +46,8 @@ export class GameGateway {
   ): void {
     //@MessageBody受信したデータ
     //@ConnectedSocket→ユーザーのID（websocketで自動で割り当てられる）や、その他接続に関する情報など
-    this.logger.log('chat受信');
-    this.logger.log(payload);
+    // this.logger.log('chat受信');
+    // this.logger.log(payload);
     //emit()とすると、指定した名前をリッスンしているクライアントに情報をプッシュできる
     this.server.emit('chatToClient', { ...payload, socketId: client.id });
   }
@@ -56,8 +56,8 @@ export class GameGateway {
     @MessageBody() payload: PaddleAndRoom,
     @ConnectedSocket() client: Socket,
   ): void {
-    this.logger.log('message info received');
-    this.logger.log(payload);
+    // this.logger.log('message info received');
+    // this.logger.log(payload);
     // console.log(payload);
     this.server.emit('GameToClient', payload, client.id);
   }
@@ -66,11 +66,11 @@ export class GameGateway {
     @MessageBody() payload: BallPos,
     @ConnectedSocket() client: Socket,
   ): void {
-    this.logger.log('game info received');
-    this.logger.log(payload);
-    console.log('hoge');
-    console.log(payload.room);
-    console.log('piyo');
+    // this.logger.log('game info received');
+    // this.logger.log(payload);
+    // console.log('hoge');
+    // console.log(payload.room);
+    // console.log('piyo');
     this.server.emit('BallPosToClient', payload, client.id);
   }
 
@@ -110,7 +110,7 @@ export class GameGateway {
 
   // 接続が切断されたときの処理
   handleDisconnect(socket: any) {
-    console.log(`Client disconnected: ${socket.id}`);
+    console.log(`game Client disconnected: ${socket.id}`);
     // ルームからユーザーを削除します
     Object.keys(this.rooms).forEach((room) => {
       this.rooms[room] = this.rooms[room].filter((id) => id !== socket.id);
