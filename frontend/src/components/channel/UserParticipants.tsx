@@ -45,14 +45,6 @@ export default function UserParticipant(props: UserParticipantProps) {
     }
   }
 
-  const getMyMember = async ()=> {
-    const { data } = await axios.get(`http://localhost:8080/chat/${roomId}/myMember`);
-    if (data) {
-      console.log(data);
-      setMyMember(data);
-    }
-  }
-
   useEffect(() => {
     getUserId();
     getMyMember();
