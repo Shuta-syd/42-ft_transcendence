@@ -113,6 +113,18 @@ export class ChatController {
   }
 
   @ApiOperation({
+    description: 'Add a specific user to join a specific room as a member',
+    summary: 'Add a user to join a room',
+  })
+  @Post('member/add/me')
+  async addMemberMe(
+    @Req() req: Request,
+    @Body() dto: AddMemberDto,
+  ): Promise<Member> {
+    return this.chatService.addMember(req.user.id, dto.roomId, dto.status);
+  }
+
+  @ApiOperation({
     description: 'Get all DM rooms to which the user belongs',
     summary: "Get a user's DM rooms ",
   })

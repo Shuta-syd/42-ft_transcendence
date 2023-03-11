@@ -186,6 +186,9 @@ export class ChatService {
           contains: name,
         },
       },
+      include: {
+        members: true,
+      },
     });
     return rooms;
   }
