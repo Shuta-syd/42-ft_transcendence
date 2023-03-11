@@ -13,6 +13,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ChatRoom, Member, Message, User } from '@prisma/client';
 import { Request } from 'express';
+import { Msg } from 'src/auth/dto/auth.dto';
 import {
   PrismaChatRoom,
   PrismaMessage,
@@ -23,6 +24,7 @@ import {
   AddMemberDto,
   ChatRoomPayload,
   CreateChatRoom,
+  muteMemberDto,
   SendChatDto,
 } from './dto/chat.dto';
 
@@ -43,11 +45,11 @@ export class ChatController {
     type: PrismaMessage,
   })
   async sendChat(
-    // @Req() req: Request, jwt or passport使用する場合
+    @Req() req: Request,
     @Param('id') roomId: string,
     @Body() dto: SendChatDto,
   ): Promise<Message> {
-    return this.chatService.sendChat(roomId, dto);
+    return this.chatService.sendChat(req.user.id, roomId, dto);
   }
 
   @Post('room')
@@ -84,14 +86,6 @@ export class ChatController {
     return this.chatService.getFriendNameByDMId(req.user.id, roomId);
   }
 
-  @Get('room/:roomId/memberId')
-  async getMyMemberId(
-    @Req() req: Request,
-    @Param('roomId') roomId: string,
-  ): Promise<string> {
-    return this.chatService.getMyMemberId(req.user.id, roomId);
-  }
-
   @Get('room/log/:roomId')
   @ApiOperation({
     description: 'Get chat logs of specified chat room',
@@ -115,7 +109,19 @@ export class ChatController {
     @Req() req: Request,
     @Body() dto: AddMemberDto,
   ): Promise<Member> {
-    return this.chatService.addMember(req.user.id, dto.roomId);
+    return this.chatService.addMember(req.user.id, dto.roomId, dto.status);
+  }
+
+  @ApiOperation({
+    description: 'search my member in room',
+    summary: 'search my member in room',
+  })
+  @Get(':roomId/myMember')
+  async getMyMember(
+    @Req() req: Request,
+    @Param('roomId') roomId: string,
+  ): Promise<Member> {
+    return this.chatService.getMyMember(req.user.id, roomId);
   }
 
   @ApiOperation({
@@ -137,5 +143,17 @@ export class ChatController {
   })
   async getChannels(@Req() req: Request): Promise<ChatRoom[]> {
     return this.chatService.getChannels(req.user.id);
+  }
+
+  @Patch('channel/mute')
+  @ApiOperation({
+    description: 'admin or owner mute the member',
+    summary: 'admin or owner mute the member',
+  })
+  async muteMember(
+    @Req() req: Request,
+    @Body() dto: muteMemberDto,
+  ): Promise<Msg> {
+    return this.chatService.muteMember(req.user.id, dto);
   }
 }

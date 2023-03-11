@@ -1,8 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { ChatRoom, Member, Message } from '@prisma/client';
+import { ChatRoom, Member, MemberRole, Message } from '@prisma/client';
+import { Msg } from 'src/auth/dto/auth.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
-import { ChatRoomPayload, CreateChatRoom, SendChatDto } from './dto/chat.dto';
+import {
+  ChatRoomPayload,
+  CreateChatRoom,
+  muteMemberDto,
+  SendChatDto,
+} from './dto/chat.dto';
 
 @Injectable()
 export class ChatService {
@@ -23,7 +29,7 @@ export class ChatService {
         },
       })
       .then((room: ChatRoom): ChatRoom => {
-        this.addMember(userId, room.id);
+        this.addMember(userId, room.id, 'OWNER');
         return room;
       });
   }
@@ -62,7 +68,7 @@ export class ChatService {
    * @param userId APIを叩いているユーザのID
    * @param roomId 所属するroomID
    */
-  async getMyMemberId(userId: string, roomId: string): Promise<string> {
+  async getMyMember(userId: string, roomId: string): Promise<Member> {
     const members = await this.prisma.chatRoom
       .findUnique({
         where: { id: roomId },
@@ -71,7 +77,7 @@ export class ChatService {
     const userMember = members.filter(
       (member: Member) => member.userId === userId,
     );
-    return userMember[0].id;
+    return userMember[0];
   }
 
   /**
@@ -79,7 +85,11 @@ export class ChatService {
    * @param roomId 所属させたいChat RoomID
    * @returns 作成したMember object
    */
-  async addMember(userId: string, roomId: string): Promise<Member> {
+  async addMember(
+    userId: string,
+    roomId: string,
+    status: MemberRole,
+  ): Promise<Member> {
     return this.prisma.member.create({
       data: {
         room: {
@@ -92,6 +102,7 @@ export class ChatService {
             id: userId,
           },
         },
+        role: status,
       },
     });
   }
@@ -139,11 +150,18 @@ export class ChatService {
    * @param dto メッセージ送信に必要なSendChatDto
    * @returns 送ったメッセージのデータ
    */
-  async sendChat(roomId: string, dto: SendChatDto): Promise<Message> {
+  async sendChat(
+    userId: string,
+    roomId: string,
+    dto: SendChatDto,
+  ): Promise<Message> {
+    const member = await this.getMyMember(userId, roomId);
+    if (member.isMute === true) throw new Error('You are not right');
+
     return this.prisma.message.create({
       data: {
         member: {
-          connect: { id: dto.memberId },
+          connect: { id: member.id },
         },
         room: {
           connect: { id: roomId },
@@ -173,5 +191,27 @@ export class ChatService {
       },
     });
     return channels;
+  }
+
+  /**
+   * @description 特定のメンバーをMuteもしくはunMuteにする（Owner or Adminのみ）
+   */
+  async muteMember(userId: string, dto: muteMemberDto): Promise<Msg> {
+    const { roomId, memberId, status } = dto;
+    const executor = await this.getMyMember(userId, roomId);
+    if (executor.role !== 'OWNER' && executor.role !== 'ADMIN') {
+      return {
+        message: 'You are not Admin or Owner',
+      };
+    }
+
+    await this.prisma.member.update({
+      where: { id: memberId },
+      data: { isMute: status === true ? true : false },
+    });
+
+    return {
+      message: 'Mute status update',
+    };
   }
 }

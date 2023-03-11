@@ -8,8 +8,6 @@ import useMutationMessage from "../../hooks/chat/useMutationMessage";
 import TextFieldComponent from "../utils/TextFieldComponent";
 import { Message } from "../../types/PrismaType";
 import getUserName from "../../utils/getUserName";
-import getNow from "../../utils/getNow";
-import getMemberId from "../../utils/getMemberId";
 import convertDate from "../../utils/convertDate";
 
 type MessagePayload = {
@@ -28,7 +26,7 @@ export default function ChatWindowComponent() {
   const socket: Socket = useOutletContext();
   const { roomId } = useParams();
   const ChatRoomID: string = roomId as string;
-  const { createMessageMutation } = useMutationMessage(ChatRoomID);
+  const { createMessageMutation } = useMutationMessage(socket, ChatRoomID);
   const [friendName, setFriendName] = useState('');
   const [userName, setUserName] = useState('');
   const [text, setText] = useState('');
@@ -82,16 +80,12 @@ export default function ChatWindowComponent() {
   const sendChat = () => {
     if (text === '')
       return;
-    getMemberId(ChatRoomID).then((id) => {
-      console.log('Message Emit');
-      socket.emit('send_message_room', { senderName: userName, text, time: getNow(), id: roomId })
-      createMessageMutation.mutate({
-        message: text,
-        senderName: userName,
-        memberId: id,
-      });
-      setText('');
-    })
+    console.log('Message Emit');
+    createMessageMutation.mutate({
+      message: text,
+      senderName: userName,
+    });
+    setText('');
   };
 
   return (

@@ -25,7 +25,8 @@ model Member {
   room     ChatRoom @relation(fields: [roomId], references: [id])
   user     User     @relation(fields: [userId], references: [id])
   messages Message[]
-  //role   RoomRole
+  role   MemberRole  @default(NORMAL)
+  isMute Boolean @default(false)
 }
 
 model ChatRoom {
@@ -52,4 +53,16 @@ model Match {
   player1   String
   player2   String
   winner_id Int
+}
+
+enum MemberRole {
+  OWNER
+  ADMIN
+  NORMAL
+}
+
+enum RoomRole {
+  PUBLIC
+  PROTECT
+  PRIVATE
 }

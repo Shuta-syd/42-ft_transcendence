@@ -7,9 +7,9 @@ import { useOutletContext, useParams } from "react-router-dom";
 import useMutationMessage from "../../hooks/chat/useMutationMessage";
 import TextFieldComponent from "../utils/TextFieldComponent";
 import { Message } from "../../types/PrismaType";
+import MoreOptionButton from "../utils/MoreOptionButton";
+import UserParticipant from "./UserParticipants";
 import getUserName from "../../utils/getUserName";
-import getMemberId from "../../utils/getMemberId";
-import getNow from "../../utils/getNow";
 import convertDate from "../../utils/convertDate";
 
 type MessagePayload = {
@@ -28,12 +28,14 @@ export default function ChannelWindowComponent() {
   const socket: Socket = useOutletContext();
   const { roomId } = useParams();
   const ChatRoomID: string = roomId as string;
-  const { createMessageMutation } = useMutationMessage(ChatRoomID);
-  const [subtitleHeight, setSubtitleHeight] = useState<string>('0');
+  const { createMessageMutation } = useMutationMessage(socket, ChatRoomID);
+  const [subtitleHeight, setSubtitleHeight] = useState<string>('0px');
   const subtitleElm = useRef<HTMLInputElement>(null);
+  const [GridWidth, setGridWidth] = useState<string>('100%');
   const [text, setText] = useState('');
   const [userName, setUserName] = useState('');
   const [roomName, setRoomName] = useState('');
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [chatLog, setChatLog] = useState<ChatLog>([]);
   const latestChatRef = createRef<HTMLDivElement>();
 
@@ -55,9 +57,9 @@ export default function ChannelWindowComponent() {
 
   useEffect(() => {
     if (subtitleElm.current) {
-      setSubtitleHeight(`${subtitleElm.current.clientHeight.toString()}px`);
+      setSubtitleHeight(`${(subtitleElm.current.clientHeight + 3.5).toString()}px`);
     }
-  }, [subtitleElm, subtitleHeight])
+  }, [subtitleElm, subtitleHeight, isOpen])
 
   useEffect(() => {
     getUserName().then((name) => { setUserName(name); });
@@ -86,35 +88,53 @@ export default function ChannelWindowComponent() {
   const sendChat = () => {
     if (text === '')
       return;
-    getMemberId(ChatRoomID).then((id) => {
-      console.log('Message Emit');
-      socket.emit('send_message_room', { senderName: userName , text, time: getNow(), id: roomId })
-      createMessageMutation.mutate({
-        message: text,
-        senderName: userName,
-        memberId: id,
-      });
-      setText('');
-    })
+    console.log('Message Emit');
+    createMessageMutation.mutate({
+      message: text,
+      senderName: userName,
+    });
+    setText('');
   };
 
   return (
     <Grid item xs={9} position='relative'>
       <Stack spacing={0}>
-        <Box sx={{backgroundColor: '#141E61'}} ref={subtitleElm}>
+        <Box
+          width={GridWidth}
+          borderTop={1} borderBottom={2.5} borderColor={'#787A91'}
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            backgroundColor: '#141E61'
+          }}
+          ref={subtitleElm}
+        >
           <Typography
             variant="h6"
-            borderTop={1} borderBottom={2.5} borderColor={'#787A91'}
             padding={0.5}
             sx={{ fontFamily: 'Lato', color: '#e1e2e2', fontWeight:700 }}
             >
             @ {roomName}
           </Typography>
+          <Box
+            sx={{
+            marginRight: '1.5vw'
+            }}
+          >
+            <MoreOptionButton
+              isOpen={isOpen} setIsOpen={setIsOpen}
+              DrawerElement={<UserParticipant roomId={ChatRoomID} />}
+              setGridWidth={setGridWidth}
+            />
+          </Box>
         </Box>
         <Box
-          maxHeight={`calc(94vh - ${subtitleHeight})`}
+          maxHeight={`calc(94vh - ${subtitleHeight}px)`}
         >
-          <Box sx={{ color: '#EEEEEE', backgroundColor: '#0F044C', overflow: 'auto' }} height={`calc(85vh - ${subtitleHeight})`}>
+          <Box
+            sx={{ color: '#EEEEEE', backgroundColor: '#0F044C', overflow: 'auto' ,overflowWrap: 'break-word', wordWrap: 'break-word' }}
+            maxWidth={GridWidth} height={`calc(85vh - ${subtitleHeight})`}
+          >
           {chatLog.map((chat, idx) => (
               <div key={idx}>
                 <div>{chat.time}</div>
@@ -124,7 +144,7 @@ export default function ChannelWindowComponent() {
             <div ref={latestChatRef} />
           </Box>
           <Box height={'9vh'} sx={{ backgroundColor: '#0F044C' }}>
-            <TextFieldComponent handleOnChange={setText} handleOnClick={sendChat} value={text}/>
+            <TextFieldComponent textFieldWidth={GridWidth} handleOnChange={setText} handleOnClick={sendChat} value={text} />
           </Box>
         </Box>
       </Stack>
