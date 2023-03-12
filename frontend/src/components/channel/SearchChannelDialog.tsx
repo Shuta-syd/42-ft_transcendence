@@ -1,5 +1,7 @@
 /* eslint-disable no-unused-vars */
-import { Button, Dialog, Grid, IconButton, InputAdornment, TextField } from "@mui/material";
+import { Button, Dialog, Grid, IconButton, InputAdornment, Menu, MenuItem, TextField } from "@mui/material";
+import LockIcon from '@mui/icons-material/Lock';
+import KeyIcon from '@mui/icons-material/Key';
 import SearchIcon from '@mui/icons-material/Search';
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -14,17 +16,16 @@ type SearchChannelDialogProps = {
 type SearchChannelType = {
   id: string;
   name: string;
+  type: string;
   description?: string;
 }
 
 export default function SearchChannelDialog(props: SearchChannelDialogProps) {
   const { isOpen, handleClose, setChannels } = props;
   const [text, setText] = useState<string>('');
+  const [pass, setPass] = useState<string>('');
   const [searchResult, setSearchResult] = useState<SearchChannelType[]>([]);
 
-  const handleOnChange = (value: string) => {
-    setText(value);
-  }
 
 
   useEffect(() => {
@@ -36,16 +37,21 @@ export default function SearchChannelDialog(props: SearchChannelDialogProps) {
         return ;
       setSearchResult([]);
       data.map((room: any) => {
-        setSearchResult(prev => [...prev, { id: room.id, name: room.name}]);
+        setSearchResult(prev => [...prev, { id: room.id, name: room.name, type: room.type}]);
       })
     }
 
     searchChannel();
   }, [text]);
 
-  const handleOnClick = async (roomId: string) => {
+  const handleOnChange = (value: string) => {
+    setText(value);
+  }
+
+  const handleOnClick = async (roomId: string, password?: string) => {
     try {
-      const { data } = await axios.post(`http://localhost:8080/chat/member/add/me`, { roomId, status: 'NORMAL' });
+      setPass('');
+      const { data } = await axios.post(`http://localhost:8080/chat/member/add/me`, { roomId, status: 'NORMAL', password });
       setChannels((prev: any) => [...prev, { name: data.name, id: data.id }]);
     } catch (error) {
       console.log(error)
@@ -77,8 +83,8 @@ export default function SearchChannelDialog(props: SearchChannelDialogProps) {
             }}
           />
           {searchResult.length > 0 ? (
-            <Box sx={{ position: 'absolute', left: 0, right: 0}}>
-              {searchResult.map((result: SearchChannelType, idx) => (
+            <Box sx={{ position: 'absolute', left: 0, right: 0 }}>
+              {searchResult.map((channel: SearchChannelType, idx) => (
                 <Grid
                   key={idx}
                   container
@@ -87,12 +93,39 @@ export default function SearchChannelDialog(props: SearchChannelDialogProps) {
                   sx={{ display: 'flex', alignItems: 'center' }}
                 >
                   <Grid item>
-                    {result.name}
+                    {channel.name}
                   </Grid>
                   <Grid item>
-                    <Button onClick={async () => {await handleOnClick(result.id)}}>
+                    {channel.type === 'PROTECT' ?
+                      (
+                        <LockIcon/>
+                      ) : (<></>)}
+                  </Grid>
+                  <Grid item>
+                    {
+                      channel.type === 'PROTECT' ?
+                        (
+                          <>
+                            <TextField
+                              size="small"
+                              label={'password'}
+                              value={pass}
+                              onChange={e => { setPass(e.target.value); }}
+                              />
+                            <Button
+                              onClick={async () => { await handleOnClick(channel.id, pass); }}
+                              >
+                              JOIN
+                            </Button>
+                          </>
+                        ) : (
+                    <Button
+                      onClick={async (event) => { await handleOnClick(channel.id); }}
+                    >
                       JOIN
                     </Button>
+                        )
+                    }
                   </Grid>
                 </Grid>
               ))}

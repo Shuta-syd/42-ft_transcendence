@@ -218,7 +218,7 @@ export class ChatService {
     if (isBan.length !== 0) throw new Error("You couldn't enter the room");
 
     const room = await this.getChatRoomById(dto.roomId);
-    if (room.type === 'PROTECT' && dto.password === room.password)
+    if (room.type === 'PROTECT' && dto.password !== room.password)
       throw new Error('Password is wrong');
 
     return this.prisma.member.create({
