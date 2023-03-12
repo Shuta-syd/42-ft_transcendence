@@ -113,15 +113,20 @@ export class ChatController {
   }
 
   @ApiOperation({
-    description: 'Add a specific user to join a specific room as a member',
+    description: 'Add login user to join a specific room as a member',
     summary: 'Add a user to join a room',
   })
   @Post('member/add/me')
   async addMemberMe(
     @Req() req: Request,
     @Body() dto: AddMemberDto,
-  ): Promise<Member> {
-    return this.chatService.addMember(req.user.id, dto.roomId, dto.status);
+  ): Promise<ChatRoom> {
+    const me = await this.chatService.addMember(
+      req.user.id,
+      dto.roomId,
+      dto.status,
+    );
+    return this.getChatRoomById(me.roomId);
   }
 
   @ApiOperation({
@@ -154,7 +159,6 @@ export class ChatController {
     @Req() req: Request,
     @Query('name') name: string,
   ): Promise<ChatRoom[]> {
-    console.log(name);
     return this.chatService.searchChannel(req.user.id, name);
   }
 
