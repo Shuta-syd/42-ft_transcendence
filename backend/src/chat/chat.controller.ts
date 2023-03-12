@@ -109,7 +109,7 @@ export class ChatController {
   })
   @Post('member/add')
   async addMember(@Body() dto: AddMemberDto): Promise<Member> {
-    return this.chatService.addMember(dto.userId, dto.roomId, dto.status);
+    return this.chatService.addMember(dto.userId, dto);
   }
 
   @ApiOperation({
@@ -121,11 +121,7 @@ export class ChatController {
     @Req() req: Request,
     @Body() dto: AddMemberDto,
   ): Promise<ChatRoom> {
-    const me = await this.chatService.addMember(
-      req.user.id,
-      dto.roomId,
-      dto.status,
-    );
+    const me = await this.chatService.addMember(req.user.id, dto);
     return this.getChatRoomById(me.roomId);
   }
 
