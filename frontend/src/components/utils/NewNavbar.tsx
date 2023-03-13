@@ -46,43 +46,61 @@ export default function NewNavBar() {
           }}
         >
           <Box
-            borderRadius={4}
-            className={ path === '/game' ? 'NavbarActive' : ''}
+            className={'NavbarButtonParent'}
+            borderRight={path === '/game' ? 4 : 0}
+            borderColor={'#1f9f88'}
           >
-            <Link to={'/game'}>
-              <IconButton>
-                <VideogameAssetOutlinedIcon
-                  fontSize="large"
-                  className={ path === '/game' ? 'NavbarButtonActive' : 'NavbarButton'}
-                  />
-              </IconButton>
-            </Link>
+            <Box
+              borderRadius={4}
+              className={ path === '/game' ? 'NavbarActive' : ''}
+            >
+              <Link to={'/game'}>
+                <IconButton>
+                  <VideogameAssetOutlinedIcon
+                    fontSize="large"
+                    className={ path === '/game' ? 'NavbarButtonActive' : 'NavbarButton'}
+                    />
+                </IconButton>
+              </Link>
+            </Box>
           </Box>
           <Box
-            borderRadius={4}
-            className={ path === '/chat/room' ? 'NavbarActive' : ''}
+            className={'NavbarButtonParent'}
+            borderRight={path === '/chat/room' ? 4 : 0}
+            borderColor={'#1f9f88'}
           >
-            <Link to={'/chat/room'}>
-              <IconButton>
-                <ChatOutlinedIcon
-                  fontSize="large"
-                  className={ path === '/chat/room' ? 'NavbarButtonActive' : 'NavbarButton'}
-                  />
-              </IconButton>
-            </Link>
+            <Box
+              borderRadius={4}
+              className={ path === '/chat/room' ? 'NavbarActive' : ''}
+            >
+              <Link to={'/chat/room'}>
+                <IconButton>
+                  <ChatOutlinedIcon
+                    fontSize="large"
+                    className={ path === '/chat/room' ? 'NavbarButtonActive' : 'NavbarButton'}
+                    />
+                </IconButton>
+              </Link>
+            </Box>
           </Box>
           <Box
-            borderRadius={4}
-            className={ path === '/channel/room' ? 'NavbarActive' : ''}
+            className={'NavbarButtonParent'}
+            borderRight={path === '/channel/room' ? 4 : 0}
+            borderColor={'#1f9f88'}
           >
-            <Link to={'/channel/room'}>
-              <IconButton>
-                <ForumOutlinedIcon
-                  fontSize="large"
-                  className={ path === '/channel/room' ? 'NavbarButtonActive' : 'NavbarButton'}
-                  />
-              </IconButton>
-            </Link>
+            <Box
+              borderRadius={4}
+              className={ path === '/channel/room' ? 'NavbarActive' : ''}
+            >
+              <Link to={'/channel/room'}>
+                <IconButton>
+                  <ForumOutlinedIcon
+                    fontSize="large"
+                    className={ path === '/channel/room' ? 'NavbarButtonActive' : 'NavbarButton'}
+                    />
+                </IconButton>
+              </Link>
+            </Box>
           </Box>
         </Stack>
         <Box

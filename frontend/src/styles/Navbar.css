@@ -10,3 +10,19 @@
 .NavbarButtonActive {
   color: #1f9f88;
 }
+
+.NavbarButtonParent {
+  width: 6rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.NavbarButtonActiveParent {
+  width: 6rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
