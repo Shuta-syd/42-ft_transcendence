@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
-import Navbar from './components/utils/Navbar';
+import NewNavBar from './components/utils/NewNavbar';
 import './styles/index.css'
 
 const root = ReactDOM.createRoot(
@@ -12,7 +12,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <>
     <BrowserRouter>
-      <Navbar />
+      <NewNavBar />
       <App />
     </BrowserRouter>
   </>
