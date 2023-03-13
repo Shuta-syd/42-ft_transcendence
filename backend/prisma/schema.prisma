@@ -15,6 +15,7 @@ model User {
   friends         User[]   @relation("Friends")
   friendRelation  User[]   @relation("Friends")
   memberships     Member[]
+  banned   BanUserOnChatRoom[]
 }
 
 model Member {
@@ -25,14 +26,18 @@ model Member {
   room     ChatRoom @relation(fields: [roomId], references: [id])
   user     User     @relation(fields: [userId], references: [id])
   messages Message[]
-  //role   RoomRole
+  role   MemberRole  @default(NORMAL)
+  isMute Boolean @default(false)
 }
 
 model ChatRoom {
   id       String      @id @default(uuid())
-  isDM     Boolean     @default(false)
+  name     String      @default("unknown")
+  password String      @default("")
+  type     RoomType
   messages Message[]
   members  Member[]
+  banned   BanUserOnChatRoom[]
 }
 
 model Message {
@@ -46,11 +51,37 @@ model Message {
   member    Member   @relation(fields: [memberId], references: [id])
 }
 
+model BanUserOnChatRoom {
+  id String @id @default(uuid())
+  baned_userId String
+  banned_user User @relation(fields: [baned_userId], references: [id])
+  roomId String
+  room   ChatRoom @relation(fields: [roomId], references: [id])
+}
+
 model Match {
   id        Int     @id @default(autoincrement())
   player1   String
   player2   String
   winner_id Int
+}
+
+enum MemberRole {
+  OWNER
+  ADMIN
+  NORMAL
+}
+
+enum RoomType {
+  PUBLIC
+  PROTECT
+  PRIVATE
+  DM
+}
+
+enum BanType {
+  CHANNEL
+  LOCAL
 }
 
 

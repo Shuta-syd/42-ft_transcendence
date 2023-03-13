@@ -4,12 +4,14 @@ import { Outlet } from "react-router-dom";
 
 const queryClient = new QueryClient();
 
-function Chat() {
+function Channel() {
   return (
-    <QueryClientProvider client={queryClient}>
-        <Outlet />
-    </QueryClientProvider>
-  );
+    <>
+      <QueryClientProvider client={queryClient}>
+          <Outlet />
+      </QueryClientProvider>
+    </>
+  )
 }
 
-export default Chat;
+export default Channel;

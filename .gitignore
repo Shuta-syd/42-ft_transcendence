@@ -3,6 +3,7 @@
 *.idea*
 *.xml
 .DS_Store
+assets/scale
 assets/study/
 node_modules/
 .node-version
