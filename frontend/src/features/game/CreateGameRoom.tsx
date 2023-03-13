@@ -18,7 +18,6 @@ const CreateGameRoom = () => {
             setUser(userDto);
             gamePromisesRef.current = GameRoomReq(userDto?.name);
         });
-
     }, []);
 
     useEffect(() => {
@@ -50,7 +49,7 @@ const CreateGameRoom = () => {
             {
                 (() => {
                     if (game?.player2 === '') {
-                        return <GamePlayer1></GamePlayer1>
+                        return <GamePlayer1 roomId={roomId}></GamePlayer1>
                     }
                     return <GamePlayer2 roomId={roomId}></GamePlayer2>
                 })()

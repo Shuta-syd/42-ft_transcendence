@@ -1,15 +1,13 @@
 
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import { GameSocket } from "../../contexts/WebsocketContext";
-import {Game, User} from "../../types/PrismaType";
-import {GameRoomReq, useGameUser} from "../../hooks/game/useGameuser";
 
 
-// type Props = {
-//     roomId: number | undefined;
-// }
+type Props = {
+    roomId: number | undefined;
+}
 
-const GamePlayer1 = () => {
+const GamePlayer1 = ({ roomId }: Props) => {
     // global variables
     let context: CanvasRenderingContext2D | null;
     let canvas:  HTMLCanvasElement | null;
@@ -151,10 +149,9 @@ const GamePlayer1 = () => {
 
         const paddleAndRoom = {
             paddleHeight: rightPaddle.y,
-            room: player1RoomId?.toString(),
+            room: roomId?.toString(),
         }
-        // console.log('player1roomid roomID', player1RoomId?.toString());
-        // console.log('paddleAndRoom roomID', paddleAndRoom.room);
+        console.log('paddleAndRoom roomID', paddleAndRoom.room);
         GameSocket.emit('GameToServer', paddleAndRoom);
         // console.log(paddleAndRoom.room);
         keycode = '';
@@ -165,7 +162,7 @@ const GamePlayer1 = () => {
         const BallPos:BallPos = {
             x: ball.x,
             y:ball.y,
-            room: player1RoomId?.toString(),
+            room: roomId?.toString(),
         }
 
         const vectorMiddleTo1X = BallPos.x - MIDDLEX;
@@ -189,7 +186,7 @@ const GamePlayer1 = () => {
     }
 
 
-  /*  useEffect(() => {
+    useEffect(() => {
         const handleKeyUp = ():void => {
             keycode =  '';
         }
@@ -205,11 +202,10 @@ const GamePlayer1 = () => {
             return ;
         }
 
-
-
+        window.requestAnimationFrame(draw);
         window.addEventListener('keyup', handleKeyUp);
         window.addEventListener('keydown', handleKeyDown);
-    }, []); */
+    }, []);
 
     type Chat = {
         socketId: string,
@@ -259,8 +255,7 @@ const GamePlayer1 = () => {
             return;
         }
         console.log('送信')
-        console.log('THIS IS ROOM => ', player1RoomId);
-        GameSocket.emit('chatToServer', { uname, text, time: getNow(), room: player1RoomId?.toString()});
+        GameSocket.emit('chatToServer', { uname, text, time: getNow(), room: roomId?.toString()});
         setText('');
     }, [uname, text])
 
@@ -271,93 +266,6 @@ const GamePlayer1 = () => {
             leftPaddle.y = leftPaddley;
         }
     });
-
-
-    // adding from create game room
-    const [player1User, setUser] = useState<User>();
-    // const [player1Game, setGame] = useState<Game>();
-    const [player1RoomId, setRoomId] = useState<number | undefined>(undefined); // useStateでroomIdを宣言
-
-    const gamePromisesRef = useRef<Promise<Game>>();
-    const UserPromises = useGameUser();
-    useEffect(() => {
-        UserPromises.then((userDto: User) => {
-            setUser(userDto);
-            gamePromisesRef.current = GameRoomReq(userDto?.name);
-        });
-
-    }, []);
-    useEffect(() => {
-        gamePromisesRef.current?.then((Gamedto: Game) => {
-            // setGame(Gamedto);
-            console.log(Gamedto?.id);
-            setRoomId(Gamedto?.id); // roomIdを更新する
-            console.log('hoge', player1RoomId)
-            type RoomId = {
-                room: string | undefined,
-            }
-            const roomid: RoomId = {
-                room: Gamedto.id.toString(),
-            }
-            GameSocket.emit('JoinRoom', roomid);
-            const handleKeyUp = ():void => {
-                keycode =  '';
-            }
-            const handleKeyDown = (e:KeyboardEvent):void  => {
-                keycode = e.code;
-            }
-            canvas = canvasRef.current;
-            if (!canvas) {
-                return ;
-            }
-            context = canvas.getContext('2d');
-            if (!context) {
-                return ;
-            }
-
-
-
-            window.requestAnimationFrame(draw);
-            window.addEventListener('keyup', handleKeyUp);
-            window.addEventListener('keydown', handleKeyDown);
-        });
-    }, [player1User]);
-/*
-
-    useEffect(() => {
-        gamePromisesRef.current?.then((Gamedto: Game) => {
-            console.log(Gamedto?.id);
-            setRoomId(Gamedto?.id);
-        });
-    }, [setRoomId]);
-
-    useEffect(() => {
-        console.log('hoge', player1RoomId)
-        type RoomId = {
-            room: string | undefined,
-        }
-        const roomid: RoomId = {
-            room: player1RoomId.toString(),
-        }
-        GameSocket.emit('JoinRoom', roomid);
-
-        const handleKeyUp = ():void => {
-            keycode =  '';
-        }
-        const handleKeyDown = (e:KeyboardEvent):void  => {
-            keycode = e.code;
-        }
-
-        canvas = canvasRef.current;
-        if (!canvas) {
-            return ;
-        }
-        context = canvas.getContext('2d');
-        if (!context) {
-            return ;
-        }
-    }, [player1RoomId]);
-*/
 
     return (
         <div>
