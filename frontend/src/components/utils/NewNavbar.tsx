@@ -7,9 +7,11 @@ import ChatOutlinedIcon from '@mui/icons-material/ChatOutlined';
 import PersonIcon from '@mui/icons-material/Person';
 import React from "react";
 import '../../styles/Navbar.css'
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export default function NewNavBar() {
+  const path = useLocation().pathname;
+
   return (
     <>
       <Box
@@ -44,35 +46,40 @@ export default function NewNavBar() {
           }}
         >
           <Box
-            className={'NavbarActive'}
             borderRadius={4}
+            className={ path === '/game' ? 'NavbarActive' : ''}
           >
             <Link to={'/game'}>
               <IconButton>
                 <VideogameAssetOutlinedIcon
                   fontSize="large"
-                  sx={{ color: '#1f9f88' }}
-                  className={'NavbarButton'}
+                  className={ path === '/game' ? 'NavbarButtonActive' : 'NavbarButton'}
                   />
               </IconButton>
             </Link>
           </Box>
-          <Box>
+          <Box
+            borderRadius={4}
+            className={ path === '/chat/room' ? 'NavbarActive' : ''}
+          >
             <Link to={'/chat/room'}>
               <IconButton>
                 <ChatOutlinedIcon
                   fontSize="large"
-                  sx={{color: '#B2B9C5'}}
+                  className={ path === '/chat/room' ? 'NavbarButtonActive' : 'NavbarButton'}
                   />
               </IconButton>
             </Link>
           </Box>
-          <Box>
+          <Box
+            borderRadius={4}
+            className={ path === '/channel/room' ? 'NavbarActive' : ''}
+          >
             <Link to={'/channel/room'}>
               <IconButton>
                 <ForumOutlinedIcon
                   fontSize="large"
-                  sx={{color: '#B2B9C5'}}
+                  className={ path === '/channel/room' ? 'NavbarButtonActive' : 'NavbarButton'}
                   />
               </IconButton>
             </Link>
