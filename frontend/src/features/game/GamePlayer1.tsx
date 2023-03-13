@@ -114,7 +114,6 @@ const GamePlayer1 = () => {
         context?.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
         drawStaticObject();
 
-
         /* check collision */
         if (ball.x - ball.radius <= leftPaddle.x + PADDLEWIDTH
             && (ball.y <= leftPaddle.y + PADDLEWHEIGHT
@@ -151,7 +150,6 @@ const GamePlayer1 = () => {
             name: user?.name.toString(),
         }
         // console.log('paddleAndRoom name', paddleAndRoom.name);
-        console.log('paddleAndRoom name', paddleAndRoom.name);
         GameSocket.emit('GameToServer', paddleAndRoom);
         // console.log(paddleAndRoom.room);
         keycode = '';
@@ -268,11 +266,14 @@ const GamePlayer1 = () => {
     }, [uname, text])
 
 
-    GameSocket.on('GameToClient', (leftPaddley: number, socketid: string) => {
-        // console.log('chat receive leftPaddley info', leftPaddley)
-        if (GameSocket.id !== socketid) {
-            leftPaddle.y = leftPaddley;
-        }
+    type PaddleAndRoom = {
+        paddleHeight: number;
+        name: string;
+    };
+
+    GameSocket.on('GameToClient', (leftPaddley: PaddleAndRoom, socketid: string) => {
+        if (GameSocket.id !== socketid)
+            leftPaddle.y = leftPaddley.paddleHeight;
     });
 
     return (
