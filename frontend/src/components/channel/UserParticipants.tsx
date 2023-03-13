@@ -37,7 +37,7 @@ export default function UserParticipant(props: UserParticipantProps) {
     }
   }
 
-  const getUserId = async () => {
+  const getUserId = async ()=> {
     const { data } = await axios.get(`http://localhost:8080/user`);
     if (data){
       setUserId(data.id);
@@ -45,8 +45,8 @@ export default function UserParticipant(props: UserParticipantProps) {
   }
 
   useEffect(() => {
-    loadMember();
     getUserId();
+    loadMember();
   }, [roomId])
 
   const handleKick = async (memberId: string) => {
