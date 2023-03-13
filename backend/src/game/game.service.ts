@@ -5,6 +5,8 @@ import { Game } from '@prisma/client';
 let playerId = 0;
 let tmpGame: Game;
 
+export type NameToRoomIdDic = { [key: number]: string };
+export const NameToRoomIdDic: NameToRoomIdDic = {};
 @Injectable()
 export class GameService {
   constructor(private prisma: PrismaService) {}
@@ -24,9 +26,16 @@ export class GameService {
       });
       // ここの処理は改善できそう
       tmpGame = await game;
+      game.then((Gamedto: Game) => {
+        NameToRoomIdDic[playerName.toString()] = Gamedto.id.toString();
+        console.log(playerName.toString());
+        console.log(Gamedto.id.toString());
+        console.log(Gamedto.id.toString());
+        console.log(NameToRoomIdDic[playerName]);
+      });
       return game;
     } else {
-      return this.prisma.game.update({
+      const game = this.prisma.game.update({
         where: {
           id: tmpGame.id,
         },
@@ -34,6 +43,14 @@ export class GameService {
           player2: playerName,
         },
       });
+      game.then((Gamedto: Game) => {
+        NameToRoomIdDic[playerName.toString()] = Gamedto.id.toString();
+        console.log(playerName.toString());
+        console.log(Gamedto.id.toString());
+        console.log(Gamedto.id.toString());
+        console.log(NameToRoomIdDic[playerName]);
+      });
+      return game;
     }
   }
 }

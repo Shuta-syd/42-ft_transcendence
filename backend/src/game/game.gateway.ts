@@ -7,6 +7,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
+import { NameToRoomIdDic } from './game.service';
 
 type ChatRecieved = {
   uname: string;
@@ -27,7 +28,7 @@ type PaddleAndRoom = {
 };
 
 type RoomId = {
-  room: string;
+  name: string;
 };
 
 @WebSocketGateway({
@@ -53,8 +54,9 @@ export class GameGateway {
     // this.logger.log(payload);
     // this.logger.log('chat受信');
     //emit()とすると、指定した名前をリッスンしているクライアントに情報をプッシュできる
+    const roomId: string = NameToRoomIdDic[payload.name];
     this.server
-      .to(payload.name)
+      .to(roomId)
       .emit('chatToClient', { ...payload, socketId: client.id });
   }
   @SubscribeMessage('GameToServer')
@@ -62,38 +64,39 @@ export class GameGateway {
     @MessageBody() payload: PaddleAndRoom,
     @ConnectedSocket() client: Socket,
   ): void {
-    // console.log('game to server', payload.room);
+    console.log('GAME to server', payload.paddleHeight);
     console.log('GAME to server', payload.name);
-    console.log('Event is happend');
-    this.server.emit('GameToClient', payload, client.id);
+    console.log('Event happend');
+    const roomId: string = NameToRoomIdDic[payload.name];
+    console.log(roomId);
+    this.server.to(roomId).emit('GameToClient', payload, client.id);
   }
   @SubscribeMessage('BallPosToServer')
   ReceiveBallPosInfo(
     @MessageBody() payload: BallPos,
     @ConnectedSocket() client: Socket,
   ): void {
-    console.log('ball pos to server NAME', payload.name);
-    this.server.emit('BallPosToClient', payload, client.id);
+    const roomId: string = NameToRoomIdDic[payload.name];
+    this.server.to(roomId).emit('BallPosToClient', payload, client.id);
   }
   // ユーザーがルームに参加するたnめのイベントを定義します
   @SubscribeMessage('JoinRoom')
   handleJoinRoom(
-    @MessageBody() payload: RoomId,
+    @MessageBody() payload: string,
     @ConnectedSocket() socket: Socket,
   ): void {
     // ユーザーをルームに参加させます
-    console.log('payload is ', payload.room);
-    socket.join(payload.room);
+    if (!payload) return;
+    const roomId: string = NameToRoomIdDic[payload];
+    socket.join(roomId);
     // ルームが存在しない場合は、新しいルームを作成します
-    if (!this.rooms[payload.room]) {
-      this.rooms[payload.room] = [];
+    if (!this.rooms[roomId]) {
+      this.rooms[roomId] = [];
     }
     // ユーザーをルームの参加者リストに追加します
-    this.rooms[payload.room].push(socket.id);
+    this.rooms[roomId].push(socket.id);
     // ルームの参加者リストをルームの全員に送信します
-    this.server
-      .to(payload.room)
-      .emit('update room.room', this.rooms[payload.room]);
+    this.server.to(roomId).emit(roomId, this.rooms[roomId]);
   }
 
   // ユーザーがルームから離脱するためのイベントを定義します

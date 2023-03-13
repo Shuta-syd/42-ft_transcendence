@@ -171,8 +171,8 @@ const GamePlayer2 = () => {
     const UserPromises = useGameUser();
     useEffect(() => {
         UserPromises.then((userDto: User) => {
-
             setUser(userDto);
+            GameSocket.emit('JoinRoom', userDto.name);
         });
     }, []);
 
@@ -259,10 +259,6 @@ const GamePlayer2 = () => {
         ball.x = BallPos.x;
         ball.y = BallPos.y;
     });
-
-    // useEffect(() => {
-    //     GameSocket.emit('JoinRoom', roomId?.toString);
-    // }, []);
 
 return (
         <div>

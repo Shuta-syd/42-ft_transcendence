@@ -189,8 +189,8 @@ const GamePlayer1 = () => {
     const UserPromises = useGameUser();
     useEffect(() => {
         UserPromises.then((userDto: User) => {
-
             setUser(userDto);
+            GameSocket.emit('JoinRoom', userDto?.name);
         });
     }, []);
 
@@ -210,7 +210,6 @@ const GamePlayer1 = () => {
         if (!context) {
             return ;
         }
-
         window.requestAnimationFrame(draw);
         window.addEventListener('keyup', handleKeyUp);
         window.addEventListener('keydown', handleKeyDown);
