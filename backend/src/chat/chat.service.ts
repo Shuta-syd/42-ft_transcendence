@@ -32,7 +32,11 @@ export class ChatService {
         },
       })
       .then((room: ChatRoom): ChatRoom => {
-        this.addMember(userId, { roomId: room.id, status: 'OWNER' });
+        this.addMember(userId, {
+          roomId: room.id,
+          status: 'OWNER',
+          password: dto.password,
+        });
         return room;
       });
   }
