@@ -12,18 +12,18 @@ type ChatRecieved = {
   uname: string;
   time: string;
   text: string;
-  room: string;
+  name: string;
 };
 
 type BallPos = {
   x: number;
   y: number;
-  room: string;
+  name: string;
 };
 
 type PaddleAndRoom = {
   paddleHeight: number;
-  room: string;
+  name: string;
 };
 
 type RoomId = {
@@ -50,11 +50,11 @@ export class GameGateway {
   ): void {
     //@MessageBody受信したデータ
     //@ConnectedSocket→ユーザーのID（websocketで自動で割り当てられる）や、その他接続に関する情報など
-    // this.logger.log('chat受信');
     // this.logger.log(payload);
+    // this.logger.log('chat受信');
     //emit()とすると、指定した名前をリッスンしているクライアントに情報をプッシュできる
     this.server
-      .to(payload.room)
+      .to(payload.name)
       .emit('chatToClient', { ...payload, socketId: client.id });
   }
   @SubscribeMessage('GameToServer')
@@ -63,15 +63,17 @@ export class GameGateway {
     @ConnectedSocket() client: Socket,
   ): void {
     // console.log('game to server', payload.room);
-    this.server.to(payload.room).emit('GameToClient', payload, client.id);
+    console.log('GAME to server', payload.name);
+    console.log('Event is happend');
+    this.server.emit('GameToClient', payload, client.id);
   }
   @SubscribeMessage('BallPosToServer')
   ReceiveBallPosInfo(
     @MessageBody() payload: BallPos,
     @ConnectedSocket() client: Socket,
   ): void {
-    console.log('ball pos to server', payload.room);
-    this.server.to(payload.room).emit('BallPosToClient', payload, client.id);
+    console.log('ball pos to server NAME', payload.name);
+    this.server.emit('BallPosToClient', payload, client.id);
   }
   // ユーザーがルームに参加するたnめのイベントを定義します
   @SubscribeMessage('JoinRoom')

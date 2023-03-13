@@ -1,13 +1,10 @@
-
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import { GameSocket } from "../../contexts/WebsocketContext";
+import {User} from "../../types/PrismaType";
+import { useGameUser } from "../../hooks/game/useGameuser";
 
 
-type Props = {
-    roomId: number | undefined;
-}
-
-const GamePlayer1 = ({ roomId }: Props) => {
+const GamePlayer1 = () => {
     // global variables
     let context: CanvasRenderingContext2D | null;
     let canvas:  HTMLCanvasElement | null;
@@ -106,12 +103,14 @@ const GamePlayer1 = ({ roomId }: Props) => {
     type BallPos = {
         x: number;
         y: number;
-        room: string | undefined;
+        name: string | undefined;
     };
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
     function draw() {
+        if (!user?.name)
+            return;
         context?.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
         drawStaticObject();
 
@@ -149,9 +148,10 @@ const GamePlayer1 = ({ roomId }: Props) => {
 
         const paddleAndRoom = {
             paddleHeight: rightPaddle.y,
-            room: roomId?.toString(),
+            name: user?.name.toString(),
         }
-        console.log('paddleAndRoom roomID', paddleAndRoom.room);
+        // console.log('paddleAndRoom name', paddleAndRoom.name);
+        console.log('paddleAndRoom name', paddleAndRoom.name);
         GameSocket.emit('GameToServer', paddleAndRoom);
         // console.log(paddleAndRoom.room);
         keycode = '';
@@ -162,7 +162,7 @@ const GamePlayer1 = ({ roomId }: Props) => {
         const BallPos:BallPos = {
             x: ball.x,
             y:ball.y,
-            room: roomId?.toString(),
+            name: user?.name.toString(),
         }
 
         const vectorMiddleTo1X = BallPos.x - MIDDLEX;
@@ -185,6 +185,15 @@ const GamePlayer1 = ({ roomId }: Props) => {
         window.requestAnimationFrame(draw);
     }
 
+    const [user, setUser] = useState<User>();
+    const UserPromises = useGameUser();
+    useEffect(() => {
+        UserPromises.then((userDto: User) => {
+
+            setUser(userDto);
+        });
+    }, []);
+
 
     useEffect(() => {
         const handleKeyUp = ():void => {
@@ -205,14 +214,14 @@ const GamePlayer1 = ({ roomId }: Props) => {
         window.requestAnimationFrame(draw);
         window.addEventListener('keyup', handleKeyUp);
         window.addEventListener('keydown', handleKeyDown);
-    }, []);
+    }, [user]);
 
     type Chat = {
         socketId: string,
         uname: string,
         time: string,
         text: string,
-        room: string | undefined,
+        name: string,
     }
     type ChatLog = Array<Chat>
 
@@ -255,7 +264,7 @@ const GamePlayer1 = ({ roomId }: Props) => {
             return;
         }
         console.log('送信')
-        GameSocket.emit('chatToServer', { uname, text, time: getNow(), room: roomId?.toString()});
+        GameSocket.emit('chatToServer', { uname, text, time: getNow(), name: user?.name});
         setText('');
     }, [uname, text])
 
