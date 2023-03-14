@@ -27,4 +27,13 @@ function GameRoomReq(playerName: string | undefined) {
     return getGameObject();
 }
 
-export {useGameUser, GameRoomReq};
+function GameObserverReq(observer: string | undefined) {
+    const getGameObject = async () => {
+        const { data } = await axios.post<Game>(`http://localhost:8080/game/newobserver`, {
+            observer,
+        });
+        return data;
+    }
+    return getGameObject();
+}
+export {useGameUser, GameRoomReq, GameObserverReq};
