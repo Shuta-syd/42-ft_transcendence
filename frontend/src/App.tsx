@@ -1,5 +1,6 @@
 import React from "react";
 import {Route, Routes } from 'react-router-dom';
+import { Grid } from "@mui/material";
 import axios from "axios";
 import Auth from "./features/auth/Auth";
 import Chat from "./features/chat/Chat";
@@ -17,7 +18,7 @@ import GameObserver from "./features/game/GameObserver";
 function App() {
   axios.defaults.withCredentials = true;
   return (
-    <>
+    <Grid item xs>
         <Routes>
           <Route index element={<Auth/>} />
           <Route path="/chat" element={<Chat />}>
@@ -36,7 +37,7 @@ function App() {
           <Route path="/game/player2" element={<GamePlayer2/>} />
           <Route path="/game/observer" element={<GameObserver/>} />
         </Routes>
-    </>
+    </Grid>
   )
 }
 export default App;

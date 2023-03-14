@@ -102,9 +102,9 @@ export default function ChatWindowComponent() {
           </Typography>
         </Box>
         <Box
-          maxHeight={`calc(94vh - ${subtitleHeight})`}
+          maxHeight={`calc(100vh - ${subtitleHeight})`}
         >
-          <Box sx={{color: '#EEEEEE', backgroundColor: '#0F044C', overflow: 'auto'}} height={`calc(85vh - ${subtitleHeight})`}>
+          <Box sx={{color: '#EEEEEE', backgroundColor: '#0F044C', overflow: 'auto'}} height={`calc(91vh - ${subtitleHeight})`}>
             {chatLog.map((chat, idx) => (
               <div key={idx}>
                 <div>{chat.time}</div>

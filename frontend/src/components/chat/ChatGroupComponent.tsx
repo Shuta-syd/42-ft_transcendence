@@ -24,7 +24,7 @@ export default function ChatGroupComponent(props: ChatGroupComponentProps) {
   }, [subtitleElm, subtitleHeight]);
 
   return (
-    <Grid item xs={3} height={'94vh'}>
+    <Grid item xs={3} height={'100vh'}>
       <Box>
         <Stack>
           <Box sx={{ backgroundColor: '#141E61'}} ref={subtitleElm}>
@@ -38,7 +38,7 @@ export default function ChatGroupComponent(props: ChatGroupComponentProps) {
             </Typography>
           </Box>
           <Stack
-            height={`calc(94vh - ${subtitleHeight})`}
+            height={`calc(100vh - ${subtitleHeight})`}
             sx={{ backgroundColor: '#141E61', overflow: 'auto' }} borderColor={'#787A91'}
           >
             <ChatFriendsComponent socket={props.socket} />

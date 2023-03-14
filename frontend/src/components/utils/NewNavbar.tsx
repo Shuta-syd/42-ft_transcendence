@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-import { Avatar, Box, IconButton, Stack } from "@mui/material";
+import { Box, Grid, IconButton, Stack } from "@mui/material";
 import Looks4Icon from '@mui/icons-material/Looks4';
 import VideogameAssetOutlinedIcon from '@mui/icons-material/VideogameAssetOutlined';
 import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
@@ -13,7 +12,7 @@ export default function NewNavBar() {
   const path = useLocation().pathname;
 
   return (
-    <>
+    <Grid item>
       <Box
         width={'6rem'} height={'100vh'}
         sx={{
@@ -116,6 +115,6 @@ export default function NewNavBar() {
           </Link>
         </Box>
       </Box>
-    </>
+    </Grid>
   )
 }
