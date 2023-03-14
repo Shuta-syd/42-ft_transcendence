@@ -29,7 +29,11 @@ const GameSelectRoom = () => {
         setNumber(tmpNumber);
         isAlreadyAssigned = true;
         if (!isAlreadyAssigned && user) {
-           const gameRes = GameObserverReq(user.name);
+            const observseDto = {
+                name:user.name,
+                roomId:number,
+            }
+           const gameRes = GameObserverReq(observseDto);
            gameRes.then((game:Game) => {
                if (game.id && game.player1 && game.player2)
                    setIsAsssigned(true);

@@ -27,10 +27,15 @@ function GameRoomReq(playerName: string | undefined) {
     return getGameObject();
 }
 
-function GameObserverReq(observer: string | undefined) {
+type ObserverDto = {
+    name: string;
+    roomId: string,
+}
+
+function GameObserverReq(observer: ObserverDto | undefined) {
     const getGameObject = async () => {
         const { data } = await axios.post<Game>(`http://localhost:8080/game/newobserver`, {
-            observer,
+            observer
         });
         return data;
     }
