@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {Body, Controller, Get, Post} from '@nestjs/common';
 import { GameService } from './game.service';
 import { Game } from '@prisma/client';
 
@@ -10,5 +10,10 @@ export class GameController {
     @Body() assignPlayerReqDto: string | any, // assignPlayerReq の型もしくは any を指定
   ): Promise<Game | null> {
     return this.gameService.handleAssignPlayerReq(assignPlayerReqDto);
+  }
+
+  @Get('ongoing')
+  async setOngoingGames(): Promise<Game[] | null> {
+    return this.gameService.getAllOngoingGames();
   }
 }

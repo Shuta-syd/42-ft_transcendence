@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Game } from '@prisma/client';
+import {Game, Match} from '@prisma/client';
 
 let playerId = 0;
 let tmpGame: Game;
@@ -52,5 +52,8 @@ export class GameService {
       });
       return game;
     }
+  }
+  async getAllOngoingGames(): Promise<Game[] | null> {
+    return await this.prisma.game.findMany({});
   }
 }
