@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   HttpStatus,
   Param,
@@ -14,7 +13,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ChatRoom, Member, Message, User } from '@prisma/client';
 import { Request } from 'express';
-import { Msg } from 'src/auth/dto/auth.dto';
 import {
   PrismaChatRoom,
   PrismaMessage,
@@ -23,11 +21,9 @@ import {
 import { ChatService } from './chat.service';
 import {
   AddMemberDto,
-  MuteMemberDto,
   ChatRoomPayload,
   CreateChatRoom,
   SendChatDto,
-  MemberDto,
 } from './dto/chat.dto';
 
 @Controller('chat')
@@ -47,11 +43,11 @@ export class ChatController {
     type: PrismaMessage,
   })
   async sendChat(
-    @Req() req: Request,
+    // @Req() req: Request, jwt or passport使用する場合
     @Param('id') roomId: string,
     @Body() dto: SendChatDto,
   ): Promise<Message> {
-    return this.chatService.sendChat(req.user.id, roomId, dto);
+    return this.chatService.sendChat(roomId, dto);
   }
 
   @Post('room')
@@ -88,6 +84,14 @@ export class ChatController {
     return this.chatService.getFriendNameByDMId(req.user.id, roomId);
   }
 
+  @Get('room/:roomId/memberId')
+  async getMyMemberId(
+    @Req() req: Request,
+    @Param('roomId') roomId: string,
+  ): Promise<string> {
+    return this.chatService.getMyMemberId(req.user.id, roomId);
+  }
+
   @Get('room/log/:roomId')
   @ApiOperation({
     description: 'Get chat logs of specified chat room',
@@ -108,19 +112,7 @@ export class ChatController {
   })
   @Post('member/add')
   async addMember(@Body() dto: AddMemberDto): Promise<Member> {
-    return this.chatService.addMember(dto.userId, dto.roomId, dto.status);
-  }
-
-  @ApiOperation({
-    description: 'search my member in room',
-    summary: 'search my member in room',
-  })
-  @Get(':roomId/myMember')
-  async getMyMember(
-    @Req() req: Request,
-    @Param('roomId') roomId: string,
-  ): Promise<Member> {
-    return this.chatService.getMyMember(req.user.id, roomId);
+    return this.chatService.addMember(dto.userId, dto.roomId);
   }
 
   @ApiOperation({
@@ -130,53 +122,5 @@ export class ChatController {
   @Get('dm')
   async getUserDM(@Req() req: Request): Promise<ChatRoomPayload> {
     return this.chatService.getUserDM(req.user.id);
-  }
-
-  /**
-   * Channel Controller
-   */
-  @Get('group')
-  @ApiOperation({
-    description: 'get channel user belongs to',
-    summary: 'get channel user belongs to',
-  })
-  async getChannels(@Req() req: Request): Promise<ChatRoom[]> {
-    return this.chatService.getChannels(req.user.id);
-  }
-
-  @Patch('channel/mute')
-  @ApiOperation({
-    description: 'admin or owner mute the member',
-    summary: 'admin or owner mute the member',
-  })
-  async muteMember(
-    @Req() req: Request,
-    @Body() dto: MuteMemberDto,
-  ): Promise<Msg> {
-    return this.chatService.muteMember(req.user.id, dto);
-  }
-
-  @Delete('channel/member/kick')
-  @ApiOperation({
-    description: 'admin or owner kick the member',
-    summary: 'admin or owner kick the member',
-  })
-  async deleteMember(
-    @Req() req: Request,
-    @Body() dto: MemberDto,
-  ): Promise<Msg> {
-    return this.chatService.deleteMember(req.user.id, dto);
-  }
-
-  @Post('channel/member/ban')
-  @ApiOperation({
-    description: 'admin or owner ban the user',
-    summary: 'admin or owner ban the user',
-  })
-  async banUserOnChatRoom(
-    @Req() req: Request,
-    @Body() dto: MemberDto,
-  ): Promise<Msg> {
-    return this.chatService.banUserOnChatRoom(req.user.id, dto);
   }
 }

@@ -10,13 +10,12 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { ChatPayload } from './dto/chat.dto';
+import { ChatPayload, TokenPayload } from './dto/chat.dto';
 
 @WebSocketGateway({
   cors: {
     origin: ['http://localhost:3000'],
   },
-  namespace: '/chat',
 })
 export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -24,6 +23,34 @@ export class ChatGateway
   @WebSocketServer()
   server: Server;
   private logger: Logger = new Logger('ChatGateway');
+  private key = 0;
+
+  @SubscribeMessage('send_message_room') // to subscribeEvent
+  //@MessageBody clientから送られてくるbody内容
+  sendMessage(
+    @MessageBody() payload: ChatPayload,
+    @ConnectedSocket() client: Socket,
+  ) {
+    this.logger.log('Chat Received');
+    this.logger.log(payload);
+    this.server.to(payload.id).emit('chatToClient', {
+      ...payload,
+      socketId: client.id,
+    });
+  }
+
+  @SubscribeMessage('create_dmRoom')
+  handleFriendId(
+    @MessageBody() payload: { id: string },
+    @ConnectedSocket() client: Socket,
+  ) {
+    this.logger.log('handleFriendId');
+    client.join(payload.id);
+  }
+
+  afterInit(server: Server) {
+    this.logger.log('Init');
+  }
 
   handleDisconnect(client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`);
@@ -31,29 +58,8 @@ export class ChatGateway
 
   handleConnection(client: Socket, ...args: any[]) {
     this.logger.log(`Client connected ${client.id}`);
-  }
-
-  @SubscribeMessage('send_message_room')
-  sendMessage(
-    @MessageBody() payload: ChatPayload,
-    @ConnectedSocket() client: Socket,
-  ) {
-    this.server.to(payload.id).emit('chatToClient', {
-      ...payload,
-      socketId: client.id,
-    });
-  }
-
-  @SubscribeMessage('joinRoom')
-  handleJoinRoom(
-    @MessageBody() payload: { id: string },
-    @ConnectedSocket() client: Socket,
-  ) {
-    this.logger.log('JoinRoom');
-    client.join(payload.id);
-  }
-
-  afterInit(server: Server) {
-    this.logger.log('Init');
+    const token: TokenPayload = { key: this.key.toString() };
+    this.server.to(client.id).emit('token', token);
+    this.key += 1;
   }
 }

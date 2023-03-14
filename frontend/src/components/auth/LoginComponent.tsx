@@ -1,7 +1,8 @@
-import { Button, Grid, TextField } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import axios from "axios";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+// import { useNavigate } from "react-router-dom";
 import FormController from "../utils/FormController";
 
 type LoginData = {
@@ -10,6 +11,7 @@ type LoginData = {
 }
 
 function LoginComponent() {
+  // const router = useNavigate();
   const { control, handleSubmit, reset } = useForm<LoginData>({ defaultValues: { email: '', password: '' } });
 
   const onSubmit: SubmitHandler<LoginData> = async (data) => {
@@ -31,17 +33,13 @@ function LoginComponent() {
         <h2>Login Component</h2>
         <FormController
           name="email"
+          placeholder="type email"
           control={control}
-          RenderComponent={(field: any) => (
-            <TextField {...field} label={'email'} placeholder={'email'}/>
-          )}
         />
         <FormController
           name="password"
+          placeholder="type password"
           control={control}
-          RenderComponent={(field: any) => (
-            <TextField {...field} label={'password'} placeholder={'password'}/>
-          )}
         />
         <Button type="submit" variant="contained">Login</Button>
       </form>

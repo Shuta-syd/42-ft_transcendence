@@ -1,16 +1,10 @@
+import { TextField } from "@mui/material";
 import React from "react";
 import { Controller } from "react-hook-form";
-
-type FromControllerProps = {
-  name: string; // Controllerの識別子name
-  control: any; // useFormのcontrolオブジェクト
-  handleOnChange?: any; // formのonChangeハンドラー
-  RenderComponent: any // 実際に表示するComponent
-}
-
+import { FromControllerProps } from "./type/FormController";
 
 function FormController(props: FromControllerProps) {
-  const { name, control, RenderComponent } = props;
+  const { name, control, placeholder } = props;
 
   return (
     <Controller
@@ -18,8 +12,14 @@ function FormController(props: FromControllerProps) {
       control={control}
       render={(
         { field }
-      ) =>  RenderComponent(field)
-      }
+      ) => (
+        <TextField
+          label={field.name}
+          placeholder={placeholder}
+          value={field.value}
+          onChange={field.onChange}
+        />
+      )}
     />
   )
 }

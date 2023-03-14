@@ -1,4 +1,4 @@
-import { Button, Grid, TextField } from "@mui/material";
+import { Button, Grid} from "@mui/material";
 import axios from "axios";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -33,24 +33,18 @@ function SignupComponent() {
         <h2>Signup Component</h2>
         <FormController
           name="username"
+          placeholder="type username"
           control={control}
-          RenderComponent={(field: any) => (
-            <TextField {...field} label={'username'} placeholder={'username'}/>
-          )}
         />
         <FormController
           name="email"
+          placeholder="type email"
           control={control}
-          RenderComponent={(field: any) => (
-            <TextField {...field} label={'email'} placeholder={'email'}/>
-          )}
         />
         <FormController
           name="password"
+          placeholder="type password"
           control={control}
-          RenderComponent={(field: any) => (
-            <TextField {...field} label={'password'} placeholder={'password'}/>
-          )}
         />
         <Button type="submit" variant="contained">SIGNUP</Button>
       </form>

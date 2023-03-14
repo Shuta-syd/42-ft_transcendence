@@ -1,22 +1,20 @@
 import { IconButton, InputAdornment, TextField } from "@mui/material";
 import SendIcon from '@mui/icons-material/Send';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
 import React from "react";
 
-type TextFieldComponentProps = {
-  textFieldWidth?: string ;
+type Props = {
   handleOnChange: any;
   handleOnClick: any;
   value: string;
 }
 
 
-function TextFieldComponent(props: TextFieldComponentProps) {
-  const { handleOnChange, handleOnClick, value, textFieldWidth } = props;
+function TextFieldComponent(props: Props) {
+  const { handleOnChange, handleOnClick, value } = props;
 
   return (
     <div>
-      <TextField
+      <TextField fullWidth
         type={"text"}
         variant="outlined"
         placeholder="new message"
@@ -24,7 +22,6 @@ function TextFieldComponent(props: TextFieldComponentProps) {
         value={value}
         onChange={(e) => { handleOnChange(e.target.value) }}
         sx={{
-          width: textFieldWidth === undefined ? '100%' : textFieldWidth,
           '& .MuiInputBase-root': {
             border: '2px solid #787A91',
             overflow: 'hidden',
@@ -32,14 +29,7 @@ function TextFieldComponent(props: TextFieldComponentProps) {
           }
         }}
         InputProps={{
-          style: { color: '#EEEEEE' },
-          startAdornment: (
-            <InputAdornment position="start">
-              <IconButton color="primary">
-                <AddCircleIcon fontSize="medium"/>
-              </IconButton>
-            </InputAdornment>
-          ),
+          style: {color: '#EEEEEE' },
           endAdornment: (
             <InputAdornment position="end">
               <IconButton color="primary" onClick={handleOnClick}>

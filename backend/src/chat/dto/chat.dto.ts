@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { MemberRole, RoomType } from '@prisma/client';
 
 export class SendChatDto {
+  @ApiProperty()
+  memberId: string;
   @ApiProperty()
   senderName: string;
   @ApiProperty()
@@ -11,31 +12,20 @@ export class SendChatDto {
 export class AddMemberDto {
   userId: string;
   roomId: string;
-  status: MemberRole;
 }
 
 export class CreateChatRoom {
-  type: RoomType;
-  name: string;
-  password?: string;
-}
-
-export class MuteMemberDto {
-  roomId: string;
-  memberId: string;
-  isMute: boolean;
-}
-
-export class MemberDto {
-  roomId: string;
-  memberId: string;
+  isDM: string;
 }
 
 export type ChatPayload = {
   time: string;
-  senderName: string;
   text: string;
   id: string;
+};
+
+export type TokenPayload = {
+  key: string;
 };
 
 export type FriendPayload = {

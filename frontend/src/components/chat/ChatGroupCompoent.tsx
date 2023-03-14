@@ -1,18 +1,13 @@
 import { Grid, Typography } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import React, { useEffect, useRef, useState } from "react";
-import { Socket } from "socket.io-client";
 import ChatFriendsComponent from "./ChatFriendsComponent";
-
-type ChatGroupComponentProps = {
-  socket: Socket;
-}
 
 
 /**
  * @returns chatの会話中のフレンド、グループを表示するコンポーネント
  */
-export default function ChatGroupComponent(props: ChatGroupComponentProps) {
+export default function ChatGroupComponent() {
   const subtitleElm = useRef<HTMLInputElement>();
   const [subtitleHeight, setSubtitleHeight] = useState<string>('0');
 
@@ -39,9 +34,9 @@ export default function ChatGroupComponent(props: ChatGroupComponentProps) {
           </Box>
           <Stack
             height={`calc(94vh - ${subtitleHeight})`}
-            sx={{ backgroundColor: '#141E61', overflow: 'auto' }} borderColor={'#787A91'}
+            sx={{ backgroundColor: '#141E61' }} borderRight={2.5} borderColor={'#787A91'}
           >
-            <ChatFriendsComponent socket={props.socket} />
+            <ChatFriendsComponent/>
           </Stack>
         </Stack>
       </Box>

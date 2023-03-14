@@ -18,16 +18,3 @@ input[type=text]::placeholder {
 .FriendListActive {
   background-color: #40487E;
 }
-
-.ChannelLink {
-  text-decoration: none;
-  color: #EEEEEE;
-}
-
-.ChannelList:hover{
-  background-color: #6A709A;
-}
-
-.ChannelListActive{
-  background-color: #40487E;
-}

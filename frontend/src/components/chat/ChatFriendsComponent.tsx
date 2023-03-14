@@ -1,10 +1,11 @@
 import { Avatar, Grid, Typography } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import { Link, useLocation } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import axios from "axios";
 import useQueryFriend from "../../hooks/user/useQueryFriend";
+import { WebsocketContext } from "../../contexts/WebsocketContext";
 import '../../styles/Chat.css'
 
 type FriendPayload = {
@@ -14,16 +15,12 @@ type FriendPayload = {
 
 type ChatRoomPayload = { [friendId: string]: string };
 
-type ChatFriendsComponentProps = {
-  socket: Socket;
-}
-
 /**
  * @returns DirectMessage送信可能なフレンド一覧を表示するコンポーネント
  */
-export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
-  const { socket } = props;
+export default function ChatFriendsComponent() {
   const roomID = useLocation().pathname.split('/')[3];
+  const socket: Socket = useContext(WebsocketContext);
   const { data: friendData } = useQueryFriend();
   const [friends, setFriends] = useState<FriendPayload[]>([]);
 
@@ -40,7 +37,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
   useEffect(() => {
     const createDMRoom = async (friendId: string): Promise<string> => {
       try {
-        const roomCrateDto = { type: 'DM' };
+        const roomCrateDto = { isDM: true };
         const room = await axios.post(`http://localhost:8080/chat/room`, roomCrateDto);
         const addMemberDto = { userId: friendId, roomId: room.data.id };
         await axios.post(`http://localhost:8080/chat/member/add`, addMemberDto);
@@ -74,17 +71,18 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
   }, [friendData]);
 
   useEffect(() => {
-    socket.on('joinRoom', () => {
+    socket.on('create_dmRoom', () => {
+      console.log('crateDMRoom');
     })
   }, [])
 
   useEffect(() => {
-    socket.emit('joinRoom', { id: roomID });
+    socket.emit('create_dmRoom', { id: roomID });
   }, [roomID])
 
   const handleClick = (roomId: string) => {
     console.log('click friend button');
-    socket.emit('joinRoom', { id: roomId})
+    socket.emit('create_dmRoom', { id: roomId})
   }
 
   return (
