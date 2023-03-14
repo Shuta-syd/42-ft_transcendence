@@ -146,7 +146,7 @@ const GamePlayer2 = () => {
 
         const paddleAndRoom = {
             paddleHeight: rightPaddle.y,
-            name: user?.name.toString(),
+            name: user?.name,
         }
         GameSocket.emit('GameToServer', paddleAndRoom);
         keycode = '';
@@ -250,14 +250,10 @@ const GamePlayer2 = () => {
         setText('');
     }, [uname, text])
 
-    type PaddleAndRoom = {
-        paddleHeight: number;
-        name: string;
-    };
-
-    GameSocket.on('GameToClient', (leftPaddley: PaddleAndRoom, socketid: string) => {
-        if (GameSocket.id !== socketid)
-            leftPaddle.y = leftPaddley.paddleHeight;
+    GameSocket.on('GameToClient', (leftPaddley: number, socketid: string) => {
+        if (GameSocket.id !== socketid) {
+            leftPaddle.y = leftPaddley;
+        }
     });
     GameSocket.on('BallPosToClient', (BallPos: BallPos, SocketId: string) => {
         ball.x = BallPos.x;
