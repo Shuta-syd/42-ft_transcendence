@@ -26,7 +26,7 @@ export default function ChannelGroupComponent(props: ChannelGroupComponentProps)
   }, [subtitleElm, subtitleHeight]);
 
   return (
-    <Grid item xs={3} height={'94vh'}>
+    <Grid item xs={3} height={'100vh'}>
       <Box>
         <Stack>
           <Box
@@ -56,7 +56,7 @@ export default function ChannelGroupComponent(props: ChannelGroupComponentProps)
             </Box>
           </Box>
           <Stack
-            height={`calc(94vh - ${subtitleHeight})`}
+            height={`calc(100vh - ${subtitleHeight})`}
             sx={{ backgroundColor: '#141E61', overflow: 'auto' }} borderColor={'#787A91'}
           >
             <ChannelListComponent socket={props.socket} channels={channels} setChannels={setChannels} />

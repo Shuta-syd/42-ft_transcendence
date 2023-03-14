@@ -128,11 +128,11 @@ export default function ChannelWindowComponent() {
           </Box>
         </Box>
         <Box
-          maxHeight={`calc(94vh - ${subtitleHeight}px)`}
+          maxHeight={`calc(100vh - ${subtitleHeight}px)`}
         >
           <Box
             sx={{ color: '#EEEEEE', backgroundColor: '#0F044C', overflow: 'auto' ,overflowWrap: 'break-word', wordWrap: 'break-word' }}
-            maxWidth={GridWidth} height={`calc(85vh - ${subtitleHeight})`}
+            maxWidth={GridWidth} height={`calc(91vh - ${subtitleHeight})`}
           >
           {chatLog.map((chat, idx) => (
               <div key={idx}>
