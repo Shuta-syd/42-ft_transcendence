@@ -1,5 +1,4 @@
 ###clion
-
 *.idea*
 *.xml
 .DS_Store
