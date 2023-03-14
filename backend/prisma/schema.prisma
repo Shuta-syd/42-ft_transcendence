@@ -83,10 +83,3 @@ enum BanType {
   CHANNEL
   LOCAL
 }
-
-
-model Game {
-  id        Int     @id @default(autoincrement())
-  player1   String
-  player2   String
-}
