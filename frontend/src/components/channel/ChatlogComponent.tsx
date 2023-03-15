@@ -49,7 +49,10 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
   }, [roomId])
 
   return (
-    <Box>
+    <Box
+      width={'95%'}
+      sx={{ color: '#3C444B', overflow: 'auto' ,overflowWrap: 'break-word', wordWrap: 'break-word' }}
+    >
       {chatLog.map((chat, idx) =>
       (
         <div key={idx}>

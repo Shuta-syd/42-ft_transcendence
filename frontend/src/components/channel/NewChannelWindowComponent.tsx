@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { Box, Grid, Typography } from "@mui/material";
 import axios from "axios";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 import { Socket } from "socket.io-client";
 import useMutationMessage from "../../hooks/chat/useMutationMessage";
@@ -25,6 +25,7 @@ export default function NewChannelWindowComponent() {
   const [text, setText] = useState('');
   const [userName, setUserName] = useState('');
   const [roomName, setRoomName] = useState('');
+  const textfieldElm = useRef<HTMLInputElement>(null);
 
   const getRoomName = useCallback(async (): Promise<string> => {
     try {
@@ -78,9 +79,12 @@ export default function NewChannelWindowComponent() {
           </Typography>
         </Box>
       </Grid>
-      <Box >
+      <Box
+        sx={{ display: 'flex', justifyContent: 'center'}}
+        height={`calc(85% - ${textfieldElm?.current?.clientHeight}px)`}
+      >
         <ChatlogComponent roomId={ChatRoomID} socket={socket} />
-      </Box>
+        </Box>
       <Box
         display='flex'
         justifyContent='center'
@@ -89,6 +93,7 @@ export default function NewChannelWindowComponent() {
           width={'95%'}
           position='absolute'
           bottom={20}
+          ref={textfieldElm}
         >
           <TextFieldComponent
             value={text}
