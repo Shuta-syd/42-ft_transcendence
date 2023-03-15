@@ -1,8 +1,8 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import { GameSocket } from "../../contexts/WebsocketContext";
-import {User} from "../../types/PrismaType";
+import {User, Game} from '../../types/PrismaType';
 import {useGameUser} from "../../hooks/game/useGameuser";
-
+import {fetchObserverGameinfo} from "../../hooks/game/useGameObserver";
 
 const GamePlayer2 = () => {
     // global variables
@@ -148,11 +148,16 @@ const GamePlayer2 = () => {
     }
 
     const [user, setUser] = useState<User>();
+    const [game, setGame] = useState<Game>();
     const UserPromises = useGameUser();
     useEffect(() => {
         UserPromises.then((userDto: User) => {
             setUser(userDto);
             GameSocket.emit('JoinRoom', userDto.name);
+            const GamePromises = fetchObserverGameinfo(userDto);
+            GamePromises.then((gameDto:Game) => {
+                setGame(gameDto);
+            });
         });
     }, []);
 
@@ -167,7 +172,7 @@ const GamePlayer2 = () => {
         }
 
         window.requestAnimationFrame(draw);
-    }, [user]);
+    }, [user, game]);
 
     type Chat = {
         socketId: string,

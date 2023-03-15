@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Game } from "../../types/PrismaType";
+import {Game, User} from "../../types/PrismaType";
 /*
 axiosを使ってbackend(nestjs)とhttp通信を行う
 またaxios.getとすることでGetメソッドをリクエストとして指定できる
@@ -15,4 +15,16 @@ function fetchGameRoomArr() {
     return getGames();
 }
 
-export default fetchGameRoomArr;
+function fetchObserverGameinfo(user: User) {
+    const getGame = async () => {
+        const { data } = await axios.get<Game>(`http://localhost:8080/game/observer`, {
+            params: {
+                name: user.name,
+            }
+        });
+        return data;
+    }
+    return getGame();
+}
+
+export {fetchGameRoomArr, fetchObserverGameinfo};
