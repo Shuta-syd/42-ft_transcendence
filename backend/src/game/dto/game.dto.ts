@@ -10,3 +10,9 @@ export class assignPlayerRes {
   roomId: string;
   playerType: number;
 }
+
+export class assignObserverDto {
+  @ApiProperty()
+  name: string;
+  roomId: number;
+}

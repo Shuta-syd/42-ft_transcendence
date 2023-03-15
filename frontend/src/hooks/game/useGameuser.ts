@@ -25,8 +25,8 @@ function GameRoomReq(playerName: string | undefined) {
         return data;
     }
     return getGameObject();
-}
 
+}
 type ObserverDto = {
     name: string;
     roomId: string,

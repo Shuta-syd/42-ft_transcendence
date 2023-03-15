@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "ChatRoom" ADD COLUMN     "isDM" BOOLEAN NOT NULL DEFAULT false;

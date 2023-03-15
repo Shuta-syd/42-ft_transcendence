@@ -1,6 +1,7 @@
-import {Body, Controller, Get, Post} from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { GameService } from './game.service';
 import { Game } from '@prisma/client';
+import { assignObserverDto } from './dto/game.dto';
 
 @Controller('game')
 export class GameController {
@@ -13,7 +14,14 @@ export class GameController {
   }
 
   @Get('ongoing')
-  async setOngoingGames(): Promise<Game[] | null> {
+  async getOngoingGames(): Promise<Game[] | null> {
     return this.gameService.getAllOngoingGames();
+  }
+
+  @Post('newobserver')
+  async setNewObserver(
+    @Body() assignnObserverDto: assignObserverDto | any,
+  ): Promise<Game | null> {
+    return this.gameService.assignObserver(assignnObserverDto);
   }
 }
