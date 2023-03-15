@@ -64,6 +64,7 @@ const GamePlayer2 = () => {
     };
 
 
+    // Player 2
     const leftPaddle = {
         x: LPADDLEX,
         y: LPADDLEY,
@@ -77,7 +78,7 @@ const GamePlayer2 = () => {
         }
     }
 
-
+    // Player 1
     const rightPaddle = {
         x: RPADDLEX,
         y: RPADDLEY,
@@ -107,7 +108,7 @@ const GamePlayer2 = () => {
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     function draw() {
-        if (!user?.name)
+        if (!user?.name || !game)
             return;
         context?.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
         drawStaticObject();
@@ -141,9 +142,12 @@ const GamePlayer2 = () => {
         }
         context.fillStyle = 'black';
         context.font = "bold 50px 'ＭＳ 明朝'";
+
+        context.fillText(game.player1, 200, 50);
         context.fillText(leftScore.toString() , 360, 50);
         context.fillText( '-', 440, 50);
         context.fillText( rightScore.toString(), 500, 50);
+        context.fillText( game.player2, 660, 50);
         window.requestAnimationFrame(draw);
     }
 
@@ -232,10 +236,13 @@ const GamePlayer2 = () => {
         name: string;
     };
 
-    GameSocket.on('GameToClient', (leftPaddley: PaddleAndRoom, socketid: string) => {
-        if (GameSocket.id !== socketid)
-            leftPaddle.y = leftPaddley.paddleHeight;
+    GameSocket.on('GameToClient', (Paddley: PaddleAndRoom, socketid: string) => {
+        if (Paddley.name === game?.player1)
+            leftPaddle.y = Paddley.paddleHeight;
+        else if (Paddley.name === game?.player2)
+            rightPaddle.y = Paddley.paddleHeight;
     });
+
     GameSocket.on('BallPosToClient', (BallPos: BallPos, SocketId: string) => {
         ball.x = BallPos.x;
         ball.y = BallPos.y;
@@ -244,7 +251,7 @@ const GamePlayer2 = () => {
     return (
         <div>
             <h1>[PONG GAME]</h1>
-            <h1>[Player 2]</h1>
+            <h1>[Observer]</h1>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
             <div>
                 <input type="text" value={uname} onChange={(event) => { setUname(event.target.value) }} />

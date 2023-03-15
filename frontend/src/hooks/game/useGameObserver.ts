@@ -27,4 +27,4 @@ function fetchObserverGameinfo(user: User) {
     return getGame();
 }
 
-export {fetchGameRoomArr, fetchObserverGameinfo};
+export { fetchGameRoomArr, fetchObserverGameinfo };

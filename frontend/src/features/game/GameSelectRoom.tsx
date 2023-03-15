@@ -1,7 +1,7 @@
 import React, { useEffect, useState, ChangeEvent} from "react";
 import {Link} from "react-router-dom";
 import {Game, User} from "../../types/PrismaType";
-import fetchGameRoomArr from "../../hooks/game/useGameObserver";
+import { fetchGameRoomArr } from "../../hooks/game/useGameObserver";
 import {GameObserverReq, useGameUser} from "../../hooks/game/useGameuser";
 // import {GameSocket} from "../../contexts/WebsocketContext";
 
@@ -33,8 +33,9 @@ const GameSelectRoom = () => {
                 name:user.name,
                 roomId:number,
             }
-            console.log("after", observseDto.roomId);
-            console.log("after", observseDto.name);
+            // at the beginning, roomId is 0, so escaped
+            if (observseDto.roomId === 0)
+                return
            const gameRes = GameObserverReq(observseDto);
            gameRes.then((game:Game) => {
                    setIsAsssigned(true);
@@ -63,6 +64,7 @@ const GameSelectRoom = () => {
                 </div>
             ))}
             <div>
+                <p>enterは2回以上押してください！</p>
                 <input type="text" value={tmpNumber} onChange={handleInputChange} />
                 <button onClick={handleButtonClick}>enter</button>
                 {IsAssigned && <p>You are successfully assigned !!</p>}
