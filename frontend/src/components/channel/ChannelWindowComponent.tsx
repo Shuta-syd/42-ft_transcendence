@@ -143,7 +143,7 @@ export default function ChannelWindowComponent() {
             <div ref={latestChatRef} />
           </Box>
           <Box height={'9vh'} sx={{ backgroundColor: '#0F044C' }}>
-            <TextFieldComponent textFieldWidth={GridWidth} handleOnChange={setText} handleOnClick={sendChat} value={text} />
+            <TextFieldComponent handleOnChange={setText} handleOnClick={sendChat} value={text} />
           </Box>
         </Box>
       </Stack>

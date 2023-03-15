@@ -9,7 +9,7 @@ import ChatWindowComponent from "./components/chat/ChatWindowComponent";
 import Matches from "./features/match/Match";
 import Channel from "./features/channel/Channel";
 import ChannelComponent from "./components/channel/ChannelComponent";
-import ChannelWindowComponent from "./components/channel/ChannelWindowComponent";
+import NewChannelWindowComponent from "./components/channel/NewChannelWindowComponent";
 import GameMatching from "./features/game/GameMatching";
 import GamePlayer1 from "./features/game/GamePlayer1";
 import GamePlayer2 from "./features/game/GamePlayer2";
@@ -28,7 +28,7 @@ function App() {
           </Route>
           <Route path="/channel" element={<Channel />}>
             <Route path="room" element={<ChannelComponent />}>
-              <Route path=":roomId" element={<ChannelWindowComponent />} />
+              <Route path=":roomId" element={<NewChannelWindowComponent />} />
             </Route>
           </Route>
           <Route path="/match" element={<Matches/>}/>

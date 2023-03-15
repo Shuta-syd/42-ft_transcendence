@@ -4,6 +4,7 @@ import { Socket } from "socket.io-client";
 import React, { useState } from "react";
 import { ChatRoom } from "../../types/PrismaType";
 import NewChannelListComponent from "./NewChannelListComponent";
+import '../../styles/Chat.css';
 
 type ChannelGroupComponentProps = {
   socket: Socket;
@@ -19,26 +20,22 @@ export default function NewChannelGroupComponent(props: ChannelGroupComponentPro
   return (
     <>
       <Grid item
-        height={'100vh'}
-        borderLeft={2}
-        borderColor={'#EDF0F4'}
-        borderRadius={8}
         xs={2.5}
       >
         <Grid container justifyContent={'center'}>
           <Box
             width={'18vw'}
-            height={'10vh'}
             borderBottom={2}
             borderColor={'#EDF0F4'}
             textAlign={'left'}
             sx={{ display: 'flex', alignItems: 'center' }}
             >
             <Typography
-            variant="h5"
-            marginTop={2}
-            marginLeft={2}
-            sx={{ color: '#3C444B' }}
+              variant="h5"
+              mt={2}
+              mb={3}
+              ml={2}
+              sx={{ color: '#3C444B' }}
             >
               Group Chat
             </Typography>
@@ -49,12 +46,11 @@ export default function NewChannelGroupComponent(props: ChannelGroupComponentPro
             >
             <TextField
               fullWidth
-              label={'Search'}
+              placeholder={'Search'}
               InputProps={{
                 style: {
                   color: '#3C444B',
                   backgroundColor: '#EDF0F4',
-                  borderColor: '#EDF0F4',
                   borderRadius: 15,
                 },
                 endAdornment: (
