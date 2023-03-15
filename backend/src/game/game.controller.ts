@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {Body, Controller, Get, Param, Post} from '@nestjs/common';
 import { GameService } from './game.service';
 import { Game } from '@prisma/client';
 import { assignObserverDto } from './dto/game.dto';
@@ -25,5 +25,9 @@ export class GameController {
     console.log(dto.name);
     console.log(dto.roomId);
     return this.gameService.assignObserver(dto);
+  }
+  @Get('observer')
+  async getObserverGameinfo(@Param() name: string | any): Promise<Game | null> {
+    return this.gameService.getObserverGame(name);
   }
 }

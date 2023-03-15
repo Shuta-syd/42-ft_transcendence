@@ -71,4 +71,13 @@ export class GameService {
     });
     return game || null;
   }
+  async getObserverGame(observerName: string): Promise<Game | null> {
+    const roomId = NameToRoomIdDic[observerName];
+    const [game] = await this.prisma.game.findMany({
+      where: {
+        id: roomId,
+      },
+    });
+    return game || null;
+  }
 }
