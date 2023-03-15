@@ -65,11 +65,21 @@ export default function NewChannelGroupComponent(props: ChannelGroupComponentPro
               }}
               />
           </Box>
-          <Box>
-            <Typography>
-              Recent Chats
-            </Typography>
-          </Box>
+          <Grid
+            container
+            width={'18vw'}
+            height={'8vh'}
+            alignItems={'center'}
+          >
+            <Grid item>
+              <Typography color={'#808792'}>
+                Recent Chats
+              </Typography>
+            </Grid>
+            <Grid item>
+              {/* Button */}
+            </Grid>
+          </Grid>
           <NewChannelListComponent socket={socket} setChannels={setChannels} channels={channels} />
         </Grid>
       </Grid>

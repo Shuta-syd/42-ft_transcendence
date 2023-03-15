@@ -45,18 +45,18 @@ export default function NewNavBar() {
         >
           <Box
             className={'NavbarButtonParent'}
-            borderRight={path === '/game' ? 4 : 0}
+            borderRight={path.includes('/game') ? 4 : 0}
             borderColor={'#1f9f88'}
           >
             <Box
               borderRadius={4}
-              className={ path === '/game' ? 'NavbarActive' : ''}
+              className={ path.includes('/game') ? 'NavbarActive' : ''}
             >
               <Link to={'/game'}>
                 <IconButton>
                   <VideogameAssetOutlinedIcon
                     fontSize="large"
-                    className={ path === '/game' ? 'NavbarButtonActive' : 'NavbarButton'}
+                    className={ path.includes('/game') ? 'NavbarButtonActive' : 'NavbarButton'}
                     />
                 </IconButton>
               </Link>
@@ -64,18 +64,18 @@ export default function NewNavBar() {
           </Box>
           <Box
             className={'NavbarButtonParent'}
-            borderRight={path === '/chat/room' ? 4 : 0}
+            borderRight={path.includes('/chat/room') ? 4 : 0}
             borderColor={'#1f9f88'}
           >
             <Box
               borderRadius={4}
-              className={ path === '/chat/room' ? 'NavbarActive' : ''}
+              className={path.includes('/chat/room') ? 'NavbarActive' : ''}
             >
               <Link to={'/chat/room'}>
                 <IconButton>
                   <ChatOutlinedIcon
                     fontSize="large"
-                    className={ path === '/chat/room' ? 'NavbarButtonActive' : 'NavbarButton'}
+                    className={ path.includes('/chat/room') ? 'NavbarButtonActive' : 'NavbarButton'}
                     />
                 </IconButton>
               </Link>
@@ -83,18 +83,18 @@ export default function NewNavBar() {
           </Box>
           <Box
             className={'NavbarButtonParent'}
-            borderRight={path === '/channel/room' ? 4 : 0}
+            borderRight={path.includes('/channel/room') ? 4 : 0}
             borderColor={'#1f9f88'}
           >
             <Box
               borderRadius={4}
-              className={ path === '/channel/room' ? 'NavbarActive' : ''}
+              className={ path.includes('/channel/room') ? 'NavbarActive' : ''}
             >
               <Link to={'/channel/room'}>
                 <IconButton>
                   <ForumOutlinedIcon
                     fontSize="large"
-                    className={ path === '/channel/room' ? 'NavbarButtonActive' : 'NavbarButton'}
+                    className={ path.includes('/channel/room') ? 'NavbarButtonActive' : 'NavbarButton'}
                     />
                 </IconButton>
               </Link>
