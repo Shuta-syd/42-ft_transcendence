@@ -21,13 +21,15 @@ input[type=text]::placeholder {
 
 .ChannelLink {
   text-decoration: none;
-  color: #EEEEEE;
+  color: #3C444B;
 }
 
 .ChannelList:hover{
-  background-color: #6A709A;
+  background-color: #f7f8fa;
+  border-radius: 5%;
 }
 
 .ChannelListActive{
-  background-color: #40487E;
+  background-color: #f7f8fa;
+  border-radius: 5%;
 }
