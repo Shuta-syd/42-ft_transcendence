@@ -57,6 +57,7 @@ export default function NewChannelWindowComponent() {
     <Grid
       item xs
       width={'100%'}
+      height={'100%'}
       position='relative'
       borderRadius={5}
       sx={{ backgroundColor: '#edf0f5' }}
@@ -80,7 +81,7 @@ export default function NewChannelWindowComponent() {
         </Box>
       </Grid>
       <Box
-        sx={{ display: 'flex', justifyContent: 'center'}}
+        sx={{ display: 'flex', justifyContent: 'center' }}
         height={`calc(85% - ${textfieldElm?.current?.clientHeight}px)`}
       >
         <ChatlogComponent roomId={ChatRoomID} socket={socket} />
