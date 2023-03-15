@@ -91,14 +91,14 @@ export default function NewChannelWindowComponent() {
       <Grid container justifyContent={'center'}>
         <Box
           width={'95%'}
+          height={'7vh'}
           borderBottom={2}
           borderColor={'#e0e3e9'}
           textAlign={'left'}
+          sx={{ display: 'flex', alignItems: 'center' }}
         >
           <Typography
             variant="h6"
-            mt={2}
-            mb={3}
             ml={2}
             sx={{ color: '#3C444B' }}
           >

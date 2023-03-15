@@ -25,6 +25,7 @@ export default function NewChannelGroupComponent(props: ChannelGroupComponentPro
         <Grid container justifyContent={'center'}>
           <Box
             width={'90%'}
+            height={'7vh'}
             borderBottom={2}
             borderColor={'#EDF0F4'}
             textAlign={'left'}
@@ -32,8 +33,6 @@ export default function NewChannelGroupComponent(props: ChannelGroupComponentPro
             >
             <Typography
               variant="h5"
-              mt={2}
-              mb={3}
               ml={2}
               sx={{ color: '#3C444B' }}
             >
