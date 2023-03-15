@@ -56,6 +56,7 @@ export default function NewChannelWindowComponent() {
     <Grid
       item xs
       width={'100%'}
+      position='relative'
       borderRadius={5}
       sx={{ backgroundColor: '#edf0f5' }}
     >
@@ -77,17 +78,17 @@ export default function NewChannelWindowComponent() {
           </Typography>
         </Box>
       </Grid>
-      <Box>
+      <Box >
         <ChatlogComponent roomId={ChatRoomID} socket={socket} />
       </Box>
       <Box
-        height={'92%'}
         display='flex'
         justifyContent='center'
-      >
+        >
         <Box
           width={'95%'}
-          position='relative'
+          position='absolute'
+          bottom={20}
         >
           <TextFieldComponent
             value={text}

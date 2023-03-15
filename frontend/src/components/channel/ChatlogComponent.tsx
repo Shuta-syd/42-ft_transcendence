@@ -1,3 +1,4 @@
+import { Box } from "@mui/material";
 import axios from "axios";
 import React, { createRef, useEffect, useLayoutEffect, useState } from "react";
 import { Socket } from "socket.io-client";
@@ -47,5 +48,16 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
     fetchChat();
   }, [roomId])
 
-  return (<></>)
+  return (
+    <Box>
+      {chatLog.map((chat, idx) =>
+      (
+        <div key={idx}>
+          <div>{chat.time}</div>
+          <div>{chat.senderName}: {chat.text}</div>
+        </div>
+      ))}
+      <div ref={latestChatRef} />
+    </Box>
+    )
 }
