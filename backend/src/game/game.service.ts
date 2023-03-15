@@ -61,11 +61,12 @@ export class GameService {
   async assignObserver(
     assignObserver: assignObserverDto,
   ): Promise<Game | null> {
+    console.log(assignObserver.name);
     NameToRoomIdDic[assignObserver.name.toString()] =
       assignObserver.roomId.toString();
     const [game] = await this.prisma.game.findMany({
       where: {
-        id: assignObserver.roomId,
+        id: assignObserver.roomId.valueOf(),
       },
     });
     return game || null;

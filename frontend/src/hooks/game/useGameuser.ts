@@ -29,14 +29,12 @@ function GameRoomReq(playerName: string | undefined) {
 }
 type ObserverDto = {
     name: string;
-    roomId: string,
+    roomId: number,
 }
 
 function GameObserverReq(observer: ObserverDto | undefined) {
     const getGameObject = async () => {
-        const { data } = await axios.post<Game>(`http://localhost:8080/game/newobserver`, {
-            observer
-        });
+        const { data } = await axios.post<Game>(`http://localhost:8080/game/newobserver`, observer);
         return data;
     }
     return getGameObject();
