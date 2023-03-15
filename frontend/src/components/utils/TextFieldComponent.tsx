@@ -19,7 +19,12 @@ function TextFieldComponent(props: TextFieldComponentProps) {
         fullWidth
         type={"text"}
         value={value}
-        style={{ position: 'absolute', bottom: 20 }}
+        style={{
+          position: 'absolute',
+          bottom: 20,
+          borderRadius: 15,
+          boxShadow: "2px 2px 2px rgba(0, 0, 0, 0.2)"
+        }}
         onChange={(e) => { handleOnChange(e.target.value) }}
         InputProps={{
           placeholder: 'Write your message...',

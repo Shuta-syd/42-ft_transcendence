@@ -84,6 +84,7 @@ export default function NewChannelWindowComponent() {
   return (
     <Grid
       item xs
+      width={'100%'}
       borderRadius={5}
       sx={{ backgroundColor: '#edf0f5' }}
     >
@@ -95,8 +96,7 @@ export default function NewChannelWindowComponent() {
           textAlign={'left'}
         >
           <Typography
-            variant="h5"
-
+            variant="h6"
             mt={2}
             mb={3}
             ml={2}
@@ -107,8 +107,7 @@ export default function NewChannelWindowComponent() {
         </Box>
       </Grid>
       <Box
-        width={'100%'}
-        height={'100%'}
+        height={'92%'}
         display='flex'
         justifyContent='center'
       >
