@@ -22,7 +22,6 @@ export default function NewNavBar() {
           alignItems: 'center',
           justifyContent: 'space-between'
         }}
-        borderRight={1}
       >
         <Box
           marginTop={'3vh'}
