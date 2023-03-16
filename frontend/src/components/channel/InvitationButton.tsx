@@ -19,11 +19,11 @@ type FriendPayload = {
 const CustomButton = styled(Button)({
   fontSize: 16,
   fontFamily: ['Lato', 'sans-serif'],
-  backgroundColor: '#0F044C',
-  color: '#EEEEEE',
+  backgroundColor: '#1f9f88',
+  color: '#EDF0F4',
   height: '4vh',
   '&:hover': {
-    backgroundColor: '#0F044C'
+    backgroundColor: '#1f9f88'
   },
 });
 

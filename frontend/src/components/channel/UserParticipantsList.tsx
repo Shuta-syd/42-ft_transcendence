@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { Avatar, Box, Grid, Typography } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PersonIcon from '@mui/icons-material/Person';
@@ -133,6 +132,9 @@ export default function UserParticipantList(props: UserParticipantListProps) {
           </Grid>
         </Grid>
       ))}
+      <Box mt={2}>
+        <InvitationButton roomId={roomId} setMembers={setMembers} members={members} />
+      </Box>
     </>
   )
 }
