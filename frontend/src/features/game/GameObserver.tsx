@@ -252,8 +252,8 @@ const GamePlayer2 = () => {
         name: string
     }
     GameSocket.on('ScoreToClient', (Score: Score, SocketId: string) => {
-        leftScore = Score.player1;
-        rightScore = Score.player2;
+        leftScore = Score.player2;
+        rightScore = Score.player1;
     });
 
     return (
