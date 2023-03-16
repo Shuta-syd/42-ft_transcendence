@@ -3,9 +3,8 @@ import { Box, Stack } from "@mui/system";
 import React, { useEffect, useRef, useState } from "react";
 import { Socket } from "socket.io-client";
 import { ChatRoom } from "../../types/PrismaType";
-import CustomDialogButton from "../utils/CustomDialogButton";
-import ChannelCreateDialog from "./ChannelCreateDialog";
-import ChannelListComponent from "./ChannleListComponent";
+import ChannelMoreOption from "./ChannelMoreOption";
+import ChannelListComponent from "./ChannelListComponent";
 
 type ChannelGroupComponentProps = {
   socket: Socket;
@@ -53,7 +52,7 @@ export default function ChannelGroupComponent(props: ChannelGroupComponentProps)
                 marginRight: '0.5vw'
               }}
             >
-              <CustomDialogButton DialogComponent={ChannelCreateDialog} setChannels={setChannels} />
+              <ChannelMoreOption  setChannels={setChannels} />
             </Box>
           </Box>
           <Stack
