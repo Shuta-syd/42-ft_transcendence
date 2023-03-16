@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { ChatRoom, Member, MemberRole, Message, User } from '@prisma/client';
+import { ChatRoom, Member, Message, User } from '@prisma/client';
 import { Msg } from 'src/auth/dto/auth.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import {
+  AddMemberDto,
   ChatRoomPayload,
   CreateChatRoom,
   MemberDto,
@@ -31,7 +32,11 @@ export class ChatService {
         },
       })
       .then((room: ChatRoom): ChatRoom => {
-        this.addMember(userId, room.id, 'OWNER');
+        this.addMember(userId, {
+          roomId: room.id,
+          status: 'OWNER',
+          password: dto.password,
+        });
         return room;
       });
   }
@@ -174,6 +179,28 @@ export class ChatService {
   }
 
   /**
+   * @description 与えられたnameからチャンネルを検索する（部分一致）
+   */
+  async searchChannel(userId: string, name: string): Promise<ChatRoom[]> {
+    if (name === undefined) return [];
+
+    const rooms = this.prisma.chatRoom.findMany({
+      where: {
+        NOT: [{ type: 'DM' }, { type: 'PRIVATE' }],
+        members: {
+          none: {
+            userId,
+          },
+        },
+        name: {
+          contains: name,
+        },
+      },
+    });
+    return rooms;
+  }
+
+  /**
    * ===Member CRUD===
    */
 
@@ -182,11 +209,7 @@ export class ChatService {
    * @param roomId 所属させたいChat RoomID
    * @returns 作成したMember object
    */
-  async addMember(
-    userId: string,
-    roomId: string,
-    status: MemberRole,
-  ): Promise<Member> {
+  async addMember(userId: string, dto: AddMemberDto): Promise<Member> {
     const banedList = await this.prisma.user
       .findUnique({
         where: {
@@ -195,14 +218,18 @@ export class ChatService {
       })
       .banned();
 
-    const isBan = banedList.filter((val) => val.roomId === roomId);
+    const isBan = banedList.filter((val) => val.roomId === dto.roomId);
     if (isBan.length !== 0) throw new Error("You couldn't enter the room");
+
+    const room = await this.getChatRoomById(dto.roomId);
+    if (room.type === 'PROTECT' && dto.password !== room.password)
+      throw new Error('Password is wrong');
 
     return this.prisma.member.create({
       data: {
         room: {
           connect: {
-            id: roomId,
+            id: dto.roomId,
           },
         },
         user: {
@@ -210,7 +237,7 @@ export class ChatService {
             id: userId,
           },
         },
-        role: status,
+        role: dto.status,
       },
       include: {
         user: true,
