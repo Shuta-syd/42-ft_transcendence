@@ -41,6 +41,9 @@ const GamePlayer1 = () => {
     const WIDTH = 1000;
     const HEIGHT = 900;
 
+    /* start flag */
+    let isRecievePong = false;
+
     const ball = {
         x: BALLX,
         y: BALLY,
@@ -109,7 +112,7 @@ const GamePlayer1 = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
     function draw() {
-        if (!user?.name)
+        if (!user?.name || isRecievePong == false)
             return;
         context?.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
         drawStaticObject();
@@ -189,6 +192,9 @@ const GamePlayer1 = () => {
         UserPromises.then((userDto: User) => {
             setUser(userDto);
             GameSocket.emit('JoinRoom', userDto?.name);
+            while (isRecievePong == false) {
+                GameSocket.emit('Ping', userDto?.name);
+            }
         });
     }, []);
 
@@ -274,6 +280,11 @@ const GamePlayer1 = () => {
     GameSocket.on('GameToClient', (leftPaddley: PaddleAndRoom, socketid: string) => {
         if (GameSocket.id !== socketid)
             leftPaddle.y = leftPaddley.paddleHeight;
+    });
+
+    GameSocket.on('Pong', (name: string, socketid: string) => {
+        isRecievePong = true;
+        console.log("recieved pong from ", name);
     });
 
     return (
