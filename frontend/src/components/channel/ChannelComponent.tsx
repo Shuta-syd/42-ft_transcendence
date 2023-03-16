@@ -2,7 +2,7 @@ import { Box, Grid } from "@mui/material";
 import React, { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { io, Socket } from "socket.io-client";
-import NewChannelGroupComponent from "./NewChannelGroupComponent";
+import ChannelGroupComponent from "./ChannelGroupComponent";
 
 
 /**
@@ -33,7 +33,7 @@ export default function ChannelComponent() {
         sx={{ display: 'flex', alignItems: 'center' }}
       >
         <Grid container height={'95vh'}>
-          <NewChannelGroupComponent socket={socket} />
+          <ChannelGroupComponent socket={socket} />
           <Outlet context={socket}/>
         </Grid>
       </Box>

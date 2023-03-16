@@ -20,7 +20,7 @@ export default function CustomMenu(props: CustomMenuProps) {
   return (
     <>
       <IconButton
-        color="error"
+        sx={{ color: '#B2B9C5' }}
         aria-label="create channel"
         onClick={handleOpen}
         >

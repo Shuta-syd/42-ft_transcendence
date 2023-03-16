@@ -1,10 +1,10 @@
-import { Grid, Typography } from "@mui/material";
-import { Box, Stack } from "@mui/system";
-import React, { useEffect, useRef, useState } from "react";
+import { Box, Grid, IconButton, TextField, Typography } from "@mui/material";
+import SearchIcon from '@mui/icons-material/Search';
 import { Socket } from "socket.io-client";
+import React, { useState } from "react";
 import { ChatRoom } from "../../types/PrismaType";
-import ChannelMoreOption from "./ChannelMoreOption";
 import ChannelListComponent from "./ChannelListComponent";
+import '../../styles/Chat.css';
 
 type ChannelGroupComponentProps = {
   socket: Socket;
@@ -14,55 +14,72 @@ type ChannelGroupComponentProps = {
  * @returns 所属中のChannelリストを表示するコンポーネント
  */
 export default function ChannelGroupComponent(props: ChannelGroupComponentProps) {
-  const subtitleElm = useRef<HTMLInputElement>();
-  const [subtitleHeight, setSubtitleHeight] = useState<string>('0');
+  const { socket } = props;
   const [channels, setChannels] = useState<ChatRoom[]>([]);
 
-
-  useEffect(() => {
-    if (subtitleElm.current) {
-      setSubtitleHeight(`${(subtitleElm.current.clientHeight + 3.5).toString()}px`);
-    }
-  }, [subtitleElm, subtitleHeight]);
-
   return (
-    <Grid item xs={3} height={'100vh'}>
-      <Box>
-        <Stack>
+    <>
+      <Grid item
+        xs={2.5}
+      >
+        <Grid container justifyContent={'center'}>
           <Box
-          ref={subtitleElm}
-            borderTop={1} borderBottom={2.5} borderRight={1} borderColor={'#787A91'}
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              backgroundColor: '#141E61'
-            }}
-          >
-            <Box sx={{ backgroundColor: '#141E61'}}>
-              <Typography
-                variant="h6"
-                padding={0.5}
-                sx={{ fontFamily: 'Lato', color: '#e1e2e2', fontWeight: 700 }}
-              >
-                Channels
-              </Typography>
-            </Box>
-            <Box
-              sx={{
-                marginRight: '0.5vw'
-              }}
+            width={'90%'}
+            height={'7vh'}
+            borderBottom={2}
+            borderColor={'#EDF0F4'}
+            textAlign={'left'}
+            sx={{ display: 'flex', alignItems: 'center' }}
             >
-              <ChannelMoreOption  setChannels={setChannels} />
-            </Box>
+            <Typography
+              variant="h5"
+              ml={2}
+              sx={{ color: '#3C444B' }}
+            >
+              Group Chat
+            </Typography>
           </Box>
-          <Stack
-            height={`calc(100vh - ${subtitleHeight})`}
-            sx={{ backgroundColor: '#141E61', overflow: 'auto' }} borderColor={'#787A91'}
+          <Box
+          width={'18vw'}
+          marginTop={'2vh'}
+            >
+            <TextField
+              fullWidth
+              placeholder={'Search'}
+              InputProps={{
+                style: {
+                  color: '#3C444B',
+                  backgroundColor: '#EDF0F4',
+                  borderRadius: 15,
+                },
+                endAdornment: (
+                  <IconButton>
+                    <SearchIcon />
+                  </IconButton>
+                )
+              }}
+              />
+          </Box>
+          <Grid
+            container
+            width={'90%'}
+            height={'8vh'}
+            alignItems={'center'}
           >
-            <ChannelListComponent socket={props.socket} channels={channels} setChannels={setChannels} />
-          </Stack>
-        </Stack>
-      </Box>
-    </Grid>
+            <Grid item>
+              <Typography color={'#808792'}>
+                Recent Chats
+              </Typography>
+            </Grid>
+            <Grid item>
+              {/* Button */}
+            </Grid>
+          </Grid>
+          <Box width={'90%'}>
+            <ChannelListComponent socket={socket} setChannels={setChannels} channels={channels} />
+          </Box>
+        </Grid>
+      </Grid>
+    </>
   )
 }

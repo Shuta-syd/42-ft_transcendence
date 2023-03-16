@@ -1,9 +1,9 @@
 import { Avatar, Grid, Typography } from "@mui/material";
-import axios from "axios";
-import React, { useEffect, useLayoutEffect } from "react"
-import { Socket } from "socket.io-client";
-import { Link, useLocation } from "react-router-dom";
 import PersonIcon from '@mui/icons-material/Person';
+import axios from "axios";
+import React, { useEffect, useLayoutEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Socket } from "socket.io-client";
 import { ChatRoom } from "../../types/PrismaType";
 import '../../styles/Chat.css'
 
@@ -26,8 +26,8 @@ export default function ChannelListComponent(props: ChannelListComponentProps) {
       return res.data;
     } catch (error) {
       console.log(error);
+      return [];
     }
-    return [];
   }
 
   useEffect(() => {
@@ -42,36 +42,48 @@ export default function ChannelListComponent(props: ChannelListComponentProps) {
     getChannels().then((data) => { setChannels(data); })
   }, [])
 
-    const handleClick = (roomId: string) => {
-      console.log('click channel button');
-      socket.emit('joinRoom', { id: roomId });
-    }
 
   return (
     <>
-      {channels.map((room: ChatRoom, idx: number) => (
-        <Link to={`/channel/room/${room.id}`} onClick={() => handleClick(room.id)} key={idx} className={'ChannelLink'}>
-          {room.id === roomID ? (
-            <Grid container padding={1} className={'ChannelListActive'}>
-              <Grid item mr={2}>
-                <Avatar ><PersonIcon /></Avatar>
-              </Grid>
-              <Grid item>
-                <Typography variant="subtitle1" sx={{fontWeight: 700}} >{room.name}</Typography>
-                </Grid>
+    {channels.map((room: ChatRoom, idx: number) => (
+      <Link
+        key={idx}
+        to={`/channel/room/${room.id}`}
+        className={'ChannelLink'}
+      >
+        {room.id === roomID ? (
+          <Grid
+            container height={'7vh'}
+            sx={{ display: 'flex', alignItems: 'center' }}
+            className={'ChannelListActive'}
+          >
+            <Grid item mr={2} ml={3}>
+              <Avatar><PersonIcon /></Avatar>
             </Grid>
-          ): (
-            <Grid container padding={1} className={'ChannelList'}>
-              <Grid item mr={2}>
-                <Avatar ><PersonIcon /></Avatar>
-              </Grid>
-              <Grid item>
-              <Typography variant="subtitle1" sx={{fontWeight: 700}} >{room.name}</Typography>
-              </Grid>
+            <Grid item>
+              <Typography variant='subtitle1'>
+                {room.name}
+              </Typography>
             </Grid>
-          )}
-        </Link>
-      ))}
+          </Grid>
+        ) : (
+          <Grid
+          container height={'7vh'}
+          sx={{ display: 'flex', alignItems: 'center' }}
+          className={'ChannelList'}
+        >
+          <Grid item mr={2} ml={3}>
+            <Avatar><PersonIcon /></Avatar>
+          </Grid>
+          <Grid item>
+            <Typography variant='subtitle1'>
+              {room.name}
+            </Typography>
+          </Grid>
+        </Grid>
+        )}
+      </Link>
+    ))}
     </>
   )
 }
