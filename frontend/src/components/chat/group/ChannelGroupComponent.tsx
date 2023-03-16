@@ -4,7 +4,7 @@ import { Socket } from "socket.io-client";
 import React, { useState } from "react";
 import { ChatRoom } from "../../../types/PrismaType";
 import ChannelListComponent from "./ChannelListComponent";
-import '../../styles/Chat.css';
+import '../../../styles/Chat.css';
 
 type ChannelGroupComponentProps = {
   socket: Socket;

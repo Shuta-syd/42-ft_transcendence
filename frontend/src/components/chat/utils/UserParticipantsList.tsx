@@ -16,10 +16,11 @@ type MemberPayload = {
 
 type UserParticipantListProps = {
   roomId: string;
+  isDM?: boolean;
 }
 
 export default function UserParticipantList(props: UserParticipantListProps) {
-  const { roomId } = props;
+  const { roomId, isDM } = props;
   const [userId, setUserId] = useState<string>();
   const [members, setMembers] = useState<MemberPayload[]>([]);
 
@@ -132,9 +133,13 @@ export default function UserParticipantList(props: UserParticipantListProps) {
           </Grid>
         </Grid>
       ))}
-      <Box mt={2}>
-        <InvitationButton roomId={roomId} setMembers={setMembers} members={members} />
-      </Box>
+      {
+        isDM === true ? (<></>) : (
+          <Box mt={2}>
+            <InvitationButton roomId={roomId} setMembers={setMembers} members={members} />
+          </Box>
+        )
+      }
     </>
   )
 }

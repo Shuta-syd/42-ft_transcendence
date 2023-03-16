@@ -4,6 +4,7 @@ import UserParticipantList from "./UserParticipantsList";
 
 type UserParticipantsComponentProps = {
   roomId: string;
+  isDM?: boolean;
 }
 
 export default function UserParticipantsComponent(props: UserParticipantsComponentProps) {
@@ -32,7 +33,7 @@ export default function UserParticipantsComponent(props: UserParticipantsCompone
             </Typography>
         </Box>
         <Box width={'90%'}>
-          <UserParticipantList roomId={roomId} />
+          <UserParticipantList roomId={roomId} isDM={props.isDM} />
         </Box>
       </Grid>
     </Grid>
