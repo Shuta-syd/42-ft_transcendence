@@ -2,10 +2,10 @@ import { Box, Grid, Typography } from "@mui/material";
 import axios from "axios";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Socket } from "socket.io-client";
-import useMutationMessage from "../../hooks/chat/useMutationMessage";
-import getUserName from "../../utils/getUserName";
-import TextFieldComponent from "../utils/TextFieldComponent";
-import ChatlogComponent from "./ChatlogComponent";
+import useMutationMessage from "../../../hooks/chat/useMutationMessage";
+import getUserName from "../../../utils/getUserName";
+import TextFieldComponent from "../../utils/TextFieldComponent";
+import ChatlogComponent from "../utils/ChatlogComponent";
 
 type ChannelDisplayComponentProps = {
   socket: Socket;

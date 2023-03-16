@@ -2,7 +2,7 @@ import { Box, Grid, IconButton, TextField, Typography } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import { Socket } from "socket.io-client";
 import React, { useState } from "react";
-import { ChatRoom } from "../../types/PrismaType";
+import { ChatRoom } from "../../../types/PrismaType";
 import ChannelListComponent from "./ChannelListComponent";
 import '../../styles/Chat.css';
 

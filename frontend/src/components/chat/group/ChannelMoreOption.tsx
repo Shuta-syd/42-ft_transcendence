@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import AddIcon from '@mui/icons-material/Add';
-import CustomMenu from "../utils/CustomMenu";
+import CustomMenu from "../../utils/CustomMenu";
 import ChannelCreateDialog from "./ChannelCreateDialog";
-import SearchChannelDialog from "./SearchChannelDialog";
+import SearchChannelDialog from "../utils/SearchChannelDialog";
 
 type ChannelMoreOptionProps = {
   setChannels: any; // useState setter

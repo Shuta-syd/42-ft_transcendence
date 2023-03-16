@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import axios from "axios";
-import useQueryFriend from "../../hooks/user/useQueryFriend";
+import useQueryFriend from "../../../hooks/user/useQueryFriend";
 import '../../styles/Chat.css'
 
 type FriendPayload = {

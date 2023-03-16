@@ -2,8 +2,8 @@ import { Box } from "@mui/material";
 import axios from "axios";
 import React, { createRef, useEffect, useLayoutEffect, useState } from "react";
 import { Socket } from "socket.io-client";
-import { Message } from "../../types/PrismaType";
-import convertDate from "../../utils/convertDate";
+import { Message } from "../../../types/PrismaType";
+import convertDate from "../../../utils/convertDate";
 
 type MessagePayload = {
   time: string;

@@ -4,7 +4,7 @@ import axios from "axios";
 import React, { useEffect, useLayoutEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Socket } from "socket.io-client";
-import { ChatRoom } from "../../types/PrismaType";
+import { ChatRoom } from "../../../types/PrismaType";
 import '../../styles/Chat.css'
 
 type ChannelListComponentProps = {

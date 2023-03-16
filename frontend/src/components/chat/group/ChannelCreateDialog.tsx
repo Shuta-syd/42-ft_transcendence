@@ -3,8 +3,8 @@ import axios from "axios";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
 import { Stack } from "@mui/system";
 import { SubmitHandler, useForm } from "react-hook-form";
-import CustomRadioGroup from "../utils/CustomRadioGroup";
-import FormController from "../utils/FormController";
+import CustomRadioGroup from "../../utils/CustomRadioGroup";
+import FormController from "../../utils/FormController";
 
 type ChannelCreateDialogProps = {
   isOpen: boolean;

@@ -3,8 +3,8 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import InvitationButton from "./InvitationButton";
-import CustomMenu from "../utils/CustomMenu";
+import InvitationButton from "../group/InvitationButton";
+import CustomMenu from "../../utils/CustomMenu";
 
 type MemberPayload = {
   id: string;
