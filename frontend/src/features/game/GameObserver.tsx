@@ -125,10 +125,8 @@ const GamePlayer2 = () => {
         } else if (FIELDHEIGHT + FIELDY < ball.y || ball.y < FIELDY) {
             ball.vy = -ball.vy;
         } else if (ball.x < FIELDX) {
-            rightScore += 1;
             ball.init();
         } else if (FIELDX + FIELDWIDTH < ball.x) {
-            leftScore += 1;
             ball.init();
         }
 
@@ -246,6 +244,16 @@ const GamePlayer2 = () => {
     GameSocket.on('BallPosToClient', (BallPos: BallPos, SocketId: string) => {
         ball.x = BallPos.x;
         ball.y = BallPos.y;
+    });
+
+    type Score = {
+        player1: number
+        player2: number
+        name: string
+    }
+    GameSocket.on('ScoreToClient', (Score: Score, SocketId: string) => {
+        leftScore = Score.player1;
+        rightScore = Score.player2;
     });
 
     return (
