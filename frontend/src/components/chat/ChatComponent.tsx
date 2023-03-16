@@ -1,4 +1,4 @@
-import { Grid } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import React, { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { io, Socket } from "socket.io-client";
@@ -23,9 +23,17 @@ export default function ChatComponent() {
   }, [socket])
 
   return (
-    <Grid container>
-      <ChatGroupComponent socket={socket} />
-      <Outlet context={socket}/>
-    </Grid>
+    <Box
+    height={'100vh'}
+    borderLeft={2}
+    borderColor={'#EDF0F4'}
+    borderRadius={8}
+    sx={{ display: 'flex', alignItems: 'center' }}
+  >
+      <Grid container height={'95vh'}>
+        <ChatGroupComponent socket={socket} />
+        <Outlet context={socket}/>
+      </Grid>
+    </Box>
   )
 }

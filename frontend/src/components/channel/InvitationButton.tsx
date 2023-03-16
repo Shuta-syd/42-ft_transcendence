@@ -83,7 +83,7 @@ export default function InvitationButton(props: InvitationButtonProps) {
                 </Grid>
                 <Grid item>
                   {members.find((member: any) => member.userId === friend.id) ? (
-                    <Button disabled>Invited</Button>
+                    <Button disabled>Joined</Button>
                   ) : (
                     <Button onClick={() => handleInvite(friend.id)}>Invite</Button>
                   )}

@@ -1,6 +1,7 @@
-import { Grid, Typography } from "@mui/material";
-import { Box, Stack } from "@mui/system";
-import React, { useEffect, useRef, useState } from "react";
+import { Grid, IconButton, TextField, Typography } from "@mui/material";
+import SearchIcon from '@mui/icons-material/Search';
+import { Box } from "@mui/system";
+import React from "react";
 import { Socket } from "socket.io-client";
 import ChatFriendsComponent from "./ChatFriendsComponent";
 
@@ -13,38 +14,71 @@ type ChatGroupComponentProps = {
  * @returns chatの会話中のフレンド、グループを表示するコンポーネント
  */
 export default function ChatGroupComponent(props: ChatGroupComponentProps) {
-  const subtitleElm = useRef<HTMLInputElement>();
-  const [subtitleHeight, setSubtitleHeight] = useState<string>('0');
-
-
-  useEffect(() => {
-    if (subtitleElm.current) {
-      setSubtitleHeight(`${subtitleElm.current.clientHeight.toString()}px`);
-    }
-  }, [subtitleElm, subtitleHeight]);
+  const { socket } = props;
 
   return (
-    <Grid item xs={3} height={'100vh'}>
-      <Box>
-        <Stack>
-          <Box sx={{ backgroundColor: '#141E61'}} ref={subtitleElm}>
-            <Typography
-              variant="h6"
-              borderTop={1} borderBottom={2.5} borderRight={2.5} borderColor={'#787A91'}
-              padding={0.5}
-              sx={{ fontFamily: 'Lato', color: '#e1e2e2', fontWeight: 700 }}
+    <>
+      <Grid item
+        xs={2.5}
+      >
+        <Grid container justifyContent={'center'}>
+          <Box
+            width={'90%'}
+            height={'7vh'}
+            borderBottom={2}
+            borderColor={'#EDF0F4'}
+            textAlign={'left'}
+            sx={{ display: 'flex', alignItems: 'center' }}
             >
-              Direct Messages
+            <Typography
+              variant="h5"
+              ml={2}
+              sx={{ color: '#3C444B' }}
+            >
+              DirectMessage
             </Typography>
           </Box>
-          <Stack
-            height={`calc(100vh - ${subtitleHeight})`}
-            sx={{ backgroundColor: '#141E61', overflow: 'auto' }} borderColor={'#787A91'}
+          <Box
+          width={'18vw'}
+          marginTop={'2vh'}
+            >
+            <TextField
+              fullWidth
+              placeholder={'Search'}
+              InputProps={{
+                style: {
+                  color: '#3C444B',
+                  backgroundColor: '#EDF0F4',
+                  borderRadius: 15,
+                },
+                endAdornment: (
+                  <IconButton>
+                    <SearchIcon />
+                  </IconButton>
+                )
+              }}
+              />
+          </Box>
+          <Grid
+            container
+            width={'90%'}
+            height={'8vh'}
+            alignItems={'center'}
           >
-            <ChatFriendsComponent socket={props.socket} />
-          </Stack>
-        </Stack>
-      </Box>
-    </Grid>
+            <Grid item>
+              <Typography color={'#808792'}>
+                Recent Chats
+              </Typography>
+            </Grid>
+            <Grid item>
+              {/* Button */}
+            </Grid>
+          </Grid>
+          <Box width={'90%'}>
+            <ChatFriendsComponent socket={socket} />
+          </Box>
+        </Grid>
+      </Grid>
+    </>
   )
 }

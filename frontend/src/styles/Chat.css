@@ -1,22 +1,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
 
-.FriendLink {
-  text-decoration: none;
-  color: #EEEEEE;
-}
-
 input[type=text]::placeholder {
   font-weight: 700;
   color: #EEEEEE;
   font-family: 'Lato',
 }
 
-.FriendList:hover {
-  background-color: #6A709A;
+.FriendLink {
+  text-decoration: none;
+  color: #3C444B;
 }
 
-.FriendListActive {
-  background-color: #40487E;
+.FriendList:hover{
+  background-color: #f7f8fa;
+  border-radius: 5%;
+}
+
+.FriendListActive{
+  background-color: #f7f8fa;
+  border-radius: 5%;
 }
 
 .ChannelLink {
