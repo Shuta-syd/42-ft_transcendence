@@ -1,4 +1,4 @@
-import { Avatar, Box, Grid, Typography } from "@mui/material";
+import { Avatar, Grid, Typography } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
@@ -14,11 +14,11 @@ type MemberPayload = {
   role: string;
 }
 
-type UserParticipantProps = {
+type UserParticipantListProps = {
   roomId: string;
 }
 
-export default function UserParticipant(props: UserParticipantProps) {
+export default function UserParticipantList(props: UserParticipantListProps) {
   const { roomId } = props;
   const [userId, setUserId] = useState<string>();
   const [members, setMembers] = useState<MemberPayload[]>([]);
@@ -87,15 +87,7 @@ export default function UserParticipant(props: UserParticipantProps) {
 
 
   return (
-    <Box>
-      <Typography
-        borderBottom={2.5}
-        variant="h6"
-        padding={0.5}
-        sx={{ fontFamily: 'Lato', color: '#EEEEEE', fontWeight: 700 }}
-      >
-      @ Participants
-      </Typography>
+    <>
       {members.map((member, idx) => (
         <Grid container padding={1} key={idx} >
           <Grid item xs={5}>
@@ -131,6 +123,6 @@ export default function UserParticipant(props: UserParticipantProps) {
         </Grid>
       ))}
       <InvitationButton roomId={roomId} setMembers={setMembers} members={members} />
-    </Box>
+    </>
   )
 }

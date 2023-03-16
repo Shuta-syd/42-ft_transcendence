@@ -8,7 +8,7 @@ import useMutationMessage from "../../hooks/chat/useMutationMessage";
 import TextFieldComponent from "../utils/TextFieldComponent";
 import { Message } from "../../types/PrismaType";
 import MoreOptionButton from "../utils/MoreOptionButton";
-import UserParticipant from "./UserParticipants";
+import UserParticipant from "./UserParticipantsList";
 import getUserName from "../../utils/getUserName";
 import convertDate from "../../utils/convertDate";
 

@@ -1,27 +1,20 @@
-/* eslint-disable no-unused-vars */
 import { Box, Grid, Typography } from "@mui/material";
 import axios from "axios";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useOutletContext, useParams } from "react-router-dom";
 import { Socket } from "socket.io-client";
 import useMutationMessage from "../../hooks/chat/useMutationMessage";
 import getUserName from "../../utils/getUserName";
 import TextFieldComponent from "../utils/TextFieldComponent";
 import ChatlogComponent from "./ChatlogComponent";
 
-type MessagePayload = {
-  time: string;
-  senderName: string;
-  text: string;
-};
+type ChannelDisplayComponentProps = {
+  socket: Socket;
+  roomId: string;
+}
 
-type ChatLog = MessagePayload[];
-
-export default function ChannelDisplayComponent() {
-  const socket: Socket = useOutletContext();
-  const { roomId } = useParams();
-  const ChatRoomID: string = roomId as string;
-  const { createMessageMutation } = useMutationMessage(socket, ChatRoomID);
+export default function ChannelDisplayComponent(props: ChannelDisplayComponentProps) {
+  const { roomId, socket } = props;
+  const { createMessageMutation } = useMutationMessage(socket, roomId);
   const [text, setText] = useState('');
   const [userName, setUserName] = useState('');
   const [roomName, setRoomName] = useState('');
@@ -29,18 +22,18 @@ export default function ChannelDisplayComponent() {
 
   const getRoomName = useCallback(async (): Promise<string> => {
     try {
-      const res = await axios.get(`http://localhost:8080/chat/room/${ChatRoomID}`);
+      const res = await axios.get(`http://localhost:8080/chat/room/${roomId}`);
       return res.data.name;
     } catch (error) {
       console.log(error);
     }
     return '';
-  }, [ChatRoomID])
+  }, [roomId])
 
   useEffect(() => {
     getUserName().then((name) => { setUserName(name); });
     getRoomName().then((name) => { setRoomName(name); })
-  }, [ChatRoomID])
+  }, [roomId])
 
 
   const sendChat = () => {
@@ -55,7 +48,7 @@ export default function ChannelDisplayComponent() {
 
   return (
     <Grid
-      item xs
+      item xs={7}
       width={'100%'}
       height={'100%'}
       position='relative'
@@ -84,7 +77,7 @@ export default function ChannelDisplayComponent() {
         sx={{ display: 'flex', justifyContent: 'center' }}
         height={`calc(85% - ${textfieldElm?.current?.clientHeight}px)`}
       >
-        <ChatlogComponent roomId={ChatRoomID} socket={socket} />
+        <ChatlogComponent roomId={roomId} socket={socket} />
         </Box>
       <Box
         display='flex'

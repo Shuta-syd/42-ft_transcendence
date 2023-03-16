@@ -53,7 +53,7 @@ export default function NewChannelListComponent(props: ChannelListComponentProps
       >
         {room.id === roomID ? (
           <Grid
-            container width={'18vw'} height={'7vh'}
+            container height={'7vh'}
             sx={{ display: 'flex', alignItems: 'center' }}
             className={'ChannelListActive'}
           >
@@ -68,7 +68,7 @@ export default function NewChannelListComponent(props: ChannelListComponentProps
           </Grid>
         ) : (
           <Grid
-          container width={'18vw'} height={'7vh'}
+          container height={'7vh'}
           sx={{ display: 'flex', alignItems: 'center' }}
           className={'ChannelList'}
         >

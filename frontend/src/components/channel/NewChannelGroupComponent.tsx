@@ -75,7 +75,9 @@ export default function NewChannelGroupComponent(props: ChannelGroupComponentPro
               {/* Button */}
             </Grid>
           </Grid>
-          <NewChannelListComponent socket={socket} setChannels={setChannels} channels={channels} />
+          <Box width={'90%'}>
+            <NewChannelListComponent socket={socket} setChannels={setChannels} channels={channels} />
+          </Box>
         </Grid>
       </Grid>
     </>
