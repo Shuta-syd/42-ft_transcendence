@@ -2,7 +2,7 @@ import React from "react";
 import { Socket } from "socket.io-client";
 import { useOutletContext, useParams } from "react-router-dom";
 import ChannelDisplayComponent from "./ChannelDisplayComponent";
-import UserParticipants from "./UserParticipantsComponent";
+import UserParticipantsComponent from "./UserParticipantsComponent";
 
 export default function ChannelWindowComponent() {
   const socket: Socket = useOutletContext();
@@ -12,7 +12,7 @@ export default function ChannelWindowComponent() {
   return (
     <>
       <ChannelDisplayComponent socket={socket} roomId={ChatRoomId} />
-      <UserParticipants roomId={ChatRoomId} />
+      <UserParticipantsComponent roomId={ChatRoomId} />
     </>
   )
 }
