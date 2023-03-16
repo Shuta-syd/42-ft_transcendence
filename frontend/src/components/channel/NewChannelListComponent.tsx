@@ -1,4 +1,4 @@
-import { Avatar, Box, Grid, Typography } from "@mui/material";
+import { Avatar, Grid, Typography } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
 import React, { useEffect, useLayoutEffect } from "react";
@@ -44,7 +44,7 @@ export default function NewChannelListComponent(props: ChannelListComponentProps
 
 
   return (
-    <Box>
+    <>
     {channels.map((room: ChatRoom, idx: number) => (
       <Link
         key={idx}
@@ -84,6 +84,6 @@ export default function NewChannelListComponent(props: ChannelListComponentProps
         )}
       </Link>
     ))}
-    </Box>
+    </>
   )
 }

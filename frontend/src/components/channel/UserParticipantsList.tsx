@@ -1,4 +1,5 @@
-import { Avatar, Grid, Typography } from "@mui/material";
+/* eslint-disable no-unused-vars */
+import { Avatar, Box, Grid, Typography } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
@@ -89,40 +90,49 @@ export default function UserParticipantList(props: UserParticipantListProps) {
   return (
     <>
       {members.map((member, idx) => (
-        <Grid container padding={1} key={idx} >
-          <Grid item xs={5}>
-            <Grid container>
-              <Grid item mr={2}>
-                <Avatar ><PersonIcon /></Avatar>
-              </Grid>
-              <Grid item>
-                <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#EEEEEE' }} >
-                  {member.name}
-                </Typography>
-                {member.userId === userId ? (
-                  <Typography variant="subtitle2" sx={{ fontWeight: 500, color: '#EEEEEE' }} >
+        <Grid
+          key={idx}
+          container
+          height={'7vh'}
+          justifyContent='space-between'
+          sx={{ display: 'flex', alignItems: 'center' }}
+        >
+          <Grid item>
+            <Box>
+              <Grid container sx={{ display: 'flex', alignItems: 'center' }}>
+                <Grid item mr={2}>
+                  <Avatar ><PersonIcon /></Avatar>
+                </Grid>
+                <Grid item>
+                  <Typography variant="subtitle1">
+                    {member.name}
+                  </Typography>
+                  {member.userId === userId ?
+                    (
+                  <Typography variant="subtitle2">
                     You
                   </Typography>
-                ) : (<></>)}
+                  ) : (<></>)
+                  }
+                </Grid>
               </Grid>
-            </Grid>
+            </Box>
           </Grid>
+          <Grid item>
           {member.userId === userId || member.role !== 'NORMAL' ?
             (<></>) : (
-              <Grid item  xs={7} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <CustomMenu
-                ButtonIcon={<MoreVertIcon />}
-                menuItems={[
-                  { name: member.isMute ? 'unMute' : 'Mute', handleOnClick: async () => { await handleMute(member.id, member.isMute) } },
-                  { name: 'Kick', handleOnClick: async () => { await handleKick(member.id) } },
-                  { name: 'Ban',  handleOnClick: async () => { await handleBan(member.id) } }
-                ]}
-                />
-              </Grid>
+              <CustomMenu
+              ButtonIcon={<MoreVertIcon />}
+              menuItems={[
+                { name: member.isMute ? 'unMute' : 'Mute', handleOnClick: async () => { await handleMute(member.id, member.isMute) } },
+                { name: 'Kick', handleOnClick: async () => { await handleKick(member.id) } },
+                { name: 'Ban',  handleOnClick: async () => { await handleBan(member.id) } }
+              ]}
+              />
             )}
+          </Grid>
         </Grid>
       ))}
-      <InvitationButton roomId={roomId} setMembers={setMembers} members={members} />
     </>
   )
 }
