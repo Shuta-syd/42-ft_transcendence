@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const GameMatching = () => {
-    console.log('start');
     return (
         <div>
             <h1>[Matching Page]</h1>
@@ -13,7 +12,7 @@ const GameMatching = () => {
             <p></p>
             <Link to={"/game/select_room"}>Observer</Link>
             <p></p>
-            <Link to={"/game/CreateGameRoom"}>CreateGameRoom</Link>
+            <Link to={"/game/game_room"}>Random Match</Link>
             <p></p>
         </div>
     )
