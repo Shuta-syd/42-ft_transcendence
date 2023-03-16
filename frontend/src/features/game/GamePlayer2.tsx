@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useState, useCallback } from "react";
 import { GameSocket } from "../../contexts/WebsocketContext";
 import {User} from "../../types/PrismaType";
 import {useGameUser} from "../../hooks/game/useGameuser";
-import {unmountComponentAtNode} from "react-dom";
 
 
 const GamePlayer2 = () => {
@@ -266,9 +265,7 @@ const GamePlayer2 = () => {
     });
 
     GameSocket.on('Ping', (name: string, SocketId: string) => {
-        if (user?.name == undefined)
-            return
-        GameSocket.emit('Pong', user.name);
+        GameSocket.emit('Pong', user?.name);
     });
 
     return (

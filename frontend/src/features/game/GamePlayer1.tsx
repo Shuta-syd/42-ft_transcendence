@@ -1,7 +1,7 @@
-import React, { useRef, useEffect, useState, useCallback } from "react";
-import { GameSocket } from "../../contexts/WebsocketContext";
+import React, {useCallback, useEffect, useRef, useState} from "react";
+import {GameSocket} from "../../contexts/WebsocketContext";
 import {User} from "../../types/PrismaType";
-import { useGameUser } from "../../hooks/game/useGameuser";
+import {useGameUser} from "../../hooks/game/useGameuser";
 
 
 const GamePlayer1 = () => {
@@ -112,7 +112,7 @@ const GamePlayer1 = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
     function draw() {
-        if (!user?.name || isRecievePong == false)
+        if (!user?.name )
             return;
         context?.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
         drawStaticObject();
@@ -152,14 +152,15 @@ const GamePlayer1 = () => {
             paddleHeight: rightPaddle.y,
             name: user?.name.toString(),
         }
-        // console.log('paddleAndRoom name', paddleAndRoom.name);
         GameSocket.emit('GameToServer', paddleAndRoom);
-        // console.log(paddleAndRoom.room);
         keycode = '';
 
         /* send ball pos to server */
-        ball.x += ball.vx;
-        ball.y += ball.vy;
+        if (isRecievePong) {
+            ball.x += ball.vx;
+            ball.y += ball.vy;
+        }
+
         const BallPos:BallPos = {
             x: ball.x,
             y:ball.y,
@@ -192,9 +193,8 @@ const GamePlayer1 = () => {
         UserPromises.then((userDto: User) => {
             setUser(userDto);
             GameSocket.emit('JoinRoom', userDto?.name);
-            while (isRecievePong == false) {
-                GameSocket.emit('Ping', userDto?.name);
-            }
+            GameSocket.emit('Ping', userDto?.name);
+
         });
     }, []);
 
@@ -284,7 +284,6 @@ const GamePlayer1 = () => {
 
     GameSocket.on('Pong', (name: string, socketid: string) => {
         isRecievePong = true;
-        console.log("recieved pong from ", name);
     });
 
     return (
