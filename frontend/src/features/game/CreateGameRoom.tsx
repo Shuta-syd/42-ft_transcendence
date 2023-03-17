@@ -24,13 +24,6 @@ const CreateGameRoom = () => {
         gamePromisesRef.current?.then((Gamedto: Game) => {
             setGame(Gamedto);
             setRoomId(Gamedto?.id); // roomIdを更新する
-            // type RoomId = {
-            //     room: string | undefined,
-            // }
-            // const roomid: RoomId = {
-            //     room: Gamedto.id.toString(),
-            // }
-            // GameSocket.emit('JoinRoom', roomid);
         });
     }, [user]);
 

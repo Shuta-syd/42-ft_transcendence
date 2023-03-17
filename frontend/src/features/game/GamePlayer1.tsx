@@ -113,6 +113,7 @@ const GamePlayer1 = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
     const lastScore = 5;
+    let p2name: string;
 
     function draw() {
         if (!user?.name )
@@ -208,7 +209,7 @@ const GamePlayer1 = () => {
              */
             const matchData = {
                 player1: user.name,
-                player2: 'hoge',
+                player2: p2name,
                 winner_id: 2,
             };
             axios.post('http://localhost:8080/match', matchData)
@@ -219,7 +220,7 @@ const GamePlayer1 = () => {
         } else {
             const matchData = {
                 player1: user.name,
-                player2: 'hoge',
+                player2: p2name,
                 winner_id: 1,
             };
             axios.post('http://localhost:8080/match', matchData)
@@ -327,6 +328,7 @@ const GamePlayer1 = () => {
 
     GameSocket.on('Pong', (name: string, socketid: string) => {
         isRecievePong = true;
+        p2name = name;
     });
 
     return (
