@@ -62,7 +62,6 @@ const GamePlayer2 = () => {
         }
     };
 
-
     const leftPaddle = {
         x: LPADDLEX,
         y: LPADDLEY,
@@ -105,7 +104,6 @@ const GamePlayer2 = () => {
     };
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-
     const lastScore = 5;
 
     function draw() {
@@ -119,7 +117,7 @@ const GamePlayer2 = () => {
             && (ball.y <= leftPaddle.y + PADDLEWHEIGHT
                 && ball.y >= leftPaddle.y)){
             ball.vx = -ball.vx;
-        }else if (ball.x + ball.radius >= rightPaddle.x
+        } else if (ball.x + ball.radius >= rightPaddle.x
             && (ball.y <= rightPaddle.y + PADDLEWHEIGHT
                 && ball.y >= rightPaddle.y)) {
             ball.vx = -ball.vx;
