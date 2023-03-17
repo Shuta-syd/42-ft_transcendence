@@ -13,8 +13,9 @@ const GameMatching = () => (
             <p></p>
             <Link to={"/game/game_room"}>Random Match</Link>
             <p></p>
-            <Link to={"/game/invite_room"}>Invite someone</Link>
+            <Link to={"/game/invite_room"}>Invite Someone</Link>
             <p></p>
+            <Link to={"/game/join_invited_room"}>Join Invited room</Link>
         </div>
     )
 

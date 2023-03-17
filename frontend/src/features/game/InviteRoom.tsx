@@ -35,7 +35,7 @@ const InviteRoom = () => {
 
     return (
         <div>
-            <h1>[Invite Match Room!!]</h1>
+            <h1>[Host Room!!]</h1>
             <h2>You are {user?.name}!!!</h2>
             <h2>Invite Id is {roomId}!!!</h2>
             <p></p>
