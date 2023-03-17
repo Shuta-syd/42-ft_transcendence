@@ -41,6 +41,7 @@ const GamePlayer2 = () => {
     const WIDTH = 1000;
     const HEIGHT = 900;
 
+    const lastScore = 5;
     const ball = {
         x: BALLX,
         y: BALLY,
@@ -118,7 +119,7 @@ const GamePlayer2 = () => {
             && (ball.y <= leftPaddle.y + PADDLEWHEIGHT
                 && ball.y >= leftPaddle.y)){
             ball.vx = -ball.vx;
-        }else if (ball.x + ball.radius >= rightPaddle.x
+        } else if (ball.x + ball.radius >= rightPaddle.x
             && (ball.y <= rightPaddle.y + PADDLEWHEIGHT
                 && ball.y >= rightPaddle.y)) {
             ball.vx = -ball.vx;
@@ -138,16 +139,39 @@ const GamePlayer2 = () => {
         if (canvas == null || context == null) {
             return ;
         }
+
         context.fillStyle = 'black';
         context.font = "bold 50px 'ＭＳ 明朝'";
 
-        context.fillText(game.player1, 200, 50);
+        context.fillText(game.player2, 200, 50);
         context.fillText(leftScore.toString() , 360, 50);
         context.fillText( '-', 440, 50);
         context.fillText( rightScore.toString(), 500, 50);
-        context.fillText( game.player2, 660, 50);
+        context.fillText( game.player1, 660, 50);
         window.requestAnimationFrame(draw);
+
+        if (rightScore == lastScore) {
+
+            context.fillStyle = 'blue'
+            context.font = "bold 50px 'ＭＳ 明朝'";
+            context.fillText('Lose!', 200,  200);
+
+            context.fillStyle = 'red'
+            context.font = "bold 50px 'ＭＳ 明朝'";
+            context.fillText('Win!', 500, 200);
+        } else if (leftScore == lastScore) {
+
+            context.fillStyle = 'red'
+            context.font = "bold 50px 'ＭＳ 明朝'";
+            context.fillText('Win!', 200, 200);
+
+            context.fillStyle = 'blue'
+            context.font = "bold 50px 'ＭＳ 明朝'";
+            context.fillText('Lose!', 500,  200);
+
+        }
     }
+
 
     const [user, setUser] = useState<User>();
     const [game, setGame] = useState<Game>();
@@ -236,9 +260,9 @@ const GamePlayer2 = () => {
 
     GameSocket.on('GameToClient', (Paddley: PaddleAndRoom, socketid: string) => {
         if (Paddley.name === game?.player1)
-            leftPaddle.y = Paddley.paddleHeight;
-        else if (Paddley.name === game?.player2)
             rightPaddle.y = Paddley.paddleHeight;
+        else if (Paddley.name === game?.player2)
+            leftPaddle.y = Paddley.paddleHeight;
     });
 
     GameSocket.on('BallPosToClient', (BallPos: BallPos, SocketId: string) => {
@@ -252,8 +276,8 @@ const GamePlayer2 = () => {
         name: string
     }
     GameSocket.on('ScoreToClient', (Score: Score, SocketId: string) => {
-        leftScore = Score.player2;
         rightScore = Score.player1;
+        leftScore = Score.player2;
     });
 
     return (

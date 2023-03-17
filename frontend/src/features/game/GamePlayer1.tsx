@@ -111,6 +111,8 @@ const GamePlayer1 = () => {
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
+    const lastScore = 5;
+
     function draw() {
         if (!user?.name )
             return;
@@ -122,7 +124,7 @@ const GamePlayer1 = () => {
             && (ball.y <= leftPaddle.y + PADDLEWHEIGHT
                 && ball.y >= leftPaddle.y)){
             ball.vx = -ball.vx;
-        }else if (ball.x + ball.radius >= rightPaddle.x
+        } else if (ball.x + ball.radius >= rightPaddle.x
             && (ball.y <= rightPaddle.y + PADDLEWHEIGHT
                 && ball.y >= rightPaddle.y)) {
             ball.vx = -ball.vx;
@@ -184,19 +186,30 @@ const GamePlayer1 = () => {
             player2: number,
             name: string,
         }
-
-        const score:Scoredto = {
+        const score: Scoredto = {
             player1: rightScore,
             player2: leftScore,
             name: user.name,
         }
         GameSocket.emit('ScoreToServer', score);
+
         context.fillStyle = 'black';
         context.font = "bold 50px 'ＭＳ 明朝'";
-        context.fillText(leftScore.toString() , 360, 50);
-        context.fillText( '-', 440, 50);
-        context.fillText( rightScore.toString(), 500, 50);
-        window.requestAnimationFrame(draw);
+        context.fillText(leftScore.toString(), 360, 50);
+        context.fillText('-', 440, 50);
+        context.fillText(rightScore.toString(), 500, 50);
+
+        if (leftScore < lastScore && rightScore < lastScore) {
+            window.requestAnimationFrame(draw);
+        } else if (leftScore === lastScore) {
+            context.fillStyle = 'blue'
+            context.font = "bold 50px 'ＭＳ 明朝'";
+            context.fillText('You Lose!', 360,  300);
+        } else {
+            context.fillStyle = 'red'
+            context.font = "bold 50px 'ＭＳ 明朝'";
+            context.fillText('You Win!', 360, 300);
+        }
     }
 
     const [user, setUser] = useState<User>();
