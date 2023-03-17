@@ -16,14 +16,14 @@ type MessagePayload = {
 type ChatLog = MessagePayload[];
 
 type ChatlogComponentProps = {
+  memberId: string;
   roomId: string;
   socket: Socket;
 }
 
 export default function ChatlogComponent(props: ChatlogComponentProps) {
-  const { roomId, socket } = props;
+  const { roomId, socket, memberId } = props;
   const [chatLog, setChatLog] = useState<ChatLog>([]);
-  const [myMemberId, setMyMemberId] = useState<string>('');
   const latestChatRef = createRef<HTMLDivElement>();
 
   useEffect(() => {
@@ -38,8 +38,6 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
 
   useLayoutEffect(() => {
     const fetchChat = async () => {
-      const { data: myMember } = await axios.get(`http://localhost:8080/chat/${roomId}/myMember`);
-      setMyMemberId(myMember.id);
       setChatLog([]);
       const { data } = await axios.get<Message[]>(`http://localhost:8080/chat/room/log/${roomId}`);
       if (data) {
@@ -59,7 +57,7 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
       sx={{ color: '#3C444B', overflow: 'auto' ,overflowWrap: 'break-word', wordWrap: 'break-word' }}
     >
       {chatLog.map((chat, idx) => (
-        myMemberId === chat.memberId ? (
+        memberId === chat.memberId ? (
           <Box
           key={idx}
           mb={2}
