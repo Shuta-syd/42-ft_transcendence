@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { GameService } from './game.service';
 import { Game, InviteGame } from '@prisma/client';
-import { assignObserverDto } from './dto/game.dto';
+import { assignGuestDto, assignObserverDto } from './dto/game.dto';
 
 @Controller('game')
 export class GameController {
@@ -33,15 +33,15 @@ export class GameController {
 
   @Post('create_invite_room')
   async sethost(
-    @Body() assignPlayerReqDto: string | any, // assignPlayerReq の型もしくは any を指定
+    @Body() assignPlayerReqDto: string | any,
   ): Promise<InviteGame | null> {
     return this.gameService.createInviteGame(assignPlayerReqDto);
   }
 
-  @Post('crea')
-  async sethost(
-      @Body() assignPlayerReqDto: string | any, // assignPlayerReq の型もしくは any を指定
+  @Post('invited_guest')
+  async setguest(
+    @Body() assignPlayerReqDto: assignGuestDto | any,
   ): Promise<InviteGame | null> {
-    return this.gameService.createInviteGame(assignPlayerReqDto);
+    return this.gameService.assignGuest(assignPlayerReqDto);
   }
 }

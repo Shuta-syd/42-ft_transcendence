@@ -49,3 +49,7 @@ export type InviteGame = {
   player2:  string
 }
 
+export type GuestDto = {
+  name: string,
+  roomId: string,
+}

@@ -43,7 +43,7 @@ const InviteRoom = () => {
             <button onClick={handleCopy}>Copy Text</button>
             <p></p>
             <div>
-                <Link to={"/game/player1"}>Player1</Link>
+                <Link to={"/game/player1"}>lets go!!</Link>
                 <p></p>
             </div>
         </div>
