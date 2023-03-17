@@ -90,3 +90,11 @@ model Game {
   player1   String
   player2   String
 }
+
+
+
+model InviteGame {
+  id        Int     @id @default(autoincrement())
+  player1   String
+  player2   String
+}
