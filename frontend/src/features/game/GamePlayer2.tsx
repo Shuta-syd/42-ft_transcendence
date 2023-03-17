@@ -3,7 +3,6 @@ import { GameSocket } from "../../contexts/WebsocketContext";
 import {User} from "../../types/PrismaType";
 import {useGameUser} from "../../hooks/game/useGameuser";
 
-
 const GamePlayer2 = () => {
     // global variables
     let context: CanvasRenderingContext2D | null;
@@ -99,6 +98,7 @@ const GamePlayer2 = () => {
         context?.lineTo(MIDDLEX, FIELDWIDTH - 100);
         context?.stroke();
     }
+
     type BallPos = {
         x: number;
         y: number;
@@ -106,6 +106,9 @@ const GamePlayer2 = () => {
     };
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+    const lastScore = 5;
+
     function draw() {
         if (!user?.name)
             return;
@@ -124,10 +127,8 @@ const GamePlayer2 = () => {
         } else if (FIELDHEIGHT + FIELDY < ball.y || ball.y < FIELDY) {
             ball.vy = -ball.vy;
         } else if (ball.x < FIELDX) {
-            // rightScore += 1;
             ball.init();
         } else if (FIELDX + FIELDWIDTH < ball.x) {
-            // leftScore += 1;
             ball.init();
         }
 
@@ -149,7 +150,6 @@ const GamePlayer2 = () => {
         }
         GameSocket.emit('GameToServer', paddleAndRoom);
         keycode = '';
-        // console.log(paddleAndRoom.room);
 
         /* draw part */
         leftPaddle.draw();
@@ -158,12 +158,22 @@ const GamePlayer2 = () => {
         if (canvas == null || context == null) {
             return ;
         }
-        context.fillStyle = 'black';
-        context.font = "bold 50px 'ＭＳ 明朝'";
-        context.fillText(leftScore.toString() , 360, 50);
-        context.fillText( '-', 440, 50);
-        context.fillText( rightScore.toString(), 500, 50);
-        window.requestAnimationFrame(draw);
+        if (leftScore < lastScore && rightScore < lastScore) {
+            context.fillStyle = 'black';
+            context.font = "bold 50px 'ＭＳ 明朝'";
+            context.fillText(leftScore.toString() , 360, 50);
+            context.fillText( '-', 440, 50);
+            context.fillText( rightScore.toString(), 500, 50);
+            window.requestAnimationFrame(draw);
+        } else if (leftScore === lastScore) {
+            context.fillStyle = 'blue'
+            context.font = "bold 50px 'ＭＳ 明朝'";
+            context.fillText('You Lose!', 360,  300);
+        } else {
+            context.fillStyle = 'red'
+            context.font = "bold 50px 'ＭＳ 明朝'";
+            context.fillText('You Win!', 360, 300);
+        }
     }
 
     const [user, setUser] = useState<User>();

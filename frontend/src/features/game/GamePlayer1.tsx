@@ -124,7 +124,7 @@ const GamePlayer1 = () => {
             && (ball.y <= leftPaddle.y + PADDLEWHEIGHT
                 && ball.y >= leftPaddle.y)){
             ball.vx = -ball.vx;
-        }else if (ball.x + ball.radius >= rightPaddle.x
+        } else if (ball.x + ball.radius >= rightPaddle.x
             && (ball.y <= rightPaddle.y + PADDLEWHEIGHT
                 && ball.y >= rightPaddle.y)) {
             ball.vx = -ball.vx;
@@ -181,19 +181,18 @@ const GamePlayer1 = () => {
         if (canvas == null || context == null) {
             return ;
         }
-
+        type Scoredto = {
+            player1: number,
+            player2: number,
+            name: string,
+        }
+        const score: Scoredto = {
+            player1: rightScore,
+            player2: leftScore,
+            name: user.name,
+        }
+        GameSocket.emit('ScoreToServer', score);
         if (leftScore < lastScore && rightScore < lastScore) {
-            type Scoredto = {
-                player1: number,
-                player2: number,
-                name: string,
-            }
-            const score: Scoredto = {
-                player1: rightScore,
-                player2: leftScore,
-                name: user.name,
-            }
-            GameSocket.emit('ScoreToServer', score);
             context.fillStyle = 'black';
             context.font = "bold 50px 'ＭＳ 明朝'";
             context.fillText(leftScore.toString(), 360, 50);
