@@ -1,8 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const GameMatching = () => {
-    return (
+const GameMatching = () => (
         <div>
             <h1>[Matching Page]</h1>
             <h2>Who are you?</h2>
@@ -16,6 +15,5 @@ const GameMatching = () => {
             <p></p>
         </div>
     )
-}
 
 export default GameMatching;
