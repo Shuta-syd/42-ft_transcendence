@@ -3,6 +3,8 @@ import { GameSocket } from "../../contexts/WebsocketContext";
 import {User, Game} from '../../types/PrismaType';
 import {useGameUser} from "../../hooks/game/useGameuser";
 import {fetchObserverGameinfo} from "../../hooks/game/useGameObserver";
+import gamePlayer1 from "./GamePlayer1";
+import gamePlayer2 from "./GamePlayer2";
 
 const GamePlayer2 = () => {
     // global variables
@@ -289,6 +291,7 @@ const GamePlayer2 = () => {
         <div>
             <h1>[PONG GAME]</h1>
             <h1>[Observer]</h1>
+            <h2>this room is match between {gamePlayer1.name} vs {gamePlayer2.name}</h2>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
             <div>
                 <input type="text" value={uname} onChange={(event) => { setUname(event.target.value) }} />

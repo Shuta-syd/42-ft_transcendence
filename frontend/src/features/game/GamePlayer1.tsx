@@ -312,7 +312,7 @@ const GamePlayer1 = () => {
     return (
         <div>
             <h1>[PONG GAME]</h1>
-            <h1>[Player1]</h1>
+            <h1>[Player1 (Mr. {user?.name})]</h1>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
             <div>
                 <input type="text" value={uname} onChange={(event) => { setUname(event.target.value) }} />
