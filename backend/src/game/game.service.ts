@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Game, Match, InviteGame } from '@prisma/client';
-import {assignGuestDto, assignObserverDto} from './dto/game.dto';
+import { assignGuestDto, assignObserverDto } from './dto/game.dto';
 import { addAbortSignal } from 'stream';
 
 let playerId = 0;
