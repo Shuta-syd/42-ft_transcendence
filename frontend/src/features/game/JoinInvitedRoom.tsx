@@ -1,7 +1,8 @@
 import React, {ChangeEvent, useEffect, useState} from "react";
 import { Link } from "react-router-dom";
 import {User, InviteGame} from "../../types/PrismaType";
-import {GameInviteRoomReq, useGameUser} from "../../hooks/game/useGameuser";
+import {useGameUser} from "../../hooks/game/useGameuser";
+import GameInvitedGuestReq from "../../hooks/game/useInvitedRoom";
 
 const JoinInvitedRoom = () => {
 
@@ -32,7 +33,7 @@ const JoinInvitedRoom = () => {
             // at the beginning, roomId is 0, so escaped
             if (observseDto.roomId === '')
                 return
-            const gameRes = GameInviteRoomReq(observseDto);
+            const gameRes = GameInvitedGuestReq(observseDto);
             gameRes.then((game:InviteGame) => {
                     setIsAsssigned(true);
                 }

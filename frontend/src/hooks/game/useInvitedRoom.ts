@@ -1,9 +1,9 @@
 import axios from "axios";
 import {InviteGame} from "../../types/PrismaType";
 
-function GameInviteRoomReq(playerName: { name: string; roomId: string }) {
+function GameInvitedGuestReq(playerName: { name: string; roomId: string }) {
     const getInviteGameObject = async () => {
-        const { data } = await axios.post<InviteGame>(`http://localhost:8080/game/create_invite_room`, {
+        const { data } = await axios.post<InviteGame>(`http://localhost:8080/game/invited_guest`, {
             playerName,
         });
         return data;
@@ -12,4 +12,4 @@ function GameInviteRoomReq(playerName: { name: string; roomId: string }) {
 
 }
 
-export default GameInviteRoomReq ;
+export default GameInvitedGuestReq ;

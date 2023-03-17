@@ -37,4 +37,11 @@ export class GameController {
   ): Promise<InviteGame | null> {
     return this.gameService.createInviteGame(assignPlayerReqDto);
   }
+
+  @Post('crea')
+  async sethost(
+      @Body() assignPlayerReqDto: string | any, // assignPlayerReq の型もしくは any を指定
+  ): Promise<InviteGame | null> {
+    return this.gameService.createInviteGame(assignPlayerReqDto);
+  }
 }

@@ -42,5 +42,15 @@ function GameObserverReq(observer: ObserverDto | undefined) {
     return getGameObject();
 }
 
+function GameInviteRoomReq(playerName: string | undefined) {
+    const getInviteGameObject = async () => {
+        const { data } = await axios.post<InviteGame>(`http://localhost:8080/game/create_invite_room`, {
+            playerName,
+        });
+        return data;
+    }
+    return getInviteGameObject();
 
-export {useGameUser, GameRoomReq, GameObserverReq};
+}
+
+export {useGameUser, GameRoomReq, GameObserverReq, GameInviteRoomReq};
