@@ -7,7 +7,6 @@ const GamePlayer2 = () => {
     // global variables
     let context: CanvasRenderingContext2D | null;
     let canvas:  HTMLCanvasElement | null;
-    let keycode = '';
     let leftScore = 0;
     let rightScore = 0;
 
@@ -131,25 +130,11 @@ const GamePlayer2 = () => {
         } else if (FIELDX + FIELDWIDTH < ball.x) {
             ball.init();
         }
-
-        /* check keycode */
-        if (keycode === 'KeyW') {
-            if (rightPaddle.y  > FIELDY) {
-                rightPaddle.y -= 50;
-            }
-        }
-        if (keycode === 'KeyS') {
-            if (rightPaddle.y + PADDLEWHEIGHT < FIELDHEIGHT + FIELDY) {
-                rightPaddle.y += 50;
-            }
-        }
-
         const paddleAndRoom = {
             paddleHeight: rightPaddle.y,
             name: user?.name.toString(),
         }
         GameSocket.emit('GameToServer', paddleAndRoom);
-        keycode = '';
 
         /* draw part */
         leftPaddle.draw();
@@ -186,12 +171,6 @@ const GamePlayer2 = () => {
     }, []);
 
     useEffect(() => {
-        const handleKeyUp = ():void => {
-            keycode = '';
-        }
-        const handleKeyDown = (e:KeyboardEvent):void  => {
-            keycode = e.code;
-        }
         canvas = canvasRef.current;
         if (!canvas) {
             return ;
@@ -200,10 +179,7 @@ const GamePlayer2 = () => {
         if (!context) {
             return ;
         }
-
         window.requestAnimationFrame(draw);
-        window.addEventListener('keyup', handleKeyUp);
-        window.addEventListener('keydown', handleKeyDown);
     }, [user]);
 
     type Chat = {

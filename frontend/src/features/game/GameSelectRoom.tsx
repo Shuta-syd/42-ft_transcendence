@@ -27,8 +27,6 @@ const GameSelectRoom = () => {
     const handleButtonClick = () => {
         setNumber(Number(tmpNumber));
         if ( user?.name) {
-            console.log(user.name);
-            console.log(tmpNumber);
             const observseDto = {
                 name:user.name,
                 roomId:number,
