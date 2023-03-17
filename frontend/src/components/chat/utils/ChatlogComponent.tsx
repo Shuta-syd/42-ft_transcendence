@@ -54,7 +54,7 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
   return (
     <Box
       width={'95%'}
-      sx={{ color: '#3C444B', overflow: 'auto' ,overflowWrap: 'break-word', wordWrap: 'break-word' }}
+      sx={{ color: '#3C444B', overflow: 'auto'}}
     >
       {chatLog.map((chat, idx) => (
         memberId === chat.memberId ? (
@@ -75,16 +75,17 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
               >
                 <Typography variant="caption" >You {chat.time}</Typography>
                 <Box
-                  sx={{ display: 'flex', justifyContent: 'end' }}
+                  sx={{ display: 'flex', justifyContent: 'end', wordBreak: 'break-word'}}
                   mr={2}
                 >
                   <Box
-                    width={`calc(1.2rem * ${chat.text.length})`}
-                    height={'3rem'}
+                    maxWidth={'30rem'}
+                    width={ chat.text.length * 0.7 > 8 ? `calc(0.6rem * ${chat.text.length})` : `calc(1.1rem * ${chat.text.length})`}
+                    minHeight={'3rem'}
                     justifyContent='center'
                     sx={{
-                      backgroundColor: '#ffffff', color: '#3C444B', display: 'flex', alignItems: 'center',
-                      borderRadius: '20px 20px 0px 20px'
+                      backgroundColor: '#d0d3e4', color: '#3C444B', display: 'flex', alignItems: 'center',
+                      borderRadius: '20px 20px 0px 20px',
                     }}
                     >
                     {chat.text}
@@ -114,12 +115,12 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
             <Grid item>
               <Typography variant="caption" >{chat.senderName}  {chat.time}</Typography>
               <Box
-                width={`calc(1.2rem * ${chat.text.length})`}
-                height={'3rem'}
+                width={ chat.text.length * 0.7 > 7 ? `calc(0.6rem * ${chat.text.length})` : `calc(1.1rem * ${chat.text.length})`}
+                minHeight={'3rem'}
                 justifyContent='center'
                 sx={{
                   backgroundColor: '#ffffff', color: '#3C444B', display: 'flex', alignItems: 'center',
-                  borderRadius: '20px 20px 20px 0px'
+                  borderRadius: '20px 20px 20px 0px',
                 }}
               >
                 {chat.text}
