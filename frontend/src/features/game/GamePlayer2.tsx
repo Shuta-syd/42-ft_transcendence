@@ -78,7 +78,6 @@ const GamePlayer2 = () => {
         }
     }
 
-
     const rightPaddle = {
         x: RPADDLEX,
         y: RPADDLEY,
