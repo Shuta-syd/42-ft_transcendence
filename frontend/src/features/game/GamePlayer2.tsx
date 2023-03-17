@@ -141,12 +141,13 @@ const GamePlayer2 = () => {
         if (canvas == null || context == null) {
             return ;
         }
-        if (leftScore < lastScore && rightScore < lastScore) {
+
             context.fillStyle = 'black';
             context.font = "bold 50px 'ＭＳ 明朝'";
             context.fillText(leftScore.toString() , 360, 50);
             context.fillText( '-', 440, 50);
             context.fillText( rightScore.toString(), 500, 50);
+        if (leftScore < lastScore && rightScore < lastScore) {
             window.requestAnimationFrame(draw);
         } else if (leftScore === lastScore) {
             context.fillStyle = 'blue'
