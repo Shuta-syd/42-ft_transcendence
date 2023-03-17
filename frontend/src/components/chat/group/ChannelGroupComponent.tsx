@@ -4,6 +4,7 @@ import { Socket } from "socket.io-client";
 import React, { useState } from "react";
 import { ChatRoom } from "../../../types/PrismaType";
 import ChannelListComponent from "./ChannelListComponent";
+import ChannelMoreOption from "./ChannelMoreOption";
 import '../../../styles/Chat.css';
 
 type ChannelGroupComponentProps = {
@@ -65,6 +66,7 @@ export default function ChannelGroupComponent(props: ChannelGroupComponentProps)
             width={'90%'}
             height={'8vh'}
             alignItems={'center'}
+            justifyContent={'space-between'}
           >
             <Grid item>
               <Typography color={'#808792'}>
@@ -72,7 +74,7 @@ export default function ChannelGroupComponent(props: ChannelGroupComponentProps)
               </Typography>
             </Grid>
             <Grid item>
-              {/* Button */}
+              <ChannelMoreOption setChannels={setChannels} />
             </Grid>
           </Grid>
           <Box width={'90%'}>

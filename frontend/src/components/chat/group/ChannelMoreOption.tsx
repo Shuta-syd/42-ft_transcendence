@@ -39,7 +39,7 @@ export default function ChannelMoreOption(props: ChannelMoreOptionProps) {
         ButtonIcon={<AddIcon/>}
         menuItems={[
           { name: 'Create Channel', handleOnClick: handleOpenCreateChannel },
-          { name: 'Search Channel', handleOnClick: handleOpenSearchChannel},
+          { name: 'Join Channel', handleOnClick: handleOpenSearchChannel},
         ]}
       />
       <ChannelCreateDialog isOpen={createChannelDialogIsOpen} handleClose={handleCloseCreateChanel} setChannels={setChannels} />
