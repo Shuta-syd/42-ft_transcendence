@@ -1,15 +1,15 @@
 import axios from "axios";
+import {InviteGame} from "../../types/PrismaType";
 
-type GuestDto = {
-    name: string
-    roomId: string
-}
-function GameInvitedRoomReq(guest: GuestDto) {
-    const getGame = async () => {
-        const { data } = await axios.post<GuestDto>(`http://localhost:8080/game/invited_guest`, guest);
+function GameInviteRoomReq(playerName: { name: string; roomId: string }) {
+    const getInviteGameObject = async () => {
+        const { data } = await axios.post<InviteGame>(`http://localhost:8080/game/create_invite_room`, {
+            playerName,
+        });
         return data;
     }
-    return getGame();
+    return getInviteGameObject();
+
 }
 
-export default  GameInvitedRoomReq ;
+export default GameInviteRoomReq ;
