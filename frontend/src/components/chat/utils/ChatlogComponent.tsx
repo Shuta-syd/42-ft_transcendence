@@ -87,8 +87,13 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
                       backgroundColor: '#d0d3e4', color: '#3C444B', display: 'flex', alignItems: 'center',
                       borderRadius: '20px 20px 0px 20px',
                     }}
+                  >
+                    <Box
+                      width={'80%'}
+                      textAlign={'center'}
                     >
-                    {chat.text}
+                      {chat.text}
+                    </Box>
                   </Box>
                 </Box>
             </Grid>
@@ -123,7 +128,12 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
                   borderRadius: '20px 20px 20px 0px',
                 }}
               >
-                {chat.text}
+                <Box
+                  width={'80%'}
+                  textAlign={'center'}
+                >
+                  {chat.text}
+                </Box>
               </Box>
             </Grid>
           </Grid>
