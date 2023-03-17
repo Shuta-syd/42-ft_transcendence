@@ -6,14 +6,16 @@ const GameMatching = () => {
     return (
         <div>
             <h1>[Matching Page]</h1>
-            <h2>Who are you?</h2>
+            <h1>Who are you?</h1>
+            <h1>
             <Link to={"/game/player1"}>Player1</Link>
             <p></p>
             <Link to={"/game/player2"}>Player2</Link>
             <p></p>
             <Link to={"/game/select_room"}>Observer</Link>
             <p></p>
-            <Link to={"/game/CreateGameRoom"}>CreateGameRoom</Link>
+            <Link to={"/game/CreateGameRoom"}>[CreateGameRoom]</Link>
+            </h1>
             <p></p>
         </div>
     )
