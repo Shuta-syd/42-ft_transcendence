@@ -36,9 +36,11 @@ const CreateGameRoom = () => {
             <h2>Player2 is {game?.player2}!!!</h2>
             <h2>Waiting for someone </h2>
             <div>
+                <h1>
                 <Link to={"/game/player1"}>Player1</Link>
                 <br></br>
                 <Link to={"/game/player2"}>Player2</Link>
+                </h1>
             </div>
         </div>
     );
