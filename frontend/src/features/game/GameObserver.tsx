@@ -63,6 +63,7 @@ const GamePlayer2 = () => {
         }
     };
 
+
     // Player 2
     const leftPaddle = {
         x: LPADDLEX,
@@ -106,8 +107,6 @@ const GamePlayer2 = () => {
     };
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
-    const lastScore = 5;
-
     function draw() {
         if (!user?.name || !game)
             return;
@@ -119,7 +118,7 @@ const GamePlayer2 = () => {
             && (ball.y <= leftPaddle.y + PADDLEWHEIGHT
                 && ball.y >= leftPaddle.y)){
             ball.vx = -ball.vx;
-        } else if (ball.x + ball.radius >= rightPaddle.x
+        }else if (ball.x + ball.radius >= rightPaddle.x
             && (ball.y <= rightPaddle.y + PADDLEWHEIGHT
                 && ball.y >= rightPaddle.y)) {
             ball.vx = -ball.vx;
@@ -131,6 +130,7 @@ const GamePlayer2 = () => {
             ball.init();
         }
 
+
         /* draw part */
         leftPaddle.draw();
         rightPaddle.draw();
@@ -138,45 +138,15 @@ const GamePlayer2 = () => {
         if (canvas == null || context == null) {
             return ;
         }
-
-        if (leftScore < lastScore && rightScore < lastScore) {
         context.fillStyle = 'black';
         context.font = "bold 50px 'ＭＳ 明朝'";
-            context.fillText( game.player1, 200, 50);
+
+        context.fillText(game.player2, 200, 50);
         context.fillText(leftScore.toString() , 360, 50);
         context.fillText( '-', 440, 50);
         context.fillText( rightScore.toString(), 500, 50);
-        context.fillText( game.player2, 660, 50);
+        context.fillText( game.player1, 660, 50);
         window.requestAnimationFrame(draw);
-        } else if (leftScore === lastScore) {
-            // player 2 win case
-            context.fillStyle = 'black'
-            context.font = "bold 50px 'ＭＳ 明朝'";
-            context.fillText( game.player1, 200, 50);
-            context.fillText( game.player2, 500, 50);
-
-            context.fillStyle = 'blue'
-            context.font = "bold 50px 'ＭＳ 明朝'";
-            context.fillText('Lose!', 200,  200);
-
-            context.fillStyle = 'red'
-            context.font = "bold 50px 'ＭＳ 明朝'";
-            context.fillText('Win!', 500,  200);
-        } else {
-            // player 1 win case
-            context.fillStyle = 'black'
-            context.font = "bold 50px 'ＭＳ 明朝'";
-            context.fillText( game.player1, 200, 50);
-            context.fillText( game.player2, 500, 50);
-
-            context.fillStyle = 'red'
-            context.font = "bold 50px 'ＭＳ 明朝'";
-            context.fillText('Win!', 200, 200);
-
-            context.fillStyle = 'blue'
-            context.font = "bold 50px 'ＭＳ 明朝'";
-            context.fillText('Lose!', 500,  200);
-        }
     }
 
     const [user, setUser] = useState<User>();
@@ -214,6 +184,7 @@ const GamePlayer2 = () => {
         name: string,
     }
     type ChatLog = Array<Chat>
+
 
     const [chatLog, setChatLog] = useState<ChatLog>([])
     const [uname, setUname] = useState<string>('')
@@ -265,9 +236,9 @@ const GamePlayer2 = () => {
 
     GameSocket.on('GameToClient', (Paddley: PaddleAndRoom, socketid: string) => {
         if (Paddley.name === game?.player1)
-            leftPaddle.y = Paddley.paddleHeight;
-        else if (Paddley.name === game?.player2)
             rightPaddle.y = Paddley.paddleHeight;
+        else if (Paddley.name === game?.player2)
+            leftPaddle.y = Paddley.paddleHeight;
     });
 
     GameSocket.on('BallPosToClient', (BallPos: BallPos, SocketId: string) => {
@@ -281,8 +252,8 @@ const GamePlayer2 = () => {
         name: string
     }
     GameSocket.on('ScoreToClient', (Score: Score, SocketId: string) => {
-        leftScore = Score.player2;
         rightScore = Score.player1;
+        leftScore = Score.player2;
     });
 
     return (
