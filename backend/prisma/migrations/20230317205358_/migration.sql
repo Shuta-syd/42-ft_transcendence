@@ -80,6 +80,15 @@ CREATE TABLE "Game" (
 );
 
 -- CreateTable
+CREATE TABLE "InviteGame" (
+    "id" TEXT NOT NULL,
+    "player1" TEXT NOT NULL,
+    "player2" TEXT NOT NULL,
+
+    CONSTRAINT "InviteGame_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "_Friends" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL

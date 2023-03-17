@@ -43,3 +43,9 @@ export type Game = {
   player2:  string
 }
 
+export type InviteGame = {
+  id:      string
+  player1:  string
+  player2:  string
+}
+

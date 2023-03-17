@@ -13,7 +13,7 @@ const GameMatching = () => (
             <p></p>
             <Link to={"/game/game_room"}>Random Match</Link>
             <p></p>
-            <Link to={"/game/invite_room"}>Invite Match</Link>
+            <Link to={"/game/invite_room"}>Invite someone</Link>
             <p></p>
         </div>
     )

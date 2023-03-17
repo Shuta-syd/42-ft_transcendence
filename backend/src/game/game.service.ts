@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Game, Match } from '@prisma/client';
+import { Game, Match, InviteGame } from '@prisma/client';
 import { assignObserverDto } from './dto/game.dto';
 import { addAbortSignal } from 'stream';
 
@@ -9,6 +9,10 @@ let tmpGame: Game;
 
 export type NameToRoomIdDic = { [key: number]: string };
 export const NameToRoomIdDic: NameToRoomIdDic = {};
+
+export type NameToInviteRoomIdDic = { [key: string]: string };
+export const NameToInviteRoomIdDic: NameToInviteRoomIdDic = {};
+
 @Injectable()
 export class GameService {
   constructor(private prisma: PrismaService) {}
@@ -79,5 +83,23 @@ export class GameService {
       },
     });
     return game || null;
+  }
+
+  async createInviteGame(
+    assignPlayerReqDto: string,
+  ): Promise<InviteGame | null> {
+    const jsonString = JSON.stringify(assignPlayerReqDto);
+    const tmp = JSON.parse(jsonString);
+    const playerName = tmp.playerName;
+    const game = this.prisma.inviteGame.create({
+      data: {
+        player1: playerName,
+        player2: '',
+      },
+    });
+    game.then((Gamedto: InviteGame) => {
+      NameToInviteRoomIdDic[playerName.toString()] = Gamedto.id.toString();
+    });
+    return game;
   }
 }
