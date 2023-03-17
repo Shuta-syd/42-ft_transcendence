@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -108,7 +109,20 @@ export class ChatController {
   })
   @Post('member/add')
   async addMember(@Body() dto: AddMemberDto): Promise<Member> {
-    return this.chatService.addMember(dto.userId, dto.roomId, dto.status);
+    return this.chatService.addMember(dto.userId, dto);
+  }
+
+  @ApiOperation({
+    description: 'Add login user to join a specific room as a member',
+    summary: 'Add a user to join a room',
+  })
+  @Post('member/add/me')
+  async addMemberMe(
+    @Req() req: Request,
+    @Body() dto: AddMemberDto,
+  ): Promise<ChatRoom> {
+    const me = await this.chatService.addMember(req.user.id, dto);
+    return this.getChatRoomById(me.roomId);
   }
 
   @ApiOperation({
@@ -135,13 +149,25 @@ export class ChatController {
   /**
    * Channel Controller
    */
-  @Get('group')
+  @Get('channel')
   @ApiOperation({
     description: 'get channel user belongs to',
     summary: 'get channel user belongs to',
   })
   async getChannels(@Req() req: Request): Promise<ChatRoom[]> {
     return this.chatService.getChannels(req.user.id);
+  }
+
+  @Get('channel/search')
+  @ApiOperation({
+    description: 'get channel related to name',
+    summary: 'get channel related to name',
+  })
+  async searchChannel(
+    @Req() req: Request,
+    @Query('name') name: string,
+  ): Promise<ChatRoom[]> {
+    return this.chatService.searchChannel(req.user.id, name);
   }
 
   @Patch('channel/mute')
