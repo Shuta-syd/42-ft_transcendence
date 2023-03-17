@@ -1,4 +1,5 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
+import axios from "axios";
 import {GameSocket} from "../../contexts/WebsocketContext";
 import {User} from "../../types/PrismaType";
 import {useGameUser} from "../../hooks/game/useGameuser";
@@ -192,6 +193,7 @@ const GamePlayer1 = () => {
             name: user.name,
         }
         GameSocket.emit('ScoreToServer', score);
+        /* judge the score */
         if (leftScore < lastScore && rightScore < lastScore) {
             context.fillStyle = 'black';
             context.font = "bold 50px 'ＭＳ 明朝'";
@@ -200,10 +202,28 @@ const GamePlayer1 = () => {
             context.fillText(rightScore.toString(), 500, 50);
             window.requestAnimationFrame(draw);
         } else if (leftScore === lastScore) {
+            /*
+            hit api of "http://localhost:8080/match"
+            ここでmatchの結果が決まるのでそのタイミングでhistoryとしてrequestを送信する
+             */
+            const matchData = {
+                player1: user.name,
+                player2: 'hoge',
+                winner_id: 2,
+            };
+            axios.post('http://localhost:8080/match', matchData)
+                .catch(error => console.log(error));
             context.fillStyle = 'blue'
             context.font = "bold 50px 'ＭＳ 明朝'";
             context.fillText('You Lose!', 360,  300);
         } else {
+            const matchData = {
+                player1: user.name,
+                player2: 'hoge',
+                winner_id: 1,
+            };
+            axios.post('http://localhost:8080/match', matchData)
+                .catch(error => console.log(error));
             context.fillStyle = 'red'
             context.font = "bold 50px 'ＭＳ 明朝'";
             context.fillText('You Win!', 360, 300);
@@ -312,11 +332,11 @@ const GamePlayer1 = () => {
     return (
         <div>
             <h1>[PONG GAME]</h1>
-            <h1>[Player1 (Mr. {user?.name})]</h1>
+            <h1>Player1: {user?.name}</h1>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
             <div>
                 <input type="text" value={uname} onChange={(event) => { setUname(event.target.value) }} />
-            </div>sss
+            </div>
             <section style={{ backgroundColor: 'rgba(30,130,80,0.3)', height: '50vh', overflow: 'scroll' }}>
                 <h2>GAME CHAT</h2>
                 <hr />
