@@ -104,7 +104,6 @@ export class GameService {
   }
   async assignGuest(guestDto: assignGuestDto): Promise<InviteGame | null> {
     NameToInviteRoomIdDic[guestDto.name] = guestDto.roomId;
-    console.log(guestDto.name);
     const game = await this.prisma.inviteGame.update({
       where: {
         id: guestDto.roomId,
