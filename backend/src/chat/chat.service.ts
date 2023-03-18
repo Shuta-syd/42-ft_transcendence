@@ -203,7 +203,54 @@ export class ChatService {
 
   /**
    * ===Member CRUD===
+   *
+  /**
+   * @description MemberIdから紐付けられたUserデータを取得
    */
+  async getUserByMemberId(memberId: string): Promise<User> {
+    return this.prisma.member
+      .findUnique({
+        where: {
+          id: memberId,
+        },
+      })
+      .user();
+  }
+
+  async updateMemberRole(userId: string, dto: MemberDto): Promise<Msg> {
+    const { memberId, roomId } = dto;
+
+    const executor = await this.getMyMember(userId, roomId);
+    if (executor.role !== 'OWNER') {
+      return {
+        message: 'You are not Owner',
+      };
+    }
+
+    const target = await this.prisma.member.findUnique({
+      where: { id: memberId },
+    });
+
+    if (target.role === 'OWNER') {
+      return {
+        message: 'Owner can be changed to ADMIN or NORMAL',
+      };
+    } else if (target.role === 'NORMAL') {
+      this.prisma.member.update({
+        where: { id: memberId },
+        data: { role: 'ADMIN' },
+      });
+    } else {
+      this.prisma.member.update({
+        where: { id: memberId },
+        data: { role: 'NORMAL' },
+      });
+    }
+
+    return {
+      message: 'Member Role updated',
+    };
+  }
 
   /**
    * @param userId 所属させたいuserID
@@ -313,6 +360,9 @@ export class ChatService {
     };
   }
 
+  /**
+   * @description 特定のユーザを出禁にする
+   */
   async banUserOnChatRoom(userId: string, dto: MemberDto): Promise<Msg> {
     const { roomId, memberId } = dto;
 
@@ -328,18 +378,5 @@ export class ChatService {
     return {
       message: 'ban the member',
     };
-  }
-
-  /**
-   * @description MemberIdから紐付けられたUserデータを取得
-   */
-  async getUserByMemberId(memberId: string): Promise<User> {
-    return this.prisma.member
-      .findUnique({
-        where: {
-          id: memberId,
-        },
-      })
-      .user();
   }
 }
