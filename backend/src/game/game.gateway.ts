@@ -166,6 +166,17 @@ export class GameGateway {
     this.server.to(roomId).emit('ScoreToClient', payload, client.id);
   }
 
+  @SubscribeMessage('TerminateGame')
+  terminateGame(
+    @MessageBody() name: string,
+    @ConnectedSocket() client: Socket,
+  ): void {
+    let roomId: string = NameToRoomIdDic[name];
+    if (roomId === undefined) {
+      roomId = NameToInviteRoomIdDic[name];
+    }
+  }
+
   // 接続が切断されたときの処理
   handleDisconnect(socket: any) {
     console.log(`game Client disconnected: ${socket.id}`);
