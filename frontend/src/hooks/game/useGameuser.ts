@@ -1,5 +1,5 @@
 import axios from "axios";
-import { User, Game } from "../../types/PrismaType";
+import {User, Game, InviteGame} from "../../types/PrismaType";
 
 /*
 id: string
@@ -27,6 +27,8 @@ function GameRoomReq(playerName: string | undefined) {
     return getGameObject();
 
 }
+
+
 type ObserverDto = {
     name: string;
     roomId: number,
@@ -39,4 +41,16 @@ function GameObserverReq(observer: ObserverDto | undefined) {
     }
     return getGameObject();
 }
-export {useGameUser, GameRoomReq, GameObserverReq};
+
+function GameInviteRoomReq(playerName: string | undefined) {
+    const getInviteGameObject = async () => {
+        const { data } = await axios.post<InviteGame>(`http://localhost:8080/game/create_invite_room`, {
+            playerName,
+        });
+        return data;
+    }
+    return getInviteGameObject();
+
+}
+
+export {useGameUser, GameRoomReq, GameObserverReq, GameInviteRoomReq};
