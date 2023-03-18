@@ -1,4 +1,5 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
+import {Button} from "@mui/material";
 import axios from "axios";
 import {GameSocket} from "../../contexts/WebsocketContext";
 import {User} from "../../types/PrismaType";
@@ -337,6 +338,10 @@ const GamePlayer1 = () => {
             <h1>[PONG GAME]</h1>
             <h1>Player1: {user?.name}</h1>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
+                <Button variant={"contained"}
+                        size={"large"}
+                        color={"success"}
+                >LEVELUP</Button>
             <div>
                 <input type="text" value={uname} onChange={(event) => { setUname(event.target.value) }} />
             </div>
