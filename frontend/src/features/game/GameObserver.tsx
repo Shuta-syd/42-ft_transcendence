@@ -149,24 +149,24 @@ const GamePlayer2 = () => {
         context.fillText( game.player2, 660, 50);
         window.requestAnimationFrame(draw);
 
-        if (rightScore == lastScore) {
-
-            context.fillStyle = 'blue'
-            context.font = "bold 50px 'ＭＳ 明朝'";
-            context.fillText('Lose!', 200,  200);
+        if (rightScore === lastScore) {
 
             context.fillStyle = 'red'
             context.font = "bold 50px 'ＭＳ 明朝'";
-            context.fillText('Win!', 500, 200);
-        } else if (leftScore == lastScore) {
-
-            context.fillStyle = 'red'
-            context.font = "bold 50px 'ＭＳ 明朝'";
-            context.fillText('Win!', 200, 200);
+            context.fillText('Win!', 200,  200);
 
             context.fillStyle = 'blue'
             context.font = "bold 50px 'ＭＳ 明朝'";
-            context.fillText('Lose!', 500,  200);
+            context.fillText('Lose!', 500, 200);
+        } else if (leftScore === lastScore) {
+
+            context.fillStyle = 'blue'
+            context.font = "bold 50px 'ＭＳ 明朝'";
+            context.fillText('Lose!', 200, 200);
+
+            context.fillStyle = 'red'
+            context.font = "bold 50px 'ＭＳ 明朝'";
+            context.fillText('Win!', 500,  200);
 
         }
     }
@@ -286,7 +286,7 @@ const GamePlayer2 = () => {
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
             <div>
                 <input type="text" value={uname} onChange={(event) => { setUname(event.target.value) }} />
-            </div>sss
+            </div>
             <section style={{ backgroundColor: 'rgba(30,130,80,0.3)', height: '50vh', overflow: 'scroll' }}>
                 <h2>GAME CHAT</h2>
                 <hr />
