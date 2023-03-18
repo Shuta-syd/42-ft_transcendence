@@ -3,7 +3,6 @@ import axios from "axios";
 import {GameSocket} from "../../contexts/WebsocketContext";
 import {User} from "../../types/PrismaType";
 import {useGameUser} from "../../hooks/game/useGameuser";
-import {terminateGameReq} from "../../hooks/game/useQueryGame";
 
 
 const GamePlayer1 = () => {

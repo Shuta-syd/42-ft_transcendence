@@ -171,9 +171,13 @@ export class GameGateway {
     @MessageBody() name: string,
     @ConnectedSocket() client: Socket,
   ): void {
+    let IsInviteGame = false;
     let roomId: string = NameToRoomIdDic[name];
     if (roomId === undefined) {
       roomId = NameToInviteRoomIdDic[name];
+      if (roomId) {
+        IsInviteGame = true;
+      }
     }
   }
 
