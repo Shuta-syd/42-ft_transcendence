@@ -2,6 +2,7 @@ import React, {useCallback, useEffect, useRef, useState} from "react";
 import {GameSocket} from "../../contexts/WebsocketContext";
 import {User} from "../../types/PrismaType";
 import {useGameUser} from "../../hooks/game/useGameuser";
+import {terminateGameReq} from "../../hooks/game/useQueryGame";
 
 
 const GamePlayer1 = () => {
@@ -205,6 +206,7 @@ const GamePlayer1 = () => {
             context.fillStyle = 'blue'
             context.font = "bold 50px 'ＭＳ 明朝'";
             context.fillText('You Lose!', 360,  300);
+            terminateGameReq(user.name);
         } else {
             context.fillStyle = 'red'
             context.font = "bold 50px 'ＭＳ 明朝'";

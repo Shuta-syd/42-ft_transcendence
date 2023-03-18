@@ -16,4 +16,13 @@ function useQueryUserGame(userid: string) {
     return getUser();
 }
 
-export default useQueryUserGame;
+
+function terminateGameReq(name: string) {
+    const getUser = async () => {
+        const { data } = await axios.delete<boolean>(`http://localhost:8080/game/${name}`);
+        return data;
+    }
+    return getUser();
+}
+
+export { useQueryUserGame, terminateGameReq };
