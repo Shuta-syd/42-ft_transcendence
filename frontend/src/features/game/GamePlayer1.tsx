@@ -219,7 +219,6 @@ const GamePlayer1 = () => {
             context.fillStyle = 'blue'
             context.font = "bold 50px 'ＭＳ 明朝'";
             context.fillText('You Lose!', 360,  300);
-            terminateGameReq(user.name);
         } else {
             const matchData = {
                 player1: user.name,
