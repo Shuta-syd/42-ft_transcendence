@@ -98,6 +98,18 @@ CREATE TABLE "_Friends" (
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Game_player1_key" ON "Game"("player1");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Game_player2_key" ON "Game"("player2");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "InviteGame_player1_key" ON "InviteGame"("player1");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "InviteGame_player2_key" ON "InviteGame"("player2");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "_Friends_AB_unique" ON "_Friends"("A", "B");
 
 -- CreateIndex

@@ -30,8 +30,6 @@ export class GameController {
   async setNewObserver(
     @Body() dto: assignObserverDto | any,
   ): Promise<Game | null> {
-    console.log(dto.name);
-    console.log(dto.roomId);
     return this.gameService.assignObserver(dto);
   }
   @Get('observer')

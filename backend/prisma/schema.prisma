@@ -87,14 +87,14 @@ enum BanType {
 
 model Game {
   id        Int     @id @default(autoincrement())
-  player1   String
-  player2   String
+  player1   String  @unique
+  player2   String  @unique
 }
 
 
 
 model InviteGame {
-  id        String    @id @default(uuid())
-  player1   String
-  player2   String
+  id        String  @id @default(uuid())
+  player1   String  @unique
+  player2   String  @unique
 }

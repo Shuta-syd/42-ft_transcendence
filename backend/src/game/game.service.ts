@@ -19,10 +19,25 @@ export class GameService {
   async handleAssignPlayerReq(
     assignPlayerReqDto: string,
   ): Promise<Game | null> {
-    playerId += 1;
     const jsonString = JSON.stringify(assignPlayerReqDto);
     const tmp = JSON.parse(jsonString);
     const playerName = tmp.playerName;
+    const isPlayer2Unique = await this.prisma.game.findFirst({
+      where: {
+        player2: playerName,
+      },
+    });
+    const isPlayer1Unique = await this.prisma.game.findFirst({
+      where: {
+        player1: playerName,
+      },
+    });
+    if (isPlayer2Unique) {
+      return isPlayer2Unique;
+    } else if (isPlayer1Unique) {
+      return isPlayer1Unique;
+    }
+    playerId += 1;
     if (playerId % 2 != 0) {
       const game = this.prisma.game.create({
         data: {
@@ -66,6 +81,9 @@ export class GameService {
     assignObserver: assignObserverDto,
   ): Promise<Game | null> {
     console.log(assignObserver.name);
+    if (NameToInviteRoomIdDic[assignObserver.name] !== undefined) {
+      delete NameToInviteRoomIdDic[assignObserver.name];
+    }
     NameToRoomIdDic[assignObserver.name.toString()] =
       assignObserver.roomId.toString();
     const [game] = await this.prisma.game.findMany({
@@ -120,14 +138,14 @@ export class GameService {
       delete NameToRoomIdDic[dto.roomId];
       return this.prisma.game.delete({
         where: {
-          id: parseInt(dto.roomId),
+          player1: dto.player1,
         },
       });
     } else {
       delete NameToInviteRoomIdDic[dto.roomId];
       return this.prisma.inviteGame.delete({
         where: {
-          id: dto.roomId,
+          player1: dto.player1,
         },
       });
     }
