@@ -334,8 +334,11 @@ const GamePlayer1 = () => {
         p2name = name;
     });
 
-    const handleBallSpped = () => {
-        ballDefaultSpeed += 0.5;
+    const BallSpeedUp = () => {
+        ballDefaultSpeed += 0.3;
+    }
+    const BallSpeedDown = () => {
+        ballDefaultSpeed -= 0.3;
     }
 
     return (
@@ -343,13 +346,18 @@ const GamePlayer1 = () => {
             <h1>[PONG GAME]</h1>
             <h1>Player1: {user?.name}</h1>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
-                <Button variant={"contained"}
-                        size={"large"}
-                        color={"success"}
-                        onClick={(e) => {
-                            handleBallSpped();
-                        }}
-                >LEVELUP</Button>
+            <Button variant={"contained"}
+                    size={"large"}
+                    color={"success"}
+                    onClick={(e) => {
+                        BallSpeedUp();
+                    }}>LEVEL UP</Button>
+            <Button variant={"contained"}
+                    size={"large"}
+                    color={"error"}
+                    onClick={(e) => {
+                        BallSpeedDown();
+                    }}>LEVEL DOWN</Button>
             <div>
                 <input type="text" value={uname} onChange={(event) => { setUname(event.target.value) }} />
             </div>
