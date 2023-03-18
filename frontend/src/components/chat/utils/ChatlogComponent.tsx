@@ -120,19 +120,24 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
             <Grid item>
               <Typography variant="caption" >{chat.senderName}  {chat.time}</Typography>
               <Box
-                width={ chat.text.length * 0.7 > 7 ? `calc(0.6rem * ${chat.text.length})` : `calc(1.1rem * ${chat.text.length})`}
-                minHeight={'3rem'}
-                justifyContent='center'
-                sx={{
-                  backgroundColor: '#ffffff', color: '#3C444B', display: 'flex', alignItems: 'center',
-                  borderRadius: '20px 20px 20px 0px',
-                }}
-              >
-                <Box
-                  width={'80%'}
-                  textAlign={'center'}
+                  sx={{ display: 'flex', wordBreak: 'break-word'}}
+                  mr={2}
                 >
-                  {chat.text}
+                <Box
+                  width={ chat.text.length * 0.7 > 7 ? `calc(0.6rem * ${chat.text.length})` : `calc(1.1rem * ${chat.text.length})`}
+                  minHeight={'3rem'}
+                  justifyContent='center'
+                  sx={{
+                    backgroundColor: '#ffffff', color: '#3C444B', display: 'flex', alignItems: 'center',
+                    borderRadius: '20px 20px 20px 0px',
+                  }}
+                >
+                  <Box
+                    width={'80%'}
+                    textAlign={'center'}
+                  >
+                    {chat.text}
+                  </Box>
                 </Box>
               </Box>
             </Grid>
