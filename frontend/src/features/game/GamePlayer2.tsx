@@ -1,5 +1,8 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import { GameSocket } from "../../contexts/WebsocketContext";
+import {User} from "../../types/PrismaType";
+import {useGameUser} from "../../hooks/game/useGameuser";
+
 
 const GamePlayer2 = () => {
     // global variables
@@ -100,10 +103,13 @@ const GamePlayer2 = () => {
     type BallPos = {
         x: number;
         y: number;
+        name: string | undefined;
     };
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     function draw() {
+        if (!user?.name)
+            return;
         context?.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
         drawStaticObject();
 
@@ -137,8 +143,14 @@ const GamePlayer2 = () => {
                 rightPaddle.y += 50;
             }
         }
-        GameSocket.emit('GameToServer', rightPaddle.y);
+
+        const paddleAndRoom = {
+            paddleHeight: rightPaddle.y,
+            name: user?.name.toString(),
+        }
+        GameSocket.emit('GameToServer', paddleAndRoom);
         keycode = '';
+        // console.log(paddleAndRoom.room);
 
         /* draw part */
         leftPaddle.draw();
@@ -155,10 +167,18 @@ const GamePlayer2 = () => {
         window.requestAnimationFrame(draw);
     }
 
+    const [user, setUser] = useState<User>();
+    const UserPromises = useGameUser();
+    useEffect(() => {
+        UserPromises.then((userDto: User) => {
+            setUser(userDto);
+            GameSocket.emit('JoinRoom', userDto.name);
+        });
+    }, []);
 
     useEffect(() => {
         const handleKeyUp = ():void => {
-            keycode =  '';
+            keycode = '';
         }
         const handleKeyDown = (e:KeyboardEvent):void  => {
             keycode = e.code;
@@ -175,13 +195,14 @@ const GamePlayer2 = () => {
         window.requestAnimationFrame(draw);
         window.addEventListener('keyup', handleKeyUp);
         window.addEventListener('keydown', handleKeyDown);
-    }, []);
+    }, [user]);
 
     type Chat = {
-        socketId: string
-        uname: string
-        time: string
+        socketId: string,
+        uname: string,
+        time: string,
         text: string
+        name: string,
     }
     type ChatLog = Array<Chat>
 
@@ -225,23 +246,28 @@ const GamePlayer2 = () => {
             return;
         }
         console.log('送信')
-        GameSocket.emit('chatToServer', { uname, text, time: getNow() });
+        GameSocket.emit('chatToServer', { uname, text, time: getNow(), name: user?.name});
         setText('');
     }, [uname, text])
 
-    GameSocket.on('GameToClient', (leftPaddley: number, socketid: string) => {
-        if (GameSocket.id !== socketid) {
-            leftPaddle.y = leftPaddley;
-        }
+    type PaddleAndRoom = {
+        paddleHeight: number;
+        name: string;
+    };
+
+    GameSocket.on('GameToClient', (leftPaddley: PaddleAndRoom, socketid: string) => {
+        if (GameSocket.id !== socketid)
+            leftPaddle.y = leftPaddley.paddleHeight;
     });
     GameSocket.on('BallPosToClient', (BallPos: BallPos, SocketId: string) => {
         ball.x = BallPos.x;
         ball.y = BallPos.y;
     });
 
-    return (
+return (
         <div>
             <h1>[PONG GAME]</h1>
+            <h1>[Player 2]</h1>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
             <div>
                 <input type="text" value={uname} onChange={(event) => { setUname(event.target.value) }} />

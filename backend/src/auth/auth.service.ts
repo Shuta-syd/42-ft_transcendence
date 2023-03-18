@@ -20,11 +20,27 @@ export class AuthService {
    * @returns 作成したUserデータ
    */
   async signupUser(dto: SignUpUserDto): Promise<User> {
-    return this.prisma.user.create({
+    // メールアドレスが既に存在するかどうかを確認する
+    const userExists = await this.prisma.user.findUnique({
+      where: { email: dto.email },
+    });
+
+    if (userExists) {
+      // 既に存在する場合は、エラーをスローするか、処理を中断する
+      throw new Error('このメールアドレスは既に使用されています。');
+    }
+
+    // 存在しない場合は、新しいユーザーを作成する
+    const newUser = await this.prisma.user.create({
       data: {
-        ...dto,
+        email: dto.email,
+        password: dto.password,
+        name: dto.name,
+        // その他の必要なフィールドを追加する
       },
     });
+
+    return newUser;
   }
 
   /**
