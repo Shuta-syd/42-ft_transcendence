@@ -45,12 +45,13 @@ const GamePlayer1 = () => {
 
     /* start flag */
     let isRecievePong = false;
+    let ballDefaultSpeed = 2;
 
     const ball = {
         x: BALLX,
         y: BALLY,
-        vx: 2,
-        vy: 2,
+        vx: ballDefaultSpeed,
+        vy: ballDefaultSpeed,
         radius: RADIUS,
         color: "black",
         draw() {
@@ -63,8 +64,8 @@ const GamePlayer1 = () => {
         init(){
             this.x = BALLX;
             this.y = BALLY;
-            this.vx = 2;
-            this.vy = 2;
+            this.vx = ballDefaultSpeed;
+            this.vy = ballDefaultSpeed;
         }
     };
 
@@ -333,6 +334,10 @@ const GamePlayer1 = () => {
         p2name = name;
     });
 
+    const handleBallSpped = () => {
+        ballDefaultSpeed += 0.5;
+    }
+
     return (
         <div>
             <h1>[PONG GAME]</h1>
@@ -341,6 +346,9 @@ const GamePlayer1 = () => {
                 <Button variant={"contained"}
                         size={"large"}
                         color={"success"}
+                        onClick={(e) => {
+                            handleBallSpped();
+                        }}
                 >LEVELUP</Button>
             <div>
                 <input type="text" value={uname} onChange={(event) => { setUname(event.target.value) }} />
