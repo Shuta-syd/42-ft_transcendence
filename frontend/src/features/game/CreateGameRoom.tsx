@@ -24,14 +24,15 @@ const CreateGameRoom = () => {
         });
     }, [user]);
 
-    // eslint-disable-next-line consistent-return
     const ShowPage = () => {
         if (!game?.player2) {
             return (
-                "Hello"
+                    <Link to={"/game/player2"}>Player2</Link>
             );
         }
-        return "World"
+        return (
+                <Link to={"/game/player1"}>Player1</Link>
+        );
     }
 
 
@@ -42,13 +43,7 @@ const CreateGameRoom = () => {
             <h2>You are in {roomId}!!!</h2>
             <h2>Player1 is {game?.player1}!!!</h2>
             <h2>Player2 is {game?.player2}!!!</h2>
-            <h1>go next page! {ShowPage()}</h1>
-            <div>
-                 <h1>
-                 <br></br>
-                 <Link to={"/game/player2"}>Player2</Link>
-                </h1>
-            </div>
+            <h1>Your Room 👉 {ShowPage()} !!!</h1>
         </div>
     );
 
