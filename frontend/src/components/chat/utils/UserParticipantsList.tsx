@@ -1,7 +1,7 @@
 import { Avatar, Box, Grid, Typography } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState } from "react";
 import InvitationButton from "../group/InvitationButton";
 import AdminButton from "./AdminButton";
 
@@ -24,33 +24,39 @@ export default function UserParticipantList(props: UserParticipantListProps) {
   const [myRole, setMyRole] = useState<string>('');
   const [members, setMembers] = useState<MemberPayload[]>([]);
 
-  const loadMember = async () => {
-    await getUserId();
-
-    setMembers([]);
-    const { data } = await axios.get(`http://localhost:8080/chat/room/${roomId}`);
-    if (data.members) {
-      data.members.map((member: any) => {
-        const newMember: MemberPayload = {
-          id: member.id, name: member.user.name, isMute: member.isMute,
-          userId: member.user.id, role: member.role
-        };
-        setMembers(prevMembers => [...prevMembers, newMember]);
-        if (member.userId === userId) setMyRole(member.role);
-      })
+  useEffect(() => {
+    const getUserId = async () => {
+      const { data } = await axios.get(`http://localhost:8080/user`);
+      if (data){
+        setUserId(data.id);
+      }
     }
-  }
 
-  const getUserId = async ()=> {
-    const { data } = await axios.get(`http://localhost:8080/user`);
-    if (data){
-      setUserId(data.id);
-    }
-  }
+    getUserId();
+  }, [roomId]);
 
   useEffect(() => {
+    const loadMember = async () => {
+      const { data } = await axios.get(`http://localhost:8080/chat/room/${roomId}`);
+      if (data.members) {
+        const newMembers: MemberPayload[] = data.members.map((member: any) => ({
+          id: member.id,
+          name: member.user.name,
+          isMute: member.isMute,
+          userId: member.user.id,
+          role: member.role
+        }));
+        setMembers(newMembers);
+        const myMember = data.members.find((member: any) => member.userId === userId);
+        if (myMember) {
+          setMyRole(myMember.role);
+        }
+      }
+    }
+
     loadMember();
-  }, [roomId])
+  }, [roomId, userId]);
+
 
   return (
     <>
@@ -84,16 +90,14 @@ export default function UserParticipantList(props: UserParticipantListProps) {
             </Box>
           </Grid>
           <Grid item>
-            {myRole !== 'NORMAL' ? (
-              <AdminButton
-                roomId={roomId}
-                myRole={myRole}
-                memberRole={member.role}
-                member={member}
-                members={members}
-                setMembers={setMembers}
-              />
-            ) : (<></>)}
+            <AdminButton
+              roomId={roomId}
+              myRole={myRole}
+              memberRole={member.role}
+              member={member}
+              members={members}
+              setMembers={setMembers}
+            />
           </Grid>
         </Grid>
       ))}

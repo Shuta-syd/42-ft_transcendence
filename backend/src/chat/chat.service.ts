@@ -236,12 +236,12 @@ export class ChatService {
         message: 'Owner can be changed to ADMIN or NORMAL',
       };
     } else if (target.role === 'NORMAL') {
-      this.prisma.member.update({
+      await this.prisma.member.update({
         where: { id: memberId },
         data: { role: 'ADMIN' },
       });
     } else {
-      this.prisma.member.update({
+      await this.prisma.member.update({
         where: { id: memberId },
         data: { role: 'NORMAL' },
       });

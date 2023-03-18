@@ -53,11 +53,21 @@ export default function AdminButton(props: AdminButtonProps) {
 
   const handleGiveAdmin = async (memberId: string) => {
     try {
-      const { data } = await axios.patch(`http://localhost:8080/chat/channel/entitle`, { roomId, memberId });
+      const { data } = await axios.patch(`http://localhost:8080/chat/channel/role`, { roomId, memberId });
+      setMembers((prev: any[]) => prev.map((val: { id: string; role: string; }) => {
+        if (val.id === memberId) {
+          return val.role === 'ADMIN' ? { ...val, role: 'NORMAL' } : { ...val, role: 'ADMIN' };
+        }
+        return val;
+      }))
       console.log(data);
     } catch (error) {
       console.log(error);
     }
+  }
+
+  if (myRole === 'NORMAL' || myRole === '') {
+    return (<></>);
   }
 
   if (myRole === 'ADMIN') {
@@ -79,11 +89,11 @@ export default function AdminButton(props: AdminButtonProps) {
 
   return (
     <>
-      {memberRole === 'NORMAL' ? (
+      {memberRole === 'NORMAL' || memberRole === 'ADMIN' ? (
         <CustomMenu
           ButtonIcon={<MoreVertIcon />}
           menuItems={[
-          { name: 'Give Admin', handleOnClick: async () => { await handleGiveAdmin(member.id); } },
+          { name: member.role === 'NORMAL' ? 'Give Admin' : 'Revoke Admin', handleOnClick: async () => { await handleGiveAdmin(member.id); } },
           { name: member.isMute ? 'unMute' : 'Mute', handleOnClick: async () => { await handleMute(member.id, member.isMute) } },
           { name: 'Kick', handleOnClick: async () => { await handleKick(member.id) } },
           { name: 'Ban',  handleOnClick: async () => { await handleBan(member.id) } }
