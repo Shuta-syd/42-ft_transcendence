@@ -124,7 +124,7 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
                   mr={2}
                 >
                 <Box
-                  width={ chat.text.length * 0.7 > 7 ? `calc(0.6rem * ${chat.text.length})` : `calc(1.1rem * ${chat.text.length})`}
+                  width={ chat.text.length * 0.7 > 8 ? `calc(0.6rem * ${chat.text.length})` : `calc(1.1rem * ${chat.text.length})`}
                   minHeight={'3rem'}
                   justifyContent='center'
                   sx={{
