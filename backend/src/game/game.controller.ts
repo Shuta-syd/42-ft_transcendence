@@ -1,9 +1,15 @@
-import { Body, Controller, Delete, Get, Param, Post, Req} from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Req,
+} from '@nestjs/common';
 import { GameService } from './game.service';
 import { Game, InviteGame } from '@prisma/client';
 import { assignGuestDto, assignObserverDto } from './dto/game.dto';
-import {reportUnhandledError} from "rxjs/dist/types/internal/util/reportUnhandledError";
-import {Request} from "express";
 
 @Controller('game')
 export class GameController {

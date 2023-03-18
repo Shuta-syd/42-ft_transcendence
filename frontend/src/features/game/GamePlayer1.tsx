@@ -218,6 +218,8 @@ const GamePlayer1 = () => {
             context.fillStyle = 'blue'
             context.font = "bold 50px 'ＭＳ 明朝'";
             context.fillText('You Lose!', 360,  300);
+
+            GameSocket.emit('TerminateGame', user.name);
         } else {
             const matchData = {
                 player1: user.name,
@@ -229,6 +231,7 @@ const GamePlayer1 = () => {
             context.fillStyle = 'red'
             context.font = "bold 50px 'ＭＳ 明朝'";
             context.fillText('You Win!', 360, 300);
+            GameSocket.emit('TerminateGame', user.name);
         }
     }
 

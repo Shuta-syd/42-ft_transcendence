@@ -9,7 +9,7 @@ import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { NameToInviteRoomIdDic, NameToRoomIdDic } from './game.service';
 import { GameService } from './game.service';
-import {Terminate} from "./dto/game.dto";
+import { Terminate } from './dto/game.dto';
 
 type ChatRecieved = {
   uname: string;
@@ -182,24 +182,27 @@ export class GameGateway {
   ): void {
     let roomId = NameToRoomIdDic[name];
     let dto: Terminate;
+    // eslint-disable-next-line prefer-const
+    dto = {
+      isInviteGame: false,
+      roomId: '',
+      player1: '',
+    };
     if (roomId === undefined) {
       roomId = NameToInviteRoomIdDic[name];
       if (roomId) {
-        const dto: Terminate = {
-          player1: name,
-          isInviteGame: true,
-          roomId: roomId,
-        };
+        dto.isInviteGame = true;
+        dto.roomId = roomId;
+        dto.player1 = name;
       } else {
         return;
       }
     } else {
-      const dto: Terminate = {
-        player1: name,
-        isInviteGame: false,
-        roomId: roomId,
-      };
+      dto.isInviteGame = false;
+      dto.roomId = roomId;
+      dto.player1 = name;
     }
+    console.log('hoge');
     this.gameService.terminateGame(dto);
   }
 

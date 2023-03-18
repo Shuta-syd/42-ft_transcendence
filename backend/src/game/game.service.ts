@@ -1,9 +1,8 @@
-import {Injectable, ParseIntPipe} from '@nestjs/common';
+import { Injectable, ParseIntPipe } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Game, Match, InviteGame } from '@prisma/client';
-import {assignGuestDto, assignObserverDto, Terminate} from './dto/game.dto';
+import { assignGuestDto, assignObserverDto, Terminate } from './dto/game.dto';
 import { addAbortSignal } from 'stream';
-
 
 let playerId = 0;
 let tmpGame: Game;
