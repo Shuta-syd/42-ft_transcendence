@@ -8,6 +8,8 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { NameToInviteRoomIdDic, NameToRoomIdDic } from './game.service';
+import { GameService } from './game.service';
+import {Terminate} from "./dto/game.dto";
 
 type ChatRecieved = {
   uname: string;
@@ -37,12 +39,19 @@ type Score = {
   name: string;
 };
 
+type TerminateGame = {
+  player1: string;
+  isInviteGame: boolean;
+  roomId: string;
+};
+
 @WebSocketGateway({
   cors: {
     origin: '*',
   },
 })
 export class GameGateway {
+  constructor(private readonly gameService: GameService) {}
   @WebSocketServer()
   server: Server;
 
@@ -171,14 +180,27 @@ export class GameGateway {
     @MessageBody() name: string,
     @ConnectedSocket() client: Socket,
   ): void {
-    let IsInviteGame = false;
-    let roomId: string = NameToRoomIdDic[name];
+    let roomId = NameToRoomIdDic[name];
+    let dto: Terminate;
     if (roomId === undefined) {
       roomId = NameToInviteRoomIdDic[name];
       if (roomId) {
-        IsInviteGame = true;
+        const dto: Terminate = {
+          player1: name,
+          isInviteGame: true,
+          roomId: roomId,
+        };
+      } else {
+        return;
       }
+    } else {
+      const dto: Terminate = {
+        player1: name,
+        isInviteGame: false,
+        roomId: roomId,
+      };
     }
+    this.gameService.terminateGame(dto);
   }
 
   // 接続が切断されたときの処理

@@ -1,4 +1,4 @@
-import {Body, Controller, Delete, Get, Param, Post, Req} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Req} from '@nestjs/common';
 import { GameService } from './game.service';
 import { Game, InviteGame } from '@prisma/client';
 import { assignGuestDto, assignObserverDto } from './dto/game.dto';
