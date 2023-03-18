@@ -335,10 +335,10 @@ const GamePlayer1 = () => {
     });
 
     const BallSpeedUp = () => {
-        ballDefaultSpeed += 0.3;
+        ballDefaultSpeed += 0.5;
     }
     const BallSpeedDown = () => {
-        ballDefaultSpeed -= 0.3;
+        ballDefaultSpeed -= 0.5;
     }
 
     return (
