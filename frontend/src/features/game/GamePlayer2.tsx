@@ -288,11 +288,11 @@ const GamePlayer2 = () => {
     return (
         <div>
             <h1>[PONG GAME]</h1>
-            <h1>[Player 2]</h1>
+            <h1>Player2: {user?.name}</h1>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
             <div>
                 <input type="text" value={uname} onChange={(event) => { setUname(event.target.value) }} />
-            </div>sss
+            </div>
             <section style={{ backgroundColor: 'rgba(30,130,80,0.3)', height: '50vh', overflow: 'scroll' }}>
                 <h2>GAME CHAT</h2>
                 <hr />
