@@ -52,7 +52,7 @@ export default function UserParticipantList(props: UserParticipantListProps) {
 
   const handleKick = async (memberId: string) => {
     try {
-      const res = await axios.delete(`http://localhost:8080/chat/channel/member/kick`, { data: { roomId, memberId } })
+      const res = await axios.delete(`http://localhost:8080/chat/channel/member/kick`, { data: { roomId, memberId} })
       const newMembers = members.filter(member => member.id !== memberId);
       setMembers(newMembers);
       console.log(res.data);

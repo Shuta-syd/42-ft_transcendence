@@ -70,7 +70,7 @@ export default function ChannelListComponent(props: ChannelListComponentProps) {
             </Grid>
             {isLeave ? (
               <Grid item>
-              <LeaveButton/>
+                <LeaveButton roomId={room.id} setChannels={setChannels} channels={channels} />
               </Grid>
             ) : (<></>)}
           </Grid>
@@ -90,7 +90,7 @@ export default function ChannelListComponent(props: ChannelListComponentProps) {
           </Grid>
           {isLeave ? (
               <Grid item>
-              <LeaveButton/>
+              <LeaveButton roomId={room.id} setChannels={setChannels} channels={channels}/>
               </Grid>
             ) : (<></>)}
         </Grid>

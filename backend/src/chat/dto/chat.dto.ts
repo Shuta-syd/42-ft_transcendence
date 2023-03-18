@@ -27,6 +27,10 @@ export class MuteMemberDto {
   isMute: boolean;
 }
 
+export class LeaveMemberDto {
+  roomId: string;
+}
+
 export class MemberDto {
   roomId: string;
   memberId: string;
