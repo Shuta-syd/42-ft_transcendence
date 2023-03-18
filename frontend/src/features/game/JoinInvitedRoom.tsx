@@ -10,6 +10,7 @@ const JoinInvitedRoom = () => {
     const [roomId, setRoomid] = useState<string>('');
     const [enemy, setEnemy] = useState<string>('');
     const [IsAssigned, setIsAsssigned] = useState<boolean>(false);
+    const [IsUncorrect, setIsUncorrect] = useState<boolean>(false);
 
     const [user, setUser] = useState<User>();
     const UserPromises = useGameUser();
@@ -35,9 +36,16 @@ const JoinInvitedRoom = () => {
             if (observseDto.roomId === '')
                 return
             const gameRes = GameInvitedGuestReq(observseDto);
-            gameRes.then((game:InviteGame) => {
+            gameRes.then((game:InviteGame | null) => {
+                if (game && game?.player1) {
                     setIsAsssigned(true);
+                    setIsUncorrect(false);
                     setEnemy(game.player1);
+                }
+                else {
+                    console.log("hoge")
+                    setIsUncorrect(true);
+                }
                 }
             );
         }
@@ -51,8 +59,9 @@ const JoinInvitedRoom = () => {
                 <input type="text" value={tmpNumber} onChange={handleInputChange} />
                 <button onClick={handleButtonClick}>enter</button>
                 {IsAssigned && <p>You are successfully assigned !!</p>}
+                {IsUncorrect && <p>You Typed Wrong Room Id !!</p>}
                 {IsAssigned && <Link to={"/game/player2"}>lets go!</Link>}
-                <p>You will fight against {enemy}！</p>
+                {IsAssigned && <p>You will fight against {enemy}！</p>}
             </div>
         </div>
     )

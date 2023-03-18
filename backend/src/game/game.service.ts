@@ -109,6 +109,14 @@ export class GameService {
     const jsonString = JSON.stringify(assignPlayerReqDto);
     const tmp = JSON.parse(jsonString);
     const playerName = tmp.playerName;
+    const isPlayer1Unique = await this.prisma.inviteGame.findFirst({
+      where: {
+        player1: playerName,
+      },
+    });
+    if (isPlayer1Unique) {
+      return isPlayer1Unique;
+    }
     const game = this.prisma.inviteGame.create({
       data: {
         player1: playerName,
@@ -121,6 +129,14 @@ export class GameService {
     return game;
   }
   async assignGuest(guestDto: assignGuestDto): Promise<InviteGame | null> {
+    const IscorrectRoomId = await this.prisma.inviteGame.findFirst({
+      where: {
+        id: guestDto.roomId,
+      },
+    });
+    if (IscorrectRoomId === null) {
+      return IscorrectRoomId;
+    }
     NameToInviteRoomIdDic[guestDto.name] = guestDto.roomId;
     const game = await this.prisma.inviteGame.update({
       where: {
