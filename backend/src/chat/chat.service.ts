@@ -301,7 +301,7 @@ export class ChatService {
     const member = await this.getMyMember(userId, roomId);
 
     await this.prisma.message.deleteMany({
-      where: { id: member.id },
+      where: { memberId: member.id },
     });
 
     await this.prisma.member.delete({
