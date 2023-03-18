@@ -2,9 +2,6 @@ import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Game, User } from "../../types/PrismaType";
 import { GameRoomReq, useGameUser } from "../../hooks/game/useGameuser";
-// import GamePlayer1 from "./GamePlayer1";
-// import GamePlayer2 from "./GamePlayer2";
-// import {GameSocket} from "../../contexts/WebsocketContext";
 
 const CreateGameRoom = () => {
     const [user, setUser] = useState<User>();
@@ -27,6 +24,17 @@ const CreateGameRoom = () => {
         });
     }, [user]);
 
+    // eslint-disable-next-line consistent-return
+    const ShowPage = () => {
+        if (!game?.player2) {
+            return (
+                "Hello"
+            );
+        }
+        return "World"
+    }
+
+
     return (
         <div>
             <h1>[Random Match Room!!]</h1>
@@ -34,12 +42,11 @@ const CreateGameRoom = () => {
             <h2>You are in {roomId}!!!</h2>
             <h2>Player1 is {game?.player1}!!!</h2>
             <h2>Player2 is {game?.player2}!!!</h2>
-            <h2>Waiting for someone </h2>
+            <h1>go next page! {ShowPage()}</h1>
             <div>
-                <h1>
-                <Link to={"/game/player1"}>Player1</Link>
-                <br></br>
-                <Link to={"/game/player2"}>Player2</Link>
+                 <h1>
+                 <br></br>
+                 <Link to={"/game/player2"}>Player2</Link>
                 </h1>
             </div>
         </div>
