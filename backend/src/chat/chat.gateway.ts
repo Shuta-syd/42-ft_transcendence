@@ -30,7 +30,6 @@ export class ChatGateway
   }
 
   handleConnection(client: Socket, ...args: any[]) {
-    console.log(client);
     this.logger.log(`Client connected ${client.id}`);
   }
 
