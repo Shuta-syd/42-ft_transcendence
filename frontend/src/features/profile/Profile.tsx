@@ -18,7 +18,7 @@ const Profile = () => {
         UserPromises.then((userDto: User) => {
             setUser(userDto);
         });
-    }, [UserPromises]);
+    }, []);
 
     const [inputId, setInputId] = useState<string>("");
     const HandleInputID = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -39,7 +39,7 @@ const Profile = () => {
             setMatches(matches);
             setWinnerId(matches[matches.length - 1].winner_id);
         });
-    }, [MatchPromises]);
+    }, []);
 
     function ShowResult(props: {p1: string, p2: string}) {
         // console.log('winnerId', winnerId);
@@ -86,10 +86,6 @@ const Profile = () => {
 
         useEffect(() => {
             // 選択されたプレーヤー名が空の場合は全ての試合を表示する
-            if (selectedPlayer === '') {
-                setFilteredMatches([]);
-                return;
-            }
             // player1もしくはplayer2に選択されたプレーヤー名を含む試合をフィルタリングする
             const filtered = matches.filter((match) => match.player1 === selectedPlayer || match.player2 === selectedPlayer);
             setFilteredMatches(filtered);
