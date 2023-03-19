@@ -180,7 +180,7 @@ export class GameGateway {
     @MessageBody() name: string,
     @ConnectedSocket() client: Socket,
   ): void {
-    let dto: Terminate;
+    const dto: Terminate = { isInviteGame: false, player: '' };
     console.log('hoge');
     if (NameToInviteRoomIdDic[name]) {
       console.log('invite');

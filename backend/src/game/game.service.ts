@@ -171,22 +171,24 @@ export class GameService {
       if (!existingGame2 && !existingGame1) {
         return null;
       }
-      let game = this.prisma.game.delete({
-        where: {
-          player1: dto.player,
-        },
-      });
-      if (!game) {
-        game = this.prisma.game.delete({
+      let game: Game | null = null;
+      if (existingGame1) {
+        game = await this.prisma.game.delete({
+          where: {
+            player1: dto.player,
+          },
+        });
+      } else if (existingGame2) {
+        game = await this.prisma.game.delete({
           where: {
             player2: dto.player,
           },
         });
       }
-      game.then((Gamedto: Game) => {
-        delete NameToRoomIdDic[Gamedto.player1];
-        delete NameToRoomIdDic[Gamedto.player2];
-      });
+      if (game) {
+        delete NameToRoomIdDic[game.player1];
+        delete NameToRoomIdDic[game.player2];
+      }
       return game;
     } else {
       const existingGame1 = await this.prisma.inviteGame.findUnique({
@@ -202,22 +204,25 @@ export class GameService {
       if (!existingGame2 && !existingGame1) {
         return null;
       }
-      let game = this.prisma.inviteGame.delete({
-        where: {
-          player1: dto.player,
-        },
-      });
-      if (!game) {
-        game = this.prisma.inviteGame.delete({
+      let game: InviteGame | null = null;
+      if (existingGame1) {
+        game = await this.prisma.inviteGame.delete({
+          where: {
+            player1: dto.player,
+          },
+        });
+      } else if (existingGame2) {
+        game = await this.prisma.inviteGame.delete({
           where: {
             player2: dto.player,
           },
         });
       }
-      game.then((Gamedto: InviteGame) => {
-        delete NameToInviteRoomIdDic[Gamedto.player1];
-        delete NameToInviteRoomIdDic[Gamedto.player2];
-      });
+      if (game) {
+        delete NameToInviteRoomIdDic[game.player1];
+        delete NameToInviteRoomIdDic[game.player2];
+      }
+      return game;
     }
   }
 }

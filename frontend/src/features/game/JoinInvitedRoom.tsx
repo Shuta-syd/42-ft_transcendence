@@ -1,17 +1,17 @@
 import React, {ChangeEvent, useEffect, useState} from "react";
 import { Link } from "react-router-dom";
-import {User, InviteGame} from "../../types/PrismaType";
+import {User, InviteGame } from "../../types/PrismaType";
 import {useGameUser} from "../../hooks/game/useGameuser";
 import GameInvitedGuestReq from "../../hooks/game/useInvitedRoom";
+import {GameSocket} from "../../contexts/WebsocketContext";
 
 const JoinInvitedRoom = () => {
 
     const [tmpNumber, setTmpNumber] = useState<string>('');
     const [roomId, setRoomid] = useState<string>('');
-    const [enemy, setEnemy] = useState<string>('');
     const [IsAssigned, setIsAsssigned] = useState<boolean>(false);
     const [IsUncorrect, setIsUncorrect] = useState<boolean>(false);
-
+    const [Game, setgame] = useState<InviteGame>();
     const [user, setUser] = useState<User>();
     const UserPromises = useGameUser();
     useEffect(() => {
@@ -38,9 +38,9 @@ const JoinInvitedRoom = () => {
             const gameRes = GameInvitedGuestReq(observseDto);
             gameRes.then((game:InviteGame | null) => {
                 if (game && game?.player1) {
+                    setgame(game);
                     setIsAsssigned(true);
                     setIsUncorrect(false);
-                    setEnemy(game.player1);
                 }
                 else {
                     console.log("hoge")
@@ -49,6 +49,10 @@ const JoinInvitedRoom = () => {
                 }
             );
         }
+    };
+
+    const handleClick = () => {
+        GameSocket.emit('TerminateGame', user?.name);
     };
 
     return (
@@ -61,8 +65,9 @@ const JoinInvitedRoom = () => {
                 {IsAssigned && <p>You are successfully assigned !!</p>}
                 {IsUncorrect && <p>You Typed Wrong Room Id !!</p>}
                 {IsAssigned && <Link to={"/game/player2"}>lets go!</Link>}
-                {IsAssigned && <p>You will fight against {enemy}！</p>}
+                {IsAssigned && <p>You will fight against {Game?.player1}！</p>}
             </div>
+            <button onClick={handleClick}>Exit Room</button>
         </div>
     )
 };
