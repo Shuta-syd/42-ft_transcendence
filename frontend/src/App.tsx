@@ -15,6 +15,8 @@ import GamePlayer2 from "./features/game/GamePlayer2";
 import GameObserver from "./features/game/GameObserver";
 import CreateGameRoom from "./features/game/CreateGameRoom";
 import GameSelectRoom from "./features/game/GameSelectRoom";
+import InviteRoom from "./features/game/InviteRoom";
+import JoinInvitedRoom from "./features/game/JoinInvitedRoom";
 
 function App() {
   axios.defaults.withCredentials = true;
@@ -38,7 +40,9 @@ function App() {
            <Route path="/game/player2" element={<GamePlayer2/>} />
           <Route path="/game/observer" element={<GameObserver/>} />
           <Route path="/game/select_room" element={<GameSelectRoom/>} />
-          <Route path="/game/CreateGameRoom" element={<CreateGameRoom/>} />
+          <Route path="/game/game_room" element={<CreateGameRoom/>} />
+          <Route path="/game/invite_room" element={<InviteRoom/>} />
+          <Route path="/game/join_invited_room" element={<JoinInvitedRoom></JoinInvitedRoom>} />
         </Routes>
     </>
   )

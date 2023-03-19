@@ -16,3 +16,9 @@ export class assignObserverDto {
   name: string;
   roomId: number;
 }
+
+export class assignGuestDto {
+  @ApiProperty()
+  name: string;
+  roomId: string;
+}
