@@ -220,7 +220,6 @@ const GamePlayer1 = () => {
             context.fillStyle = 'blue'
             context.font = "bold 50px 'ＭＳ 明朝'";
             context.fillText('You Lose!', 360,  300);
-
             GameSocket.emit('TerminateGame', user.name);
         } else {
             const matchData = {
