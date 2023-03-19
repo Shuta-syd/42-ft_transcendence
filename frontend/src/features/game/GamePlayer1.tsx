@@ -1,4 +1,5 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
+import {Button} from "@mui/material";
 import axios from "axios";
 import {GameSocket} from "../../contexts/WebsocketContext";
 import {User} from "../../types/PrismaType";
@@ -44,12 +45,13 @@ const GamePlayer1 = () => {
 
     /* start flag */
     let isRecievePong = false;
+    let ballDefaultSpeed = 2;
 
     const ball = {
         x: BALLX,
         y: BALLY,
-        vx: 2,
-        vy: 2,
+        vx: ballDefaultSpeed,
+        vy: ballDefaultSpeed,
         radius: RADIUS,
         color: "black",
         draw() {
@@ -62,8 +64,8 @@ const GamePlayer1 = () => {
         init(){
             this.x = BALLX;
             this.y = BALLY;
-            this.vx = 2;
-            this.vy = 2;
+            this.vx = ballDefaultSpeed;
+            this.vy = ballDefaultSpeed;
         }
     };
 
@@ -332,11 +334,30 @@ const GamePlayer1 = () => {
         p2name = name;
     });
 
+    const BallSpeedUp = () => {
+        ballDefaultSpeed += 0.5;
+    }
+    const BallSpeedDown = () => {
+        ballDefaultSpeed -= 0.5;
+    }
+
     return (
         <div>
             <h1>[PONG GAME]</h1>
             <h1>Player1: {user?.name}</h1>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
+            <Button variant={"contained"}
+                    size={"large"}
+                    color={"success"}
+                    onClick={(e) => {
+                        BallSpeedUp();
+                    }}>LEVEL UP</Button>
+            <Button variant={"contained"}
+                    size={"large"}
+                    color={"error"}
+                    onClick={(e) => {
+                        BallSpeedDown();
+                    }}>LEVEL DOWN</Button>
             <div>
                 <input type="text" value={uname} onChange={(event) => { setUname(event.target.value) }} />
             </div>
