@@ -125,10 +125,8 @@ const GamePlayer2 = () => {
         } else if (FIELDHEIGHT + FIELDY < ball.y || ball.y < FIELDY) {
             ball.vy = -ball.vy;
         } else if (ball.x < FIELDX) {
-            rightScore += 1;
             ball.init();
         } else if (FIELDX + FIELDWIDTH < ball.x) {
-            leftScore += 1;
             ball.init();
         }
 
@@ -144,9 +142,9 @@ const GamePlayer2 = () => {
         context.font = "bold 50px 'ＭＳ 明朝'";
 
         context.fillText(game.player1, 200, 50);
-        context.fillText(leftScore.toString() , 360, 50);
+        context.fillText(rightScore.toString() , 360, 50);
         context.fillText( '-', 440, 50);
-        context.fillText( rightScore.toString(), 500, 50);
+        context.fillText( leftScore.toString(), 500, 50);
         context.fillText( game.player2, 660, 50);
         window.requestAnimationFrame(draw);
     }
@@ -237,15 +235,25 @@ const GamePlayer2 = () => {
     };
 
     GameSocket.on('GameToClient', (Paddley: PaddleAndRoom, socketid: string) => {
-        if (Paddley.name === game?.player1)
-            leftPaddle.y = Paddley.paddleHeight;
-        else if (Paddley.name === game?.player2)
+        if (Paddley.name === game?.player2)
             rightPaddle.y = Paddley.paddleHeight;
+        else if (Paddley.name === game?.player1)
+            leftPaddle.y = Paddley.paddleHeight;
     });
 
     GameSocket.on('BallPosToClient', (BallPos: BallPos, SocketId: string) => {
         ball.x = BallPos.x;
         ball.y = BallPos.y;
+    });
+
+    type Score = {
+        player1: number
+        player2: number
+        name: string
+    }
+    GameSocket.on('ScoreToClient', (Score: Score, SocketId: string) => {
+        rightScore = Score.player1;
+        leftScore = Score.player2;
     });
 
     return (

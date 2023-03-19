@@ -31,6 +31,12 @@ type RoomId = {
   name: string;
 };
 
+type Score = {
+  player1: number;
+  player2: number;
+  name: string;
+};
+
 @WebSocketGateway({
   cors: {
     origin: '*',
@@ -128,6 +134,16 @@ export class GameGateway {
     const roomId: string = NameToRoomIdDic[name];
     this.server.to(roomId).emit('Pong', name, client.id);
   }
+
+  @SubscribeMessage('ScoreToServer')
+  handleGameScore(
+    @MessageBody() payload: Score,
+    @ConnectedSocket() client: Socket,
+  ): void {
+    const roomId: string = NameToRoomIdDic[payload.name];
+    this.server.to(roomId).emit('ScoreToClient', payload, client.id);
+  }
+
   // 接続が切断されたときの処理
   handleDisconnect(socket: any) {
     console.log(`game Client disconnected: ${socket.id}`);

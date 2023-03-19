@@ -179,6 +179,18 @@ const GamePlayer1 = () => {
         if (canvas == null || context == null) {
             return ;
         }
+        type Scoredto = {
+            player1: number,
+            player2: number,
+            name: string,
+        }
+
+        const score:Scoredto = {
+            player1: rightScore,
+            player2: leftScore,
+            name: user.name,
+        }
+        GameSocket.emit('ScoreToServer', score);
         context.fillStyle = 'black';
         context.font = "bold 50px 'ＭＳ 明朝'";
         context.fillText(leftScore.toString() , 360, 50);
