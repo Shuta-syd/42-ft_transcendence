@@ -19,6 +19,10 @@ const Profile = () => {
         });
     }, [UserPromises]);
 
+    const HandleUserID = (id: string) => {
+        console.log(id);
+    }
+
     return (
         <div>
             <Avatar
@@ -36,16 +40,18 @@ const Profile = () => {
                 precision={0.5}
             />
             <p></p>
+            <h2>Find new friends!</h2>
             <TextField
                 id="input-with-icon-textfield"
-                label="Find new friends!"
-                size="small"
+                label="Please enter [friend ID]"
+                size="medium"
                 InputProps={{
                     startAdornment: (
                         <InputAdornment position="start">
                             <AccountCircle />
                         </InputAdornment>
                     ),
+                    onChange: (e) => HandleUserID(e.target.value)
                 }}
                 variant="standard"
             />
