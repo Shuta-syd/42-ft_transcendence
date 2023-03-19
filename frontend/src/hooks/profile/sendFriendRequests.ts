@@ -13,10 +13,10 @@ export async function sendFriendRequest(userId: string | undefined, friendId: st
             },
         });
 
-        console.log(response.data);
         return response.data;
-    } catch (error) {
+    } catch (error: any) {
         console.error(error);
+        return { error: error.message }; // 何かしらの値を返す
     }
 }
 
