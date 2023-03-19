@@ -1,9 +1,13 @@
 import React, {useEffect, useState } from 'react';
-import {Avatar, Button} from "@mui/material";
+import {Avatar} from "@mui/material";
 import Rating from '@mui/material/Rating';
 import {deepPurple} from "@mui/material/colors";
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import AccountCircle from '@mui/icons-material/AccountCircle';
 import { User } from "../../types/PrismaType";
 import { useProfileUser } from "../../hooks/profile/useProfileUser";
+
 
 const Profile = () => {
     const [user, setUser] = useState<User>();
@@ -32,9 +36,19 @@ const Profile = () => {
                 precision={0.5}
             />
             <p></p>
-            <Button variant={"contained"}>
-                FIND NEW FRIEND
-            </Button>
+            <TextField
+                id="input-with-icon-textfield"
+                label="Find new friends!"
+                size="small"
+                InputProps={{
+                    startAdornment: (
+                        <InputAdornment position="start">
+                            <AccountCircle />
+                        </InputAdornment>
+                    ),
+                }}
+                variant="standard"
+            />
         </div>
     );
 }
