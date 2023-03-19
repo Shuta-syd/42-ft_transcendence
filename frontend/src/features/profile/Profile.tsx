@@ -1,5 +1,5 @@
 import React, {useEffect, useState } from 'react';
-import {Avatar} from "@mui/material";
+import {Avatar, Button} from "@mui/material";
 import Rating from '@mui/material/Rating';
 import {deepPurple} from "@mui/material/colors";
 import { User } from "../../types/PrismaType";
@@ -31,6 +31,10 @@ const Profile = () => {
                 defaultValue={4}
                 precision={0.5}
             />
+            <p></p>
+            <Button variant={"contained"}>
+                FIND NEW FRIEND
+            </Button>
         </div>
     );
 }
