@@ -6,6 +6,7 @@ import { Socket } from "socket.io-client";
 import axios from "axios";
 import '../../../styles/Chat.css'
 import { ChatRoom } from "../../../types/PrismaType";
+import LeaveButton from "../utils/LeaveButton";
 
 
 type ChatFriendsComponentProps = {
@@ -19,7 +20,7 @@ type ChatFriendsComponentProps = {
  * @returns DirectMessage送信可能なフレンド一覧を表示するコンポーネント
  */
 export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
-  const { socket, setDMRooms, DMRooms } = props;
+  const { socket, setDMRooms, DMRooms, isLeave } = props;
   const roomID = useLocation().pathname.split('/')[3];
   const [prevRoomId, setPrevRoomId] = useState<string>();
 
@@ -72,6 +73,11 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
                   {room.name}
                 </Typography>
               </Grid>
+              {isLeave ? (
+              <Grid item>
+                <LeaveButton roomId={room.id} setChannels={setDMRooms} channels={DMRooms} />
+              </Grid>
+            ) : (<></>)}
             </Grid>
           ) : (
             <Grid
@@ -87,6 +93,11 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
                 {room.name}
               </Typography>
               </Grid>
+              {isLeave ? (
+              <Grid item>
+                <LeaveButton roomId={room.id} setChannels={setDMRooms} channels={DMRooms} />
+              </Grid>
+            ) : (<></>)}
             </Grid>
           )}
         </Link>
