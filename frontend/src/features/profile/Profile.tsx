@@ -40,13 +40,12 @@ const Profile = () => {
     const [friends, setFriends] = useState<User[]>([]);
 
     const HandleFriendListButton = () => {
-        console.log('hello');
         const friendsPromise = getFriends();
         friendsPromise.then((data) => {
             console.log('data => ', data[0]);
             setFriends(data);
-            console.log('friends => ', friends[0]);
         } );
+        console.log(friends[0]);
     };
 
     return (
@@ -95,6 +94,13 @@ const Profile = () => {
             >
                 友達リスト
             </Button>
+            <h1>
+            {friends.map((friend: User) => (
+                <div key={friend.id}>
+                    {friend.name}
+                </div> // keyプロパティを追加
+            ))}
+            </h1>
         </div>
     );
 }
