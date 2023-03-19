@@ -1,5 +1,6 @@
 import React, {useEffect, useState } from 'react';
 import {Avatar} from "@mui/material";
+import Rating from '@mui/material/Rating';
 import {deepPurple} from "@mui/material/colors";
 import { User } from "../../types/PrismaType";
 import { useProfileUser } from "../../hooks/profile/useProfileUser";
@@ -25,6 +26,12 @@ const Profile = () => {
                 {user?.name}
                 </h1>
             </Avatar>
+            <Rating
+                name={user?.name}
+                value={5}
+                readOnly
+                precision={0.5}
+            />
         </div>
     );
 }
