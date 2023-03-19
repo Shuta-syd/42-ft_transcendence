@@ -1,4 +1,5 @@
 import React, {useEffect, useState } from 'react';
+import {Avatar} from "@mui/material";
 import { User } from "../../types/PrismaType";
 import { useProfileUser } from "../../hooks/profile/useProfileUser";
 
@@ -10,11 +11,11 @@ const Profile = () => {
         UserPromises.then((userDto: User) => {
             setUser(userDto);
         });
-    }, []);
+    }, [UserPromises]);
 
     return (
         <div>
-            <h1>{user?.name}</h1>
+            <Avatar>{user?.name}</Avatar>
         </div>
     );
 }
