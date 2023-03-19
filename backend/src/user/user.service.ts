@@ -59,12 +59,24 @@ export class UserService {
    * @returns userIdのユーザのフレンドリスト
    */
   async getFriend(userId: string): Promise<User[]> {
-    return this.prisma.user
+    const friends: User[] = [];
+
+    const followings = await this.prisma.user
       .findUnique({
         where: {
           id: userId,
         },
       })
       .friends();
+
+    const followers = await this.prisma.user
+      .findUnique({ where: { id: userId } })
+      .friendRelation();
+
+    followings.forEach((following: User) => {
+      const friend = followers.find((follower) => follower.id === following.id);
+      if (friend !== undefined) friends.push(friend);
+    });
+    return friends;
   }
 }

@@ -1,7 +1,5 @@
-/* eslint-disable no-unused-vars */
-import { Button, Dialog, Grid, IconButton, InputAdornment, Menu, MenuItem, TextField } from "@mui/material";
+import { Button, Dialog, Grid, IconButton, InputAdornment, TextField } from "@mui/material";
 import LockIcon from '@mui/icons-material/Lock';
-import KeyIcon from '@mui/icons-material/Key';
 import SearchIcon from '@mui/icons-material/Search';
 import React, { useEffect, useState } from "react";
 import axios from "axios";
@@ -122,7 +120,7 @@ export default function SearchChannelDialog(props: SearchChannelDialogProps) {
                     <Button
                       onClick={async (event) => { await handleOnClick(channel.id); }}
                     >
-                      JOIN
+                      Create Chat
                     </Button>
                         )
                     }
