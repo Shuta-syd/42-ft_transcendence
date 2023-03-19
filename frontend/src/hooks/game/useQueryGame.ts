@@ -16,4 +16,4 @@ function useQueryUserGame(userid: string) {
     return getUser();
 }
 
-export default useQueryUserGame;
+export default useQueryUserGame ;
