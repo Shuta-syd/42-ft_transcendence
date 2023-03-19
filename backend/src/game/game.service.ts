@@ -2,7 +2,6 @@ import { Injectable, ParseIntPipe } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Game, Match, InviteGame } from '@prisma/client';
 import { assignGuestDto, assignObserverDto, Terminate } from './dto/game.dto';
-import { addAbortSignal } from 'stream';
 
 let playerId = 0;
 let tmpGame: Game;
@@ -56,6 +55,14 @@ export class GameService {
       });
       return game;
     } else {
+      const existingGame = await this.prisma.game.findUnique({
+        where: {
+          id: tmpGame.id,
+        },
+      });
+      if (!existingGame) {
+        return existingGame;
+      }
       const game = this.prisma.game.update({
         where: {
           id: tmpGame.id,
@@ -151,18 +158,55 @@ export class GameService {
 
   async terminateGame(dto: Terminate): Promise<Game | InviteGame | null> {
     if (dto.isInviteGame === false) {
-      delete NameToRoomIdDic[dto.roomId];
-      return this.prisma.game.delete({
+      const existingGame1 = await this.prisma.game.findUnique({
         where: {
-          player1: dto.player1,
+          player1: dto.player,
         },
       });
-    } else {
-      delete NameToInviteRoomIdDic[dto.roomId];
-      return this.prisma.inviteGame.delete({
+      if (!existingGame1) {
+        return existingGame1;
+      }
+      const existingGame2 = await this.prisma.game.findUnique({
         where: {
-          player1: dto.player1,
+          player2: dto.player,
         },
+      });
+      if (!existingGame2) {
+        return existingGame2;
+      }
+      let game = this.prisma.game.delete({
+        where: {
+          player1: dto.player,
+        },
+      });
+      if (!game) {
+        game = this.prisma.game.delete({
+          where: {
+            player2: dto.player,
+          },
+        });
+      }
+      game.then((Gamedto: Game) => {
+        delete NameToRoomIdDic[Gamedto.player1];
+        delete NameToRoomIdDic[Gamedto.player2];
+      });
+      return game;
+    } else {
+      let game = this.prisma.inviteGame.delete({
+        where: {
+          player1: dto.player,
+        },
+      });
+      if (!game) {
+        game = this.prisma.inviteGame.delete({
+          where: {
+            player2: dto.player,
+          },
+        });
+      }
+      game.then((Gamedto: InviteGame) => {
+        delete NameToInviteRoomIdDic[Gamedto.player1];
+        delete NameToInviteRoomIdDic[Gamedto.player2];
       });
     }
   }

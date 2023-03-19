@@ -182,27 +182,27 @@ export class GameGateway {
   ): void {
     let roomId = NameToRoomIdDic[name];
     let dto: Terminate;
+    console.log('hoge');
     // eslint-disable-next-line prefer-const
     dto = {
       isInviteGame: false,
       roomId: '',
-      player1: '',
+      player: '',
     };
-    if (roomId === undefined) {
+    if (!roomId) {
       roomId = NameToInviteRoomIdDic[name];
       if (roomId) {
         dto.isInviteGame = true;
         dto.roomId = roomId;
-        dto.player1 = name;
+        dto.player = name;
       } else {
         return;
       }
     } else {
       dto.isInviteGame = false;
       dto.roomId = roomId;
-      dto.player1 = name;
+      dto.player = name;
     }
-    console.log('hoge');
     this.gameService.terminateGame(dto);
   }
 
