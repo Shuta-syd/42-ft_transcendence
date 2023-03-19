@@ -24,13 +24,6 @@ const CreateGameRoom = () => {
         gamePromisesRef.current?.then((Gamedto: Game) => {
             setGame(Gamedto);
             setRoomId(Gamedto?.id); // roomIdを更新する
-            // type RoomId = {
-            //     room: string | undefined,
-            // }
-            // const roomid: RoomId = {
-            //     room: Gamedto.id.toString(),
-            // }
-            // GameSocket.emit('JoinRoom', roomid);
         });
     }, [user]);
 
@@ -43,17 +36,12 @@ const CreateGameRoom = () => {
             <h2>Player2 is {game?.player2}!!!</h2>
             <h2>Waiting for someone </h2>
             <div>
+                <h1>
                 <Link to={"/game/player1"}>Player1</Link>
+                <br></br>
                 <Link to={"/game/player2"}>Player2</Link>
+                </h1>
             </div>
-            {/*  {
-                (() => {
-                    if (game?.player2 === '') {
-                        return <GamePlayer1></GamePlayer1>
-                    }
-                    return <GamePlayer2></GamePlayer2>
-                })()
-            } */}
         </div>
     );
 
