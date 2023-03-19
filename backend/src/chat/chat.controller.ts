@@ -80,8 +80,8 @@ export class ChatController {
   async createDMRoom(
     @Req() req: Request,
     @Body() dto: CreateChatRoom,
-  ): Promise<ChatRoom> {
-    return this.chatService.crateChatRoom(req.user.id, dto);
+  ): Promise<{ room: ChatRoom; isNew: boolean }> {
+    return this.chatService.crateDMRoom(req.user.id, dto);
   }
 
   @Get('room/:roomId')

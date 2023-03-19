@@ -3,6 +3,7 @@ import { Box, Button, Dialog, Grid, IconButton, InputAdornment, TextField } from
 import SearchIcon from '@mui/icons-material/Search';
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 type SearchFriendDialogProps = {
   isOpen: boolean;
@@ -17,6 +18,7 @@ type SearchFriendType = {
 
 export default function SearchFriendDialog(props: SearchFriendDialogProps) {
   const { isOpen, handleClose, setDMRooms } = props;
+  const router = useNavigate();
   const [text, setText] = useState<string>('');
   const [searchResult, setSearchResult] = useState<SearchFriendType[]>([]);
 
@@ -40,14 +42,17 @@ export default function SearchFriendDialog(props: SearchFriendDialogProps) {
     setText(value);
   }
 
-  const handleOnClick = async (friendId: string) => {
+  const handleOnClick = async (friendId: string, friendName: string) => {
     try {
-      const { data } = await axios.post(`http://localhost:8080/chat/room`, {
+      const { data } = await axios.post(`http://localhost:8080/chat/dm/room`, {
         type: 'DM',
         name: '',
         friendId,
       });
-      setDMRooms((prev: any) => [...prev, { name: data.name, id: data.id }]);
+      handleClose();
+      router(`${data.room.id}`);
+      if (data.isNew)
+        setDMRooms((prev: any) => [...prev, { name: friendName, id: data.room.id }]);
     } catch (error) {
       console.log(error)
     }
@@ -92,7 +97,7 @@ export default function SearchFriendDialog(props: SearchFriendDialogProps) {
                   </Grid>
                   <Grid item>
                     <Button
-                      onClick={async (event) => { await handleOnClick(friend.id); }}
+                      onClick={async (event) => { await handleOnClick(friend.id, friend.name); }}
                     >
                       Join
                     </Button>

@@ -44,7 +44,10 @@ export class ChatService {
   /**
    * @description DM Roomの作成 user, friendどちらもメンバーとして追加
    */
-  async crateDMRoom(userId: string, dto: CreateChatRoom): Promise<ChatRoom> {
+  async crateDMRoom(
+    userId: string,
+    dto: CreateChatRoom,
+  ): Promise<{ room: ChatRoom; isNew: boolean }> {
     let alreadyCreated: ChatRoom = undefined;
 
     const user = await this.prisma.user.findUnique({
@@ -69,7 +72,9 @@ export class ChatService {
       });
     });
 
-    if (alreadyCreated !== undefined) return alreadyCreated;
+    // すでにDMルームがあった場合はそのルームを返す
+    if (alreadyCreated !== undefined)
+      return { room: alreadyCreated, isNew: false };
 
     const room = await this.prisma.chatRoom.create({
       data: {
@@ -91,7 +96,7 @@ export class ChatService {
       password: dto.password,
     });
 
-    return room;
+    return { room, isNew: true };
   }
 
   /**
