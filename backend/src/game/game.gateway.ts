@@ -7,7 +7,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
-import { NameToRoomIdDic } from './game.service';
+import { NameToInviteRoomIdDic, NameToRoomIdDic } from './game.service';
 
 type ChatRecieved = {
   uname: string;
@@ -28,6 +28,12 @@ type PaddleAndRoom = {
 };
 
 type RoomId = {
+  name: string;
+};
+
+type Score = {
+  player1: number;
+  player2: number;
   name: string;
 };
 
@@ -54,7 +60,10 @@ export class GameGateway {
     // this.logger.log(payload);
     // this.logger.log('chat受信');
     //emit()とすると、指定した名前をリッスンしているクライアントに情報をプッシュできる
-    const roomId: string = NameToRoomIdDic[payload.name];
+    let roomId: string = NameToRoomIdDic[payload.name];
+    if (roomId === undefined) {
+      roomId = NameToInviteRoomIdDic[payload.name];
+    }
     this.server
       .to(roomId)
       .emit('chatToClient', { ...payload, socketId: client.id });
@@ -64,11 +73,10 @@ export class GameGateway {
     @MessageBody() payload: PaddleAndRoom,
     @ConnectedSocket() client: Socket,
   ): void {
-    console.log('GAME to server', payload.paddleHeight);
-    console.log('GAME to server', payload.name);
-    console.log('Event happend');
-    const roomId: string = NameToRoomIdDic[payload.name];
-    console.log(roomId);
+    let roomId: string = NameToRoomIdDic[payload.name];
+    if (roomId === undefined) {
+      roomId = NameToInviteRoomIdDic[payload.name];
+    }
     this.server.to(roomId).emit('GameToClient', payload, client.id);
   }
   @SubscribeMessage('BallPosToServer')
@@ -76,7 +84,10 @@ export class GameGateway {
     @MessageBody() payload: BallPos,
     @ConnectedSocket() client: Socket,
   ): void {
-    const roomId: string = NameToRoomIdDic[payload.name];
+    let roomId: string = NameToRoomIdDic[payload.name];
+    if (roomId === undefined) {
+      roomId = NameToInviteRoomIdDic[payload.name];
+    }
     this.server.to(roomId).emit('BallPosToClient', payload, client.id);
   }
   // ユーザーがルームに参加するたnめのイベントを定義します
@@ -87,7 +98,11 @@ export class GameGateway {
   ): void {
     // ユーザーをルームに参加させます
     if (!payload) return;
-    const roomId: string = NameToRoomIdDic[payload];
+
+    let roomId: string = NameToRoomIdDic[payload];
+    if (roomId === undefined) {
+      roomId = NameToInviteRoomIdDic[payload];
+    }
     socket.join(roomId);
     // ルームが存在しない場合は、新しいルームを作成します
     if (!this.rooms[roomId]) {
@@ -113,6 +128,42 @@ export class GameGateway {
       // ルームの参加者リストをルームの全員に送信します
       this.server.to(room).emit('update room', this.rooms[room]);
     }
+  }
+
+  @SubscribeMessage('Ping')
+  handlePing(
+    @MessageBody() name: string,
+    @ConnectedSocket() client: Socket,
+  ): void {
+    let roomId: string = NameToRoomIdDic[name];
+    if (roomId === undefined) {
+      roomId = NameToInviteRoomIdDic[name];
+    }
+    this.server.to(roomId).emit('Ping', name, client.id);
+  }
+
+  @SubscribeMessage('Pong')
+  handlePong(
+    @MessageBody() name: string,
+    @ConnectedSocket() client: Socket,
+  ): void {
+    let roomId: string = NameToRoomIdDic[name];
+    if (roomId === undefined) {
+      roomId = NameToInviteRoomIdDic[name];
+    }
+    this.server.to(roomId).emit('Pong', name, client.id);
+  }
+
+  @SubscribeMessage('ScoreToServer')
+  handleGameScore(
+    @MessageBody() payload: Score,
+    @ConnectedSocket() client: Socket,
+  ): void {
+    let roomId: string = NameToRoomIdDic[payload.name];
+    if (roomId === undefined) {
+      roomId = NameToInviteRoomIdDic[payload.name];
+    }
+    this.server.to(roomId).emit('ScoreToClient', payload, client.id);
   }
 
   // 接続が切断されたときの処理
