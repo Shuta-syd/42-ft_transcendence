@@ -7,7 +7,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import { User } from "../../types/PrismaType";
 import { useProfileUser } from "../../hooks/profile/useProfileUser";
-
+import { sendFriendRequest } from "../../hooks/profile/sendFriendRequests";
 
 const Profile = () => {
     const [user, setUser] = useState<User>();
@@ -24,8 +24,10 @@ const Profile = () => {
         setInputId(e.target.value);
     }
 
-    const handleButtonClick = () => {
-        console.log(inputId);
+    const handleButtonClick = async () => {
+        sendFriendRequest(user?.id, inputId);
+        console.log('inputid => ', inputId);
+        console.log('  my id => ', user?.id);
     }
 
     return (
@@ -61,7 +63,7 @@ const Profile = () => {
                 variant="standard"
             />
             <Button onClick={handleButtonClick}>
-                ENTER
+                enter
             </Button>
         </div>
     );

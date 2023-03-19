@@ -47,6 +47,7 @@ export class UserController {
     @Req() req: Request,
     @Body() data: { friendId: string },
   ): Promise<User> {
+    console.log('=>', req.user.id);
     return this.userService.addFriend(req.user.id, data.friendId);
   }
 
