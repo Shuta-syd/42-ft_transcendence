@@ -1,5 +1,5 @@
-import React, {useEffect, useState } from 'react';
-import {Avatar} from "@mui/material";
+import React, {ChangeEvent, useEffect, useState} from 'react';
+import {Avatar, Button} from "@mui/material";
 import Rating from '@mui/material/Rating';
 import {deepPurple} from "@mui/material/colors";
 import TextField from '@mui/material/TextField';
@@ -19,8 +19,13 @@ const Profile = () => {
         });
     }, [UserPromises]);
 
-    const HandleUserID = (id: string) => {
-        console.log(id);
+    const [inputId, setInputId] = useState<string>("");
+    const HandleInputID = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setInputId(e.target.value);
+    }
+
+    const handleButtonClick = () => {
+        console.log(inputId);
     }
 
     return (
@@ -51,10 +56,13 @@ const Profile = () => {
                             <AccountCircle />
                         </InputAdornment>
                     ),
-                    onChange: (e) => HandleUserID(e.target.value)
+                    onChange: HandleInputID
                 }}
                 variant="standard"
             />
+            <Button onClick={handleButtonClick}>
+                ENTER
+            </Button>
         </div>
     );
 }
