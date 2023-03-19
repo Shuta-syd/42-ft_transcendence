@@ -1,13 +1,13 @@
 import axios from "axios";
-import { User, Game } from "../../types/PrismaType";
+import {User, Game, InviteGame} from "../../types/PrismaType";
 
-    /*
-    id: string
-    email: string
-    name: string
-    front側からはUser自信の情報を判定することができなかったため、
-    endpointに対して、get methodを送って、上の情報を受け取る
-    */
+/*
+id: string
+email: string
+name: string
+front側からはUser自信の情報を判定することができなかったため、
+endpointに対して、get methodを送って、上の情報を受け取る
+*/
 
 function useGameUser() {
     const getGameUser = async () => {
@@ -25,6 +25,32 @@ function GameRoomReq(playerName: string | undefined) {
         return data;
     }
     return getGameObject();
+
 }
 
-export {useGameUser, GameRoomReq};
+
+type ObserverDto = {
+    name: string;
+    roomId: number,
+}
+
+function GameObserverReq(observer: ObserverDto | undefined) {
+    const getGameObject = async () => {
+        const { data } = await axios.post<Game>(`http://localhost:8080/game/newobserver`, observer);
+        return data;
+    }
+    return getGameObject();
+}
+
+function GameInviteRoomReq(playerName: string | undefined) {
+    const getInviteGameObject = async () => {
+        const { data } = await axios.post<InviteGame>(`http://localhost:8080/game/create_invite_room`, {
+            playerName,
+        });
+        return data;
+    }
+    return getInviteGameObject();
+
+}
+
+export {useGameUser, GameRoomReq, GameObserverReq, GameInviteRoomReq};

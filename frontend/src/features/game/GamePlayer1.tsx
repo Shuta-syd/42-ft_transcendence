@@ -1,7 +1,9 @@
-import React, { useRef, useEffect, useState, useCallback } from "react";
-import { GameSocket } from "../../contexts/WebsocketContext";
+import React, {useCallback, useEffect, useRef, useState} from "react";
+import {Button} from "@mui/material";
+import axios from "axios";
+import {GameSocket} from "../../contexts/WebsocketContext";
 import {User} from "../../types/PrismaType";
-import { useGameUser } from "../../hooks/game/useGameuser";
+import {useGameUser} from "../../hooks/game/useGameuser";
 
 
 const GamePlayer1 = () => {
@@ -41,11 +43,15 @@ const GamePlayer1 = () => {
     const WIDTH = 1000;
     const HEIGHT = 900;
 
+    /* start flag */
+    let isRecievePong = false;
+    let ballDefaultSpeed = 2;
+
     const ball = {
         x: BALLX,
         y: BALLY,
-        vx: 2,
-        vy: 2,
+        vx: ballDefaultSpeed,
+        vy: ballDefaultSpeed,
         radius: RADIUS,
         color: "black",
         draw() {
@@ -58,8 +64,8 @@ const GamePlayer1 = () => {
         init(){
             this.x = BALLX;
             this.y = BALLY;
-            this.vx = 2;
-            this.vy = 2;
+            this.vx = ballDefaultSpeed;
+            this.vy = ballDefaultSpeed;
         }
     };
 
@@ -108,8 +114,11 @@ const GamePlayer1 = () => {
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
+    const lastScore = 5;
+    let p2name: string;
+
     function draw() {
-        if (!user?.name)
+        if (!user?.name )
             return;
         context?.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
         drawStaticObject();
@@ -119,7 +128,7 @@ const GamePlayer1 = () => {
             && (ball.y <= leftPaddle.y + PADDLEWHEIGHT
                 && ball.y >= leftPaddle.y)){
             ball.vx = -ball.vx;
-        }else if (ball.x + ball.radius >= rightPaddle.x
+        } else if (ball.x + ball.radius >= rightPaddle.x
             && (ball.y <= rightPaddle.y + PADDLEWHEIGHT
                 && ball.y >= rightPaddle.y)) {
             ball.vx = -ball.vx;
@@ -149,14 +158,15 @@ const GamePlayer1 = () => {
             paddleHeight: rightPaddle.y,
             name: user?.name.toString(),
         }
-        // console.log('paddleAndRoom name', paddleAndRoom.name);
         GameSocket.emit('GameToServer', paddleAndRoom);
-        // console.log(paddleAndRoom.room);
         keycode = '';
 
         /* send ball pos to server */
-        ball.x += ball.vx;
-        ball.y += ball.vy;
+        if (isRecievePong) {
+            ball.x += ball.vx;
+            ball.y += ball.vy;
+        }
+
         const BallPos:BallPos = {
             x: ball.x,
             y:ball.y,
@@ -175,12 +185,56 @@ const GamePlayer1 = () => {
         if (canvas == null || context == null) {
             return ;
         }
+        type Scoredto = {
+            player1: number,
+            player2: number,
+            name: string,
+        }
+        const score: Scoredto = {
+            player1: rightScore,
+            player2: leftScore,
+            name: user.name,
+        }
+        GameSocket.emit('ScoreToServer', score);
+
         context.fillStyle = 'black';
         context.font = "bold 50px 'ＭＳ 明朝'";
-        context.fillText(leftScore.toString() , 360, 50);
-        context.fillText( '-', 440, 50);
-        context.fillText( rightScore.toString(), 500, 50);
-        window.requestAnimationFrame(draw);
+        context.fillText(leftScore.toString(), 360, 50);
+        context.fillText('-', 440, 50);
+        context.fillText(rightScore.toString(), 500, 50);
+
+        if (leftScore < lastScore && rightScore < lastScore) {
+            window.requestAnimationFrame(draw);
+        } else if (leftScore === lastScore) {
+            /*
+            hit api of "http://localhost:8080/match"
+            ここでmatchの結果が決まるのでそのタイミングでhistoryとしてrequestを送信する
+             */
+            const matchData = {
+                player1: user.name,
+                player2: p2name,
+                winner_id: 2,
+            };
+            axios.post('http://localhost:8080/match', matchData)
+                .catch(error => console.log(error));
+            context.fillStyle = 'blue'
+            context.font = "bold 50px 'ＭＳ 明朝'";
+            context.fillText('You Lose!', 360,  300);
+
+            GameSocket.emit('TerminateGame', user.name);
+        } else {
+            const matchData = {
+                player1: user.name,
+                player2: p2name,
+                winner_id: 1,
+            };
+            axios.post('http://localhost:8080/match', matchData)
+                .catch(error => console.log(error));
+            context.fillStyle = 'red'
+            context.font = "bold 50px 'ＭＳ 明朝'";
+            context.fillText('You Win!', 360, 300);
+            GameSocket.emit('TerminateGame', user.name);
+        }
     }
 
     const [user, setUser] = useState<User>();
@@ -189,6 +243,8 @@ const GamePlayer1 = () => {
         UserPromises.then((userDto: User) => {
             setUser(userDto);
             GameSocket.emit('JoinRoom', userDto?.name);
+            GameSocket.emit('Ping', userDto?.name);
+
         });
     }, []);
 
@@ -276,14 +332,38 @@ const GamePlayer1 = () => {
             leftPaddle.y = leftPaddley.paddleHeight;
     });
 
+    GameSocket.on('Pong', (name: string, socketid: string) => {
+        isRecievePong = true;
+        p2name = name;
+    });
+
+    const BallSpeedUp = () => {
+        ballDefaultSpeed += 0.5;
+    }
+    const BallSpeedDown = () => {
+        ballDefaultSpeed -= 0.5;
+    }
+
     return (
         <div>
             <h1>[PONG GAME]</h1>
-            <h1>[Player1]</h1>
+            <h1>Player1: {user?.name}</h1>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
+            <Button variant={"contained"}
+                    size={"large"}
+                    color={"success"}
+                    onClick={(e) => {
+                        BallSpeedUp();
+                    }}>LEVEL UP</Button>
+            <Button variant={"contained"}
+                    size={"large"}
+                    color={"error"}
+                    onClick={(e) => {
+                        BallSpeedDown();
+                    }}>LEVEL DOWN</Button>
             <div>
                 <input type="text" value={uname} onChange={(event) => { setUname(event.target.value) }} />
-            </div>sss
+            </div>
             <section style={{ backgroundColor: 'rgba(30,130,80,0.3)', height: '50vh', overflow: 'scroll' }}>
                 <h2>GAME CHAT</h2>
                 <hr />

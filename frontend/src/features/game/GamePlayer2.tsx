@@ -3,12 +3,10 @@ import { GameSocket } from "../../contexts/WebsocketContext";
 import {User} from "../../types/PrismaType";
 import {useGameUser} from "../../hooks/game/useGameuser";
 
-
 const GamePlayer2 = () => {
     // global variables
     let context: CanvasRenderingContext2D | null;
     let canvas:  HTMLCanvasElement | null;
-    let keycode = '';
     let leftScore = 0;
     let rightScore = 0;
 
@@ -64,7 +62,6 @@ const GamePlayer2 = () => {
         }
     };
 
-
     const leftPaddle = {
         x: LPADDLEX,
         y: LPADDLEY,
@@ -77,7 +74,6 @@ const GamePlayer2 = () => {
             context?.fill();
         }
     }
-
 
     const rightPaddle = {
         x: RPADDLEX,
@@ -100,6 +96,7 @@ const GamePlayer2 = () => {
         context?.lineTo(MIDDLEX, FIELDWIDTH - 100);
         context?.stroke();
     }
+
     type BallPos = {
         x: number;
         y: number;
@@ -107,6 +104,8 @@ const GamePlayer2 = () => {
     };
 
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
+    const lastScore = 5;
+
     function draw() {
         if (!user?.name)
             return;
@@ -118,39 +117,22 @@ const GamePlayer2 = () => {
             && (ball.y <= leftPaddle.y + PADDLEWHEIGHT
                 && ball.y >= leftPaddle.y)){
             ball.vx = -ball.vx;
-        }else if (ball.x + ball.radius >= rightPaddle.x
+        } else if (ball.x + ball.radius >= rightPaddle.x
             && (ball.y <= rightPaddle.y + PADDLEWHEIGHT
                 && ball.y >= rightPaddle.y)) {
             ball.vx = -ball.vx;
         } else if (FIELDHEIGHT + FIELDY < ball.y || ball.y < FIELDY) {
             ball.vy = -ball.vy;
         } else if (ball.x < FIELDX) {
-            rightScore += 1;
             ball.init();
         } else if (FIELDX + FIELDWIDTH < ball.x) {
-            leftScore += 1;
             ball.init();
         }
-
-        /* check keycode */
-        if (keycode === 'KeyW') {
-            if (rightPaddle.y  > FIELDY) {
-                rightPaddle.y -= 50;
-            }
-        }
-        if (keycode === 'KeyS') {
-            if (rightPaddle.y + PADDLEWHEIGHT < FIELDHEIGHT + FIELDY) {
-                rightPaddle.y += 50;
-            }
-        }
-
         const paddleAndRoom = {
             paddleHeight: rightPaddle.y,
             name: user?.name.toString(),
         }
         GameSocket.emit('GameToServer', paddleAndRoom);
-        keycode = '';
-        // console.log(paddleAndRoom.room);
 
         /* draw part */
         leftPaddle.draw();
@@ -159,12 +141,23 @@ const GamePlayer2 = () => {
         if (canvas == null || context == null) {
             return ;
         }
-        context.fillStyle = 'black';
-        context.font = "bold 50px 'ＭＳ 明朝'";
-        context.fillText(leftScore.toString() , 360, 50);
-        context.fillText( '-', 440, 50);
-        context.fillText( rightScore.toString(), 500, 50);
-        window.requestAnimationFrame(draw);
+
+            context.fillStyle = 'black';
+            context.font = "bold 50px 'ＭＳ 明朝'";
+            context.fillText(leftScore.toString() , 360, 50);
+            context.fillText( '-', 440, 50);
+            context.fillText( rightScore.toString(), 500, 50);
+        if (leftScore < lastScore && rightScore < lastScore) {
+            window.requestAnimationFrame(draw);
+        } else if (leftScore === lastScore) {
+            context.fillStyle = 'blue'
+            context.font = "bold 50px 'ＭＳ 明朝'";
+            context.fillText('You Lose!', 360,  300);
+        } else {
+            context.fillStyle = 'red'
+            context.font = "bold 50px 'ＭＳ 明朝'";
+            context.fillText('You Win!', 360, 300);
+        }
     }
 
     const [user, setUser] = useState<User>();
@@ -177,12 +170,6 @@ const GamePlayer2 = () => {
     }, []);
 
     useEffect(() => {
-        const handleKeyUp = ():void => {
-            keycode = '';
-        }
-        const handleKeyDown = (e:KeyboardEvent):void  => {
-            keycode = e.code;
-        }
         canvas = canvasRef.current;
         if (!canvas) {
             return ;
@@ -191,10 +178,7 @@ const GamePlayer2 = () => {
         if (!context) {
             return ;
         }
-
         window.requestAnimationFrame(draw);
-        window.addEventListener('keyup', handleKeyUp);
-        window.addEventListener('keydown', handleKeyDown);
     }, [user]);
 
     type Chat = {
@@ -264,14 +248,29 @@ const GamePlayer2 = () => {
         ball.y = BallPos.y;
     });
 
-return (
+    GameSocket.on('Ping', (name: string, SocketId: string) => {
+        GameSocket.emit('Pong', user?.name);
+    });
+
+    type Score = {
+        player1: number
+        player2: number
+        name: string
+    }
+
+    GameSocket.on('ScoreToClient', (Score: Score, SocketId: string) => {
+        leftScore = Score.player1;
+        rightScore = Score.player2;
+    });
+
+    return (
         <div>
             <h1>[PONG GAME]</h1>
-            <h1>[Player 2]</h1>
+            <h1>Player2: {user?.name}</h1>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
             <div>
                 <input type="text" value={uname} onChange={(event) => { setUname(event.target.value) }} />
-            </div>sss
+            </div>
             <section style={{ backgroundColor: 'rgba(30,130,80,0.3)', height: '50vh', overflow: 'scroll' }}>
                 <h2>GAME CHAT</h2>
                 <hr />
