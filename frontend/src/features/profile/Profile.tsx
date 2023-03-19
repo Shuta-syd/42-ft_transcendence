@@ -6,14 +6,14 @@ import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import {Match, User} from "../../types/PrismaType";
-import { useProfileUser } from "../../hooks/profile/useProfileUser";
+import { fetchProfileUser } from "../../hooks/profile/useProfileUser";
 import { sendFriendRequest } from "../../hooks/profile/sendFriendRequests";
 import useQueryMatches from "../../hooks/match/useWueryMatch";
 
 const Profile = () => {
     const [user, setUser] = useState<User>();
 
-    const UserPromises = useProfileUser();
+    const UserPromises = fetchProfileUser();
     useEffect(() => {
         UserPromises.then((userDto: User) => {
             setUser(userDto);
@@ -64,37 +64,45 @@ const Profile = () => {
             </h2>
         );
     }
-
     interface MatchListProps {
         matches: Match[];
     }
+
+
     function MatchList({ matches }: MatchListProps) {
-        const [matchUser, setMatchUser] = useState<User>();
-        const [selectedPlayer, setSelectedPlayer] = useState('');
-        const [filteredMatches, setFilterdMatchs] = useState<Match[]>([]);
-        const MatchUserPromises = useProfileUser();
+        const [selectedPlayer, setSelectedPlayer] = useState(user?.name);
+        const [filteredMatches, setFilteredMatches] = useState<Match[]>([]);
+
         useEffect(() => {
-            MatchUserPromises.then((userDto: User) => {
-                setMatchUser(userDto);
-                if (matchUser) {
-                    setSelectedPlayer(matchUser.name);
-                    const createdMatchs = selectedPlayer ? matches.filter((match) =>
-                        match.player1 === selectedPlayer || match.player2 === selectedPlayer
-                    ) : matches;
-                    setFilterdMatchs(createdMatchs);
+            // ユーザー情報を取得する非同期処理
+            const getUserInfo = async () => {
+                const userDto = await fetchProfileUser();
+                if (userDto) {
+                    setSelectedPlayer(userDto.name);
                 }
-            });
-        }, [UserPromises]);
+            };
+            getUserInfo();
+        }, []);
 
-
-
+        useEffect(() => {
+            // 選択されたプレーヤー名が空の場合は全ての試合を表示する
+            if (selectedPlayer === '') {
+                setFilteredMatches([]);
+                return;
+            }
+            // player1もしくはplayer2に選択されたプレーヤー名を含む試合をフィルタリングする
+            const filtered = matches.filter((match) => match.player1 === selectedPlayer || match.player2 === selectedPlayer);
+            setFilteredMatches(filtered);
+        }, []);
 
         return (
             <div>
-                <h3>Result</h3>
+                {/* フィルタリングされた試合のみ表示 */}
                 {filteredMatches.map((match) => (
                     <div key={match.id}>
-                        <h1>[{match.id}] {match.player1} vs {match.player2}</h1>
+                        <h1>
+                            [{match.id}] {match.player1} vs {match.player2}
+                        </h1>
                         <div>
                             <ShowResult p1={match.player1} p2={match.player2} />
                         </div>
@@ -136,9 +144,8 @@ const Profile = () => {
                 }}
                 variant="standard"
             />
-            <Button onClick={handleButtonClick}>
-                enter
-            </Button>
+            <Button onClick={handleButtonClick}>enter</Button>
+            <h2>今までの戦績</h2>
             <MatchList matches={matchArr} />
         </div>
     );
