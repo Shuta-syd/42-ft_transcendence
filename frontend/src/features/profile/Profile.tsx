@@ -28,8 +28,7 @@ const Profile = () => {
             </Avatar>
             <Rating
                 name={user?.name}
-                value={5}
-                readOnly
+                defaultValue={4}
                 precision={0.5}
             />
         </div>
