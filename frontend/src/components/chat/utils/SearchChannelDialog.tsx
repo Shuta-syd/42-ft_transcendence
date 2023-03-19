@@ -87,7 +87,7 @@ export default function SearchChannelDialog(props: SearchChannelDialogProps) {
                   key={idx}
                   container
                   height={'5vh'}
-                  border={1}
+                  borderBottom={1}
                   sx={{ display: 'flex', alignItems: 'center' }}
                 >
                   <Grid item>
@@ -120,7 +120,7 @@ export default function SearchChannelDialog(props: SearchChannelDialogProps) {
                     <Button
                       onClick={async (event) => { await handleOnClick(channel.id); }}
                     >
-                      Create Chat
+                      JOIN
                     </Button>
                         )
                     }

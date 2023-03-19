@@ -22,14 +22,14 @@ export default function SearchFriendDialog(props: SearchFriendDialogProps) {
 
   useEffect(() => {
     const searchChannel = async () => {
-      const { data } = await axios.get(`http://localhost:8080/chat/channel/search`, {
+      const { data } = await axios.get(`http://localhost:8080/user/friend/search`, {
         params: { name: text }
       });
       if (data.length === searchResult.length)
         return ;
       setSearchResult([]);
-      data.map((room: any) => {
-        setSearchResult(prev => [...prev, { id: room.id, name: room.name, type: room.type}]);
+      data.map((friend: any) => {
+        setSearchResult(prev => [...prev, { id: friend.id, name: friend.name}]);
       })
     }
 
@@ -56,7 +56,7 @@ export default function SearchFriendDialog(props: SearchFriendDialogProps) {
         open={isOpen}
         onClose={handleClose}
       >
-        <Box>
+        <Box sx={{ position: 'relative', height:'40vh'}}>
         <TextField
             fullWidth
             autoFocus
@@ -80,7 +80,7 @@ export default function SearchFriendDialog(props: SearchFriendDialogProps) {
                   key={idx}
                   container
                   height={'5vh'}
-                  border={1}
+                  borderBottom={1}
                   sx={{ display: 'flex', alignItems: 'center' }}
                 >
                   <Grid item>
@@ -90,7 +90,7 @@ export default function SearchFriendDialog(props: SearchFriendDialogProps) {
                     <Button
                       onClick={async (event) => { await handleOnClick(friend.id); }}
                     >
-                      JOIN
+                      Create Chat
                     </Button>
                   </Grid>
                 </Grid>

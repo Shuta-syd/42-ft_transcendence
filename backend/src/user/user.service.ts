@@ -79,4 +79,18 @@ export class UserService {
     });
     return friends;
   }
+
+  /**
+   * @description nameを含むfriendsを検索して返す
+   */
+  async searchFriend(userId: string, name: string): Promise<User[]> {
+    console.log(name);
+    const userFriends = await this.getFriend(userId);
+
+    const result: User[] = userFriends.filter((friend) =>
+      friend.name.includes(name),
+    );
+
+    return result;
+  }
 }
