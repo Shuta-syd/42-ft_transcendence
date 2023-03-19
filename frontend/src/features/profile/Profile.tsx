@@ -1,5 +1,6 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
 import {Avatar, Button} from "@mui/material";
+import axios from "axios";
 import Rating from '@mui/material/Rating';
 import {deepPurple} from "@mui/material/colors";
 import TextField from '@mui/material/TextField';
@@ -8,6 +9,7 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import { User } from "../../types/PrismaType";
 import { useProfileUser } from "../../hooks/profile/useProfileUser";
 import { sendFriendRequest } from "../../hooks/profile/sendFriendRequests";
+// import { useQueryFriend } from "../../hooks/user/useQueryFriend";
 
 const Profile = () => {
     const [user, setUser] = useState<User>();
@@ -30,9 +32,22 @@ const Profile = () => {
         // console.log('  my id => ', user?.id);
     }
 
-    const handleFriendListButton = () => {
-        console.log('FriendList');
+    const getFriends = async () => {
+        const { data } = await axios.get<User[]>(`http://localhost:8080/user/friend`);
+        return data;
     }
+
+    const [friends, setFriends] = useState<User[]>([]);
+
+    const HandleFriendListButton = () => {
+        console.log('hello');
+        const friendsPromise = getFriends();
+        friendsPromise.then((data) => {
+            console.log('data => ', data[0]);
+            setFriends(data);
+            console.log('friends => ', friends[0]);
+        } );
+    };
 
     return (
         <div>
@@ -76,7 +91,7 @@ const Profile = () => {
             variant="outlined"
             color="primary"
             size="large"
-            onClick={handleFriendListButton}
+            onClick={HandleFriendListButton}
             >
                 友達リスト
             </Button>
