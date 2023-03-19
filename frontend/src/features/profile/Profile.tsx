@@ -24,10 +24,14 @@ const Profile = () => {
         setInputId(e.target.value);
     }
 
-    const handleButtonClick = async () => {
+    const handleDecideIdButton = async () => {
         sendFriendRequest(user?.id, inputId);
         // console.log('inputid => ', inputId);
         // console.log('  my id => ', user?.id);
+    }
+
+    const handleFriendListButton = () => {
+        console.log('FriendList');
     }
 
     return (
@@ -64,8 +68,17 @@ const Profile = () => {
             />
             <Button
             variant="contained"
-                onClick={handleButtonClick}>
+                onClick={handleDecideIdButton}>
                 ID決定
+            </Button>
+            <p></p>
+            <Button
+            variant="outlined"
+            color="primary"
+            size="large"
+            onClick={handleFriendListButton}
+            >
+                友達リスト
             </Button>
         </div>
     );
