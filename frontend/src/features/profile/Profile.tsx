@@ -26,8 +26,8 @@ const Profile = () => {
 
     const handleButtonClick = async () => {
         sendFriendRequest(user?.id, inputId);
-        console.log('inputid => ', inputId);
-        console.log('  my id => ', user?.id);
+        // console.log('inputid => ', inputId);
+        // console.log('  my id => ', user?.id);
     }
 
     return (
@@ -62,8 +62,10 @@ const Profile = () => {
                 }}
                 variant="standard"
             />
-            <Button onClick={handleButtonClick}>
-                enter
+            <Button
+            variant="contained"
+                onClick={handleButtonClick}>
+                ID決定
             </Button>
         </div>
     );
