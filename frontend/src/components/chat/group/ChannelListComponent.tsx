@@ -1,7 +1,7 @@
 import { Avatar, Grid, Typography } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Socket } from "socket.io-client";
 import { ChatRoom } from "../../../types/PrismaType";
@@ -45,7 +45,7 @@ export default function ChannelListComponent(props: ChannelListComponentProps) {
     setPrevRoomId(roomID);
   }, [roomID]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     getChannels().then((data) => { setChannels(data); })
   }, [])
 

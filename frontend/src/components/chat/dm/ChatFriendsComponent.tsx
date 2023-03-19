@@ -4,16 +4,9 @@ import { Link, useLocation } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import axios from "axios";
-import useQueryFriend from "../../../hooks/user/useQueryFriend";
 import '../../../styles/Chat.css'
 import { ChatRoom } from "../../../types/PrismaType";
 
-type FriendPayload = {
-  id: string;
-  name: string;
-}
-
-type ChatRoomPayload = { [friendId: string]: string };
 
 type ChatFriendsComponentProps = {
   socket: Socket;
@@ -26,57 +19,23 @@ type ChatFriendsComponentProps = {
  * @returns DirectMessage送信可能なフレンド一覧を表示するコンポーネント
  */
 export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
-  const { socket } = props;
+  const { socket, setDMRooms, DMRooms } = props;
   const roomID = useLocation().pathname.split('/')[3];
-  const { data: friendData } = useQueryFriend();
-  const [friends, setFriends] = useState<FriendPayload[]>([]);
   const [prevRoomId, setPrevRoomId] = useState<string>();
 
-  const getUserDM = async (): Promise<ChatRoomPayload> => {
+  const getUserDM = async (): Promise<ChatRoom[]> => {
     try {
       const res = await axios.get(`http://localhost:8080/chat/dm`);
       return res.data;
     } catch (error) {
       console.log(error);
     }
-    return {};
+    return [];
   };
 
   useEffect(() => {
-    const createDMRoom = async (friendId: string): Promise<string> => {
-      try {
-        const roomCrateDto = { type: 'DM' };
-        const room = await axios.post(`http://localhost:8080/chat/room`, roomCrateDto);
-        const addMemberDto = { userId: friendId, roomId: room.data.id };
-        await axios.post(`http://localhost:8080/chat/member/add`, addMemberDto);
-        const newRoomId = room.data.id;
-        return newRoomId;
-      } catch (error) {
-        console.log(error);
-      }
-      return "";
-    };
-
-    const loadFriends = async () => {
-      const updatedRooms = await getUserDM();
-      if (friendData) {
-        const updatedFriends = friendData.map(async (friend) => {
-          const roomId: string | undefined = updatedRooms[friend.id];
-          if (roomId === undefined) {
-            const newRoomId = await createDMRoom(friend.id);
-            return { id: newRoomId, name: friend.name };
-          }
-          return { id: roomId, name: friend.name };
-        });
-
-        Promise.all(updatedFriends).then((friendsArray) => {
-          setFriends(friendsArray);
-        });
-      }
-    };
-
-    loadFriends();
-  }, [friendData]);
+    getUserDM().then((data) => { setDMRooms(data); })
+  }, [])
 
   useEffect(() => {
     socket.on('join_chat_room', () => { });
@@ -92,15 +51,14 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
   }, [roomID])
 
   const handleClick = (roomId: string) => {
-    console.log('click friend button');
     socket.emit('join_chat_room', { id: roomId })
   }
 
   return (
     <>
-      {friends?.map((friend, idx) => (
-        <Link to={`/chat/room/${friend.id}`} onClick={() => handleClick(friend.id)} className={'FriendLink'} key={idx}>
-          {friend.id === roomID ? (
+      {DMRooms?.map((room, idx) => (
+        <Link to={`/chat/room/${room.id}`} onClick={() => handleClick(room.id)} className={'FriendLink'} key={idx}>
+          {room.id === roomID ? (
             <Grid
               container height={'7vh'}
               sx={{ display: 'flex', alignItems: 'center' }}
@@ -111,7 +69,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
               </Grid>
               <Grid item>
                 <Typography variant="subtitle1">
-                  {friend.name}
+                  {room.name}
                 </Typography>
               </Grid>
             </Grid>
@@ -126,7 +84,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
               </Grid>
               <Grid item>
               <Typography variant="subtitle1">
-                {friend.name}
+                {room.name}
               </Typography>
               </Grid>
             </Grid>

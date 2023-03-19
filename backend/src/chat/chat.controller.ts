@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ChatRoom, Member, Message, User } from '@prisma/client';
+import { ChatRoom, Member, Message } from '@prisma/client';
 import { Request } from 'express';
 import { Msg } from 'src/auth/dto/auth.dto';
 import {
@@ -25,7 +25,6 @@ import { ChatService } from './chat.service';
 import {
   AddMemberDto,
   MuteMemberDto,
-  ChatRoomPayload,
   CreateChatRoom,
   SendChatDto,
   MemberDto,
@@ -143,7 +142,7 @@ export class ChatController {
     summary: "Get a user's DM rooms ",
   })
   @Get('dm')
-  async getUserDM(@Req() req: Request): Promise<ChatRoomPayload> {
+  async getUserDM(@Req() req: Request): Promise<ChatRoom[]> {
     return this.chatService.getUserDM(req.user.id);
   }
 

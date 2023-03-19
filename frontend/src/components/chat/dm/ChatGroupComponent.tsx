@@ -1,13 +1,12 @@
-/* eslint-disable no-unused-vars */
 import { Grid, IconButton, TextField, Typography } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import { Box } from "@mui/system";
 import React, { useState } from "react";
 import { Socket } from "socket.io-client";
 import ChatFriendsComponent from "./ChatFriendsComponent";
-import LeaveButton from "../utils/LeaveButton";
 import { ChatRoom } from "../../../types/PrismaType";
 import OptionOpenButton from "../utils/OptionOpenButton";
+import CreateDMRoomButton from "./CreateDMRoomButton";
 
 type ChatGroupComponentProps = {
   socket: Socket;
@@ -78,7 +77,8 @@ export default function ChatGroupComponent(props: ChatGroupComponentProps) {
             </Grid>
             <Grid item>
               <Box display={'flex'}>
-              <OptionOpenButton open={openLeaveButton} setOpen={setOpenLeaveButton} />
+                <CreateDMRoomButton setDMRooms={setDMRooms}/>
+                <OptionOpenButton open={openLeaveButton} setOpen={setOpenLeaveButton} />
               </Box>
             </Grid>
           </Grid>

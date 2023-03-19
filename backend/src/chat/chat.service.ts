@@ -5,7 +5,6 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import {
   AddMemberDto,
-  ChatRoomPayload,
   CreateChatRoom,
   LeaveMemberDto,
   MemberDto,
@@ -92,8 +91,7 @@ export class ChatService {
    * @param userId 取得したいDMのuserID
    * @returns userIDのすべてのDM
    */
-  async getUserDM(userId: string): Promise<ChatRoomPayload> {
-    const DMRooms: ChatRoomPayload = {};
+  async getUserDM(userId: string): Promise<ChatRoom[]> {
     const DirectMessageRooms = await this.prisma.chatRoom.findMany({
       where: {
         type: 'DM',
@@ -106,12 +104,7 @@ export class ChatService {
       include: { members: true },
     });
 
-    DirectMessageRooms.map((room: ChatRoom & { members: Member[] }) => {
-      room.members.map((member: Member) => {
-        if (member.userId !== userId) DMRooms[member.userId] = room.id;
-      });
-    });
-    return DMRooms;
+    return DirectMessageRooms;
   }
 
   /**
