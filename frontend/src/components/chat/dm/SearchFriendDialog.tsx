@@ -40,11 +40,12 @@ export default function SearchFriendDialog(props: SearchFriendDialogProps) {
     setText(value);
   }
 
-  const handleOnClick = async (roomId: string) => {
+  const handleOnClick = async (friendId: string) => {
     try {
       const { data } = await axios.post(`http://localhost:8080/chat/room`, {
         type: 'DM',
         name: '',
+        friendId,
       });
       setDMRooms((prev: any) => [...prev, { name: data.name, id: data.id }]);
     } catch (error) {

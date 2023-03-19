@@ -45,6 +45,32 @@ export class ChatService {
    * @description DM Roomの作成 user, friendどちらもメンバーとして追加
    */
   async crateDMRoom(userId: string, dto: CreateChatRoom): Promise<ChatRoom> {
+    let alreadyCreated: ChatRoom = undefined;
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        memberships: {
+          include: {
+            room: {
+              include: {
+                members: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    user.memberships.forEach((myMember) => {
+      if (myMember.room.type !== 'DM') return;
+      myMember.room.members.map((member) => {
+        if (member.userId === dto.friendId) alreadyCreated = myMember.room;
+      });
+    });
+
+    if (alreadyCreated !== undefined) return alreadyCreated;
+
     const room = await this.prisma.chatRoom.create({
       data: {
         type: dto.type,
