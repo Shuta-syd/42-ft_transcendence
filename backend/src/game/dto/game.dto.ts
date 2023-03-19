@@ -28,5 +28,4 @@ export class Terminate {
   @ApiProperty()
   player: string;
   isInviteGame: boolean;
-  roomId: string;
 }

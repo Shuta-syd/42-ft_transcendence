@@ -163,16 +163,13 @@ export class GameService {
           player1: dto.player,
         },
       });
-      if (!existingGame1) {
-        return existingGame1;
-      }
       const existingGame2 = await this.prisma.game.findUnique({
         where: {
           player2: dto.player,
         },
       });
-      if (!existingGame2) {
-        return existingGame2;
+      if (!existingGame2 && !existingGame1) {
+        return null;
       }
       let game = this.prisma.game.delete({
         where: {
@@ -192,6 +189,19 @@ export class GameService {
       });
       return game;
     } else {
+      const existingGame1 = await this.prisma.inviteGame.findUnique({
+        where: {
+          player1: dto.player,
+        },
+      });
+      const existingGame2 = await this.prisma.inviteGame.findUnique({
+        where: {
+          player2: dto.player,
+        },
+      });
+      if (!existingGame2 && !existingGame1) {
+        return null;
+      }
       let game = this.prisma.inviteGame.delete({
         where: {
           player1: dto.player,

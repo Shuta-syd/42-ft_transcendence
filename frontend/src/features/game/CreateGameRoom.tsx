@@ -8,7 +8,6 @@ const CreateGameRoom = () => {
     const [user, setUser] = useState<User>();
     const [game, setGame] = useState<Game>();
     const [roomId, setRoomId] = useState<number | undefined>(undefined); // useStateでroomIdを宣言
-    let isAlreadyShow = false;
 
     const gamePromisesRef = useRef<Promise<Game>>();
     const UserPromises = useGameUser();
@@ -31,13 +30,11 @@ const CreateGameRoom = () => {
     };
 
     const ShowPage = () => {
-        if (game?.player2 && !isAlreadyShow) {
-            isAlreadyShow = true;
+        if (game?.player1 !== user?.name) {
             return (
                     <Link to={"/game/player2"}>Player2</Link>
             );
         }
-        isAlreadyShow = true;
         return (
                 <Link to={"/game/player1"}>Player1</Link>
         );

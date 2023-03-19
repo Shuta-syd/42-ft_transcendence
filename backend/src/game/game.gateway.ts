@@ -180,28 +180,19 @@ export class GameGateway {
     @MessageBody() name: string,
     @ConnectedSocket() client: Socket,
   ): void {
-    let roomId = NameToRoomIdDic[name];
     let dto: Terminate;
     console.log('hoge');
-    // eslint-disable-next-line prefer-const
-    dto = {
-      isInviteGame: false,
-      roomId: '',
-      player: '',
-    };
-    if (!roomId) {
-      roomId = NameToInviteRoomIdDic[name];
-      if (roomId) {
-        dto.isInviteGame = true;
-        dto.roomId = roomId;
-        dto.player = name;
-      } else {
-        return;
-      }
-    } else {
-      dto.isInviteGame = false;
-      dto.roomId = roomId;
+    if (NameToInviteRoomIdDic[name]) {
+      console.log('invite');
+      dto.isInviteGame = true;
       dto.player = name;
+    } else if (NameToRoomIdDic[name]) {
+      console.log('noninvite');
+      dto.isInviteGame = false;
+      dto.player = name;
+    } else {
+      console.log('rerurn');
+      return;
     }
     this.gameService.terminateGame(dto);
   }
