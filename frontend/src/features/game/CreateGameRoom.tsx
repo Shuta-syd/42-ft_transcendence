@@ -25,7 +25,7 @@ const CreateGameRoom = () => {
     }, [user]);
 
     const ShowPage = () => {
-        if (!game?.player2) {
+        if (game?.player2) {
             return (
                     <Link to={"/game/player2"}>Player2</Link>
             );
