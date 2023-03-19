@@ -1,20 +1,25 @@
+/* eslint-disable no-unused-vars */
 import { Grid, IconButton, TextField, Typography } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import { Box } from "@mui/system";
-import React from "react";
+import React, { useState } from "react";
 import { Socket } from "socket.io-client";
 import ChatFriendsComponent from "./ChatFriendsComponent";
+import LeaveButton from "../utils/LeaveButton";
+import { ChatRoom } from "../../../types/PrismaType";
+import OptionOpenButton from "../utils/OptionOpenButton";
 
 type ChatGroupComponentProps = {
   socket: Socket;
 }
-
 
 /**
  * @returns chatの会話中のフレンド、グループを表示するコンポーネント
  */
 export default function ChatGroupComponent(props: ChatGroupComponentProps) {
   const { socket } = props;
+  const [DMRooms, setDMRooms] = useState<ChatRoom[]>([]);
+  const [openLeaveButton, setOpenLeaveButton] = useState<boolean>(false);
 
   return (
     <>
@@ -64,6 +69,7 @@ export default function ChatGroupComponent(props: ChatGroupComponentProps) {
             width={'90%'}
             height={'8vh'}
             alignItems={'center'}
+            justifyContent={'space-between'}
           >
             <Grid item>
               <Typography color={'#808792'}>
@@ -71,11 +77,13 @@ export default function ChatGroupComponent(props: ChatGroupComponentProps) {
               </Typography>
             </Grid>
             <Grid item>
-              {/* Button */}
+              <Box display={'flex'}>
+              <OptionOpenButton open={openLeaveButton} setOpen={setOpenLeaveButton} />
+              </Box>
             </Grid>
           </Grid>
           <Box width={'90%'}>
-            <ChatFriendsComponent socket={socket} />
+            <ChatFriendsComponent socket={socket} DMRooms={DMRooms} setDMRooms={setDMRooms} isLeave={openLeaveButton} />
           </Box>
         </Grid>
       </Grid>

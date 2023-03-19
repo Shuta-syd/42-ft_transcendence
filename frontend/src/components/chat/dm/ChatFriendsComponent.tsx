@@ -6,6 +6,7 @@ import { Socket } from "socket.io-client";
 import axios from "axios";
 import useQueryFriend from "../../../hooks/user/useQueryFriend";
 import '../../../styles/Chat.css'
+import { ChatRoom } from "../../../types/PrismaType";
 
 type FriendPayload = {
   id: string;
@@ -16,6 +17,9 @@ type ChatRoomPayload = { [friendId: string]: string };
 
 type ChatFriendsComponentProps = {
   socket: Socket;
+  DMRooms: ChatRoom[];
+  setDMRooms: any; // useState setter
+  isLeave: boolean;
 }
 
 /**
