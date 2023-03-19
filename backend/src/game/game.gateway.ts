@@ -8,8 +8,6 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { NameToInviteRoomIdDic, NameToRoomIdDic } from './game.service';
-import { GameService } from './game.service';
-import { Terminate } from './dto/game.dto';
 
 type ChatRecieved = {
   uname: string;
@@ -39,19 +37,12 @@ type Score = {
   name: string;
 };
 
-type TerminateGame = {
-  player1: string;
-  isInviteGame: boolean;
-  roomId: string;
-};
-
 @WebSocketGateway({
   cors: {
     origin: '*',
   },
 })
 export class GameGateway {
-  constructor(private readonly gameService: GameService) {}
   @WebSocketServer()
   server: Server;
 
@@ -173,37 +164,6 @@ export class GameGateway {
       roomId = NameToInviteRoomIdDic[payload.name];
     }
     this.server.to(roomId).emit('ScoreToClient', payload, client.id);
-  }
-
-  @SubscribeMessage('TerminateGame')
-  terminateGame(
-    @MessageBody() name: string,
-    @ConnectedSocket() client: Socket,
-  ): void {
-    let roomId = NameToRoomIdDic[name];
-    let dto: Terminate;
-    // eslint-disable-next-line prefer-const
-    dto = {
-      isInviteGame: false,
-      roomId: '',
-      player1: '',
-    };
-    if (roomId === undefined) {
-      roomId = NameToInviteRoomIdDic[name];
-      if (roomId) {
-        dto.isInviteGame = true;
-        dto.roomId = roomId;
-        dto.player1 = name;
-      } else {
-        return;
-      }
-    } else {
-      dto.isInviteGame = false;
-      dto.roomId = roomId;
-      dto.player1 = name;
-    }
-    console.log('hoge');
-    this.gameService.terminateGame(dto);
   }
 
   // 接続が切断されたときの処理
