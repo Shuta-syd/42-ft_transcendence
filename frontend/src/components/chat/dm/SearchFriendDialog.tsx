@@ -40,9 +40,12 @@ export default function SearchFriendDialog(props: SearchFriendDialogProps) {
     setText(value);
   }
 
-  const handleOnClick = async (roomId: string, password?: string) => {
+  const handleOnClick = async (roomId: string) => {
     try {
-      const { data } = await axios.post(`http://localhost:8080/chat/member/add/me`, { roomId, status: 'NORMAL', password });
+      const { data } = await axios.post(`http://localhost:8080/chat/room`, {
+        type: 'DM',
+        name: '',
+      });
       setDMRooms((prev: any) => [...prev, { name: data.name, id: data.id }]);
     } catch (error) {
       console.log(error)
@@ -90,7 +93,7 @@ export default function SearchFriendDialog(props: SearchFriendDialogProps) {
                     <Button
                       onClick={async (event) => { await handleOnClick(friend.id); }}
                     >
-                      Create Chat
+                      Join
                     </Button>
                   </Grid>
                 </Grid>

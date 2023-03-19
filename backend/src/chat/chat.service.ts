@@ -42,6 +42,33 @@ export class ChatService {
   }
 
   /**
+   * @description DM Roomの作成 user, friendどちらもメンバーとして追加
+   */
+  async crateDMRoom(userId: string, dto: CreateChatRoom): Promise<ChatRoom> {
+    const room = await this.prisma.chatRoom.create({
+      data: {
+        type: dto.type,
+        password: dto.password,
+        name: dto.name === undefined ? 'unknown' : dto.name,
+      },
+    });
+
+    await this.addMember(userId, {
+      roomId: room.id,
+      status: 'NORMAL',
+      password: dto.password,
+    });
+
+    await this.addMember(dto.friendId, {
+      roomId: room.id,
+      status: 'NORMAL',
+      password: dto.password,
+    });
+
+    return room;
+  }
+
+  /**
    * @param roomId 取得したいroomのID
    * @returns 取得したRoomデータ
    */
@@ -278,7 +305,7 @@ export class ChatService {
             id: userId,
           },
         },
-        role: dto.status,
+        role: dto.status === undefined ? 'NORMAL' : dto.status,
       },
       include: {
         user: true,

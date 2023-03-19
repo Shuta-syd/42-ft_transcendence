@@ -84,7 +84,6 @@ export class UserService {
    * @description nameを含むfriendsを検索して返す
    */
   async searchFriend(userId: string, name: string): Promise<User[]> {
-    console.log(name);
     const userFriends = await this.getFriend(userId);
 
     const result: User[] = userFriends.filter((friend) =>

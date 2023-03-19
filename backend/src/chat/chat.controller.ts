@@ -72,6 +72,18 @@ export class ChatController {
     return this.chatService.crateChatRoom(req.user.id, dto);
   }
 
+  @Post('dm/room')
+  @ApiOperation({
+    description: 'create chat dm room',
+    summary: 'create chat dm room',
+  })
+  async createDMRoom(
+    @Req() req: Request,
+    @Body() dto: CreateChatRoom,
+  ): Promise<ChatRoom> {
+    return this.chatService.crateChatRoom(req.user.id, dto);
+  }
+
   @Get('room/:roomId')
   @ApiOperation({
     description: 'Get chat room by id',
