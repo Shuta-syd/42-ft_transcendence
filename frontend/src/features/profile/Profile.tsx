@@ -6,12 +6,15 @@ import {deepPurple} from "@mui/material/colors";
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import AccountCircle from '@mui/icons-material/AccountCircle';
+import io from "socket.io-client";
 import {Match, User} from "../../types/PrismaType";
 import { fetchProfileUser } from "../../hooks/profile/useProfileUser";
 import { sendFriendRequest } from "../../hooks/profile/sendFriendRequests";
 import useQueryMatches from "../../hooks/match/useWueryMatch";
 
+
 const Profile = () => {
+    const socket = io("http://localhost:8000");
     const [user, setUser] = useState<User>();
 
     const UserPromises = fetchProfileUser();
@@ -28,8 +31,6 @@ const Profile = () => {
 
     const handleDecideIdButton = async () => {
         sendFriendRequest(user?.id, inputId);
-        // console.log('inputid => ', inputId);
-        // console.log('  my id => ', user?.id);
     }
 
     const getFriends = async () => {
@@ -38,12 +39,6 @@ const Profile = () => {
     }
 
     const [friends, setFriends] = useState<User[]>([]);
-
-    const handleButtonClick = async () => {
-        sendFriendRequest(user?.id, inputId);
-        console.log('inputid => ', inputId);
-        console.log('  my id => ', user?.id);
-    }
 
 
     const HandleFriendListButton = () => {
@@ -91,8 +86,6 @@ const Profile = () => {
     interface MatchListProps {
         matches: Match[];
     }
-
-
     function MatchList({ matches }: MatchListProps) {
         const [selectedPlayer, setSelectedPlayer] = useState(user?.name);
         const [filteredMatches, setFilteredMatches] = useState<Match[]>([]);
@@ -131,6 +124,37 @@ const Profile = () => {
             </div>
         );
     }
+
+    interface FriendProps {
+        friendId: string;
+    }
+    function FriendStatus({ friendId }:FriendProps) {
+        const [isOnline, setIsOnline] = useState(null);
+
+        useEffect(() => {
+            // WebSocketを使用して、友達のオンライン/オフライン状態を取得する
+            socket.emit("getFriendStatus", friendId);
+
+            // サーバーからの応答を受信する
+            socket.on("friendStatus", (status) => {
+                setIsOnline(status);
+            });
+
+            // コンポーネントのアンマウント時にWebSocket接続を解除する
+            return () => {
+                socket.off("friendStatus");
+            };
+        }, [friendId]);
+
+        if (isOnline === null) {
+            return <span>Loading...</span>;
+        }
+
+        return (
+            <span>{isOnline ? "Online" : "Offline"}</span>
+        );
+    }
+
 
     return (
         <div>
@@ -182,10 +206,10 @@ const Profile = () => {
             {friends.map((friend: User) => (
                 <div key={friend.id}>
                     {friend.name}
+                    <FriendStatus friendId={friend.id}/>
                 </div> // keyプロパティを追加
             ))}
             </h1>
-            <Button onClick={handleButtonClick}>enter</Button>
             <h2>今までの戦績</h2>
             <MatchList matches={matchArr} />
         </div>
