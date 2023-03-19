@@ -1,5 +1,6 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
 import {Avatar, Button} from "@mui/material";
+import axios from "axios";
 import Rating from '@mui/material/Rating';
 import {deepPurple} from "@mui/material/colors";
 import TextField from '@mui/material/TextField';
@@ -25,11 +26,34 @@ const Profile = () => {
         setInputId(e.target.value);
     }
 
+    const handleDecideIdButton = async () => {
+        sendFriendRequest(user?.id, inputId);
+        // console.log('inputid => ', inputId);
+        // console.log('  my id => ', user?.id);
+    }
+
+    const getFriends = async () => {
+        const { data } = await axios.get<User[]>(`http://localhost:8080/user/friend`);
+        return data;
+    }
+
+    const [friends, setFriends] = useState<User[]>([]);
+
     const handleButtonClick = async () => {
         sendFriendRequest(user?.id, inputId);
         console.log('inputid => ', inputId);
         console.log('  my id => ', user?.id);
     }
+
+
+    const HandleFriendListButton = () => {
+        const friendsPromise = getFriends();
+        friendsPromise.then((data) => {
+            console.log('data => ', data[0]);
+            setFriends(data);
+        } );
+        console.log(friends[0]);
+    };
 
     const [matchArr, setMatches] = useState<Match[]>([]);
     const [winnerId, setWinnerId] = useState<string>('');
@@ -140,6 +164,27 @@ const Profile = () => {
                 }}
                 variant="standard"
             />
+            <Button
+            variant="contained"
+                onClick={handleDecideIdButton}>
+                ID決定
+            </Button>
+            <p></p>
+            <Button
+            variant="outlined"
+            color="primary"
+            size="large"
+            onClick={HandleFriendListButton}
+            >
+                友達リスト
+            </Button>
+            <h1>
+            {friends.map((friend: User) => (
+                <div key={friend.id}>
+                    {friend.name}
+                </div> // keyプロパティを追加
+            ))}
+            </h1>
             <Button onClick={handleButtonClick}>enter</Button>
             <h2>今までの戦績</h2>
             <MatchList matches={matchArr} />
