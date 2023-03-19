@@ -264,7 +264,7 @@ const GamePlayer2 = () => {
         ball.y = BallPos.y;
     });
 
-return (
+    return (
         <div>
             <h1>[PONG GAME]</h1>
             <h1>[Player 2]</h1>

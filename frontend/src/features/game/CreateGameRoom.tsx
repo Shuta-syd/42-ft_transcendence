@@ -46,7 +46,7 @@ const CreateGameRoom = () => {
                 <Link to={"/game/player1"}>Player1</Link>
                 <Link to={"/game/player2"}>Player2</Link>
             </div>
-          {/*  {
+            {/*  {
                 (() => {
                     if (game?.player2 === '') {
                         return <GamePlayer1></GamePlayer1>
