@@ -264,6 +264,10 @@ const GamePlayer2 = () => {
         ball.y = BallPos.y;
     });
 
+    GameSocket.on('Ping', (name: string, SocketId: string) => {
+        GameSocket.emit('Pong', user?.name);
+    });
+
     return (
         <div>
             <h1>[PONG GAME]</h1>

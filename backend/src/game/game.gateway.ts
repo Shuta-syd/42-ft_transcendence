@@ -111,6 +111,23 @@ export class GameGateway {
     }
   }
 
+  @SubscribeMessage('Ping')
+  handlePing(
+    @MessageBody() name: string,
+    @ConnectedSocket() client: Socket,
+  ): void {
+    const roomId: string = NameToRoomIdDic[name];
+    this.server.to(roomId).emit('Ping', name, client.id);
+  }
+
+  @SubscribeMessage('Pong')
+  handlePong(
+    @MessageBody() name: string,
+    @ConnectedSocket() client: Socket,
+  ): void {
+    const roomId: string = NameToRoomIdDic[name];
+    this.server.to(roomId).emit('Pong', name, client.id);
+  }
   // 接続が切断されたときの処理
   handleDisconnect(socket: any) {
     console.log(`game Client disconnected: ${socket.id}`);
