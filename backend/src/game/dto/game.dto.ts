@@ -22,3 +22,10 @@ export class assignGuestDto {
   name: string;
   roomId: string;
 }
+
+export class Terminate {
+  @ApiProperty()
+  player1: string;
+  isInviteGame: boolean;
+  roomId: string;
+}

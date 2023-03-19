@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Game, Match, InviteGame } from '@prisma/client';
-import { assignGuestDto, assignObserverDto } from './dto/game.dto';
+import { assignGuestDto, assignObserverDto, Terminate } from './dto/game.dto';
 import { addAbortSignal } from 'stream';
 
 let playerId = 0;
@@ -113,5 +113,23 @@ export class GameService {
       },
     });
     return game || null;
+  }
+
+  async terminateGame(dto: Terminate): Promise<Game | InviteGame | null> {
+    if (dto.isInviteGame === false) {
+      delete NameToRoomIdDic[dto.roomId];
+      return this.prisma.game.delete({
+        where: {
+          id: parseInt(dto.roomId),
+        },
+      });
+    } else {
+      delete NameToInviteRoomIdDic[dto.roomId];
+      return this.prisma.inviteGame.delete({
+        where: {
+          id: dto.roomId,
+        },
+      });
+    }
   }
 }

@@ -3,7 +3,6 @@ import {Link} from "react-router-dom";
 import {Game, User} from "../../types/PrismaType";
 import { fetchGameRoomArr } from "../../hooks/game/useGameObserver";
 import {GameObserverReq, useGameUser} from "../../hooks/game/useGameuser";
-// import {GameSocket} from "../../contexts/WebsocketContext";
 
 const GameSelectRoom = () => {
 
@@ -55,7 +54,7 @@ const GameSelectRoom = () => {
 
     return (
         <div>
-            <h1>[Match Result]</h1>
+            <h1>[Room List]</h1>
             {GameRoomArr.map((game) => (
                 <div key={game.id}>
                     <h2>[{game.id}] {game.player1} vs {game.player2}</h2>
