@@ -2,9 +2,6 @@ import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Game, User } from "../../types/PrismaType";
 import { GameRoomReq, useGameUser } from "../../hooks/game/useGameuser";
-// import GamePlayer1 from "./GamePlayer1";
-// import GamePlayer2 from "./GamePlayer2";
-// import {GameSocket} from "../../contexts/WebsocketContext";
 
 const CreateGameRoom = () => {
     const [user, setUser] = useState<User>();
@@ -24,36 +21,29 @@ const CreateGameRoom = () => {
         gamePromisesRef.current?.then((Gamedto: Game) => {
             setGame(Gamedto);
             setRoomId(Gamedto?.id); // roomIdを更新する
-            // type RoomId = {
-            //     room: string | undefined,
-            // }
-            // const roomid: RoomId = {
-            //     room: Gamedto.id.toString(),
-            // }
-            // GameSocket.emit('JoinRoom', roomid);
         });
     }, [user]);
 
+    const ShowPage = () => {
+        if (game?.player2) {
+            return (
+                    <Link to={"/game/player2"}>Player2</Link>
+            );
+        }
+        return (
+                <Link to={"/game/player1"}>Player1</Link>
+        );
+    }
+
+
     return (
         <div>
-            <h1>[Create Game]</h1>
+            <h1>[Random Match Room!!]</h1>
             <h2>You are {user?.name}!!!</h2>
             <h2>You are in {roomId}!!!</h2>
             <h2>Player1 is {game?.player1}!!!</h2>
             <h2>Player2 is {game?.player2}!!!</h2>
-            <h2>Waiting for someone </h2>
-            <div>
-                <Link to={"/game/player1"}>Player1</Link>
-                <Link to={"/game/player2"}>Player2</Link>
-            </div>
-          {/*  {
-                (() => {
-                    if (game?.player2 === '') {
-                        return <GamePlayer1></GamePlayer1>
-                    }
-                    return <GamePlayer2></GamePlayer2>
-                })()
-            } */}
+            <h1>Your Room 👉 {ShowPage()} !!!</h1>
         </div>
     );
 
