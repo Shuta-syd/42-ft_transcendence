@@ -3,10 +3,14 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
+
+export type OnlineUsers = { [key: string]: string };
+export const OnlineUsers: OnlineUsers = {};
+
 import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway()
-export class AppGateway {
+export class UserGateway {
   @WebSocketServer()
   server: Server;
 
@@ -16,11 +20,29 @@ export class AppGateway {
     const status = getFriendStatus(friendId);
     this.server.emit('friendStatus', status);
   }
+
+  @SubscribeMessage('AssignOnline')
+  assignOnline(client: any, name: string): void {
+    OnlineUsers[client.id] = name;
+  }
+  handleDisconnect(socket: any) {
+    // 接続が切断されたときの処理
+    delete OnlineUsers[socket.id];
+  }
+
+  afterInit(server: Server) {
+    //初期化
+  }
+
+  handleConnection(client: Socket, ...args: any[]) {
+    //クライアント接続時
+  }
 }
 
 function getFriendStatus(friendId: string): boolean {
-  // ここで、友達のオンライン/オフライン状態を取得する処理を記述する
-  // 例えば、データベースに問い合わせるなど
-  // ここでは、ランダムにオンライン/オフラインを返すようにしている
-  return Math.random() < 0.5;
+  if (OnlineUsers[friendId]) {
+    return true;
+  } else {
+    return false;
+  }
 }

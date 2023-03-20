@@ -14,12 +14,15 @@ import useQueryMatches from "../../hooks/match/useWueryMatch";
 
 
 const Profile = () => {
-    const socket = io("http://localhost:8000");
+
     const [user, setUser] = useState<User>();
+
+    const socket = io("http://localhost:8080");
 
     const UserPromises = fetchProfileUser();
     useEffect(() => {
         UserPromises.then((userDto: User) => {
+            socket.emit('AssignOnline', userDto.name);
             setUser(userDto);
         });
     }, []);
@@ -126,14 +129,14 @@ const Profile = () => {
     }
 
     interface FriendProps {
-        friendId: string;
+        friendName: string;
     }
-    function FriendStatus({ friendId }:FriendProps) {
+    function FriendStatus({ friendName }:FriendProps) {
         const [isOnline, setIsOnline] = useState(null);
 
         useEffect(() => {
             // WebSocketを使用して、友達のオンライン/オフライン状態を取得する
-            socket.emit("getFriendStatus", friendId);
+            socket.emit("getFriendStatus", friendName);
 
             // サーバーからの応答を受信する
             socket.on("friendStatus", (status) => {
@@ -144,14 +147,14 @@ const Profile = () => {
             return () => {
                 socket.off("friendStatus");
             };
-        }, [friendId]);
+        }, [friendName]);
 
         if (isOnline === null) {
             return <span>Loading...</span>;
         }
 
         return (
-            <span>{isOnline ? "Online" : "Offline"}</span>
+            <span>{isOnline ? " -> Online" : " -> Offline"}</span>
         );
     }
 
@@ -206,7 +209,7 @@ const Profile = () => {
             {friends.map((friend: User) => (
                 <div key={friend.id}>
                     {friend.name}
-                    <FriendStatus friendId={friend.id}/>
+                    <FriendStatus friendName={friend.name}/>
                 </div> // keyプロパティを追加
             ))}
             </h1>
