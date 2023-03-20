@@ -163,9 +163,9 @@ const Profile = () => {
 
     return (
         <div>
-            <Avatar alt={"jack"}
+            <Avatar alt={"steve jobs"}
                     src={"https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg"}
-            >
+                    sx={{width: 200, height: 200, margin: 2}}>
                 <h1>
                     {user?.name}
                 </h1>
