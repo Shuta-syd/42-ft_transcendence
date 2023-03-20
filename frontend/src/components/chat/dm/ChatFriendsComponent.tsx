@@ -10,6 +10,7 @@ import LeaveButton from "../utils/LeaveButton";
 
 
 type ChatFriendsComponentProps = {
+  userName: string;
   socket: Socket;
   DMRooms: ChatRoom[];
   setDMRooms: any; // useState setter
@@ -20,9 +21,22 @@ type ChatFriendsComponentProps = {
  * @returns DirectMessage送信可能なフレンド一覧を表示するコンポーネント
  */
 export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
-  const { socket, setDMRooms, DMRooms, isLeave } = props;
+  const { socket, setDMRooms, DMRooms, isLeave, userName } = props;
   const roomID = useLocation().pathname.split('/')[3];
   const [prevRoomId, setPrevRoomId] = useState<string>();
+
+  const getFriendNameFromRoomName = (user: string, room: string): string => {
+    let friendName: string = '';
+
+    const names = room.split(',');
+    console.log(names)
+    console.log(user);
+    names.map((name) => {
+      if (name !== user)
+        friendName = name;
+    })
+    return friendName;
+  }
 
   const getUserDM = async (): Promise<ChatRoom[]> => {
     try {
@@ -70,7 +84,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
               </Grid>
               <Grid item>
                 <Typography variant="subtitle1">
-                  {room.name}
+                  {getFriendNameFromRoomName(userName, room.name)}
                 </Typography>
               </Grid>
               {isLeave ? (

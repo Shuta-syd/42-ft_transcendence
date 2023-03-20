@@ -10,13 +10,14 @@ import CreateDMRoomButton from "./CreateDMRoomButton";
 
 type ChatGroupComponentProps = {
   socket: Socket;
+  userName: string;
 }
 
 /**
  * @returns chatの会話中のフレンド、グループを表示するコンポーネント
  */
 export default function ChatGroupComponent(props: ChatGroupComponentProps) {
-  const { socket } = props;
+  const { socket, userName } = props;
   const [DMRooms, setDMRooms] = useState<ChatRoom[]>([]);
   const [openLeaveButton, setOpenLeaveButton] = useState<boolean>(false);
 
@@ -83,7 +84,13 @@ export default function ChatGroupComponent(props: ChatGroupComponentProps) {
             </Grid>
           </Grid>
           <Box width={'90%'}>
-            <ChatFriendsComponent socket={socket} DMRooms={DMRooms} setDMRooms={setDMRooms} isLeave={openLeaveButton} />
+            <ChatFriendsComponent
+              socket={socket}
+              DMRooms={DMRooms}
+              setDMRooms={setDMRooms}
+              isLeave={openLeaveButton}
+              userName={userName}
+            />
           </Box>
         </Grid>
       </Grid>

@@ -3,23 +3,33 @@ import axios from "axios";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Socket } from "socket.io-client";
 import useMutationMessage from "../../../hooks/chat/useMutationMessage";
-import getUserName from "../../../utils/getUserName";
 import TextFieldComponent from "../../utils/TextFieldComponent";
 import ChatlogComponent from "../utils/ChatlogComponent";
 
 type ChannelDisplayComponentProps = {
   socket: Socket;
   roomId: string;
+  userName: string;
 }
 
 export default function ChatDisplayComponent(props: ChannelDisplayComponentProps) {
-  const { roomId, socket } = props;
+  const { roomId, socket, userName } = props;
   const [myMemberId, setMyMemberId] = useState<string>('');
-  const [userName, setUserName] = useState('');
   const [roomName, setRoomName] = useState('');
   const { createMessageMutation } = useMutationMessage(socket, roomId, myMemberId);
   const [text, setText] = useState('');
   const textfieldElm = useRef<HTMLInputElement>(null);
+
+  const getFriendNameFromRoomName = (user: string, room: string): string => {
+    let friendName: string = '';
+
+    const names = room.split(',');
+    names.map((name) => {
+      if (name !== user)
+        friendName = name;
+    })
+    return friendName;
+  }
 
   const getRoomName = useCallback(async (): Promise<string> => {
     try {
@@ -38,7 +48,6 @@ export default function ChatDisplayComponent(props: ChannelDisplayComponentProps
     }
 
     getMymember();
-    getUserName().then((name) => { setUserName(name); });
     getRoomName().then((name) => { setRoomName(name); })
   }, [roomId])
 
@@ -76,7 +85,7 @@ export default function ChatDisplayComponent(props: ChannelDisplayComponentProps
             mt={1} ml={2}
             sx={{ color: '#3C444B' }}
           >
-            @{roomName}
+            @{getFriendNameFromRoomName(userName, roomName)}
           </Typography>
         </Box>
       </Grid>
