@@ -53,16 +53,15 @@ export default function AdminButton(props: AdminButtonProps) {
 
   const handleGiveAdmin = async (memberId: string) => {
     try {
-      const { data } = await axios.patch(`http://localhost:8080/chat/channel/role`, { roomId, memberId });
+      await axios.patch(`http://localhost:8080/chat/channel/role`, { roomId, memberId });
       setMembers((prev: any[]) => prev.map((val: { id: string; role: string; }) => {
         if (val.id === memberId) {
           return val.role === 'ADMIN' ? { ...val, role: 'NORMAL' } : { ...val, role: 'ADMIN' };
         }
         return val;
       }))
-      console.log(data);
     } catch (error) {
-      console.log(error);
+      alert('権限がないもしくはすでにオーナーです');
     }
   }
 

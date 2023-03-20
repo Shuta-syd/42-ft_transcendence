@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotAcceptableException,
   NotFoundException,
@@ -259,14 +260,12 @@ export class ChatService {
       .user();
   }
 
-  async updateMemberRole(userId: string, dto: MemberDto): Promise<Msg> {
+  async updateMemberRole(userId: string, dto: MemberDto) {
     const { memberId, roomId } = dto;
 
     const executor = await this.getMyMember(userId, roomId);
     if (executor.role !== 'OWNER') {
-      return {
-        message: 'You are not Owner',
-      };
+      throw new ForbiddenException('You are not Owner');
     }
 
     const target = await this.prisma.member.findUnique({
@@ -274,9 +273,9 @@ export class ChatService {
     });
 
     if (target.role === 'OWNER') {
-      return {
-        message: 'Owner can be changed to ADMIN or NORMAL',
-      };
+      throw new ForbiddenException(
+        'Owner cannot be changed to ADMIN or NORMAL',
+      );
     } else if (target.role === 'NORMAL') {
       await this.prisma.member.update({
         where: { id: memberId },
@@ -288,10 +287,6 @@ export class ChatService {
         data: { role: 'NORMAL' },
       });
     }
-
-    return {
-      message: 'Member Role updated',
-    };
   }
 
   /**

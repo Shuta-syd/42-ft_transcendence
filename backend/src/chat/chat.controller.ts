@@ -231,10 +231,7 @@ export class ChatController {
   }
 
   @Patch('channel/role')
-  async updateMemberRole(
-    @Req() req: Request,
-    @Body() dto: MemberDto,
-  ): Promise<Msg> {
+  async updateMemberRole(@Req() req: Request, @Body() dto: MemberDto) {
     return this.chatService.updateMemberRole(req.user.id, dto);
   }
 }
