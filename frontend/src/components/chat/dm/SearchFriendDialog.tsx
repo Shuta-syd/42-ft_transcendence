@@ -46,7 +46,7 @@ export default function SearchFriendDialog(props: SearchFriendDialogProps) {
     try {
       const { data } = await axios.post(`http://localhost:8080/chat/dm/room`, {
         type: 'DM',
-        name: '',
+        name: friendName,
         friendId,
       });
       handleClose();
