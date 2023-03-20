@@ -2,14 +2,13 @@ import React, {ChangeEvent, useEffect, useState} from 'react';
 import {Avatar, Button} from "@mui/material";
 import axios from "axios";
 import Rating from '@mui/material/Rating';
-import {deepPurple} from "@mui/material/colors";
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import io from "socket.io-client";
 import {Match, User} from "../../types/PrismaType";
-import { fetchProfileUser } from "../../hooks/profile/useProfileUser";
-import { sendFriendRequest } from "../../hooks/profile/sendFriendRequests";
+import {fetchProfileUser} from "../../hooks/profile/useProfileUser";
+import {sendFriendRequest} from "../../hooks/profile/sendFriendRequests";
 import useQueryMatches from "../../hooks/match/useWueryMatch";
 
 
@@ -37,7 +36,7 @@ const Profile = () => {
     }
 
     const getFriends = async () => {
-        const { data } = await axios.get<User[]>(`http://localhost:8080/user/friend`);
+        const {data} = await axios.get<User[]>(`http://localhost:8080/user/friend`);
         return data;
     }
 
@@ -49,7 +48,7 @@ const Profile = () => {
         friendsPromise.then((data) => {
             console.log('data => ', data[0]);
             setFriends(data);
-        } );
+        });
         console.log(friends[0]);
     };
 
@@ -63,7 +62,7 @@ const Profile = () => {
         });
     }, []);
 
-    function ShowResult(props: {p1: string, p2: string}) {
+    function ShowResult(props: { p1: string, p2: string }) {
         // console.log('winnerId', winnerId);
         if (winnerId === '1') {
             return (
@@ -71,7 +70,7 @@ const Profile = () => {
                     <div>
                         Winner
                         &nbsp;=&gt;
-                        { props.p1  }!!!
+                        {props.p1}!!!
                     </div>
                 </h2>
             );
@@ -81,15 +80,17 @@ const Profile = () => {
                 <div>
                     Winner
                     &nbsp;=&gt;
-                    {  props.p2  }!!!
+                    {props.p2}!!!
                 </div>
             </h2>
         );
     }
+
     interface MatchListProps {
         matches: Match[];
     }
-    function MatchList({ matches }: MatchListProps) {
+
+    function MatchList({matches}: MatchListProps) {
         const [selectedPlayer, setSelectedPlayer] = useState(user?.name);
         const [filteredMatches, setFilteredMatches] = useState<Match[]>([]);
 
@@ -120,7 +121,7 @@ const Profile = () => {
                             [{match.id}] {match.player1} vs {match.player2}
                         </h1>
                         <div>
-                            <ShowResult p1={match.player1} p2={match.player2} />
+                            <ShowResult p1={match.player1} p2={match.player2}/>
                         </div>
                     </div>
                 ))}
@@ -131,7 +132,8 @@ const Profile = () => {
     interface FriendProps {
         friendName: string;
     }
-    function FriendStatus({ friendName }:FriendProps) {
+
+    function FriendStatus({friendName}: FriendProps) {
         const [isOnline, setIsOnline] = useState(null);
 
         useEffect(() => {
@@ -161,13 +163,11 @@ const Profile = () => {
 
     return (
         <div>
-            <Avatar
-                sx={{ bgcolor: deepPurple[500]
-                    , width: 100
-                    , height: 100}}
+            <Avatar alt={"jack"}
+                    src={"https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg"}
             >
                 <h1>
-                {user?.name}
+                    {user?.name}
                 </h1>
             </Avatar>
             <Rating
@@ -184,7 +184,7 @@ const Profile = () => {
                 InputProps={{
                     startAdornment: (
                         <InputAdornment position="start">
-                            <AccountCircle />
+                            <AccountCircle/>
                         </InputAdornment>
                     ),
                     onChange: HandleInputID
@@ -192,29 +192,29 @@ const Profile = () => {
                 variant="standard"
             />
             <Button
-            variant="contained"
+                variant="contained"
                 onClick={handleDecideIdButton}>
                 ID決定
             </Button>
             <p></p>
             <Button
-            variant="outlined"
-            color="primary"
-            size="large"
-            onClick={HandleFriendListButton}
+                variant="outlined"
+                color="primary"
+                size="large"
+                onClick={HandleFriendListButton}
             >
                 友達リスト
             </Button>
             <h1>
-            {friends.map((friend: User) => (
-                <div key={friend.id}>
-                    {friend.name}
-                    <FriendStatus friendName={friend.name}/>
-                </div> // keyプロパティを追加
-            ))}
+                {friends.map((friend: User) => (
+                    <div key={friend.id}>
+                        {friend.name}
+                        <FriendStatus friendName={friend.name}/>
+                    </div> // keyプロパティを追加
+                ))}
             </h1>
             <h2>今までの戦績</h2>
-            <MatchList matches={matchArr} />
+            <MatchList matches={matchArr}/>
         </div>
     );
 }
