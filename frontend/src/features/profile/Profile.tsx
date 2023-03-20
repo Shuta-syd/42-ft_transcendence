@@ -1,11 +1,12 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
-import {Avatar, Button} from "@mui/material";
+import {Avatar, Button, IconButton} from "@mui/material";
 import axios from "axios";
 import Rating from '@mui/material/Rating';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import io from "socket.io-client";
+import {PhotoCamera} from "@mui/icons-material";
 import {Match, User} from "../../types/PrismaType";
 import {fetchProfileUser} from "../../hooks/profile/useProfileUser";
 import {sendFriendRequest} from "../../hooks/profile/sendFriendRequests";
@@ -160,16 +161,28 @@ const Profile = () => {
         );
     }
 
-
     return (
         <div>
-            <Avatar alt={"steve jobs"}
-                    src={"https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg"}
-                    sx={{width: 200, height: 200, margin: 2}}>
-                <h1>
-                    {user?.name}
-                </h1>
+            <Avatar
+                variant="circular"
+                color="success"
+                alt={user?.name}
+                src={"https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg"}
+                sx={{width: 200, height: 200, margin: 2}}
+            >
             </Avatar>
+            <h1>
+                {user?.name}
+            </h1>
+            <Button variant="contained" component="label">
+                Upload
+                <input hidden accept="image/*" multiple type="file"/>
+            </Button>
+            <IconButton color="primary" aria-label="upload picture" component="label">
+                <input hidden accept="image/*" type="file"/>
+                <PhotoCamera/>
+            </IconButton>
+            <p></p>
             <Rating
                 name={user?.name}
                 defaultValue={4}
