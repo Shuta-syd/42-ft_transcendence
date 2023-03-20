@@ -135,7 +135,7 @@ const Profile = () => {
     }
 
 
-    const [image] = useState("https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg");
+    const steveJobsImage = "https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg";
 
     function FriendStatus({friendName}: FriendProps) {
         const [isOnline, setIsOnline] = useState(null);
@@ -163,8 +163,11 @@ const Profile = () => {
         );
     }
 
+    const [image, setImage] = useState(steveJobsImage);
+    const elonMuskImage = "https://upload.wikimedia.org/wikipedia/commons/e/e1/Elon_Musk_%28cropped%29.jpg";
     const uploadImage = () => {
         console.log("uploadImage");
+        setImage(elonMuskImage);
     }
 
     return (
