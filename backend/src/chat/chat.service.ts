@@ -45,6 +45,7 @@ export class ChatService {
    * @description DM Roomの作成 user, friendどちらもメンバーとして追加
    */
   async crateDMRoom(
+    userName: string,
     userId: string,
     dto: CreateChatRoom,
   ): Promise<{ room: ChatRoom; isNew: boolean }> {
@@ -80,7 +81,7 @@ export class ChatService {
       data: {
         type: dto.type,
         password: dto.password,
-        name: dto.name === undefined ? 'unknown' : dto.name,
+        name: `${dto.name},${userName}`,
       },
     });
 
@@ -139,9 +140,10 @@ export class ChatService {
         where: { id: roomId },
       })
       .members();
-    const userMember = members.filter(
+    const userMember = members?.filter(
       (member: Member) => member.userId === userId,
     );
+
     return userMember[0];
   }
 

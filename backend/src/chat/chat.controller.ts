@@ -81,7 +81,7 @@ export class ChatController {
     @Req() req: Request,
     @Body() dto: CreateChatRoom,
   ): Promise<{ room: ChatRoom; isNew: boolean }> {
-    return this.chatService.crateDMRoom(req.user.id, dto);
+    return this.chatService.crateDMRoom(req.user.name, req.user.id, dto);
   }
 
   @Get('room/:roomId')
