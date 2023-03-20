@@ -1,5 +1,5 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
-import {Avatar, Button, Grid, IconButton} from "@mui/material";
+import {Avatar, Button, IconButton} from "@mui/material";
 import axios from "axios";
 import Rating from '@mui/material/Rating';
 import TextField from '@mui/material/TextField';
@@ -164,10 +164,10 @@ const Profile = () => {
     }
 
     const [image, setImage] = useState(steveJobsImage);
-    const elonMuskImage = "https://upload.wikimedia.org/wikipedia/commons/e/e1/Elon_Musk_%28cropped%29.jpg";
-    const uploadImage = () => {
-        console.log("uploadImage");
-        setImage(elonMuskImage);
+    // const elonMuskImage = "https://upload.wikimedia.org/wikipedia/commons/e/e1/Elon_Musk_%28cropped%29.jpg";
+    const uploadImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+        // @ts-ignore
+        setImage(URL.createObjectURL(event.target.files[0]));
     }
 
     return (
@@ -183,21 +183,18 @@ const Profile = () => {
             <h1>
                 {user?.name}
             </h1>
-            <Grid item xs={3}>
-                <Button
-                    variant="contained"
-                    component="label"
-                    color="success"
-                    onClick={uploadImage}
-                >
-                    Upload
-                    <input hidden accept="image/*" multiple type="file"/>
-                </Button>
-                <IconButton color="primary" aria-label="upload picture" component="label">
-                    <input hidden accept="image/*" type="file"/>
-                    <PhotoCamera/>
-                </IconButton>
-            </Grid>
+            <Button
+                variant="contained"
+                component="label"
+                color="success"
+            >
+                Upload
+                <input hidden accept="image/*" multiple type="file" onChange={event => uploadImage(event)}/>
+            </Button>
+            <IconButton color="primary" aria-label="upload picture" component="label">
+                <input hidden accept="image/*" type="file"/>
+                <PhotoCamera/>
+            </IconButton>
             <p></p>
             <Rating
                 name={user?.name}
