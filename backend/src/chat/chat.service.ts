@@ -117,7 +117,7 @@ export class ChatService {
     });
 
     // roomが見つからない場合は例外処理
-    if (!room) throw new NotFoundException('chatRoom not found');
+    if (!room) throw new NotFoundException('chat room not found');
 
     return room;
   }
@@ -151,7 +151,10 @@ export class ChatService {
       where: { id: roomId },
       include: { messages: true },
     });
-    return chatRoom?.messages;
+
+    if (chatRoom) throw new NotFoundException('chat room not found');
+
+    return chatRoom.messages;
   }
 
   /**
