@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ChatRoom, Member, Message, User } from '@prisma/client';
 import { Msg } from 'src/auth/dto/auth.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -20,7 +20,11 @@ export class ChatService {
   ) {}
 
   /**
-   * @returns 作成したChatRoomデータ
+   * === Chat Room ===
+   */
+
+  /**
+   * @description ChatRoomを作成してuserIdのユーザをMemberとして追加する
    */
   async crateChatRoom(userId: string, dto: CreateChatRoom): Promise<ChatRoom> {
     return this.prisma.chatRoom
@@ -105,46 +109,17 @@ export class ChatService {
    * @returns 取得したRoomデータ
    */
   async getChatRoomById(roomId: string): Promise<ChatRoom> {
-    return this.prisma.chatRoom.findUnique({
+    const room = await this.prisma.chatRoom.findUnique({
       where: { id: roomId },
       include: {
         members: { include: { user: true } },
       },
     });
-  }
 
-  /**
-   * @param userId APIを叩いているユーザのID
-   * @param roomId 所属するroomID
-   */
-  async getFriendNameByDMId(userId: string, roomId: string): Promise<string> {
-    const members = await this.prisma.chatRoom
-      .findUnique({
-        where: { id: roomId },
-      })
-      .members();
-    const friendMember = members.filter(
-      (member: Member) => member.userId !== userId,
-    );
-    const friend = await this.userService.getUserById(friendMember[0].userId);
-    return friend.name;
-  }
+    // roomが見つからない場合は例外処理
+    if (!room) throw new NotFoundException('chatRoom not found');
 
-  /**
-   * @param userId APIを叩いているユーザのID
-   * @param roomId 所属するroomID
-   */
-  async getMyMember(userId: string, roomId: string): Promise<Member> {
-    const members = await this.prisma.chatRoom
-      .findUnique({
-        where: { id: roomId },
-      })
-      .members();
-    const userMember = members?.filter(
-      (member: Member) => member.userId === userId,
-    );
-
-    return userMember[0];
+    return room;
   }
 
   /**
@@ -431,5 +406,42 @@ export class ChatService {
     return {
       message: 'ban the member',
     };
+  }
+
+  /**
+   * @param userId APIを叩いているユーザのID
+   * @param roomId 所属するroomID
+   */
+  async getMyMember(userId: string, roomId: string): Promise<Member> {
+    const members = await this.prisma.chatRoom
+      .findUnique({
+        where: { id: roomId },
+      })
+      .members();
+    const userMember = members?.filter(
+      (member: Member) => member.userId === userId,
+    );
+
+    return userMember[0];
+  }
+
+  /**
+   * ==== Utils ====
+   */
+  /**
+   * @param userId APIを叩いているユーザのID
+   * @param roomId 所属するroomID
+   */
+  async getFriendNameByDMId(userId: string, roomId: string): Promise<string> {
+    const members = await this.prisma.chatRoom
+      .findUnique({
+        where: { id: roomId },
+      })
+      .members();
+    const friendMember = members.filter(
+      (member: Member) => member.userId !== userId,
+    );
+    const friend = await this.userService.getUserById(friendMember[0].userId);
+    return friend.name;
   }
 }
