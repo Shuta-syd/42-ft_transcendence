@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotAcceptableException,
+  NotFoundException,
+} from '@nestjs/common';
 import { ChatRoom, Member, Message, User } from '@prisma/client';
 import { Msg } from 'src/auth/dto/auth.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -168,20 +173,26 @@ export class ChatService {
     dto: SendChatDto,
   ): Promise<Message> {
     const member = await this.getMyMember(userId, roomId);
-    if (member.isMute === true) throw new Error('You are not right');
+    if (member.isMute === true)
+      throw new NotAcceptableException('You are not right');
 
-    return this.prisma.message.create({
-      data: {
-        member: {
-          connect: { id: member.id },
+    try {
+      const message = this.prisma.message.create({
+        data: {
+          member: {
+            connect: { id: member.id },
+          },
+          room: {
+            connect: { id: roomId },
+          },
+          senderName: dto.senderName,
+          message: dto.message,
         },
-        room: {
-          connect: { id: roomId },
-        },
-        senderName: dto.senderName,
-        message: dto.message,
-      },
-    });
+      });
+      return message;
+    } catch (error) {
+      throw new BadRequestException('DTO is whether large or too small');
+    }
   }
 
   /**

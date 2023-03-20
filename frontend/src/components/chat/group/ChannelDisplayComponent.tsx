@@ -18,7 +18,7 @@ export default function ChannelDisplayComponent(props: ChannelDisplayComponentPr
   const [myMemberId, setMyMemberId] = useState<string>('');
   const [userName, setUserName] = useState('');
   const [roomName, setRoomName] = useState('');
-  const { createMessageMutation } = useMutationMessage(socket, roomId, myMemberId);
+  const { createMessageMutation } = useMutationMessage(socket, roomId);
   const [text, setText] = useState('');
   const textfieldElm = useRef<HTMLInputElement>(null);
   const router = useNavigate();
