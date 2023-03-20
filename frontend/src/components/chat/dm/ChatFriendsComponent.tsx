@@ -25,15 +25,14 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
   const roomID = useLocation().pathname.split('/')[3];
   const [prevRoomId, setPrevRoomId] = useState<string>();
 
-  const getFriendNameFromRoomName = (user: string, room: string): string => {
+  const getFriendNameFromRoomName = (room: string): string => {
     let friendName: string = '';
 
     const names = room.split(',');
-    console.log(names)
-    console.log(user);
     names.map((name) => {
-      if (name !== user)
+      if (name !== userName) {
         friendName = name;
+      }
     })
     return friendName;
   }
@@ -49,8 +48,12 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
   };
 
   useEffect(() => {
-    getUserDM().then((data) => { setDMRooms(data); })
-  }, [])
+    getUserDM().then((data) => {
+      setDMRooms([]);
+      data.map((room => setDMRooms((prev: any) => [...prev, { id: room.id, name: getFriendNameFromRoomName(room.name) }]))
+      )
+    })
+  }, [userName])
 
   useEffect(() => {
     socket.on('join_chat_room', () => { });
@@ -84,7 +87,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
               </Grid>
               <Grid item>
                 <Typography variant="subtitle1">
-                  {getFriendNameFromRoomName(userName, room.name)}
+                  {room.name}
                 </Typography>
               </Grid>
               {isLeave ? (
