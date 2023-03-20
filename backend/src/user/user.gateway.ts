@@ -21,10 +21,10 @@ export class UserGateway {
     this.server.emit('friendStatus', status);
   }
 
-  @SubscribeMessage('AssignOnline')
-  assignOnline(client: any, name: string): void {
-    OnlineUsers[client.id] = name;
-  }
+  // @SubscribeMessage('AssignOnline')
+  // assignOnline(client: any, name: string): void {
+  // }
+
   handleDisconnect(socket: any) {
     // 接続が切断されたときの処理
     delete OnlineUsers[socket.id];
@@ -35,7 +35,19 @@ export class UserGateway {
   }
 
   handleConnection(client: Socket, ...args: any[]) {
-    //クライアント接続時
+    // 接続時
+
+    const query = client.handshake.query;
+    // クエリパラメータから特定のパラメータを取得
+    const exampleParam = query.exampleParam;
+    const name = Array.isArray(client.handshake.query.name)
+      ? client.handshake.query.name[0]
+      : client.handshake.query.name;
+    if (!name) {
+      return;
+    }
+    OnlineUsers[client.id] = name;
+    console.log('connected', name);
   }
 }
 
