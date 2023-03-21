@@ -1,0 +1,20 @@
+.NavbarActive {
+  background-color: #B5D3D5;
+  border-right: 1rem;
+}
+
+.NavbarButton {
+  color: #B2B9C5;
+}
+
+.NavbarButtonActive {
+  color: #1f9f88;
+}
+
+.NavbarButtonParent {
+  width: 6rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}

@@ -5,7 +5,7 @@ import { Socket } from "socket.io-client";
 import { Message } from "../../types/PrismaType";
 import getNow from "../../utils/getNow";
 
-function useMutationMessage(socket: Socket, roomId: string) {
+function useMutationMessage(socket: Socket, roomId: string, memberId: string) {
   const queryClient = useQueryClient();
   const router = useNavigate();
 
@@ -21,7 +21,7 @@ function useMutationMessage(socket: Socket, roomId: string) {
     },
     {
       onSuccess: (res) => {
-        socket.emit('send_message_room', { senderName: res.senderName, text: res.message, time: getNow(), id: roomId })
+        socket.emit('send_message_room', { memberId: res.memberId, senderName: res.senderName, text: res.message, time: getNow(), id: roomId })
 
         const previousData = queryClient.getQueryData<Message[]>([`chatRoom${String(roomId)}`]);
         if (previousData)
