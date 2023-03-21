@@ -8,7 +8,7 @@ function Channel() {
   return (
     <>
       <QueryClientProvider client={queryClient}>
-          <Outlet />
+        <Outlet />
       </QueryClientProvider>
     </>
   )

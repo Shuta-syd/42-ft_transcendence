@@ -4,8 +4,8 @@ import { Link, useLocation } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
 import axios from "axios";
-import useQueryFriend from "../../hooks/user/useQueryFriend";
-import '../../styles/Chat.css'
+import useQueryFriend from "../../../hooks/user/useQueryFriend";
+import '../../../styles/Chat.css'
 
 type FriendPayload = {
   id: string;
@@ -92,21 +92,33 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
       {friends?.map((friend, idx) => (
         <Link to={`/chat/room/${friend.id}`} onClick={() => handleClick(friend.id)} className={'FriendLink'} key={idx}>
           {friend.id === roomID ? (
-            <Grid container padding={1} className={'FriendListActive'}>
-              <Grid item mr={2}>
+            <Grid
+              container height={'7vh'}
+              sx={{ display: 'flex', alignItems: 'center' }}
+              className={'FriendListActive'}
+            >
+              <Grid item mr={2} ml={3}>
                 <Avatar ><PersonIcon /></Avatar>
               </Grid>
               <Grid item>
-                <Typography variant="subtitle1" sx={{fontWeight: 700}} >{friend.name}</Typography>
+                <Typography variant="subtitle1">
+                  {friend.name}
+                </Typography>
               </Grid>
             </Grid>
           ) : (
-            <Grid container padding={1} className={'FriendList'}>
-              <Grid item mr={2}>
+            <Grid
+            container height={'7vh'}
+            sx={{ display: 'flex', alignItems: 'center' }}
+            className={'FriendList'}
+            >
+              <Grid item mr={2} ml={3}>
                 <Avatar ><PersonIcon /></Avatar>
               </Grid>
               <Grid item>
-              <Typography variant="subtitle1" sx={{fontWeight: 700}} >{friend.name}</Typography>
+              <Typography variant="subtitle1">
+                {friend.name}
+              </Typography>
               </Grid>
             </Grid>
           )}
