@@ -6,18 +6,21 @@ import { Link, useLocation } from "react-router-dom";
 import { Socket } from "socket.io-client";
 import { ChatRoom } from "../../../types/PrismaType";
 import '../../../styles/Chat.css'
+import LeaveButton from "../utils/LeaveButton";
 
 type ChannelListComponentProps = {
   socket: Socket;
   channels: any;
   setChannels: any; // useState setter
+  isLeave: boolean;
 }
 
 /**
  * @returns Message送信可能なChannel一覧を表示するコンポーネント
  */
 export default function ChannelListComponent(props: ChannelListComponentProps) {
-  const { socket, channels, setChannels } = props;
+  // eslint-disable-next-line no-unused-vars
+  const { socket, channels, setChannels, isLeave } = props;
   const roomID = useLocation().pathname.split('/')[3];
 
   const getChannels = async (): Promise<ChatRoom[]> => {
@@ -65,6 +68,11 @@ export default function ChannelListComponent(props: ChannelListComponentProps) {
                 {room.name}
               </Typography>
             </Grid>
+            {isLeave ? (
+              <Grid item>
+                <LeaveButton roomId={room.id} setChannels={setChannels} channels={channels} />
+              </Grid>
+            ) : (<></>)}
           </Grid>
         ) : (
           <Grid
@@ -80,6 +88,11 @@ export default function ChannelListComponent(props: ChannelListComponentProps) {
               {room.name}
             </Typography>
           </Grid>
+          {isLeave ? (
+              <Grid item>
+              <LeaveButton roomId={room.id} setChannels={setChannels} channels={channels}/>
+              </Grid>
+            ) : (<></>)}
         </Grid>
         )}
       </Link>

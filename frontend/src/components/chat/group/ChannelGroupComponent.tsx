@@ -6,6 +6,7 @@ import { ChatRoom } from "../../../types/PrismaType";
 import ChannelListComponent from "./ChannelListComponent";
 import ChannelMoreOption from "./ChannelMoreOption";
 import '../../../styles/Chat.css';
+import OptionOpenButton from "../utils/OptionOpenButton";
 
 type ChannelGroupComponentProps = {
   socket: Socket;
@@ -17,6 +18,7 @@ type ChannelGroupComponentProps = {
 export default function ChannelGroupComponent(props: ChannelGroupComponentProps) {
   const { socket } = props;
   const [channels, setChannels] = useState<ChatRoom[]>([]);
+  const [openLeaveButton, setOpenLeaveButton] = useState<boolean>(false);
 
   return (
     <>
@@ -74,11 +76,14 @@ export default function ChannelGroupComponent(props: ChannelGroupComponentProps)
               </Typography>
             </Grid>
             <Grid item>
-              <ChannelMoreOption setChannels={setChannels} />
+              <Box display={'flex'}>
+                <ChannelMoreOption setChannels={setChannels} />
+                <OptionOpenButton open={openLeaveButton} setOpen={setOpenLeaveButton} />
+              </Box>
             </Grid>
           </Grid>
           <Box width={'90%'}>
-            <ChannelListComponent socket={socket} setChannels={setChannels} channels={channels} />
+            <ChannelListComponent socket={socket} setChannels={setChannels} channels={channels} isLeave={openLeaveButton} />
           </Box>
         </Grid>
       </Grid>

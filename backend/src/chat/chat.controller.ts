@@ -29,6 +29,7 @@ import {
   CreateChatRoom,
   SendChatDto,
   MemberDto,
+  LeaveMemberDto,
 } from './dto/chat.dto';
 
 @Controller('chat')
@@ -204,5 +205,17 @@ export class ChatController {
     @Body() dto: MemberDto,
   ): Promise<Msg> {
     return this.chatService.banUserOnChatRoom(req.user.id, dto);
+  }
+
+  @Delete('channel/member/leave')
+  @ApiOperation({
+    description: 'the user leave the room',
+    summary: 'the user leave the room',
+  })
+  async leaveChatRoom(
+    @Req() req: Request,
+    @Body() dto: LeaveMemberDto,
+  ): Promise<Msg> {
+    return this.chatService.leaveChatRoom(req.user.id, dto);
   }
 }

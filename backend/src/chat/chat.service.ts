@@ -7,6 +7,7 @@ import {
   AddMemberDto,
   ChatRoomPayload,
   CreateChatRoom,
+  LeaveMemberDto,
   MemberDto,
   MuteMemberDto,
   SendChatDto,
@@ -289,6 +290,26 @@ export class ChatService {
 
     return {
       message: 'Kick the member',
+    };
+  }
+
+  /**
+   * @description 自ユーザがChatRoomから離脱する
+   */
+  async leaveChatRoom(userId: string, dto: LeaveMemberDto): Promise<Msg> {
+    const { roomId } = dto;
+    const member = await this.getMyMember(userId, roomId);
+
+    await this.prisma.message.deleteMany({
+      where: { memberId: member.id },
+    });
+
+    await this.prisma.member.delete({
+      where: { id: member.id },
+    });
+
+    return {
+      message: 'leave the room',
     };
   }
 
