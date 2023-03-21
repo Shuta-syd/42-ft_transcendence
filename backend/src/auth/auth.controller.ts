@@ -5,7 +5,9 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Req,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
@@ -14,6 +16,8 @@ import { PrismaUser } from 'src/swagger/type';
 import { SignUpUserDto } from 'src/user/dto/user.dto';
 import { AuthService } from './auth.service';
 import { AuthDto, Msg } from './dto/auth.dto';
+import { Request } from 'express';
+import { FtGuard } from './guards/ft.guard';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -54,6 +58,30 @@ export class AuthController {
     return {
       message: 'Login Success',
     };
+  }
+
+  @Get('login/42')
+  @UseGuards(FtGuard)
+  login42() {
+    return 'login42auth';
+  }
+
+  @Get('login/42/callback')
+  @UseGuards(FtGuard)
+  async ftCallback(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const username = req.user.name;
+    const userId = req.user.id;
+    const jwt = await this.authService.generateJwt(userId, username);
+    res.cookie('access_token', jwt.accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
+    res.redirect('http://localhost:3000/');
   }
 
   @Post('logout')
