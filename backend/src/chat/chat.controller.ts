@@ -218,4 +218,12 @@ export class ChatController {
   ): Promise<Msg> {
     return this.chatService.leaveChatRoom(req.user.id, dto);
   }
+
+  @Patch('channel/role')
+  async updateMemberRole(
+    @Req() req: Request,
+    @Body() dto: MemberDto,
+  ): Promise<Msg> {
+    return this.chatService.updateMemberRole(req.user.id, dto);
+  }
 }
