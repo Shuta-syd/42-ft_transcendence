@@ -57,7 +57,6 @@ export default function UserParticipantList(props: UserParticipantListProps) {
     loadMember();
   }, [roomId, userId]);
 
-
   return (
     <>
       {members.map((member, idx) => (
