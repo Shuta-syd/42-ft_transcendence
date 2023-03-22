@@ -21,10 +21,6 @@ export class UserGateway {
     this.server.emit('friendStatus', status);
   }
 
-  @SubscribeMessage('AssignOnline')
-  assignOnline(client: any, name: string): void {
-    OnlineUsers[client.id] = name;
-  }
   handleDisconnect(socket: any) {
     // 接続が切断されたときの処理
     delete OnlineUsers[socket.id];
@@ -40,9 +36,11 @@ export class UserGateway {
 }
 
 function getFriendStatus(friendId: string): boolean {
-  if (OnlineUsers[friendId]) {
-    return true;
-  } else {
-    return false;
-  }
+  // if (OnlineUsers[friendId]) {
+  //   return true;
+  // } else {
+  //   return false;
+  // }
+  // これから追加
+  return Math.random() < 0.5;
 }

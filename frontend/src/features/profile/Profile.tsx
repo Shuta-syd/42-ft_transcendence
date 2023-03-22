@@ -22,7 +22,6 @@ const Profile = () => {
     const UserPromises = fetchProfileUser();
     useEffect(() => {
         UserPromises.then((userDto: User) => {
-            socket.emit('AssignOnline', userDto.name);
             setUser(userDto);
         });
     }, []);
