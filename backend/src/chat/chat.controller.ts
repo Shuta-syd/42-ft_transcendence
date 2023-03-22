@@ -182,7 +182,7 @@ export class ChatController {
     return this.chatService.searchChannel(req.user.id, name);
   }
 
-  @Patch('channel/mute')
+  @Patch('channel/member/mute')
   @ApiOperation({
     description: 'admin or owner mute the member',
     summary: 'admin or owner mute the member',
@@ -196,10 +196,7 @@ export class ChatController {
     description: 'admin or owner kick the member',
     summary: 'admin or owner kick the member',
   })
-  async deleteMember(
-    @Req() req: Request,
-    @Body() dto: MemberDto,
-  ): Promise<Msg> {
+  async deleteMember(@Req() req: Request, @Body() dto: MemberDto) {
     return this.chatService.deleteMember(req.user.id, dto);
   }
 

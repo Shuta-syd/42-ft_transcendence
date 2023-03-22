@@ -354,14 +354,12 @@ export class ChatService {
   /**
    * @description 特定のメンバーをルームから削除する（KICK同様）（Owner or Adminのみ）
    */
-  async deleteMember(userId: string, dto: MemberDto): Promise<Msg> {
+  async deleteMember(userId: string, dto: MemberDto) {
     const { roomId, memberId } = dto;
     const executor = await this.getMyMember(userId, roomId);
-    if (executor.role !== 'OWNER' && executor.role !== 'ADMIN') {
-      return {
-        message: 'You are not Admin or Owner',
-      };
-    }
+    if (!executor) throw new NotFoundException('executor is not found');
+    if (executor.role !== 'OWNER' && executor.role !== 'ADMIN')
+      throw new ForbiddenException('You could not mute');
 
     await this.prisma.message.deleteMany({
       where: { memberId },
@@ -370,10 +368,6 @@ export class ChatService {
     await this.prisma.member.delete({
       where: { id: memberId },
     });
-
-    return {
-      message: 'Kick the member',
-    };
   }
 
   /**
