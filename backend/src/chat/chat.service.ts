@@ -398,8 +398,13 @@ export class ChatService {
       .members();
 
     if (members.length === 0) {
-      this.prisma.chatRoom.delete({
-        where: { id: member.id },
+      await this.prisma.message.deleteMany({
+        where: {
+          roomId: dto.roomId,
+        },
+      });
+      await this.prisma.chatRoom.delete({
+        where: { id: dto.roomId },
       });
     }
   }
