@@ -1,9 +1,9 @@
 import { Box, Grid, Typography } from "@mui/material";
 import axios from "axios";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
 import { Socket } from "socket.io-client";
 import useMutationMessage from "../../../hooks/chat/useMutationMessage";
+import { ChatRoom } from "../../../types/PrismaType";
 import getUserName from "../../../utils/getUserName";
 import TextFieldComponent from "../../utils/TextFieldComponent";
 import ChatlogComponent from "../utils/ChatlogComponent";
@@ -12,10 +12,12 @@ import ChannelEditDialog from "./ChannelEditDialog";
 type ChannelDisplayComponentProps = {
   socket: Socket;
   roomId: string;
+  setChannels: any;
+  channels: any;
 }
 
 export default function ChannelDisplayComponent(props: ChannelDisplayComponentProps) {
-  const { roomId, socket } = props;
+  const { roomId, socket, setChannels, channels } = props;
   const [myUserId, setMyUserId] = useState<string>('');
   const [userName, setUserName] = useState('');
   const [myRole, setMyRole] = useState<string>('');
@@ -23,18 +25,7 @@ export default function ChannelDisplayComponent(props: ChannelDisplayComponentPr
   const { createMessageMutation } = useMutationMessage(socket, roomId, false);
   const [text, setText] = useState('');
   const textfieldElm = useRef<HTMLInputElement>(null);
-  const router = useNavigate();
 
-  const getRoomName = useCallback(async (): Promise<string> => {
-    try {
-      const res = await axios.get(`http://localhost:8080/chat/room/${roomId}`);
-      return res.data.name;
-    } catch (error) {
-      alert('チャットルームが見つかりませんでした');
-      router('/channel/room');
-    }
-    return '';
-  }, [roomId])
 
   useEffect(() => {
     const getUserId = async () => {
@@ -47,10 +38,15 @@ export default function ChannelDisplayComponent(props: ChannelDisplayComponentPr
       setMyRole(member.role);
     }
 
+    channels.map((room: ChatRoom) => {
+      if (room.id === roomId) {
+        setRoomName(room.name);
+      }
+    })
+
     getUserId();
     getMyRole();
     getUserName().then((name) => { setUserName(name); });
-    getRoomName().then((name) => { setRoomName(name); })
   }, [roomId])
 
 
@@ -95,7 +91,7 @@ export default function ChannelDisplayComponent(props: ChannelDisplayComponentPr
             <Grid item>
               {myRole === 'OWNER' ? (
                 <>
-                  <ChannelEditDialog roomId={roomId} />
+                  <ChannelEditDialog roomId={roomId} setChannels={setChannels} channels={channels} />
                 </>
               ) : (<></>)}
             </Grid>

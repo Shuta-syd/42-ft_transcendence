@@ -12,8 +12,14 @@ type CreateChannelDto = {
   password?: string;
 }
 
-export default function ChannelEditDialog(props: { roomId: string }) {
-  const { roomId } = props;
+type ChannelEditDialogProps = {
+  roomId: string;
+  setChannels: any
+  channels: any;
+}
+
+export default function ChannelEditDialog(props: ChannelEditDialogProps) {
+  const { roomId, setChannels, channels } = props;
   const [settingOpen, setSettingOpen] = useState<boolean>(false);
   const [name, setName] = useState<string>('');
   const [type, setType] = useState<string>('PUBLIC');
@@ -38,9 +44,20 @@ export default function ChannelEditDialog(props: { roomId: string }) {
   }, [roomId]);
 
   const onSubmit: SubmitHandler<CreateChannelDto> = async (data) => {
-    await axios.patch(`http://localhost:8080/chat/channel/${roomId}`, { type: data.type, name: data.name, password: data.password })
-    reset();
-    setSettingOpen(false);
+    try {
+      await axios.patch(`http://localhost:8080/chat/channel/${roomId}`, { type: data.type, name: data.name, password: data.password })
+      reset();
+      setSettingOpen(false);
+      const updatedChannels = channels.map((room: any) => {
+        if (room.id === roomId) {
+          return { ...room, name: data.name };
+        }
+        return room;
+    });
+    setChannels(updatedChannels);
+    } catch (error) {
+      alert('チャンネルの変更に失敗しました');
+    }
   }
 
   const handleOnClick = () => {
