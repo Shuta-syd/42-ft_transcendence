@@ -19,11 +19,9 @@ export default function ChatComponent() {
 
   useEffect(() => {
     socket.on('connect', () => {
-      console.log(`Connect: ${socket.id}`);
     });
 
     return () => {
-      console.log(`Disconnect: ${socket.id}`);
       socket.disconnect();
     }
   }, [socket])
