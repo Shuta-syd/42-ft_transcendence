@@ -7,6 +7,7 @@ import useMutationMessage from "../../../hooks/chat/useMutationMessage";
 import getUserName from "../../../utils/getUserName";
 import TextFieldComponent from "../../utils/TextFieldComponent";
 import ChatlogComponent from "../utils/ChatlogComponent";
+import ChannelEditDialog from "./ChannelEditDialog";
 
 type ChannelDisplayComponentProps = {
   socket: Socket;
@@ -17,6 +18,7 @@ export default function ChannelDisplayComponent(props: ChannelDisplayComponentPr
   const { roomId, socket } = props;
   const [myUserId, setMyUserId] = useState<string>('');
   const [userName, setUserName] = useState('');
+  const [myRole, setMyRole] = useState<string>('');
   const [roomName, setRoomName] = useState('');
   const { createMessageMutation } = useMutationMessage(socket, roomId, false);
   const [text, setText] = useState('');
@@ -40,7 +42,13 @@ export default function ChannelDisplayComponent(props: ChannelDisplayComponentPr
       setMyUserId(myUser.id);
     }
 
+    const getMyRole = async () => {
+      const { data: member } = await axios.get(`http://localhost:8080/chat/${roomId}/myMember`);
+      setMyRole(member.role);
+    }
+
     getUserId();
+    getMyRole();
     getUserName().then((name) => { setUserName(name); });
     getRoomName().then((name) => { setRoomName(name); })
   }, [roomId])
@@ -74,13 +82,24 @@ export default function ChannelDisplayComponent(props: ChannelDisplayComponentPr
           textAlign={'left'}
           sx={{ display: 'flex', alignItems: 'center' }}
         >
-          <Typography
-            variant="h6"
-            mt={1} ml={2}
-            sx={{ color: '#3C444B' }}
-          >
-            @{roomName}
-          </Typography>
+          <Grid container justifyContent={'space-between'}>
+            <Grid item>
+              <Typography
+                variant="h6"
+                mt={1} ml={2}
+                sx={{ color: '#3C444B' }}
+              >
+                @{roomName}
+              </Typography>
+            </Grid>
+            <Grid item>
+              {myRole === 'OWNER' ? (
+                <>
+                  <ChannelEditDialog roomId={roomId} />
+                </>
+              ) : (<></>)}
+            </Grid>
+          </Grid>
         </Box>
       </Grid>
       <Box
