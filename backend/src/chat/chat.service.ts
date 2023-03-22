@@ -373,9 +373,10 @@ export class ChatService {
   /**
    * @description 自ユーザがChatRoomから離脱する
    */
-  async leaveChatRoom(userId: string, dto: LeaveMemberDto): Promise<Msg> {
+  async leaveChatRoom(userId: string, dto: LeaveMemberDto) {
     const { roomId } = dto;
     const member = await this.getMyMember(userId, roomId);
+    if (!member) throw new NotFoundException('member not found');
 
     await this.prisma.message.deleteMany({
       where: { memberId: member.id },
@@ -384,10 +385,6 @@ export class ChatService {
     await this.prisma.member.delete({
       where: { id: member.id },
     });
-
-    return {
-      message: 'leave the room',
-    };
   }
 
   /**

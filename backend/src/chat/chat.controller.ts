@@ -217,10 +217,7 @@ export class ChatController {
     description: 'the user leave the room',
     summary: 'the user leave the room',
   })
-  async leaveChatRoom(
-    @Req() req: Request,
-    @Body() dto: LeaveMemberDto,
-  ): Promise<Msg> {
+  async leaveChatRoom(@Req() req: Request, @Body() dto: LeaveMemberDto) {
     return this.chatService.leaveChatRoom(req.user.id, dto);
   }
 
