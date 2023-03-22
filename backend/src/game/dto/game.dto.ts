@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import {AbstractInstanceResolver} from "@nestjs/core/injector/abstract-instance-resolver";
 
 export class assignPlayerReq {
   @ApiProperty()
@@ -25,7 +26,6 @@ export class assignGuestDto {
 
 export class Terminate {
   @ApiProperty()
-  player1: string;
+  player: string;
   isInviteGame: boolean;
-  roomId: string;
 }
