@@ -414,6 +414,9 @@ export class ChatService {
         where: { id: roomId },
       })
       .members();
+
+    if (!members) throw new NotFoundException("Members aren't be found");
+
     const userMember = members?.filter(
       (member: Member) => member.userId === userId,
     );
