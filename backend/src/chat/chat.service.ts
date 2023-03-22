@@ -309,9 +309,9 @@ export class ChatService {
       throw new ForbiddenException("You couldn't enter the room");
 
     const room = await this.getChatRoomById(dto.roomId);
-    if (room.type === 'PROTECT' && dto.password !== room.password)
+    if (!room) throw new NotFoundException('chat room is not found');
+    else if (room.type === 'PROTECT' && dto.password !== room.password)
       throw new UnauthorizedException('Password is wrong');
-    else if (!room) throw new NotFoundException('chat room is not found');
 
     return this.prisma.member.create({
       data: {
@@ -336,23 +336,19 @@ export class ChatService {
   /**
    * @description 特定のメンバーをMuteもしくはunMuteにする（Owner or Adminのみ）
    */
-  async muteMember(userId: string, dto: MuteMemberDto): Promise<Msg> {
+  async muteMember(userId: string, dto: MuteMemberDto) {
     const { roomId, memberId, isMute } = dto;
     const executor = await this.getMyMember(userId, roomId);
-    if (executor.role !== 'OWNER' && executor.role !== 'ADMIN') {
-      return {
-        message: 'You are not Admin or Owner',
-      };
-    }
+    if (!executor) throw new NotFoundException('executor is not found');
+    if (executor.role !== 'OWNER' && executor.role !== 'ADMIN')
+      throw new ForbiddenException('You could not mute');
 
-    await this.prisma.member.update({
+    const member = await this.prisma.member.update({
       where: { id: memberId },
       data: { isMute: isMute === true ? true : false },
     });
 
-    return {
-      message: 'Mute status update',
-    };
+    if (!member) throw new Error('mutation exception error');
   }
 
   /**

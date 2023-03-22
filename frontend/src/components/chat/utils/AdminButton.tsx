@@ -39,15 +39,14 @@ export default function AdminButton(props: AdminButtonProps) {
 
   const handleMute = async (memberId: string, isMute: boolean) => {
     try {
-      const res = await axios.patch(`http://localhost:8080/chat/channel/mute`, { roomId, memberId, status: !isMute });
+      await axios.patch(`http://localhost:8080/chat/channel/mute`, { roomId, memberId, status: !isMute });
       setMembers((prev: any[]) => prev.map((val: { id: string; }) => {
         if (val.id === memberId)
           return { ...val, isMute: !isMute };
         return val;
       }))
-      console.log(res.data);
     } catch (error) {
-      console.log(error)
+      alert('権限がないもしくはミュートに失敗しました');
     }
   }
 

@@ -187,10 +187,7 @@ export class ChatController {
     description: 'admin or owner mute the member',
     summary: 'admin or owner mute the member',
   })
-  async muteMember(
-    @Req() req: Request,
-    @Body() dto: MuteMemberDto,
-  ): Promise<Msg> {
+  async muteMember(@Req() req: Request, @Body() dto: MuteMemberDto) {
     return this.chatService.muteMember(req.user.id, dto);
   }
 
