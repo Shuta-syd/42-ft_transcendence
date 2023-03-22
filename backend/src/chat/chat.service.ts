@@ -4,6 +4,7 @@ import {
   Injectable,
   NotAcceptableException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { ChatRoom, Member, Message, User } from '@prisma/client';
 import { Msg } from 'src/auth/dto/auth.dto';
@@ -304,11 +305,13 @@ export class ChatService {
       .banned();
 
     const isBan = banedList.filter((val) => val.roomId === dto.roomId);
-    if (isBan.length !== 0) throw new Error("You couldn't enter the room");
+    if (isBan.length !== 0)
+      throw new ForbiddenException("You couldn't enter the room");
 
     const room = await this.getChatRoomById(dto.roomId);
     if (room.type === 'PROTECT' && dto.password !== room.password)
-      throw new Error('Password is wrong');
+      throw new UnauthorizedException('Password is wrong');
+    else if (!room) throw new NotFoundException('chat room is not found');
 
     return this.prisma.member.create({
       data: {
