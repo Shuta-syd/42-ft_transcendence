@@ -27,12 +27,11 @@ export default function AdminButton(props: AdminButtonProps) {
 
   const handleBan = async (memberId: string) => {
     try {
-      const res = await axios.post(`http://localhost:8080/chat/channel/member/ban`, { roomId, memberId });
+      await axios.post(`http://localhost:8080/chat/channel/member/ban`, { roomId, memberId });
       const newMembers = members.filter((val: { id: string; }) => val.id !== memberId);
       setMembers(newMembers);
-      console.log(res.data);
     } catch (error) {
-      console.log(error);
+      alert('権限がないもしくは他の理由でBANに失敗しました')
     }
   }
 

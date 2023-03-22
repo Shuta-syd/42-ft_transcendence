@@ -205,10 +205,7 @@ export class ChatController {
     description: 'admin or owner ban the user',
     summary: 'admin or owner ban the user',
   })
-  async banUserOnChatRoom(
-    @Req() req: Request,
-    @Body() dto: MemberDto,
-  ): Promise<Msg> {
+  async banUserOnChatRoom(@Req() req: Request, @Body() dto: MemberDto) {
     return this.chatService.banUserOnChatRoom(req.user.id, dto);
   }
 

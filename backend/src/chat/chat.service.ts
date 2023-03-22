@@ -390,10 +390,11 @@ export class ChatService {
   /**
    * @description 特定のユーザを出禁にする
    */
-  async banUserOnChatRoom(userId: string, dto: MemberDto): Promise<Msg> {
+  async banUserOnChatRoom(userId: string, dto: MemberDto) {
     const { roomId, memberId } = dto;
 
     const user = await this.getUserByMemberId(memberId);
+    if (!user) throw new NotFoundException('member not found');
     await this.deleteMember(userId, dto);
     await this.prisma.banUserOnChatRoom.create({
       data: {
@@ -401,10 +402,6 @@ export class ChatService {
         roomId: roomId,
       },
     });
-
-    return {
-      message: 'ban the member',
-    };
   }
 
   /**

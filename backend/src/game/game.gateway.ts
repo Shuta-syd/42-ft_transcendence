@@ -168,7 +168,7 @@ export class GameGateway {
 
   // 接続が切断されたときの処理
   handleDisconnect(socket: any) {
-    console.log(`game Client disconnected: ${socket.id}`);
+    // console.log(`game Client disconnected: ${socket.id}`);
     // ルームからユーザーを削除します
     Object.keys(this.rooms).forEach((room) => {
       this.rooms[room] = this.rooms[room].filter((id) => id !== socket.id);
@@ -184,6 +184,6 @@ export class GameGateway {
 
   handleConnection(client: Socket, ...args: any[]) {
     //クライアント接続時
-    this.logger.log(`Client connected: ${client.id}`);
+    // this.logger.log(`Client connected: ${client.id}`);
   }
 }
