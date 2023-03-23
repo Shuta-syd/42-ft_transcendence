@@ -17,52 +17,48 @@ export default function AdminButton(props: AdminButtonProps) {
 
   const handleKick = async (memberId: string) => {
     try {
-      const res = await axios.delete(`http://localhost:8080/chat/channel/member/kick`, { data: { roomId, memberId} })
+      await axios.delete(`http://localhost:8080/chat/channel/member/kick`, { data: { roomId, memberId} })
       const newMembers = members.filter((val: { id: string; }) => val.id !== memberId);
       setMembers(newMembers);
-      console.log(res.data);
     } catch (error) {
-      console.log(error);
+      alert('権限がないもしくは他の理由でKICKに失敗しました');
     }
   }
 
   const handleBan = async (memberId: string) => {
     try {
-      const res = await axios.post(`http://localhost:8080/chat/channel/member/ban`, { roomId, memberId });
+      await axios.post(`http://localhost:8080/chat/channel/member/ban`, { roomId, memberId });
       const newMembers = members.filter((val: { id: string; }) => val.id !== memberId);
       setMembers(newMembers);
-      console.log(res.data);
     } catch (error) {
-      console.log(error);
+      alert('権限がないもしくは他の理由でBANに失敗しました')
     }
   }
 
   const handleMute = async (memberId: string, isMute: boolean) => {
     try {
-      const res = await axios.patch(`http://localhost:8080/chat/channel/mute`, { roomId, memberId, status: !isMute });
+      await axios.patch(`http://localhost:8080/chat/channel/member/mute`, { roomId, memberId, status: !isMute });
       setMembers((prev: any[]) => prev.map((val: { id: string; }) => {
         if (val.id === memberId)
           return { ...val, isMute: !isMute };
         return val;
       }))
-      console.log(res.data);
     } catch (error) {
-      console.log(error)
+      alert('権限がないもしくは他の理由でミュートに失敗しました');
     }
   }
 
   const handleGiveAdmin = async (memberId: string) => {
     try {
-      const { data } = await axios.patch(`http://localhost:8080/chat/channel/role`, { roomId, memberId });
+      await axios.patch(`http://localhost:8080/chat/channel/role`, { roomId, memberId });
       setMembers((prev: any[]) => prev.map((val: { id: string; role: string; }) => {
         if (val.id === memberId) {
           return val.role === 'ADMIN' ? { ...val, role: 'NORMAL' } : { ...val, role: 'ADMIN' };
         }
         return val;
       }))
-      console.log(data);
     } catch (error) {
-      console.log(error);
+      alert('権限がないもしくはすでにオーナーです');
     }
   }
 

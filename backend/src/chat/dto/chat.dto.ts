@@ -19,6 +19,7 @@ export class CreateChatRoom {
   type: RoomType;
   name: string;
   password?: string;
+  friendId?: string;
 }
 
 export class MuteMemberDto {
