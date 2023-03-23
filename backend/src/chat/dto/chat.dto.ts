@@ -40,6 +40,7 @@ export class MemberDto {
 export type ChatPayload = {
   time: string;
   senderName: string;
+  senderUserId: string;
   text: string;
   id: string;
 };

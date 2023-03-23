@@ -28,7 +28,6 @@ export default function ChannelDisplayComponent(props: ChannelDisplayComponentPr
 
   useEffect(() => {
     socket.on('updateChannelInfo', (dto: { id: string, name: string }) => {
-    console.log('update channel info')
       const tmpChannels = [...channels];
       const idx = tmpChannels.findIndex((channel: any) => channel.id === dto.id);
       if (idx !== -1) {
@@ -108,7 +107,7 @@ export default function ChannelDisplayComponent(props: ChannelDisplayComponentPr
             <Grid item>
               {myRole === 'OWNER' ? (
                 <>
-                  <ChannelEditDialog roomId={roomId} setChannels={setChannels} channels={channels} socket={socket} />
+                  <ChannelEditDialog roomId={roomId} channels={channels} socket={socket} />
                 </>
               ) : (<></>)}
             </Grid>
