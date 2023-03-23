@@ -26,6 +26,14 @@ export default function ChannelDisplayComponent(props: ChannelDisplayComponentPr
   const [text, setText] = useState('');
   const textfieldElm = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    channels.map((room: ChatRoom) => {
+      if (room.id === roomId) {
+        setRoomName(room.name); // すでルームに入っている時にリロードするとsetされないからuseLocation使うのがいいかも
+      }
+    })
+  }, [channels, roomId])
+
 
   useEffect(() => {
     const getUserId = async () => {
@@ -37,12 +45,6 @@ export default function ChannelDisplayComponent(props: ChannelDisplayComponentPr
       const { data: member } = await axios.get(`http://localhost:8080/chat/${roomId}/myMember`);
       setMyRole(member.role);
     }
-
-    channels.map((room: ChatRoom) => {
-      if (room.id === roomId) {
-        setRoomName(room.name);
-      }
-    })
 
     getUserId();
     getMyRole();
