@@ -72,7 +72,7 @@ export class ChatGateway
   updateChannelInfo(
     @MessageBody() payload: { id: string; name: string },
     @ConnectedSocket() client: Socket,
-    ) {
+  ) {
     this.server.emit('updateChannelInfo', {
       id: payload.id,
       name: payload.name,
