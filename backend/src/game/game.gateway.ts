@@ -171,7 +171,7 @@ export class GameGateway {
     @MessageBody() name: string,
     @ConnectedSocket() client: Socket,
   ): void {
-    const dto: Terminate = { isInviteGame: false, player: '' };
+    const dto = { isInviteGame: false, player: '' };
     console.log('hoge');
     if (NameToInviteRoomIdDic[name]) {
       console.log('invite');
@@ -185,7 +185,7 @@ export class GameGateway {
       console.log('rerurn');
       return;
     }
-    this.gameService.terminateGame(dto);
+    // this.gameService.terminateGame(dto);
   }
 
   // 接続が切断されたときの処理
