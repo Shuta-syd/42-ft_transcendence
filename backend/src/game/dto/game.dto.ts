@@ -25,7 +25,6 @@ export class assignGuestDto {
 
 export class Terminate {
   @ApiProperty()
-  player1: string;
+  player: string;
   isInviteGame: boolean;
-  roomId: string;
 }

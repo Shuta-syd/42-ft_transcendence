@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { User, InviteGame } from "../../types/PrismaType";
 import { GameInviteRoomReq, useGameUser } from "../../hooks/game/useGameuser";
+import {GameSocket} from "../../contexts/WebsocketContext";
 
 const InviteRoom = () => {
     const [user, setUser] = useState<User>();
@@ -33,6 +34,10 @@ const InviteRoom = () => {
         setText(`You have been invited by ${user?.name} to ${roomId}! Let's join now!\n`);
     }, [user, roomId]);
 
+    const handleClick = () => {
+        GameSocket.emit('TerminateGame', user?.name);
+    };
+
     return (
         <div>
             <h1>[Host Room!!]</h1>
@@ -46,6 +51,7 @@ const InviteRoom = () => {
                 <Link to={"/game/player1"}>lets go!!</Link>
                 <p></p>
             </div>
+            <button onClick={handleClick}>Exit Room</button>
         </div>
     );
 };
