@@ -19,11 +19,11 @@ type FriendPayload = {
 const CustomButton = styled(Button)({
   fontSize: 16,
   fontFamily: ['Lato', 'sans-serif'],
-  backgroundColor: '#0F044C',
-  color: '#EEEEEE',
+  backgroundColor: '#1f9f88',
+  color: '#EDF0F4',
   height: '4vh',
   '&:hover': {
-    backgroundColor: '#0F044C'
+    backgroundColor: '#1f9f88'
   },
 });
 
@@ -83,7 +83,7 @@ export default function InvitationButton(props: InvitationButtonProps) {
                 </Grid>
                 <Grid item>
                   {members.find((member: any) => member.userId === friend.id) ? (
-                    <Button disabled>Invited</Button>
+                    <Button disabled>Joined</Button>
                   ) : (
                     <Button onClick={() => handleInvite(friend.id)}>Invite</Button>
                   )}

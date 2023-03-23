@@ -5,6 +5,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -63,5 +64,13 @@ export class UserController {
   })
   async getFriend(@Req() req: Request): Promise<User[]> {
     return this.userService.getFriend(req.user.id);
+  }
+
+  @Get('friend/search')
+  async searchFriend(
+    @Req() req: Request,
+    @Query('name') name: string,
+  ): Promise<User[]> {
+    return this.userService.searchFriend(req.user.id, name);
   }
 }
