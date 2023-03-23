@@ -33,17 +33,6 @@ export default function ChatDisplayComponent(props: ChannelDisplayComponentProps
     return friendName;
   }
 
-  const getFriendNameFromRoomName = (user: string, room: string): string => {
-    let friendName: string = '';
-
-    const names = room.split(',');
-    names.map((name) => {
-      if (name !== user)
-        friendName = name;
-    })
-    return friendName;
-  }
-
   const getRoomName = useCallback(async (): Promise<string> => {
     try {
       const res = await axios.get(`http://localhost:8080/chat/room/${roomId}`);
