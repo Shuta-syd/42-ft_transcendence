@@ -182,15 +182,12 @@ export class ChatController {
     return this.chatService.searchChannel(req.user.id, name);
   }
 
-  @Patch('channel/mute')
+  @Patch('channel/member/mute')
   @ApiOperation({
     description: 'admin or owner mute the member',
     summary: 'admin or owner mute the member',
   })
-  async muteMember(
-    @Req() req: Request,
-    @Body() dto: MuteMemberDto,
-  ): Promise<Msg> {
+  async muteMember(@Req() req: Request, @Body() dto: MuteMemberDto) {
     return this.chatService.muteMember(req.user.id, dto);
   }
 
@@ -199,10 +196,7 @@ export class ChatController {
     description: 'admin or owner kick the member',
     summary: 'admin or owner kick the member',
   })
-  async deleteMember(
-    @Req() req: Request,
-    @Body() dto: MemberDto,
-  ): Promise<Msg> {
+  async deleteMember(@Req() req: Request, @Body() dto: MemberDto) {
     return this.chatService.deleteMember(req.user.id, dto);
   }
 
@@ -211,10 +205,7 @@ export class ChatController {
     description: 'admin or owner ban the user',
     summary: 'admin or owner ban the user',
   })
-  async banUserOnChatRoom(
-    @Req() req: Request,
-    @Body() dto: MemberDto,
-  ): Promise<Msg> {
+  async banUserOnChatRoom(@Req() req: Request, @Body() dto: MemberDto) {
     return this.chatService.banUserOnChatRoom(req.user.id, dto);
   }
 
@@ -223,18 +214,12 @@ export class ChatController {
     description: 'the user leave the room',
     summary: 'the user leave the room',
   })
-  async leaveChatRoom(
-    @Req() req: Request,
-    @Body() dto: LeaveMemberDto,
-  ): Promise<Msg> {
+  async leaveChatRoom(@Req() req: Request, @Body() dto: LeaveMemberDto) {
     return this.chatService.leaveChatRoom(req.user.id, dto);
   }
 
   @Patch('channel/role')
-  async updateMemberRole(
-    @Req() req: Request,
-    @Body() dto: MemberDto,
-  ): Promise<Msg> {
+  async updateMemberRole(@Req() req: Request, @Body() dto: MemberDto) {
     return this.chatService.updateMemberRole(req.user.id, dto);
   }
 }

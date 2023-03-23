@@ -1,4 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotAcceptableException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ChatRoom, Member, Message, User } from '@prisma/client';
 import { Msg } from 'src/auth/dto/auth.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -20,7 +27,11 @@ export class ChatService {
   ) {}
 
   /**
-   * @returns 作成したChatRoomデータ
+   * === Chat Room ===
+   */
+
+  /**
+   * @description ChatRoomを作成してuserIdのユーザをMemberとして追加する
    */
   async crateChatRoom(userId: string, dto: CreateChatRoom): Promise<ChatRoom> {
     return this.prisma.chatRoom
@@ -105,46 +116,17 @@ export class ChatService {
    * @returns 取得したRoomデータ
    */
   async getChatRoomById(roomId: string): Promise<ChatRoom> {
-    return this.prisma.chatRoom.findUnique({
+    const room = await this.prisma.chatRoom.findUnique({
       where: { id: roomId },
       include: {
         members: { include: { user: true } },
       },
     });
-  }
 
-  /**
-   * @param userId APIを叩いているユーザのID
-   * @param roomId 所属するroomID
-   */
-  async getFriendNameByDMId(userId: string, roomId: string): Promise<string> {
-    const members = await this.prisma.chatRoom
-      .findUnique({
-        where: { id: roomId },
-      })
-      .members();
-    const friendMember = members.filter(
-      (member: Member) => member.userId !== userId,
-    );
-    const friend = await this.userService.getUserById(friendMember[0].userId);
-    return friend.name;
-  }
+    // roomが見つからない場合は例外処理
+    if (!room) throw new NotFoundException('chat room not found');
 
-  /**
-   * @param userId APIを叩いているユーザのID
-   * @param roomId 所属するroomID
-   */
-  async getMyMember(userId: string, roomId: string): Promise<Member> {
-    const members = await this.prisma.chatRoom
-      .findUnique({
-        where: { id: roomId },
-      })
-      .members();
-    const userMember = members?.filter(
-      (member: Member) => member.userId === userId,
-    );
-
-    return userMember[0];
+    return room;
   }
 
   /**
@@ -176,7 +158,10 @@ export class ChatService {
       where: { id: roomId },
       include: { messages: true },
     });
-    return chatRoom?.messages;
+
+    if (chatRoom) throw new NotFoundException('chat room not found');
+
+    return chatRoom.messages;
   }
 
   /**
@@ -190,20 +175,26 @@ export class ChatService {
     dto: SendChatDto,
   ): Promise<Message> {
     const member = await this.getMyMember(userId, roomId);
-    if (member.isMute === true) throw new Error('You are not right');
+    if (member.isMute === true)
+      throw new NotAcceptableException('You are not right');
 
-    return this.prisma.message.create({
-      data: {
-        member: {
-          connect: { id: member.id },
+    try {
+      const message = this.prisma.message.create({
+        data: {
+          member: {
+            connect: { id: member.id },
+          },
+          room: {
+            connect: { id: roomId },
+          },
+          senderName: dto.senderName,
+          message: dto.message,
         },
-        room: {
-          connect: { id: roomId },
-        },
-        senderName: dto.senderName,
-        message: dto.message,
-      },
-    });
+      });
+      return message;
+    } catch (error) {
+      throw new BadRequestException('DTO is whether large or too small');
+    }
   }
 
   /**
@@ -270,14 +261,12 @@ export class ChatService {
       .user();
   }
 
-  async updateMemberRole(userId: string, dto: MemberDto): Promise<Msg> {
+  async updateMemberRole(userId: string, dto: MemberDto) {
     const { memberId, roomId } = dto;
 
     const executor = await this.getMyMember(userId, roomId);
     if (executor.role !== 'OWNER') {
-      return {
-        message: 'You are not Owner',
-      };
+      throw new ForbiddenException('You are not Owner');
     }
 
     const target = await this.prisma.member.findUnique({
@@ -285,9 +274,9 @@ export class ChatService {
     });
 
     if (target.role === 'OWNER') {
-      return {
-        message: 'Owner can be changed to ADMIN or NORMAL',
-      };
+      throw new ForbiddenException(
+        'Owner cannot be changed to ADMIN or NORMAL',
+      );
     } else if (target.role === 'NORMAL') {
       await this.prisma.member.update({
         where: { id: memberId },
@@ -299,10 +288,6 @@ export class ChatService {
         data: { role: 'NORMAL' },
       });
     }
-
-    return {
-      message: 'Member Role updated',
-    };
   }
 
   /**
@@ -320,11 +305,13 @@ export class ChatService {
       .banned();
 
     const isBan = banedList.filter((val) => val.roomId === dto.roomId);
-    if (isBan.length !== 0) throw new Error("You couldn't enter the room");
+    if (isBan.length !== 0)
+      throw new ForbiddenException("You couldn't enter the room");
 
     const room = await this.getChatRoomById(dto.roomId);
-    if (room.type === 'PROTECT' && dto.password !== room.password)
-      throw new Error('Password is wrong');
+    if (!room) throw new NotFoundException('chat room is not found');
+    else if (room.type === 'PROTECT' && dto.password !== room.password)
+      throw new UnauthorizedException('Password is wrong');
 
     return this.prisma.member.create({
       data: {
@@ -349,36 +336,30 @@ export class ChatService {
   /**
    * @description 特定のメンバーをMuteもしくはunMuteにする（Owner or Adminのみ）
    */
-  async muteMember(userId: string, dto: MuteMemberDto): Promise<Msg> {
+  async muteMember(userId: string, dto: MuteMemberDto) {
     const { roomId, memberId, isMute } = dto;
     const executor = await this.getMyMember(userId, roomId);
-    if (executor.role !== 'OWNER' && executor.role !== 'ADMIN') {
-      return {
-        message: 'You are not Admin or Owner',
-      };
-    }
+    if (!executor) throw new NotFoundException('executor is not found');
+    if (executor.role !== 'OWNER' && executor.role !== 'ADMIN')
+      throw new ForbiddenException('You could not mute');
 
-    await this.prisma.member.update({
+    const member = await this.prisma.member.update({
       where: { id: memberId },
       data: { isMute: isMute === true ? true : false },
     });
 
-    return {
-      message: 'Mute status update',
-    };
+    if (!member) throw new Error('mutation exception error');
   }
 
   /**
    * @description 特定のメンバーをルームから削除する（KICK同様）（Owner or Adminのみ）
    */
-  async deleteMember(userId: string, dto: MemberDto): Promise<Msg> {
+  async deleteMember(userId: string, dto: MemberDto) {
     const { roomId, memberId } = dto;
     const executor = await this.getMyMember(userId, roomId);
-    if (executor.role !== 'OWNER' && executor.role !== 'ADMIN') {
-      return {
-        message: 'You are not Admin or Owner',
-      };
-    }
+    if (!executor) throw new NotFoundException('executor is not found');
+    if (executor.role !== 'OWNER' && executor.role !== 'ADMIN')
+      throw new ForbiddenException('You could not mute');
 
     await this.prisma.message.deleteMany({
       where: { memberId },
@@ -387,18 +368,15 @@ export class ChatService {
     await this.prisma.member.delete({
       where: { id: memberId },
     });
-
-    return {
-      message: 'Kick the member',
-    };
   }
 
   /**
    * @description 自ユーザがChatRoomから離脱する
    */
-  async leaveChatRoom(userId: string, dto: LeaveMemberDto): Promise<Msg> {
+  async leaveChatRoom(userId: string, dto: LeaveMemberDto) {
     const { roomId } = dto;
     const member = await this.getMyMember(userId, roomId);
+    if (!member) throw new NotFoundException('member not found');
 
     await this.prisma.message.deleteMany({
       where: { memberId: member.id },
@@ -407,19 +385,16 @@ export class ChatService {
     await this.prisma.member.delete({
       where: { id: member.id },
     });
-
-    return {
-      message: 'leave the room',
-    };
   }
 
   /**
    * @description 特定のユーザを出禁にする
    */
-  async banUserOnChatRoom(userId: string, dto: MemberDto): Promise<Msg> {
+  async banUserOnChatRoom(userId: string, dto: MemberDto) {
     const { roomId, memberId } = dto;
 
     const user = await this.getUserByMemberId(memberId);
+    if (!user) throw new NotFoundException('member not found');
     await this.deleteMember(userId, dto);
     await this.prisma.banUserOnChatRoom.create({
       data: {
@@ -427,9 +402,45 @@ export class ChatService {
         roomId: roomId,
       },
     });
+  }
 
-    return {
-      message: 'ban the member',
-    };
+  /**
+   * @param userId APIを叩いているユーザのID
+   * @param roomId 所属するroomID
+   */
+  async getMyMember(userId: string, roomId: string): Promise<Member> {
+    const members = await this.prisma.chatRoom
+      .findUnique({
+        where: { id: roomId },
+      })
+      .members();
+
+    if (!members) throw new NotFoundException("Members aren't be found");
+
+    const userMember = members?.filter(
+      (member: Member) => member.userId === userId,
+    );
+
+    return userMember[0];
+  }
+
+  /**
+   * ==== Utils ====
+   */
+  /**
+   * @param userId APIを叩いているユーザのID
+   * @param roomId 所属するroomID
+   */
+  async getFriendNameByDMId(userId: string, roomId: string): Promise<string> {
+    const members = await this.prisma.chatRoom
+      .findUnique({
+        where: { id: roomId },
+      })
+      .members();
+    const friendMember = members.filter(
+      (member: Member) => member.userId !== userId,
+    );
+    const friend = await this.userService.getUserById(friendMember[0].userId);
+    return friend.name;
   }
 }

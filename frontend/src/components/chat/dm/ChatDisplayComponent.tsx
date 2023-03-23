@@ -1,6 +1,7 @@
 import { Box, Grid, Typography } from "@mui/material";
 import axios from "axios";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Socket } from "socket.io-client";
 import useMutationMessage from "../../../hooks/chat/useMutationMessage";
 import TextFieldComponent from "../../utils/TextFieldComponent";
@@ -16,9 +17,10 @@ export default function ChatDisplayComponent(props: ChannelDisplayComponentProps
   const { roomId, socket, userName } = props;
   const [myMemberId, setMyMemberId] = useState<string>('');
   const [roomName, setRoomName] = useState('');
-  const { createMessageMutation } = useMutationMessage(socket, roomId, myMemberId);
+  const { createMessageMutation } = useMutationMessage(socket, roomId, true);
   const [text, setText] = useState('');
   const textfieldElm = useRef<HTMLInputElement>(null);
+  const router = useNavigate();
 
   const getFriendNameFromRoomName = (user: string, room: string): string => {
     let friendName: string = '';
@@ -34,9 +36,11 @@ export default function ChatDisplayComponent(props: ChannelDisplayComponentProps
   const getRoomName = useCallback(async (): Promise<string> => {
     try {
       const res = await axios.get(`http://localhost:8080/chat/room/${roomId}`);
+      console.log(res.data);
       return res.data.name;
     } catch (error) {
-      console.log(error);
+      alert('チャットルームが見つかりませんでした');
+      router('/chat/room');
     }
     return '';
   }, [roomId])

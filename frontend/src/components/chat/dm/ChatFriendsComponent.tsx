@@ -38,13 +38,8 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
   }
 
   const getUserDM = async (): Promise<ChatRoom[]> => {
-    try {
-      const res = await axios.get(`http://localhost:8080/chat/dm`);
-      return res.data;
-    } catch (error) {
-      console.log(error);
-    }
-    return [];
+    const res = await axios.get(`http://localhost:8080/chat/dm`);
+    return res.data;
   };
 
   useEffect(() => {

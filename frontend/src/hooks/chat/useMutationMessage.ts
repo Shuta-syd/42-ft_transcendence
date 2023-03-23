@@ -5,7 +5,7 @@ import { Socket } from "socket.io-client";
 import { Message } from "../../types/PrismaType";
 import getNow from "../../utils/getNow";
 
-function useMutationMessage(socket: Socket, roomId: string, memberId: string) {
+function useMutationMessage(socket: Socket, roomId: string, isDM: boolean) {
   const queryClient = useQueryClient();
   const router = useNavigate();
 
@@ -28,8 +28,11 @@ function useMutationMessage(socket: Socket, roomId: string, memberId: string) {
           queryClient.setQueryData([`chatRoom${String(roomId)}`], [...previousData, res]);
       },
       onError: (err: any) => {
-        if (err.response.status === 401 || err.response.status === 403)
+        alert('メッセージを正しく送信できませんでした。');
+        if (isDM)
           router('/chat/room');
+        else
+          router('/channel/room')
       }
     }
   );

@@ -24,13 +24,8 @@ export default function ChannelListComponent(props: ChannelListComponentProps) {
   const [prevRoomId, setPrevRoomId] = useState<string>();
 
   const getChannels = async (): Promise<ChatRoom[]> => {
-    try {
-      const res = await axios.get(`http://localhost:8080/chat/channel`);
-      return res.data;
-    } catch (error) {
-      console.log(error);
-      return [];
-    }
+    const res = await axios.get(`http://localhost:8080/chat/channel`);
+    return res.data;
   }
 
   useEffect(() => {

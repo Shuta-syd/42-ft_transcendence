@@ -16,13 +16,12 @@ export default function LeaveButton(props: LeaveButtonProps) {
 
   const handleOnClick = async () => {
     try {
-      const { data } = await axios.delete(`http://localhost:8080/chat/channel/member/leave`, { data: { roomId} })
+      await axios.delete(`http://localhost:8080/chat/channel/member/leave`, { data: { roomId} })
       const newChannels = channels.filter((room: { id: string; }) => room.id !== roomId);
       setChannels(newChannels);
       router('/channel/room');
-      console.log(data);
     } catch (error) {
-      console.log(error);
+      alert('チャンネルの離脱に失敗しました');
     }
   }
 

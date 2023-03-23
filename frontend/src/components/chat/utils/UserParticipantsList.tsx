@@ -37,25 +37,30 @@ export default function UserParticipantList(props: UserParticipantListProps) {
 
   useEffect(() => {
     const loadMember = async () => {
-      const { data } = await axios.get(`http://localhost:8080/chat/room/${roomId}`);
-      if (data.members) {
-        const newMembers: MemberPayload[] = data.members.map((member: any) => ({
-          id: member.id,
-          name: member.user.name,
-          isMute: member.isMute,
-          userId: member.user.id,
-          role: member.role
-        }));
-        setMembers(newMembers);
-        const myMember = data.members.find((member: any) => member.userId === userId);
-        if (myMember) {
-          setMyRole(myMember.role);
+      try {
+        const { data } = await axios.get(`http://localhost:8080/chat/room/${roomId}`);
+        if (data.members) {
+          const newMembers: MemberPayload[] = data.members.map((member: any) => ({
+            id: member.id,
+            name: member.user.name,
+            isMute: member.isMute,
+            userId: member.user.id,
+            role: member.role
+          }));
+          setMembers(newMembers);
+          const myMember = data.members.find((member: any) => member.userId === userId);
+          if (myMember) {
+            setMyRole(myMember.role);
+          }
         }
+      } catch (error) {
+        loadMember();
       }
     }
 
     loadMember();
   }, [roomId, userId]);
+
 
   return (
     <>
