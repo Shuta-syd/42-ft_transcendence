@@ -21,31 +21,23 @@ type ChannelEditDialogProps = {
 export default function ChannelEditDialog(props: ChannelEditDialogProps) {
   const { roomId, setChannels, channels } = props;
   const [settingOpen, setSettingOpen] = useState<boolean>(false);
-  const [name, setName] = useState<string>('');
   const [type, setType] = useState<string>('PUBLIC');
-  const [password, setPassword] = useState<string>('');
-  const { control, handleSubmit, reset } = useForm({
-    defaultValues: {
-      name,
-      type,
-      password,
-    }
-  })
+  const { control, handleSubmit, reset, setValue } = useForm<CreateChannelDto>()
 
   useEffect(() => {
     const getChannel = async () => {
       const { data } = await axios.get(`http://localhost:8080/chat/room/${roomId}`);
-      setName(data.name);
-      setType(data.type);
-      setPassword(data.password)
+      setValue('name', data.name);
+      setValue('type', data.type);
+      setValue('password', data.password);
     }
 
     getChannel();
-  }, [roomId]);
+  }, [channels, roomId]);
 
   const onSubmit: SubmitHandler<CreateChannelDto> = async (data) => {
     try {
-      await axios.patch(`http://localhost:8080/chat/channel/${roomId}`, { type: data.type, name: data.name, password: data.password })
+      await axios.patch(`http://localhost:8080/chat/channel/${roomId}`, { type: data.type, name: data.name, password: data.type === 'PROTECT' ? data.password : '' })
       reset();
       setSettingOpen(false);
       const updatedChannels = channels.map((room: any) => {
@@ -115,7 +107,7 @@ export default function ChannelEditDialog(props: ChannelEditDialogProps) {
             </Stack>
           <DialogActions>
             <Button onClick={() => setSettingOpen(false)}>Undo</Button>
-            <Button type="submit">Create</Button>
+            <Button type="submit">Change</Button>
           </DialogActions>
           </form>
         </DialogContent>
