@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Game, User } from "../../types/PrismaType";
 import { GameRoomReq, useGameUser } from "../../hooks/game/useGameuser";
+import { GameSocket } from "../../contexts/WebsocketContext";
 
 const CreateGameRoom = () => {
     const [user, setUser] = useState<User>();
