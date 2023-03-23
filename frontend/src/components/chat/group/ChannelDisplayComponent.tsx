@@ -27,6 +27,23 @@ export default function ChannelDisplayComponent(props: ChannelDisplayComponentPr
   const textfieldElm = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    socket.on('update_channel', (dto: { id: string, name: string }) => {
+      console.log('on');
+      channels.map((room: any) => {
+        const tmpChannels = [...channels];
+        const idx = tmpChannels.findIndex((channel: any) => room.id === dto.id);
+        if (idx !== -1) {
+          tmpChannels[idx] = {
+            ...tmpChannels[idx],
+            name: dto.name,
+          };
+        }
+        setChannels(tmpChannels);
+      })
+    })
+  }, []);
+
+  useEffect(() => {
     channels.map((room: ChatRoom) => {
       if (room.id === roomId) {
         setRoomName(room.name); // すでルームに入っている時にリロードするとsetされないからuseLocation使うのがいいかも
@@ -93,7 +110,7 @@ export default function ChannelDisplayComponent(props: ChannelDisplayComponentPr
             <Grid item>
               {myRole === 'OWNER' ? (
                 <>
-                  <ChannelEditDialog roomId={roomId} setChannels={setChannels} channels={channels} />
+                  <ChannelEditDialog roomId={roomId} setChannels={setChannels} channels={channels} socket={socket} />
                 </>
               ) : (<></>)}
             </Grid>

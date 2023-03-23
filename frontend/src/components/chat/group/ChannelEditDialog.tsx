@@ -3,6 +3,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, Stack, TextField } from "@mui/material";
 import { SubmitHandler, useForm } from "react-hook-form";
 import axios from "axios";
+import { Socket } from "socket.io-client";
 import CustomRadioGroup from "../../utils/CustomRadioGroup";
 import FormController from "../../utils/FormController";
 
@@ -16,13 +17,15 @@ type ChannelEditDialogProps = {
   roomId: string;
   setChannels: any
   channels: any;
+  socket: Socket;
 }
 
 export default function ChannelEditDialog(props: ChannelEditDialogProps) {
-  const { roomId, setChannels, channels } = props;
+  const { roomId, setChannels, channels, socket } = props;
   const [settingOpen, setSettingOpen] = useState<boolean>(false);
   const [type, setType] = useState<string>('PUBLIC');
   const { control, handleSubmit, reset, setValue } = useForm<CreateChannelDto>()
+
 
   useEffect(() => {
     const getChannel = async () => {
@@ -38,8 +41,9 @@ export default function ChannelEditDialog(props: ChannelEditDialogProps) {
   const onSubmit: SubmitHandler<CreateChannelDto> = async (data) => {
     try {
       await axios.patch(`http://localhost:8080/chat/channel/${roomId}`, { type: data.type, name: data.name, password: data.type === 'PROTECT' ? data.password : '' })
-      reset();
+      socket.emit('update_channel_info', { id: roomId, name: data.name });
       setSettingOpen(false);
+      reset();
       const updatedChannels = channels.map((room: any) => {
         if (room.id === roomId) {
           return { ...room, name: data.name };

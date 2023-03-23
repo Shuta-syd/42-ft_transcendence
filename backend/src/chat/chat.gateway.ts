@@ -68,6 +68,20 @@ export class ChatGateway
     client.leave(payload.id);
   }
 
+  @SubscribeMessage('update_channel_info')
+  updateChannelInfo(
+    @MessageBody() payload: { id: string; name: string },
+    @ConnectedSocket() client: Socket,
+  ) {
+    this.logger.log(
+      `Update Channel [${payload.id}]: `,
+      `client[${client.id}] `,
+    );
+    this.server.to(payload.id).emit('update_channel', {
+      ...payload,
+    });
+  }
+
   afterInit(server: Server) {
     this.logger.log('Init');
   }
