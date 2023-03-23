@@ -1,7 +1,7 @@
 import { Avatar, Grid, Typography } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
-import React, { useEffect, useLayoutEffect } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Socket } from "socket.io-client";
 import { ChatRoom } from "../../../types/PrismaType";
@@ -19,9 +19,9 @@ type ChannelListComponentProps = {
  * @returns Message送信可能なChannel一覧を表示するコンポーネント
  */
 export default function ChannelListComponent(props: ChannelListComponentProps) {
-  // eslint-disable-next-line no-unused-vars
   const { socket, channels, setChannels, isLeave } = props;
   const roomID = useLocation().pathname.split('/')[3];
+  const [prevRoomId, setPrevRoomId] = useState<string>();
 
   const getChannels = async (): Promise<ChatRoom[]> => {
     try {
@@ -34,11 +34,15 @@ export default function ChannelListComponent(props: ChannelListComponentProps) {
   }
 
   useEffect(() => {
-    socket.on('joinRoom', () => {})
+    socket.on('join_chat_room', () => { });
+    socket.on('leave_chat_room', () => { });
   }, []);
 
   useEffect(() => {
-    socket.emit('joinRoom', { id: roomID });
+    if (prevRoomId)
+      socket.emit('leave_chat_room', { id: prevRoomId });
+    socket.emit('join_chat_room', { id: roomID });
+    setPrevRoomId(roomID);
   }, [roomID]);
 
   useLayoutEffect(() => {

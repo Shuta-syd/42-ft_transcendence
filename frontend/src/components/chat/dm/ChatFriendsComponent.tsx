@@ -26,6 +26,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
   const roomID = useLocation().pathname.split('/')[3];
   const { data: friendData } = useQueryFriend();
   const [friends, setFriends] = useState<FriendPayload[]>([]);
+  const [prevRoomId, setPrevRoomId] = useState<string>();
 
   const getUserDM = async (): Promise<ChatRoomPayload> => {
     try {
@@ -74,17 +75,21 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
   }, [friendData]);
 
   useEffect(() => {
-    socket.on('joinRoom', () => {
-    })
+    socket.on('join_chat_room', () => { });
+    socket.on('leave_chat_room', () => { })
   }, [])
 
   useEffect(() => {
-    socket.emit('joinRoom', { id: roomID });
+    if (prevRoomId)
+      socket.emit('leave_chat_room', { id: prevRoomId });
+    socket.emit('join_chat_room', { id: roomID });
+    socket.emit('join_chat_room', { id: roomID });
+    setPrevRoomId(roomID);
   }, [roomID])
 
   const handleClick = (roomId: string) => {
     console.log('click friend button');
-    socket.emit('joinRoom', { id: roomId})
+    socket.emit('join_chat_room', { id: roomId })
   }
 
   return (
