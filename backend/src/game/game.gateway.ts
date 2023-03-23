@@ -166,6 +166,28 @@ export class GameGateway {
     this.server.to(roomId).emit('ScoreToClient', payload, client.id);
   }
 
+  @SubscribeMessage('TerminateGame')
+  terminateGame(
+    @MessageBody() name: string,
+    @ConnectedSocket() client: Socket,
+  ): void {
+    const dto: Terminate = { isInviteGame: false, player: '' };
+    console.log('hoge');
+    if (NameToInviteRoomIdDic[name]) {
+      console.log('invite');
+      dto.isInviteGame = true;
+      dto.player = name;
+    } else if (NameToRoomIdDic[name]) {
+      console.log('noninvite');
+      dto.isInviteGame = false;
+      dto.player = name;
+    } else {
+      console.log('rerurn');
+      return;
+    }
+    this.gameService.terminateGame(dto);
+  }
+
   // 接続が切断されたときの処理
   handleDisconnect(socket: any) {
     console.log(`game Client disconnected: ${socket.id}`);

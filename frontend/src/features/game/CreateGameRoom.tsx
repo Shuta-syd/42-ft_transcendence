@@ -24,8 +24,12 @@ const CreateGameRoom = () => {
         });
     }, [user]);
 
+    const handleClick = () => {
+        GameSocket.emit('TerminateGame', user?.name);
+    };
+
     const ShowPage = () => {
-        if (game?.player2) {
+        if (game?.player1 !== user?.name) {
             return (
                     <Link to={"/game/player2"}>Player2</Link>
             );
@@ -44,6 +48,7 @@ const CreateGameRoom = () => {
             <h2>Player1 is {game?.player1}!!!</h2>
             <h2>Player2 is {game?.player2}!!!</h2>
             <h1>Your Room 👉 {ShowPage()} !!!</h1>
+            <button onClick={handleClick}>Exit Room</button>
         </div>
     );
 
