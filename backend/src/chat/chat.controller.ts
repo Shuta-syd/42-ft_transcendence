@@ -15,7 +15,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ChatRoom, Member, Message } from '@prisma/client';
 import { Request } from 'express';
-import { Msg } from 'src/auth/dto/auth.dto';
 import {
   PrismaChatRoom,
   PrismaMessage,
