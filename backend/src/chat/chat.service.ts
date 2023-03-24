@@ -311,6 +311,21 @@ export class ChatService {
     else if (room.type === 'PROTECT' && dto.password !== room.password)
       throw new UnauthorizedException('Password is wrong');
 
+    const members = await this.prisma.chatRoom
+      .findUnique({
+        where: {
+          id: dto.roomId,
+        },
+      })
+      .members();
+
+    if (members) {
+      members.map((member) => {
+        if (member.userId === userId)
+          throw new NotAcceptableException('You are already a member');
+      });
+    }
+
     return this.prisma.member.create({
       data: {
         room: {
