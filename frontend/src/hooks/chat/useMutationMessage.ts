@@ -21,7 +21,7 @@ function useMutationMessage(socket: Socket, roomId: string, isDM: boolean) {
     },
     {
       onSuccess: (res) => {
-        socket.emit('send_message_room', { memberId: res.memberId, senderName: res.senderName, text: res.message, time: getNow(), id: roomId })
+        socket.emit('send_message_room', { senderUserId: res.senderUserId, senderName: res.senderName, text: res.message, time: getNow(), id: roomId })
 
         const previousData = queryClient.getQueryData<Message[]>([`chatRoom${String(roomId)}`]);
         if (previousData)
