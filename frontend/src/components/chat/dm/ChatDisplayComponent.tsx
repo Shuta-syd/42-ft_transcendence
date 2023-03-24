@@ -15,7 +15,7 @@ type ChannelDisplayComponentProps = {
 
 export default function ChatDisplayComponent(props: ChannelDisplayComponentProps) {
   const { roomId, socket, userName } = props;
-  const [myMemberId, setMyMemberId] = useState<string>('');
+  const [myUserId, setMyUserId] = useState<string>('');
   const [roomName, setRoomName] = useState('');
   const { createMessageMutation } = useMutationMessage(socket, roomId, true);
   const [text, setText] = useState('');
@@ -36,7 +36,6 @@ export default function ChatDisplayComponent(props: ChannelDisplayComponentProps
   const getRoomName = useCallback(async (): Promise<string> => {
     try {
       const res = await axios.get(`http://localhost:8080/chat/room/${roomId}`);
-      console.log(res.data);
       return res.data.name;
     } catch (error) {
       alert('チャットルームが見つかりませんでした');
@@ -46,12 +45,12 @@ export default function ChatDisplayComponent(props: ChannelDisplayComponentProps
   }, [roomId])
 
   useEffect(() => {
-    const getMymember = async () => {
-      const { data: myMember } = await axios.get(`http://localhost:8080/chat/${roomId}/myMember`);
-      setMyMemberId(myMember.id);
+    const getUserId = async () => {
+      const { data: myUser } = await axios.get(`http://localhost:8080/user`);
+      setMyUserId(myUser.id);
     }
 
-    getMymember();
+    getUserId();
     getRoomName().then((name) => { setRoomName(name); })
   }, [roomId])
 
@@ -97,7 +96,7 @@ export default function ChatDisplayComponent(props: ChannelDisplayComponentProps
         sx={{ display: 'flex', justifyContent: 'center' }}
         height={`calc(85% - ${textfieldElm?.current?.clientHeight}px)`}
       >
-        <ChatlogComponent roomId={roomId} socket={socket} memberId={myMemberId} />
+        <ChatlogComponent roomId={roomId} socket={socket} userId={myUserId} />
         </Box>
       <Box
         display='flex'

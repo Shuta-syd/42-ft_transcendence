@@ -25,7 +25,6 @@ model Member {
   userId   String
   room     ChatRoom @relation(fields: [roomId], references: [id])
   user     User     @relation(fields: [userId], references: [id])
-  messages Message[]
   role   MemberRole  @default(NORMAL)
   isMute Boolean @default(false)
 }
@@ -47,8 +46,7 @@ model Message {
   roomId    String
   room      ChatRoom @relation(fields: [roomId], references: [id])
   senderName String
-  memberId  String
-  member    Member   @relation(fields: [memberId], references: [id])
+  senderUserId String
 }
 
 model BanUserOnChatRoom {

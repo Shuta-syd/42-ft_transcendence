@@ -159,7 +159,7 @@ export class ChatService {
       include: { messages: true },
     });
 
-    if (chatRoom) throw new NotFoundException('chat room not found');
+    if (!chatRoom) throw new NotFoundException('chat room not found');
 
     return chatRoom.messages;
   }
@@ -181,13 +181,11 @@ export class ChatService {
     try {
       const message = this.prisma.message.create({
         data: {
-          member: {
-            connect: { id: member.id },
-          },
           room: {
             connect: { id: roomId },
           },
           senderName: dto.senderName,
+          senderUserId: userId,
           message: dto.message,
         },
       });
@@ -361,10 +359,6 @@ export class ChatService {
     if (executor.role !== 'OWNER' && executor.role !== 'ADMIN')
       throw new ForbiddenException('You could not mute');
 
-    await this.prisma.message.deleteMany({
-      where: { memberId },
-    });
-
     await this.prisma.member.delete({
       where: { id: memberId },
     });
@@ -377,10 +371,6 @@ export class ChatService {
     const { roomId } = dto;
     const member = await this.getMyMember(userId, roomId);
     if (!member) throw new NotFoundException('member not found');
-
-    await this.prisma.message.deleteMany({
-      where: { memberId: member.id },
-    });
 
     await this.prisma.member.delete({
       where: { id: member.id },
