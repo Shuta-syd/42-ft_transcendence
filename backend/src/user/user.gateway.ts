@@ -15,9 +15,10 @@ export class UserGateway {
   server: Server;
 
   @SubscribeMessage('getFriendStatus')
-  handleGetFriendStatus(client: any, friendId: string): void {
+  handleGetFriendStatus(client: any, friend: string): void {
     // ここで、友達のオンライン/オフライン状態を取得し、クライアントに返す
-    const status = getFriendStatus(friendId);
+    console.log('getFrienedStatus', friend);
+    const status = getFriendStatus(friend);
     this.server.emit('friendStatus', status);
   }
 
@@ -46,8 +47,9 @@ export class UserGateway {
     if (!name) {
       return;
     }
+    console.log('connected name = ', name);
+    console.log('connected id = ', client.id);
     OnlineUsers[client.id] = name;
-    console.log('connected', name);
   }
 }
 

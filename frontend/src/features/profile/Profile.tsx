@@ -44,14 +44,18 @@ const Profile = () => {
 
     const [friends, setFriends] = useState<User[]>([]);
 
-
     const HandleFriendListButton = () => {
         const friendsPromise = getFriends();
         friendsPromise.then((data) => {
             console.log('data => ', data[0]);
             setFriends(data);
-        } );
-        console.log(friends[0]);
+            data.map((friend: User) => {
+                const tmp:FriendProps = {
+                    friendName: friend.name
+                };
+                FriendStatus(tmp);
+            });
+        });
     };
 
     const [matchArr, setMatches] = useState<Match[]>([]);
@@ -138,7 +142,7 @@ const Profile = () => {
         useEffect(() => {
             // WebSocketを使用して、友達のオンライン/オフライン状態を取得する
             if (socket) {
-                socket.emit("getFriendStatus", friendName);
+            socket.emit("getFriendStatus", friendName);
                 // サーバーからの応答を受信する
                 socket.on("friendStatus", (status) => {
                     setIsOnline(status);
