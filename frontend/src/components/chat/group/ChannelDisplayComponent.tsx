@@ -15,7 +15,7 @@ type ChannelDisplayComponentProps = {
 
 export default function ChannelDisplayComponent(props: ChannelDisplayComponentProps) {
   const { roomId, socket } = props;
-  const [myMemberId, setMyMemberId] = useState<string>('');
+  const [myUserId, setMyUserId] = useState<string>('');
   const [userName, setUserName] = useState('');
   const [roomName, setRoomName] = useState('');
   const { createMessageMutation } = useMutationMessage(socket, roomId, false);
@@ -35,12 +35,12 @@ export default function ChannelDisplayComponent(props: ChannelDisplayComponentPr
   }, [roomId])
 
   useEffect(() => {
-    const getMymember = async () => {
-      const { data: myMember } = await axios.get(`http://localhost:8080/chat/${roomId}/myMember`);
-      setMyMemberId(myMember.id);
+    const getUserId = async () => {
+      const { data: myUser } = await axios.get(`http://localhost:8080/user`);
+      setMyUserId(myUser.id);
     }
 
-    getMymember();
+    getUserId();
     getUserName().then((name) => { setUserName(name); });
     getRoomName().then((name) => { setRoomName(name); })
   }, [roomId])
@@ -87,7 +87,7 @@ export default function ChannelDisplayComponent(props: ChannelDisplayComponentPr
         sx={{ display: 'flex', justifyContent: 'center' }}
         height={`calc(85% - ${textfieldElm?.current?.clientHeight}px)`}
       >
-        <ChatlogComponent roomId={roomId} socket={socket} memberId={myMemberId} />
+        <ChatlogComponent roomId={roomId} socket={socket} userId={myUserId} />
         </Box>
       <Box
         display='flex'

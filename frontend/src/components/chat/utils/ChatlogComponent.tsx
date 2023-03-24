@@ -7,7 +7,7 @@ import { Message } from "../../../types/PrismaType";
 import convertDate from "../../../utils/convertDate";
 
 type MessagePayload = {
-  memberId: string;
+  senderUserId: string;
   time: string;
   senderName: string;
   text: string;
@@ -16,13 +16,13 @@ type MessagePayload = {
 type ChatLog = MessagePayload[];
 
 type ChatlogComponentProps = {
-  memberId: string;
+  userId: string;
   roomId: string;
   socket: Socket;
 }
 
 export default function ChatlogComponent(props: ChatlogComponentProps) {
-  const { roomId, socket, memberId } = props;
+  const { roomId, socket, userId } = props;
   const [chatLog, setChatLog] = useState<ChatLog>([]);
   const latestChatRef = createRef<HTMLDivElement>();
 
@@ -42,7 +42,7 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
       const { data } = await axios.get<Message[]>(`http://localhost:8080/chat/room/log/${roomId}`);
       if (data) {
         data?.map((obj) => {
-          const chat: MessagePayload = { memberId: obj.memberId, senderName: obj.senderName, time: convertDate(obj.createdAt), text: obj.message };
+          const chat: MessagePayload = { senderUserId: obj.senderUserId, senderName: obj.senderName, time: convertDate(obj.createdAt), text: obj.message };
           setChatLog(prevChatLog => [...prevChatLog, chat]);
         })
       }
@@ -57,7 +57,7 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
       sx={{ color: '#3C444B', overflow: 'auto'}}
     >
       {chatLog.map((chat, idx) => (
-        memberId === chat.memberId ? (
+        userId === chat.senderUserId ? (
           <Box
           key={idx}
           mb={2}
