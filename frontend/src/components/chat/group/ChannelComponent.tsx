@@ -15,14 +15,14 @@ export default function ChannelComponent() {
 
   useEffect(() => {
     socket.on('connect', () => {
-      console.log(`Connect: ${socket.id}`);
+      console.log(`[Channel] Connect: ${socket.id}`);
     })
 
     return () => {
-      console.log(`Disconnect: ${socket.id}`);
+      console.log(`[Channel] Disconnect: ${socket.id}`);
       socket.disconnect();
     }
-  }, [socket])
+  }, [socket]);
 
 
   return (

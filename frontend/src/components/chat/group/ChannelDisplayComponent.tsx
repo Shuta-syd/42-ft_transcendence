@@ -38,7 +38,7 @@ export default function ChannelDisplayComponent(props: ChannelDisplayComponentPr
       }
       setChannels(tmpChannels);
       })
-  }, []);
+  }, [socket]);
 
   useEffect(() => {
     channels.map((room: ChatRoom) => {

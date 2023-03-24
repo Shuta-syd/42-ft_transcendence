@@ -74,8 +74,7 @@ export class ChatGateway
     @ConnectedSocket() client: Socket,
   ) {
     this.server.emit('updateChannelInfo', {
-      id: payload.id,
-      name: payload.name,
+      ...payload,
     });
     this.logger.log(`Update Channel [${payload.id}]: by client[${client.id}] `);
   }
