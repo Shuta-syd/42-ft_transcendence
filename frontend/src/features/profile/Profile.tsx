@@ -7,6 +7,7 @@ import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import io from "socket.io-client";
+import * as SocketIOClient from 'socket.io-client';
 import {Match, User} from "../../types/PrismaType";
 import { fetchProfileUser } from "../../hooks/profile/useProfileUser";
 import { sendFriendRequest } from "../../hooks/profile/sendFriendRequests";
@@ -16,13 +17,13 @@ import useQueryMatches from "../../hooks/match/useWueryMatch";
 const Profile = () => {
 
     const [user, setUser] = useState<User>();
-
-    const socket = io("http://localhost:8080");
-
+    const [socket, setSocket] = useState<SocketIOClient.Socket>(); // Socketを状態として持つ
     const UserPromises = fetchProfileUser();
     useEffect(() => {
         UserPromises.then((userDto: User) => {
-            socket.emit('AssignOnline', userDto.name);
+            const params = { query: { name: userDto.name } };
+            const Tmpsocket = io("http://localhost:8080", params);
+            setSocket(Tmpsocket);
             setUser(userDto);
         });
     }, []);
@@ -136,17 +137,13 @@ const Profile = () => {
 
         useEffect(() => {
             // WebSocketを使用して、友達のオンライン/オフライン状態を取得する
-            socket.emit("getFriendStatus", friendName);
-
-            // サーバーからの応答を受信する
-            socket.on("friendStatus", (status) => {
-                setIsOnline(status);
-            });
-
-            // コンポーネントのアンマウント時にWebSocket接続を解除する
-            return () => {
-                socket.off("friendStatus");
-            };
+            if (socket) {
+                socket.emit("getFriendStatus", friendName);
+                // サーバーからの応答を受信する
+                socket.on("friendStatus", (status) => {
+                    setIsOnline(status);
+                });
+            }
         }, [friendName]);
 
         if (isOnline === null) {
