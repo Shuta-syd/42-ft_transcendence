@@ -9,8 +9,8 @@ $(NAME):
 clean:
 	docker compose down
 
-fclean:
 	docker-compose -f ./docker-compose.yml down --rmi all --volumes --remove-orphans
+fclean:
 
 front-log:
 	docker logs -f frontend

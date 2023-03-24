@@ -6,6 +6,8 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { Terminate } from './dto/game.dto';
+import { GameService } from './game.service';
 import { Logger } from '@nestjs/common';
 import { NameToInviteRoomIdDic, NameToRoomIdDic } from './game.service';
 
@@ -43,6 +45,7 @@ type Score = {
   },
 })
 export class GameGateway {
+  constructor(private readonly gameService: GameService) {}
   @WebSocketServer()
   server: Server;
 
