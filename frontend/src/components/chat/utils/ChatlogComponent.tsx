@@ -34,7 +34,7 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
 
   useLayoutEffect(() => {
     latestChatRef.current?.scrollIntoView();
-  }, [chatLog])
+  }, [chatLog, latestChatRef])
 
   useLayoutEffect(() => {
     const fetchChat = async () => {
