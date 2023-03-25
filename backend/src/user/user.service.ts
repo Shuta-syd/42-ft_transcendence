@@ -1,3 +1,5 @@
+// @ts-ignore
+
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { User } from '@prisma/client';
@@ -91,5 +93,16 @@ export class UserService {
     );
 
     return result;
+  }
+  /**
+   * @description User tableに対して、imageをsetできるようにする
+   * @param userId imageをsetしたいUserのID
+   * @param image setしたいimageのURL
+   * @return setしたUserのデータ
+   */
+  async setImage(userId: string, image: string): Promise<User> {
+    const user = await this.getUserById(userId);
+    user.image = image;
+    return user;
   }
 }

@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
-import { User } from '@prisma/client';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { SignUpUserDto } from 'src/user/dto/user.dto';
-import { AuthDto } from './dto/auth.dto';
-import { Jwt } from './type/auth.type';
+import {Injectable} from '@nestjs/common';
+import {ConfigService} from '@nestjs/config';
+import {JwtService} from '@nestjs/jwt';
+import {User} from '@prisma/client';
+import {PrismaService} from 'src/prisma/prisma.service';
+import {SignUpUserDto} from 'src/user/dto/user.dto';
+import {AuthDto} from './dto/auth.dto';
+import {Jwt} from './type/auth.type';
 
 @Injectable()
 export class AuthService {
@@ -31,16 +31,16 @@ export class AuthService {
     }
 
     // 存在しない場合は、新しいユーザーを作成する
-    const newUser = await this.prisma.user.create({
+    return await this.prisma.user.create({
       data: {
         email: dto.email,
         password: dto.password,
         name: dto.name,
+        image:
+          'https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg',
         // その他の必要なフィールドを追加する
       },
     });
-
-    return newUser;
   }
 
   /**

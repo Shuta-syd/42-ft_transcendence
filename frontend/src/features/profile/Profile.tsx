@@ -216,6 +216,7 @@ const Profile = () => {
         const {files} = event.target;
         if (files?.[0]) {
             setImage(URL.createObjectURL(files[0]));
+            // console.log(URL.createObjectURL(files[0]));
         }
     }
 
