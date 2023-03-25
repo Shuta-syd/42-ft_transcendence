@@ -90,7 +90,7 @@ const Profile = () => {
         matches: Match[];
     }
 
-    function Achivement({matches}: MatchListProps) {
+    function ShowAchievement({matches}: MatchListProps) {
         const countMyWinTime =  () => {
             let count = 0;
             for (const match of matches) {
@@ -100,18 +100,36 @@ const Profile = () => {
             }
             return count;
         }
+        enum Achivement {
+            "Beginner" = 0,
+            "Intermediate" = 5,
+            "Advanced" = 10,
+            "Expert" = 15,
+        }
+
+        const getAchievement = () => {
+            if (countMyWinTime() < Achivement.Intermediate) {
+                return "Beginner";
+            }
+            if (countMyWinTime() < Achivement.Advanced) {
+                return "Intermediate";
+            }
+            if (countMyWinTime() < Achivement.Expert) {
+                return "Advanced";
+            }
+            return "Expert";
+        };
 
         return (
             <div>
                 <h2>
-                [Achivement]
-                <p></p>
-                number of wins : {countMyWinTime()}
+                    Your current achievement : {getAchievement()}
                 <p></p>
                 <Rating
                     name={user?.name}
-                    defaultValue={4}
+                    defaultValue={countMyWinTime()}
                     precision={0.5}
+                    max={20}
                 />
                 <p></p>
                 </h2>
@@ -263,7 +281,7 @@ const Profile = () => {
             </h1>
             <h2>今までの戦績</h2>
             <MatchList matches={matchArr}/>
-            <Achivement matches={matchArr}/>
+            <ShowAchievement matches={matchArr}/>
         </div>
     );
 }
