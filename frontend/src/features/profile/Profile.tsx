@@ -91,9 +91,22 @@ const Profile = () => {
     }
 
     function Achivement({matches}: MatchListProps) {
+        const countMyWinTime =  () => {
+            let count = 0;
+            for (const match of matches) {
+                if (match.winner_id === user?.name) {
+                    count += 1;
+                }
+            }
+            return count;
+        }
+
         return (
             <div>
+                <h2>
                 [Achivement]
+                <p></p>
+                number of wins : {countMyWinTime()}
                 <p></p>
                 <Rating
                     name={user?.name}
@@ -101,6 +114,7 @@ const Profile = () => {
                     precision={0.5}
                 />
                 <p></p>
+                </h2>
             </div>
         );
     }
