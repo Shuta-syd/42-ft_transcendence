@@ -6,7 +6,6 @@ import Auth from "./features/auth/Auth";
 import Chat from "./features/chat/Chat";
 import ChatComponent from "./components/chat/dm/ChatComponent";
 import ChatWindowComponent from "./components/chat/dm/ChatWindowComponent";
-import Matches from "./features/match/Match";
 import Channel from "./features/channel/Channel";
 import ChannelComponent from "./components/chat/group/ChannelComponent";
 import ChannelWindowComponent from "./components/chat/group/ChannelWindowComponent";
@@ -48,20 +47,14 @@ function App() {
               <Route path=":roomId" element={<ChannelWindowComponent />} />
             </Route>
           </Route>
-          <Route path="/match" element={<Matches />} />
-          <Route path="/game" element={
-            <PrivateRouter>
-              <GameMatching />
-            </PrivateRouter>
-          } />
-            <Route path="player1" element={<GamePlayer1/>} />
-            <Route path="player2" element={<GamePlayer2/>} />
-            <Route path="observer" element={<GameObserver/>} />
-            <Route path="select_room" element={<GameSelectRoom/>} />
-            <Route path="game_room" element={<CreateGameRoom/>} />
-            <Route path="invite_room" element={<InviteRoom/>} />
-            <Route path="join_invited_room" element={<JoinInvitedRoom></JoinInvitedRoom>} />
-          <Route />
+          <Route path="/game" element={<GameMatching />} />
+            <Route path="/game/player1" element={<GamePlayer1/>} />
+            <Route path="/game/player2" element={<GamePlayer2/>} />
+          <Route path="/game/observer" element={<GameObserver/>} />
+          <Route path="/game/select_room" element={<GameSelectRoom/>} />
+          <Route path="/game/game_room" element={<CreateGameRoom/>} />
+          <Route path="/game/invite_room" element={<InviteRoom/>} />
+          <Route path="/game/join_invited_room" element={<JoinInvitedRoom></JoinInvitedRoom>} />
         </Routes>
       </Grid>
     </Grid>
