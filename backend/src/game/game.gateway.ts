@@ -8,6 +8,8 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { NameToInviteRoomIdDic, NameToRoomIdDic } from './game.service';
+import { GameService } from './game.service';
+import { Terminate } from './dto/game.dto';
 
 type ChatRecieved = {
   uname: string;
@@ -37,12 +39,19 @@ type Score = {
   name: string;
 };
 
+type TerminateGame = {
+  player1: string;
+  isInviteGame: boolean;
+  roomId: string;
+};
+
 @WebSocketGateway({
   cors: {
     origin: '*',
   },
 })
 export class GameGateway {
+  constructor(private readonly gameService: GameService) {}
   @WebSocketServer()
   server: Server;
 
@@ -171,7 +180,7 @@ export class GameGateway {
     @MessageBody() name: string,
     @ConnectedSocket() client: Socket,
   ): void {
-    const dto: Terminate = { isInviteGame: false, player: '' };
+    const dto = { isInviteGame: false, player: '' };
     console.log('hoge');
     if (NameToInviteRoomIdDic[name]) {
       console.log('invite');
