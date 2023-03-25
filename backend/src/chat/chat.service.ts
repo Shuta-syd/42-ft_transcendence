@@ -311,6 +311,21 @@ export class ChatService {
     else if (room.type === 'PROTECT' && dto.password !== room.password)
       throw new UnauthorizedException('Password is wrong');
 
+    const members = await this.prisma.chatRoom
+      .findUnique({
+        where: {
+          id: dto.roomId,
+        },
+      })
+      .members();
+
+    if (members) {
+      members.map((member) => {
+        if (member.userId === userId)
+          throw new NotAcceptableException('You are already a member');
+      });
+    }
+
     return this.prisma.member.create({
       data: {
         room: {
@@ -375,6 +390,23 @@ export class ChatService {
     await this.prisma.member.delete({
       where: { id: member.id },
     });
+
+    const members = await this.prisma.chatRoom
+      .findUnique({
+        where: { id: dto.roomId },
+      })
+      .members();
+
+    if (members.length === 0) {
+      await this.prisma.message.deleteMany({
+        where: {
+          roomId: dto.roomId,
+        },
+      });
+      await this.prisma.chatRoom.delete({
+        where: { id: dto.roomId },
+      });
+    }
   }
 
   /**

@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import {AbstractInstanceResolver} from "@nestjs/core/injector/abstract-instance-resolver";
 
 export class assignPlayerReq {
   @ApiProperty()
