@@ -4,8 +4,12 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 
-export type OnlineUsers = { [key: string]: string };
-export const OnlineUsers: OnlineUsers = {};
+interface OnlineUsers {
+  name: string;
+  clientId: string;
+}
+
+let OnlineUsers: OnlineUsers[] = [];
 
 import { Server, Socket } from 'socket.io';
 
@@ -28,7 +32,11 @@ export class UserGateway {
 
   handleDisconnect(socket: any) {
     // 接続が切断されたときの処理
-    delete OnlineUsers[socket.id];
+    console.log('dissconected', socket.id);
+    const filteredUsers = OnlineUsers.filter(
+      (OnlineUsers) => OnlineUsers.clientId !== socket.id,
+    );
+    OnlineUsers = filteredUsers;
   }
 
   afterInit(server: Server) {
@@ -49,14 +57,25 @@ export class UserGateway {
     }
     console.log('connected name = ', name);
     console.log('connected id = ', client.id);
-    OnlineUsers[client.id] = name;
+    OnlineUsers.push({ name: name, clientId: client.id });
+    console.log(
+      'after connected [id] = ',
+      OnlineUsers.filter((user) => user.clientId === client.id).map(
+        (user) => user.name,
+      ),
+    );
   }
 }
 
-function getFriendStatus(friendId: string): boolean {
-  if (OnlineUsers[friendId]) {
+function getFriendStatus(friend: string): boolean {
+  const filteredUsers = OnlineUsers.filter(
+    (OnlineUsers) => OnlineUsers.name === friend,
+  );
+  if (filteredUsers.length > 0) {
+    console.log('true');
     return true;
   } else {
+    console.log('false');
     return false;
   }
 }

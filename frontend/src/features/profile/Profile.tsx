@@ -148,7 +148,7 @@ const Profile = () => {
                     setIsOnline(status);
                 });
             }
-        }, [friendName]);
+        }, []);
 
         if (isOnline === null) {
             return <span>Loading...</span>;
