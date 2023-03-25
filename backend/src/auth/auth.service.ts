@@ -76,4 +76,16 @@ export class AuthService {
       accessToken: token,
     };
   }
+
+  async validateUser(userDto: SignUpUserDto): Promise<User> {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: userDto.email,
+      },
+    });
+    if (user) {
+      return user;
+    }
+    return this.signupUser(userDto);
+  }
 }

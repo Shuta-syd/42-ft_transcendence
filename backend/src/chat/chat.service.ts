@@ -221,6 +221,22 @@ export class ChatService {
     return channels;
   }
 
+  async updateChannel(userId: string, roomId: string, dto: CreateChatRoom) {
+    const executor = await this.getMyMember(userId, roomId);
+    if (!executor) throw new NotFoundException('executor is not found');
+    if (executor.role !== 'OWNER')
+      throw new ForbiddenException('You are not a channel owner');
+
+    return this.prisma.chatRoom.update({
+      where: { id: roomId },
+      data: {
+        password: dto.password,
+        name: dto.name,
+        type: dto.type,
+      },
+    });
+  }
+
   /**
    * @description 与えられたnameからチャンネルを検索する（部分一致）
    */
@@ -390,6 +406,23 @@ export class ChatService {
     await this.prisma.member.delete({
       where: { id: member.id },
     });
+
+    const members = await this.prisma.chatRoom
+      .findUnique({
+        where: { id: dto.roomId },
+      })
+      .members();
+
+    if (members.length === 0) {
+      await this.prisma.message.deleteMany({
+        where: {
+          roomId: dto.roomId,
+        },
+      });
+      await this.prisma.chatRoom.delete({
+        where: { id: dto.roomId },
+      });
+    }
   }
 
   /**

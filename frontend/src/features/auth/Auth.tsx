@@ -4,6 +4,8 @@ import axios from "axios";
 import React from "react";
 import LoginComponent from "../../components/auth/LoginComponent";
 import SignupComponent from "../../components/auth/SignupComponent";
+import FtLoginComponent from "../../components/auth/FtLoginComponent";
+
 
 function Auth() {
   const handleClick = async () => {
@@ -13,11 +15,11 @@ function Auth() {
 
   return (
     <>
+      <FtLoginComponent />
       <LoginComponent />
       <SignupComponent />
       <Button variant="contained" onClick={handleClick}>LOGOUT</Button>
     </>
   )
 }
-
 export default Auth;

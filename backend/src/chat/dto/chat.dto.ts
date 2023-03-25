@@ -39,8 +39,8 @@ export class MemberDto {
 
 export type ChatPayload = {
   time: string;
-  senderUserId: string;
   senderName: string;
+  senderUserId: string;
   text: string;
   id: string;
 };
