@@ -30,11 +30,11 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
     socket.on('chatToClient', (chat: MessagePayload) => {
       setChatLog(prevChatLog => [...prevChatLog, chat]);
     });
-  }, [])
+  }, [socket])
 
   useLayoutEffect(() => {
     latestChatRef.current?.scrollIntoView();
-  }, [chatLog])
+  }, [chatLog, latestChatRef])
 
   useLayoutEffect(() => {
     const fetchChat = async () => {

@@ -1,38 +1,53 @@
 import { Box, Grid, Typography } from "@mui/material";
 import axios from "axios";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
 import { Socket } from "socket.io-client";
 import useMutationMessage from "../../../hooks/chat/useMutationMessage";
+import { ChatRoom } from "../../../types/PrismaType";
 import getUserName from "../../../utils/getUserName";
 import TextFieldComponent from "../../utils/TextFieldComponent";
 import ChatlogComponent from "../utils/ChatlogComponent";
+import ChannelEditDialog from "./ChannelEditDialog";
 
 type ChannelDisplayComponentProps = {
   socket: Socket;
   roomId: string;
+  setChannels: any;
+  channels: any;
 }
 
 export default function ChannelDisplayComponent(props: ChannelDisplayComponentProps) {
-  const { roomId, socket } = props;
+  const { roomId, socket, setChannels, channels } = props;
   const [myUserId, setMyUserId] = useState<string>('');
   const [userName, setUserName] = useState('');
+  const [myRole, setMyRole] = useState<string>('');
   const [roomName, setRoomName] = useState('');
   const { createMessageMutation } = useMutationMessage(socket, roomId, false);
   const [text, setText] = useState('');
   const textfieldElm = useRef<HTMLInputElement>(null);
-  const router = useNavigate();
 
-  const getRoomName = useCallback(async (): Promise<string> => {
-    try {
-      const res = await axios.get(`http://localhost:8080/chat/room/${roomId}`);
-      return res.data.name;
-    } catch (error) {
-      alert('チャットルームが見つかりませんでした');
-      router('/channel/room');
-    }
-    return '';
-  }, [roomId])
+  useEffect(() => {
+    socket.on('updateChannelInfo', (dto: { id: string, name: string }) => {
+      const tmpChannels = [...channels];
+      const idx = tmpChannels.findIndex((channel: any) => channel.id === dto.id);
+      if (idx !== -1) {
+        tmpChannels[idx] = {
+          ...tmpChannels[idx],
+          name: dto.name,
+        };
+      }
+      setChannels(tmpChannels);
+      })
+  }, [socket]);
+
+  useEffect(() => {
+    channels.map((room: ChatRoom) => {
+      if (room.id === roomId) {
+        setRoomName(room.name);
+      }
+    })
+  }, [channels, roomId])
+
 
   useEffect(() => {
     const getUserId = async () => {
@@ -40,9 +55,14 @@ export default function ChannelDisplayComponent(props: ChannelDisplayComponentPr
       setMyUserId(myUser.id);
     }
 
+    const getMyRole = async () => {
+      const { data: member } = await axios.get(`http://localhost:8080/chat/${roomId}/myMember`);
+      setMyRole(member.role);
+    }
+
     getUserId();
+    getMyRole();
     getUserName().then((name) => { setUserName(name); });
-    getRoomName().then((name) => { setRoomName(name); })
   }, [roomId])
 
 
@@ -74,13 +94,24 @@ export default function ChannelDisplayComponent(props: ChannelDisplayComponentPr
           textAlign={'left'}
           sx={{ display: 'flex', alignItems: 'center' }}
         >
-          <Typography
-            variant="h6"
-            mt={1} ml={2}
-            sx={{ color: '#3C444B' }}
-          >
-            @{roomName}
-          </Typography>
+          <Grid container justifyContent={'space-between'}>
+            <Grid item>
+              <Typography
+                variant="h6"
+                mt={1} ml={2}
+                sx={{ color: '#3C444B' }}
+              >
+                @{roomName}
+              </Typography>
+            </Grid>
+            <Grid item>
+              {myRole === 'OWNER' ? (
+                <>
+                  <ChannelEditDialog roomId={roomId} channels={channels} socket={socket} />
+                </>
+              ) : (<></>)}
+            </Grid>
+          </Grid>
         </Box>
       </Grid>
       <Box
