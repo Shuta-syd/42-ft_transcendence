@@ -45,7 +45,7 @@ function App() {
           <Route path="/game/game_room" element={<CreateGameRoom/>} />
           <Route path="/game/invite_room" element={<InviteRoom/>} />
           <Route path="/game/join_invited_room" element={<JoinInvitedRoom></JoinInvitedRoom>} />
-          <Route path="/profile" element={<Profile/>} />
+          <Route path="/user" element={<Profile/>} />
         </Routes>
     </Grid>
   )
