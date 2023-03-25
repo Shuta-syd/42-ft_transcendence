@@ -213,8 +213,10 @@ const Profile = () => {
     const [image, setImage] = useState(steveJobsImage);
     // const elonMuskImage = "https://upload.wikimedia.org/wikipedia/commons/e/e1/Elon_Musk_%28cropped%29.jpg";
     const uploadImage = (event: React.ChangeEvent<HTMLInputElement>) => {
-        // @ts-ignore
-        setImage(URL.createObjectURL(event.target.files[0]));
+        const {files} = event.target;
+        if (files?.[0]) {
+            setImage(URL.createObjectURL(files[0]));
+        }
     }
 
     return (
