@@ -13,6 +13,7 @@ import {sendFriendRequest} from "../../hooks/profile/sendFriendRequests";
 import useQueryMatches from "../../hooks/match/useWueryMatch";
 
 
+let defaultImage: string = "https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg";
 const Profile = () => {
 
     const [user, setUser] = useState<User>();
@@ -181,7 +182,6 @@ const Profile = () => {
     }
 
 
-    const steveJobsImage = "https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg";
 
     function FriendStatus({friendName}: FriendProps) {
         const [isOnline, setIsOnline] = useState(null);
@@ -209,28 +209,50 @@ const Profile = () => {
         );
     }
 
+    // const steveJobsImage = "https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg";
     // dbにimageを保存するためのfunction
-    const storeImage = async (image: string) => {
+    const [profileImage, setProfileImage] = useState(defaultImage);
+    const storeImage = async (imageDto: string) => {
         try {
-            const response = await axios.post(`http://localhost:8080/user/add/image`, { image }, {
+            await axios.post(`http://localhost:8080/user/add/image`, { image: imageDto }, {
                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-            });
-            console.log(response.data);
+            })
+                .then(res => {
+                    console.log('default image', res.data.image);
+                    defaultImage = res.data.image;
+                    setProfileImage(res.data.image);
+                });
         } catch (error) {
             console.error(error);
         }
     }
 
-    const [image, setImage] = useState(steveJobsImage);
     // const elonMuskImage = "https://upload.wikimedia.org/wikipedia/commons/e/e1/Elon_Musk_%28cropped%29.jpg";
     const uploadImage = (event: React.ChangeEvent<HTMLInputElement>) => {
         const {files} = event.target;
         if (files?.[0]) {
-            const imageData = URL.createObjectURL(files[0]);
-            setImage(imageData);
-            storeImage(imageData);
+            const imageDto = URL.createObjectURL(files[0]);
+            console.log('imageDto', imageDto);
+            storeImage(imageDto);
         }
     }
+
+    // useEffect(() => {
+    //     const fetchUserImage = async () => {
+    //         try {
+    //             const response = await axios.get(`http://localhost:8080/user/image`, {
+    //                 headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    //             });
+    //             if (response.data.image) {
+    //                 console.log(response.data.image);
+    //                 // setImage(response.data.image);
+    //             }
+    //         } catch (error) {
+    //             console.error(error);
+    //         }
+    //     };
+    //     fetchUserImage();
+    // }, []);
 
     return (
         <div>
@@ -238,7 +260,7 @@ const Profile = () => {
                 variant="circular"
                 color="success"
                 alt={user?.name}
-                src={image}
+                src={profileImage}
                 sx={{width: 200, height: 200, margin: 2}}
             >
             </Avatar>
