@@ -1,5 +1,3 @@
-// @ts-ignore
-
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { User } from '@prisma/client';
@@ -100,7 +98,7 @@ export class UserService {
    * @param image setしたいimageのURL
    * @return setしたUserのデータ
    */
-  async setImage(userId: string, image: string): Promise<User> {
+  async addUserImage(userId: string, image: string): Promise<User> {
     const user = await this.getUserById(userId);
     user.image = image;
     return user;

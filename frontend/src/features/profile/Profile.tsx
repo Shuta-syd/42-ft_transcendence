@@ -210,13 +210,27 @@ const Profile = () => {
         );
     }
 
+    // dbにimageを保存するためのfunction
+    const storeImage = async (image: string) => {
+        try {
+            const response = await axios.post(`http://localhost:8080/user/add/image`, { image }, {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+            });
+            console.log(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     const [image, setImage] = useState(steveJobsImage);
     // const elonMuskImage = "https://upload.wikimedia.org/wikipedia/commons/e/e1/Elon_Musk_%28cropped%29.jpg";
     const uploadImage = (event: React.ChangeEvent<HTMLInputElement>) => {
         const {files} = event.target;
         if (files?.[0]) {
-            setImage(URL.createObjectURL(files[0]));
-            // console.log(URL.createObjectURL(files[0]));
+            const imageData = URL.createObjectURL(files[0]);
+            setImage(imageData);
+            console.log(imageData);
+            storeImage(imageData)
         }
     }
 
