@@ -13,9 +13,8 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ChatRoom, Member, Message, User } from '@prisma/client';
+import { ChatRoom, Member, Message } from '@prisma/client';
 import { Request } from 'express';
-import { Msg } from 'src/auth/dto/auth.dto';
 import {
   PrismaChatRoom,
   PrismaMessage,
@@ -25,10 +24,10 @@ import { ChatService } from './chat.service';
 import {
   AddMemberDto,
   MuteMemberDto,
-  ChatRoomPayload,
   CreateChatRoom,
   SendChatDto,
   MemberDto,
+  LeaveMemberDto,
 } from './dto/chat.dto';
 
 @Controller('chat')
@@ -70,6 +69,18 @@ export class ChatController {
     @Body() dto: CreateChatRoom,
   ): Promise<ChatRoom> {
     return this.chatService.crateChatRoom(req.user.id, dto);
+  }
+
+  @Post('dm/room')
+  @ApiOperation({
+    description: 'create chat dm room',
+    summary: 'create chat dm room',
+  })
+  async createDMRoom(
+    @Req() req: Request,
+    @Body() dto: CreateChatRoom,
+  ): Promise<{ room: ChatRoom; isNew: boolean }> {
+    return this.chatService.crateDMRoom(req.user.name, req.user.id, dto);
   }
 
   @Get('room/:roomId')
@@ -142,7 +153,7 @@ export class ChatController {
     summary: "Get a user's DM rooms ",
   })
   @Get('dm')
-  async getUserDM(@Req() req: Request): Promise<ChatRoomPayload> {
+  async getUserDM(@Req() req: Request): Promise<ChatRoom[]> {
     return this.chatService.getUserDM(req.user.id);
   }
 
@@ -158,6 +169,19 @@ export class ChatController {
     return this.chatService.getChannels(req.user.id);
   }
 
+  @Patch('channel/:roomId')
+  @ApiOperation({
+    description: 'update channel type',
+    summary: 'update channel type',
+  })
+  async updateChannel(
+    @Req() req: Request,
+    @Param('roomId') roomId: string,
+    @Body() dto: CreateChatRoom,
+  ) {
+    return this.chatService.updateChannel(req.user.id, roomId, dto);
+  }
+
   @Get('channel/search')
   @ApiOperation({
     description: 'get channel related to name',
@@ -170,15 +194,12 @@ export class ChatController {
     return this.chatService.searchChannel(req.user.id, name);
   }
 
-  @Patch('channel/mute')
+  @Patch('channel/member/mute')
   @ApiOperation({
     description: 'admin or owner mute the member',
     summary: 'admin or owner mute the member',
   })
-  async muteMember(
-    @Req() req: Request,
-    @Body() dto: MuteMemberDto,
-  ): Promise<Msg> {
+  async muteMember(@Req() req: Request, @Body() dto: MuteMemberDto) {
     return this.chatService.muteMember(req.user.id, dto);
   }
 
@@ -187,10 +208,7 @@ export class ChatController {
     description: 'admin or owner kick the member',
     summary: 'admin or owner kick the member',
   })
-  async deleteMember(
-    @Req() req: Request,
-    @Body() dto: MemberDto,
-  ): Promise<Msg> {
+  async deleteMember(@Req() req: Request, @Body() dto: MemberDto) {
     return this.chatService.deleteMember(req.user.id, dto);
   }
 
@@ -199,10 +217,21 @@ export class ChatController {
     description: 'admin or owner ban the user',
     summary: 'admin or owner ban the user',
   })
-  async banUserOnChatRoom(
-    @Req() req: Request,
-    @Body() dto: MemberDto,
-  ): Promise<Msg> {
+  async banUserOnChatRoom(@Req() req: Request, @Body() dto: MemberDto) {
     return this.chatService.banUserOnChatRoom(req.user.id, dto);
+  }
+
+  @Delete('channel/member/leave')
+  @ApiOperation({
+    description: 'the user leave the room',
+    summary: 'the user leave the room',
+  })
+  async leaveChatRoom(@Req() req: Request, @Body() dto: LeaveMemberDto) {
+    return this.chatService.leaveChatRoom(req.user.id, dto);
+  }
+
+  @Patch('channel/role')
+  async updateMemberRole(@Req() req: Request, @Body() dto: MemberDto) {
+    return this.chatService.updateMemberRole(req.user.id, dto);
   }
 }

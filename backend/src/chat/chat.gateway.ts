@@ -44,13 +44,39 @@ export class ChatGateway
     });
   }
 
-  @SubscribeMessage('joinRoom')
+  @SubscribeMessage('join_chat_room')
   handleJoinRoom(
     @MessageBody() payload: { id: string },
     @ConnectedSocket() client: Socket,
   ) {
-    this.logger.log('JoinRoom');
+    this.logger.log(
+      'Join Room: ',
+      `client[${client.id}] join ChatRoom ${payload.id}`,
+    );
     client.join(payload.id);
+  }
+
+  @SubscribeMessage('leave_chat_room')
+  handleLeaveChatRoom(
+    @MessageBody() payload: { id: string },
+    @ConnectedSocket() client: Socket,
+  ) {
+    this.logger.log(
+      'Leave Room: ',
+      `client[${client.id}] leave ChatRoom ${payload.id}`,
+    );
+    client.leave(payload.id);
+  }
+
+  @SubscribeMessage('update_channel_info')
+  updateChannelInfo(
+    @MessageBody() payload: { id: string; name: string },
+    @ConnectedSocket() client: Socket,
+  ) {
+    this.server.emit('updateChannelInfo', {
+      ...payload,
+    });
+    this.logger.log(`Update Channel [${payload.id}]: by client[${client.id}] `);
   }
 
   afterInit(server: Server) {

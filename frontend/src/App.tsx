@@ -1,14 +1,15 @@
 import React from "react";
 import {Route, Routes } from 'react-router-dom';
+import { Grid } from "@mui/material";
 import axios from "axios";
 import Auth from "./features/auth/Auth";
 import Chat from "./features/chat/Chat";
-import ChatComponent from "./components/chat/ChatComponent";
-import ChatWindowComponent from "./components/chat/ChatWindowComponent";
+import ChatComponent from "./components/chat/dm/ChatComponent";
+import ChatWindowComponent from "./components/chat/dm/ChatWindowComponent";
 import Matches from "./features/match/Match";
 import Channel from "./features/channel/Channel";
-import ChannelComponent from "./components/channel/ChannelComponent";
-import ChannelWindowComponent from "./components/channel/ChannelWindowComponent";
+import ChannelComponent from "./components/chat/group/ChannelComponent";
+import ChannelWindowComponent from "./components/chat/group/ChannelWindowComponent";
 import GameMatching from "./features/game/GameMatching";
 import GamePlayer1 from "./features/game/GamePlayer1";
 import GamePlayer2 from "./features/game/GamePlayer2";
@@ -22,7 +23,7 @@ import Profile from "./features/profile/Profile";
 function App() {
   axios.defaults.withCredentials = true;
   return (
-    <>
+    <Grid item xs>
         <Routes>
           <Route index element={<Auth/>} />
           <Route path="/chat" element={<Chat />}>
@@ -46,7 +47,7 @@ function App() {
           <Route path="/game/join_invited_room" element={<JoinInvitedRoom></JoinInvitedRoom>} />
           <Route path="/profile" element={<Profile/>} />
         </Routes>
-    </>
+    </Grid>
   )
 }
 export default App;

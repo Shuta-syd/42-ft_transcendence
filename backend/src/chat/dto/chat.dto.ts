@@ -19,12 +19,17 @@ export class CreateChatRoom {
   type: RoomType;
   name: string;
   password?: string;
+  friendId?: string;
 }
 
 export class MuteMemberDto {
   roomId: string;
   memberId: string;
   isMute: boolean;
+}
+
+export class LeaveMemberDto {
+  roomId: string;
 }
 
 export class MemberDto {
@@ -35,6 +40,7 @@ export class MemberDto {
 export type ChatPayload = {
   time: string;
   senderName: string;
+  senderUserId: string;
   text: string;
   id: string;
 };

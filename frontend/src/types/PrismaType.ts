@@ -26,7 +26,7 @@ export type Message = {
   createdAt: Date
   senderName: string
   message: string
-  memberId: string
+  senderUserId: string
   roomId: string
 }
 
