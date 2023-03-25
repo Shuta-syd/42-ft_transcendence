@@ -103,4 +103,12 @@ export class UserService {
     user.image = image;
     return user;
   }
+
+  /**
+   * @description Userのimageを取得する
+   */
+  async getUserImage(userId: string): Promise<string> {
+    const user = await this.getUserById(userId);
+    return user.image;
+  }
 }

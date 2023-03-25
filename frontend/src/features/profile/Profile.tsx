@@ -42,7 +42,6 @@ const Profile = () => {
 
     const [friends, setFriends] = useState<User[]>([]);
 
-
     const HandleFriendListButton = () => {
         const friendsPromise = getFriends();
         friendsPromise.then((data) => {
@@ -229,8 +228,7 @@ const Profile = () => {
         if (files?.[0]) {
             const imageData = URL.createObjectURL(files[0]);
             setImage(imageData);
-            console.log(imageData);
-            storeImage(imageData)
+            storeImage(imageData);
         }
     }
 

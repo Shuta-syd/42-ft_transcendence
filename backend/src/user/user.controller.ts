@@ -81,4 +81,8 @@ export class UserController {
     console.log('user.image => ', data.image);
     return this.userService.addUserImage(req.user.id, data.image);
   }
+  @Get('image')
+  async getUserImage(@Req() req: Request): Promise<string> {
+    return this.userService.getUserImage(req.user.id);
+  }
 }
