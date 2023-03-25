@@ -1,3 +1,4 @@
+import { CircularProgress } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import userAuth from "./userAuth";
@@ -13,17 +14,20 @@ export default function PrivateRouter({ children }: { children: JSX.Element }) {
         const isAuth = await userAuth();
         setAuth(isAuth);
       } finally {
-        setLoading(false);
+        setTimeout(() => {
+          setLoading(false);
+        }, 500);
       }
     };
     getUserAuth();
   }, []);
 
   if (loading) {
-    return <></>;
+    return <CircularProgress />;
   }
 
   if (!auth) {
+    alert('ログインしてください');
     return <Navigate to={"/login"} replace />;
   }
 
