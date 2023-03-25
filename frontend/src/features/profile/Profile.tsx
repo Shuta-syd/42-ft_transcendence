@@ -100,7 +100,7 @@ const Profile = () => {
             }
             return count;
         }
-        enum Achivement {
+        enum Achievement {
             "Beginner" = 0,
             "Intermediate" = 5,
             "Advanced" = 10,
@@ -108,13 +108,13 @@ const Profile = () => {
         }
 
         const getAchievement = () => {
-            if (countMyWinTime() < Achivement.Intermediate) {
+            if (countMyWinTime() < Achievement.Intermediate) {
                 return "Beginner";
             }
-            if (countMyWinTime() < Achivement.Advanced) {
+            if (countMyWinTime() < Achievement.Advanced) {
                 return "Intermediate";
             }
-            if (countMyWinTime() < Achivement.Expert) {
+            if (countMyWinTime() < Achievement.Expert) {
                 return "Advanced";
             }
             return "Expert";
@@ -130,6 +130,7 @@ const Profile = () => {
                     defaultValue={countMyWinTime()}
                     precision={0.5}
                     max={20}
+                    readOnly
                 />
                 <p></p>
                 </h2>
