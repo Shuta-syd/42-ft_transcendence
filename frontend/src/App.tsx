@@ -1,5 +1,5 @@
 import React from "react";
-import {Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { Grid } from "@mui/material";
 import axios from "axios";
 import Auth from "./features/auth/Auth";
@@ -18,33 +18,52 @@ import CreateGameRoom from "./features/game/CreateGameRoom";
 import GameSelectRoom from "./features/game/GameSelectRoom";
 import InviteRoom from "./features/game/InviteRoom";
 import JoinInvitedRoom from "./features/game/JoinInvitedRoom";
+import NewNavBar from './components/utils/NewNavbar';
+import PrivateRouter from "./utils/PrivateRouter";
 
 function App() {
   axios.defaults.withCredentials = true;
+
   return (
-    <Grid item xs>
+    <Grid container>
+      <NewNavBar />
+      <Grid item xs>
         <Routes>
-          <Route index element={<Auth/>} />
-          <Route path="/chat" element={<Chat />}>
+          <Route path="/login" element={<Auth/>} />
+          <Route path="/chat" element={
+            <PrivateRouter>
+              <Chat />
+            </PrivateRouter>
+          }>
             <Route path="room" element={<ChatComponent />}>
               <Route path=":roomId" element={<ChatWindowComponent />} />
             </Route>
           </Route>
-          <Route path="/channel" element={<Channel />}>
+          <Route path="/channel" element={
+            <PrivateRouter>
+              <Channel />
+            </PrivateRouter>
+          }>
             <Route path="room" element={<ChannelComponent />}>
               <Route path=":roomId" element={<ChannelWindowComponent />} />
             </Route>
           </Route>
-          <Route path="/match" element={<Matches/>}/>
-          <Route path="/game" element={<GameMatching/>} />
-           <Route path="/game/player1" element={<GamePlayer1/>} />
-           <Route path="/game/player2" element={<GamePlayer2/>} />
-          <Route path="/game/observer" element={<GameObserver/>} />
-          <Route path="/game/select_room" element={<GameSelectRoom/>} />
-          <Route path="/game/game_room" element={<CreateGameRoom/>} />
-          <Route path="/game/invite_room" element={<InviteRoom/>} />
-          <Route path="/game/join_invited_room" element={<JoinInvitedRoom></JoinInvitedRoom>} />
+          <Route path="/match" element={<Matches />} />
+          <Route path="/game" element={
+            <PrivateRouter>
+              <GameMatching />
+            </PrivateRouter>
+          } />
+            <Route path="player1" element={<GamePlayer1/>} />
+            <Route path="player2" element={<GamePlayer2/>} />
+            <Route path="observer" element={<GameObserver/>} />
+            <Route path="select_room" element={<GameSelectRoom/>} />
+            <Route path="game_room" element={<CreateGameRoom/>} />
+            <Route path="invite_room" element={<InviteRoom/>} />
+            <Route path="join_invited_room" element={<JoinInvitedRoom></JoinInvitedRoom>} />
+          <Route />
         </Routes>
+      </Grid>
     </Grid>
   )
 }

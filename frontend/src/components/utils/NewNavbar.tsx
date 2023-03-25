@@ -5,8 +5,8 @@ import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
 import ChatOutlinedIcon from '@mui/icons-material/ChatOutlined';
 import PersonIcon from '@mui/icons-material/Person';
 import React from "react";
-import '../../styles/Navbar.css'
 import { Link, useLocation } from "react-router-dom";
+import '../../styles/Navbar.css'
 
 export default function NewNavBar() {
   const path = useLocation().pathname;
@@ -26,7 +26,7 @@ export default function NewNavBar() {
         <Box
           marginTop={'3vh'}
         >
-          <Link to={'/'}>
+          <Link to={'/login'}>
             <IconButton>
               <Looks4Icon
                 fontSize="large"
