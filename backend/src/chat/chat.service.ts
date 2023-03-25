@@ -390,6 +390,23 @@ export class ChatService {
     await this.prisma.member.delete({
       where: { id: member.id },
     });
+
+    const members = await this.prisma.chatRoom
+      .findUnique({
+        where: { id: dto.roomId },
+      })
+      .members();
+
+    if (members.length === 0) {
+      await this.prisma.message.deleteMany({
+        where: {
+          roomId: dto.roomId,
+        },
+      });
+      await this.prisma.chatRoom.delete({
+        where: { id: dto.roomId },
+      });
+    }
   }
 
   /**
