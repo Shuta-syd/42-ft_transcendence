@@ -221,6 +221,22 @@ export class ChatService {
     return channels;
   }
 
+  async updateChannel(userId: string, roomId: string, dto: CreateChatRoom) {
+    const executor = await this.getMyMember(userId, roomId);
+    if (!executor) throw new NotFoundException('executor is not found');
+    if (executor.role !== 'OWNER')
+      throw new ForbiddenException('You are not a channel owner');
+
+    return this.prisma.chatRoom.update({
+      where: { id: roomId },
+      data: {
+        password: dto.password,
+        name: dto.name,
+        type: dto.type,
+      },
+    });
+  }
+
   /**
    * @description 与えられたnameからチャンネルを検索する（部分一致）
    */

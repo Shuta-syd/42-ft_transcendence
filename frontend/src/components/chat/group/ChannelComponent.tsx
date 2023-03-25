@@ -1,7 +1,8 @@
 import { Box, Grid } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { io, Socket } from "socket.io-client";
+import { ChatRoom } from "../../../types/PrismaType";
 import ChannelGroupComponent from "./ChannelGroupComponent";
 
 
@@ -9,18 +10,19 @@ import ChannelGroupComponent from "./ChannelGroupComponent";
  * @returns Channel画面のコンポーネント
  */
 export default function ChannelComponent() {
-  const socket: Socket = io('http://localhost:8080/chat')
+  const socket: Socket = io('http://localhost:8080/chat');
+  const [channels, setChannels] = useState<ChatRoom[]>([]);
 
   useEffect(() => {
     socket.on('connect', () => {
-      console.log(`Connect: ${socket.id}`);
+      console.log(`[Channel] Connect: ${socket.id}`);
     })
 
     return () => {
-      console.log(`Disconnect: ${socket.id}`);
+      console.log(`[Channel] Disconnect: ${socket.id}`);
       socket.disconnect();
     }
-  }, [socket])
+  }, [socket]);
 
 
   return (
@@ -33,8 +35,8 @@ export default function ChannelComponent() {
         sx={{ display: 'flex', alignItems: 'center' }}
       >
         <Grid container height={'95vh'}>
-          <ChannelGroupComponent socket={socket} />
-          <Outlet context={socket}/>
+          <ChannelGroupComponent socket={socket} channels={channels} setChannels={setChannels} />
+          <Outlet context={{ socket, setChannels, channels}} />
         </Grid>
       </Box>
     </>

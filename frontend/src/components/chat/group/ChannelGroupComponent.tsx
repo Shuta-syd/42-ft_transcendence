@@ -2,7 +2,6 @@ import { Box, Grid, IconButton, TextField, Typography } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import { Socket } from "socket.io-client";
 import React, { useState } from "react";
-import { ChatRoom } from "../../../types/PrismaType";
 import ChannelListComponent from "./ChannelListComponent";
 import ChannelMoreOption from "./ChannelMoreOption";
 import '../../../styles/Chat.css';
@@ -10,14 +9,15 @@ import OptionOpenButton from "../utils/OptionOpenButton";
 
 type ChannelGroupComponentProps = {
   socket: Socket;
-}
+  channels: any;
+  setChannels: any;
+};
 
 /**
  * @returns 所属中のChannelリストを表示するコンポーネント
  */
 export default function ChannelGroupComponent(props: ChannelGroupComponentProps) {
-  const { socket } = props;
-  const [channels, setChannels] = useState<ChatRoom[]>([]);
+  const { socket, channels, setChannels } = props;
   const [openLeaveButton, setOpenLeaveButton] = useState<boolean>(false);
 
   return (

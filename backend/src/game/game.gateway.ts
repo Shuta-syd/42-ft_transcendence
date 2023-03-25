@@ -194,7 +194,7 @@ export class GameGateway {
       console.log('rerurn');
       return;
     }
-    // this.gameService.terminateGame(dto);
+    this.gameService.terminateGame(dto);
   }
 
   // 接続が切断されたときの処理
