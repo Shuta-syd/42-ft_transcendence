@@ -1,5 +1,5 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
-import {Avatar, Button} from "@mui/material";
+import {Avatar, Button, IconButton} from "@mui/material";
 import axios from "axios";
 import Rating from '@mui/material/Rating';
 import {deepPurple} from "@mui/material/colors";
@@ -8,6 +8,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import io from "socket.io-client";
 import * as SocketIOClient from 'socket.io-client';
+import {PhotoCamera} from "@mui/icons-material";
 import {Match, User} from "../../types/PrismaType";
 import { fetchProfileUser } from "../../hooks/profile/useProfileUser";
 import { sendFriendRequest } from "../../hooks/profile/sendFriendRequests";
@@ -91,6 +92,7 @@ const Profile = () => {
             </h2>
         );
     }
+
     interface MatchListProps {
         matches: Match[];
     }
@@ -125,7 +127,7 @@ const Profile = () => {
                             [{match.id}] {match.player1} vs {match.player2}
                         </h1>
                         <div>
-                            <ShowResult p1={match.player1} p2={match.player2} />
+                            <ShowResult p1={match.player1} p2={match.player2}/>
                         </div>
                     </div>
                 ))}
@@ -136,7 +138,11 @@ const Profile = () => {
     interface FriendProps {
         friendName: string;
     }
-    function FriendStatus({ friendName }:FriendProps) {
+
+
+    const steveJobsImage = "https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg";
+
+    function FriendStatus({friendName}: FriendProps) {
         const [isOnline, setIsOnline] = useState(null);
 
         useEffect(() => {
@@ -153,24 +159,44 @@ const Profile = () => {
         if (isOnline === null) {
             return <span>Loading...</span>;
         }
-
         return (
             <span>{isOnline ? " -> Online" : " -> Offline"}</span>
         );
     }
 
+    const [image, setImage] = useState(steveJobsImage);
+    // const elonMuskImage = "https://upload.wikimedia.org/wikipedia/commons/e/e1/Elon_Musk_%28cropped%29.jpg";
+    const uploadImage = (event: React.ChangeEvent<HTMLInputElement>) => {
+        // @ts-ignore
+        setImage(URL.createObjectURL(event.target.files[0]));
+    }
 
     return (
         <div>
             <Avatar
-                sx={{ bgcolor: deepPurple[500]
-                    , width: 100
-                    , height: 100}}
+                variant="circular"
+                color="success"
+                alt={user?.name}
+                src={image}
+                sx={{width: 200, height: 200, margin: 2}}
             >
-                <h1>
-                {user?.name}
-                </h1>
             </Avatar>
+            <h1>
+                {user?.name}
+            </h1>
+            <Button
+                variant="contained"
+                component="label"
+                color="success"
+            >
+                Upload
+                <input hidden accept="image/*" multiple type="file" onChange={event => uploadImage(event)}/>
+            </Button>
+            <IconButton color="primary" aria-label="upload picture" component="label">
+                <input hidden accept="image/*" type="file"/>
+                <PhotoCamera/>
+            </IconButton>
+            <p></p>
             <Rating
                 name={user?.name}
                 defaultValue={4}
@@ -185,7 +211,7 @@ const Profile = () => {
                 InputProps={{
                     startAdornment: (
                         <InputAdornment position="start">
-                            <AccountCircle />
+                            <AccountCircle/>
                         </InputAdornment>
                     ),
                     onChange: HandleInputID
@@ -193,29 +219,29 @@ const Profile = () => {
                 variant="standard"
             />
             <Button
-            variant="contained"
+                variant="contained"
                 onClick={handleDecideIdButton}>
                 ID決定
             </Button>
             <p></p>
             <Button
-            variant="outlined"
-            color="primary"
-            size="large"
-            onClick={HandleFriendListButton}
+                variant="outlined"
+                color="primary"
+                size="large"
+                onClick={HandleFriendListButton}
             >
                 友達リスト
             </Button>
             <h1>
-            {friends.map((friend: User) => (
-                <div key={friend.id}>
-                    {friend.name}
-                    <FriendStatus friendName={friend.name}/>
-                </div> // keyプロパティを追加
-            ))}
+                {friends.map((friend: User) => (
+                    <div key={friend.id}>
+                        {friend.name}
+                        <FriendStatus friendName={friend.name}/>
+                    </div> // keyプロパティを追加
+                ))}
             </h1>
             <h2>今までの戦績</h2>
-            <MatchList matches={matchArr} />
+            <MatchList matches={matchArr}/>
         </div>
     );
 }

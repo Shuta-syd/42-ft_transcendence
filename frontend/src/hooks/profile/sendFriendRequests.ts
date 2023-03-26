@@ -16,7 +16,7 @@ export async function sendFriendRequest(userId: string | undefined, friendId: st
         return response.data;
     } catch (error: any) {
         console.error(error);
-        return { error: error.message }; // 何かしらの値を返す
+        return {error: error.message}; // 何かしらの値を返す
     }
 }
 

@@ -39,6 +39,12 @@ type Score = {
   name: string;
 };
 
+type TerminateGame = {
+  player1: string;
+  isInviteGame: boolean;
+  roomId: string;
+};
+
 @WebSocketGateway({
   cors: {
     origin: '*',
