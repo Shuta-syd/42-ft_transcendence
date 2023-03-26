@@ -367,7 +367,7 @@ const GamePlayer1 = () => {
                 size="large"
                 onClick={pageReload}
             >
-                PRESS IF YOU ARE READY
+                🦺RECONNECT🦺
             </Button>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
             <Button variant={"contained"}
