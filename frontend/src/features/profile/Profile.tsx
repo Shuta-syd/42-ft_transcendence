@@ -92,9 +92,10 @@ const Profile = () => {
 
     function ShowAchievement({matches}: MatchListProps) {
         const countMyWinTime =  () => {
-            let count = 0;
+            let count: number = 0;
             for (const match of matches) {
-                if (match.winner_id === user?.name) {
+                const winnerName = match.winner_id === '1' ? match.player1 : match.player2;
+                if (winnerName === user?.name) {
                     count += 1;
                 }
             }
