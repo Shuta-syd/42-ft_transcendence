@@ -149,6 +149,7 @@ export class GameGateway {
       roomId = NameToInviteRoomIdDic[name];
     }
     this.server.to(roomId).emit('Ping', name, client.id);
+    console.log(name, client.id, 'Ping');
   }
 
   @SubscribeMessage('Pong')
@@ -161,6 +162,7 @@ export class GameGateway {
       roomId = NameToInviteRoomIdDic[name];
     }
     this.server.to(roomId).emit('Pong', name, client.id);
+    console.log(name, client.id, 'Pong');
   }
 
   @SubscribeMessage('ScoreToServer')
