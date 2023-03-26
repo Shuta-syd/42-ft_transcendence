@@ -50,10 +50,6 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
     })
   }, [userName])
 
-  useEffect(() => {
-    socket.on('join_chat_room', () => { });
-    socket.on('leave_chat_room', () => { })
-  }, [])
 
   useEffect(() => {
     if (prevRoomId)
@@ -61,7 +57,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
     socket.emit('join_chat_room', { id: roomID });
     socket.emit('join_chat_room', { id: roomID });
     setPrevRoomId(roomID);
-  }, [roomID])
+  }, [roomID, socket])
 
   const handleClick = (roomId: string) => {
     socket.emit('join_chat_room', { id: roomId })
