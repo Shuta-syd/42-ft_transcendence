@@ -3,13 +3,16 @@ import React from 'react';
 
 const ftLoginURL = "http://localhost:8080/auth/login/42"
 
-function FtLoginComponent() {
+function FtLoginButtonComponent() {
   return (
     <Button
       variant='contained'
       href={ftLoginURL}
-      >42 login</Button>
+      sx={{ backgroundColor: '#01babc' }}
+    >
+      42 login
+    </Button>
   );
 }
 
-export default FtLoginComponent;
+export default FtLoginButtonComponent;
