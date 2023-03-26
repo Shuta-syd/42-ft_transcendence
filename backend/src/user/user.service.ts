@@ -98,10 +98,15 @@ export class UserService {
    * @param image setしたいimageのURL
    * @return setしたUserのデータ
    */
-  async addUserImage(userId: string, image: string): Promise<User> {
-    const user = await this.getUserById(userId);
-    user.image = image;
-    return user;
+  async addUserImage(userId: string, image: string) {
+    return this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        image: image,
+      },
+    });
   }
 
   /**
