@@ -2,10 +2,10 @@ import React from "react";
 import AuthComponent from "../../components/auth/AuthComponent";
 
 
-function Auth() {
+function Auth(props: { isLogin: boolean }) {
   return (
     <>
-      <AuthComponent />
+      <AuthComponent isLogin={props.isLogin} />
     </>
   )
 }

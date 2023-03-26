@@ -26,10 +26,11 @@ function App() {
 
   return (
     <Grid container>
-      { path !=='/login' ? <NewNavBar /> : <></>}
+      { path !=='/login' && path !== '/signup' ? <NewNavBar /> : <></>}
       <Grid item xs>
         <Routes>
-          <Route path="/login" element={<Auth/>} />
+          <Route path="/login" element={<Auth isLogin={true} />} />
+          <Route path="/signup" element={<Auth isLogin={false}/>} />
           <Route path="/chat" element={
             <PrivateRouter>
               <Chat />
