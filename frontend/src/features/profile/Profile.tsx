@@ -2,7 +2,6 @@ import React, {ChangeEvent, useEffect, useState} from 'react';
 import {Avatar, Button, IconButton} from "@mui/material";
 import axios from "axios";
 import Rating from '@mui/material/Rating';
-import {deepPurple} from "@mui/material/colors";
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import AccountCircle from '@mui/icons-material/AccountCircle';
