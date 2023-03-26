@@ -1,7 +1,8 @@
-import { Box, Button, TextField, Stack } from "@mui/material";
+import { Box, Button, TextField, Stack, Typography } from "@mui/material";
 import axios from "axios";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 import FormController from "../utils/FormController";
 import FtLoginButtonComponent from "./FtLoginButtonComponent";
 
@@ -44,8 +45,10 @@ function LoginComponent() {
           >
             <Stack
               spacing={3}
-              width={'90%'}
-              >
+            width={'90%'}
+            textAlign='center'
+          >
+            <Typography variant="h5">Login</Typography>
               <FormController
                 name='email'
                 control={control}
@@ -64,6 +67,7 @@ function LoginComponent() {
               <FtLoginButtonComponent />
             </Stack>
           </Box>
+          <Link to='/signup'>signup user</Link>
         </Box>
       </form>
   )

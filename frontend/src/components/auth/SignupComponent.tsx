@@ -1,7 +1,8 @@
-import { Box, Button, TextField, Stack } from "@mui/material";
+import { Box, Button, TextField, Stack, Typography} from "@mui/material";
 import axios from "axios";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 import FormController from "../utils/FormController";
 
 type SignupData = {
@@ -28,13 +29,13 @@ function SignupComponent() {
 
 
   return (
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Box
-          sx={{ width: '100%'}}
-          height={'30rem'}
-          border={2}
-          borderRadius={'5px'}
-          borderColor={'#e0e3e9'}
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Box
+        sx={{ width: '100%'}}
+        height={'30rem'}
+        border={2}
+        borderRadius={'5px'}
+        borderColor={'#e0e3e9'}
         >
           <Box
             sx={{
@@ -43,11 +44,13 @@ function SignupComponent() {
               alignItems: 'center'
             }}
             height={'100%'}
-          >
+        >
             <Stack
               spacing={3}
-              width={'90%'}
-              >
+            width={'90%'}
+            textAlign='center'
+          >
+              <Typography variant="h5">Signup</Typography>
               <FormController
                 name='username'
                 control={control}
@@ -72,6 +75,7 @@ function SignupComponent() {
               <Button type="submit" variant="contained">SignUp</Button>
             </Stack>
           </Box>
+          <Link to='/login'>login user</Link>
         </Box>
       </form>
   )
