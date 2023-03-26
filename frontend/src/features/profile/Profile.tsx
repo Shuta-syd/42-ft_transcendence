@@ -13,7 +13,6 @@ import {sendFriendRequest} from "../../hooks/profile/sendFriendRequests";
 import useQueryMatches from "../../hooks/match/useWueryMatch";
 
 
-const defaultImage: string = "https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg";
 const Profile = () => {
 
     const [user, setUser] = useState<User>();
@@ -181,8 +180,6 @@ const Profile = () => {
         friendName: string;
     }
 
-
-
     function FriendStatus({friendName}: FriendProps) {
         const [isOnline, setIsOnline] = useState(null);
 
@@ -211,22 +208,28 @@ const Profile = () => {
 
     // const steveJobsImage = "https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg";
 
-    // const elonMuskImage = "https://upload.wikimedia.org/wikipedia/commons/e/e1/Elon_Musk_%28cropped%29.jpg";
     const uploadImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const {files} = event.target;
         if (files?.[0]) {
             const imageDto = URL.createObjectURL(files[0]);
-            /* この段階では正しくimageをstringにして受け取れている */
-            // console.log(imageDto);
+            console.log("THIS ONE: ", imageDto);
             await axios.post(`http://localhost:8080/user/add/image`, {image: imageDto}, {
                 headers: {Authorization: `Bearer ${localStorage.getItem('token')}`},
-            })
-            // storeImage(imageDto);
+            }).then((res) => {
+                console.log(res);
+                console.log("this is imageDto", imageDto);
+                setProfileImage(imageDto);
+            });
         }
     }
-
+    // const elonMuskImage = "https://upload.wikimedia.org/wikipedia/commons/e/e1/Elon_Musk_%28cropped%29.jpg";
+    // const steveJobsImage = "https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg";
+    const [profileImage, setProfileImage] = useState('');
     useEffect(() => {
-        console.log('Hello');
+        const profileUser = fetchProfileUser();
+        profileUser.then((us) => {
+            setProfileImage(us?.image);
+        });
     }, []);
 
     return (
@@ -235,7 +238,7 @@ const Profile = () => {
                 variant="circular"
                 color="success"
                 alt={user?.name}
-                src={defaultImage}
+                src={profileImage}
                 sx={{width: 200, height: 200, margin: 2}}
             >
             </Avatar>
