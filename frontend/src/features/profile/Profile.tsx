@@ -243,12 +243,6 @@ const Profile = () => {
                 <PhotoCamera/>
             </IconButton>
             <p></p>
-            <Rating
-                name={user?.name}
-                defaultValue={4}
-                precision={0.5}
-            />
-            <p></p>
             <h2>Find new friends!</h2>
             <TextField
                 id="input-with-icon-textfield"
