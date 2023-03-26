@@ -1,7 +1,8 @@
 import { Box } from "@mui/material";
 import React from "react";
 import AuthTitleComponent from "./AuthTitleComponent";
-import LoginComponent from "./LoginComponent";
+// import LoginComponent from "./LoginComponent";
+import SignupComponent from "./SignupComponent";
 
 export default function AuthComponent() {
   return (
@@ -10,7 +11,8 @@ export default function AuthComponent() {
     >
       <Box width={'40rem'}>
         <AuthTitleComponent />
-        <LoginComponent />
+        {/* <LoginComponent /> */}
+        <SignupComponent />
       </Box>
     </Box>
     )
