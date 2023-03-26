@@ -26,17 +26,6 @@ function LoginComponent() {
   }
 
   return (
-    <Box width={'40rem'}>
-      <Box
-        height={'5rem'}
-        border={2}
-        borderRadius={'5px'}
-        borderColor={'#e0e3e9'}
-        mt={'3rem'}
-        mb={'3rem'}
-      >
-        Title
-      </Box>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Box
           sx={{ width: '100%'}}
@@ -46,7 +35,12 @@ function LoginComponent() {
           borderColor={'#e0e3e9'}
         >
           <Box
-            sx={{ display: 'flex', justifyContent: 'center' }}
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+            height={'100%'}
           >
             <Stack
               spacing={3}
@@ -72,7 +66,6 @@ function LoginComponent() {
           </Box>
         </Box>
       </form>
-    </Box>
   )
 }
 

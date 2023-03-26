@@ -1,5 +1,6 @@
 import { Box } from "@mui/material";
 import React from "react";
+import AuthTitleComponent from "./AuthTitleComponent";
 import LoginComponent from "./LoginComponent";
 
 export default function AuthComponent() {
@@ -7,7 +8,10 @@ export default function AuthComponent() {
     <Box
       sx={{ display: 'flex', justifyContent: 'center' }}
     >
-      <LoginComponent />
+      <Box width={'40rem'}>
+        <AuthTitleComponent />
+        <LoginComponent />
+      </Box>
     </Box>
     )
 }
