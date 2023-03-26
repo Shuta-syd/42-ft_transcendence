@@ -10,8 +10,8 @@ function useQueryFriend() {
     const { data } = await axios.get<User[]>(`http://localhost:8080/user/friend`);
     return data;
   }
-
   return useQuery<User[], Error>({
+
     queryKey: `user/friend`,
     queryFn: getFriends,
     onError: (err: any) => {
