@@ -13,12 +13,15 @@ export default function PrivateRouter({ children }: { children: JSX.Element }) {
       try {
         const isAuth = await userAuth();
         setAuth(isAuth);
+      } catch {
+        alert('ログインしください');
       } finally {
         setTimeout(() => {
           setLoading(false);
         }, 500);
       }
     };
+
     getUserAuth();
   }, []);
 
@@ -27,7 +30,6 @@ export default function PrivateRouter({ children }: { children: JSX.Element }) {
   }
 
   if (!auth) {
-    alert('ログインしてください');
     return <Navigate to={"/login"} replace />;
   }
 
