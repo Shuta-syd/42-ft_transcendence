@@ -29,16 +29,11 @@ export default function ChannelListComponent(props: ChannelListComponentProps) {
   }
 
   useEffect(() => {
-    socket.on('join_chat_room', () => { });
-    socket.on('leave_chat_room', () => { });
-  }, []);
-
-  useEffect(() => {
     if (prevRoomId)
       socket.emit('leave_chat_room', { id: prevRoomId });
     socket.emit('join_chat_room', { id: roomID });
     setPrevRoomId(roomID);
-  }, [roomID]);
+  }, [roomID, socket]);
 
   useEffect(() => {
     getChannels().then((data) => { setChannels(data); })

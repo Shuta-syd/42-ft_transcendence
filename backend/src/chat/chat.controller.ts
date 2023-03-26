@@ -169,6 +169,19 @@ export class ChatController {
     return this.chatService.getChannels(req.user.id);
   }
 
+  @Patch('channel/:roomId')
+  @ApiOperation({
+    description: 'update channel type',
+    summary: 'update channel type',
+  })
+  async updateChannel(
+    @Req() req: Request,
+    @Param('roomId') roomId: string,
+    @Body() dto: CreateChatRoom,
+  ) {
+    return this.chatService.updateChannel(req.user.id, roomId, dto);
+  }
+
   @Get('channel/search')
   @ApiOperation({
     description: 'get channel related to name',
