@@ -158,13 +158,13 @@ const Profile = () => {
 
         return (
             <div>
-                <h2>今までの戦績</h2>
                 {/* フィルタリングされた試合のみ表示 */}
+                <h3>[⇩ Previous Record]</h3>
                 {filteredMatches.map((match) => (
                     <div key={match.id}>
-                        <h1>
+                        <h3>
                             [{match.id}] {match.player1} vs {match.player2}
-                        </h1>
+                        </h3>
                         <div>
                             <ShowResult p1={match.player1} p2={match.player2}/>
                         </div>
@@ -246,14 +246,14 @@ const Profile = () => {
                 onClick={HandleFriendListButton}
             >
                 friend list
-            </Button><h1>
+            </Button><h3>
                 {friends.map((friend: User) => (
                     <div key={friend.id}>
                         {friend.name}
                         <FriendStatus friendName={friend.name}/>
                     </div>
                 ))}
-            </h1>
+            </h3>
             </div>
         );
     }
