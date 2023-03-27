@@ -252,7 +252,9 @@ const Profile = () => {
     const InputFriendId = () => {
         console.log('input friend id');
         return (
-            <div><TextField
+            <div>
+                <h2>Find new friends!</h2>
+                <TextField
                 id="input-with-icon-textfield"
                 label="Please enter [friend ID]"
                 size="medium"
@@ -268,7 +270,8 @@ const Profile = () => {
                 variant="contained"
                 onClick={handleDecideIdButton}>
                 ID決定
-            </Button></div>
+            </Button>
+            </div>
         );
     }
 
@@ -292,25 +295,31 @@ const Profile = () => {
         );
     }
 
+    const UploadButton = () => {
+        console.log('Upload button');
+        return (
+            <div>
+                <Button
+                    variant="contained"
+                    component="label"
+                    color="success"
+                >
+                    Upload
+                    <input hidden accept="image/*" multiple type="file" onChange={event => uploadImage(event)}/>
+                </Button>
+                <IconButton color="primary" aria-label="upload picture" component="label">
+                    <input hidden accept="image/*" type="file"/>
+                    <PhotoCamera/>
+                </IconButton>
+            </div>
+        )
+    }
+
     return (
         <div>
             <ShowAvatar/>
-            <Button
-                variant="contained"
-                component="label"
-                color="success"
-            >
-                Upload
-                <input hidden accept="image/*" multiple type="file" onChange={event => uploadImage(event)}/>
-            </Button>
-            <IconButton color="primary" aria-label="upload picture" component="label">
-                <input hidden accept="image/*" type="file"/>
-                <PhotoCamera/>
-            </IconButton>
-            <p></p>
-            <h2>Find new friends!</h2>
+            <UploadButton/>
             <InputFriendId/>
-            <p></p>
             <FingerPrintButton/>
             <p></p>
             <Button
