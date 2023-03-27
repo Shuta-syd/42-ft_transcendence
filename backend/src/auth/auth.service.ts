@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   NotAcceptableException,
   NotFoundException,
@@ -31,7 +32,9 @@ export class AuthService {
 
     if (userExists) {
       // 既に存在する場合は、エラーをスローするか、処理を中断する
-      throw new Error('このメールアドレスは既に使用されています。');
+      throw new NotAcceptableException(
+        'このメールアドレスは既に使用されています。',
+      );
     }
 
     // 存在しない場合は、新しいユーザーを作成する
@@ -40,7 +43,7 @@ export class AuthService {
         email: dto.email,
         password: dto.password,
         name: dto.name,
-        // その他の必要なフィールドを追加する
+        isFtLogin: dto.isFtLogin ? dto.isFtLogin : false,
       },
     });
 
@@ -57,6 +60,7 @@ export class AuthService {
         email: dto.email,
       },
     });
+    if (user.isFtLogin) new BadRequestException('Please login with 42');
     if (!user) throw new NotFoundException("user couldn't be found");
     if (user.password !== dto.password)
       throw new NotAcceptableException('password is wrong');
@@ -91,6 +95,7 @@ export class AuthService {
     if (user) {
       return user;
     }
-    return this.signupUser(userDto);
+
+    return this.signupUser({ ...userDto, isFtLogin: true });
   }
 }

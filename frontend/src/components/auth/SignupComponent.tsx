@@ -4,6 +4,7 @@ import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import FormController from "../utils/FormController";
+import FtLoginButtonComponent from "./FtLoginButtonComponent";
 
 type SignupData = {
   username: string;
@@ -73,6 +74,7 @@ function SignupComponent() {
                   )}
                   />
               <Button type="submit" variant="contained">SignUp</Button>
+              <FtLoginButtonComponent />
             </Stack>
           </Box>
           <Link to='/login'>login user</Link>
