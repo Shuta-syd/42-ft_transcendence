@@ -2,9 +2,6 @@ import React, {ChangeEvent, useEffect, useState} from 'react';
 import { Button, IconButton} from "@mui/material";
 import axios from "axios";
 import Rating from '@mui/material/Rating';
-import TextField from '@mui/material/TextField';
-import InputAdornment from '@mui/material/InputAdornment';
-import AccountCircle from '@mui/icons-material/AccountCircle';
 import io from "socket.io-client";
 import {Fingerprint} from "@mui/icons-material";
 import {Match, User} from "../../types/PrismaType";
@@ -13,6 +10,7 @@ import {sendFriendRequest} from "../../hooks/profile/sendFriendRequests";
 import useQueryMatches from "../../hooks/match/useWueryMatch";
 import ShowAvatar from "../../components/profile/ShowAvatar";
 import ImageUploadButton from "../../components/profile/ImageUploadButton";
+import InputFriendId from "../../components/profile/InputFriendId";
 
 const Profile = () => {
     const [user, setUser] = useState<User>();
@@ -206,6 +204,22 @@ const Profile = () => {
         );
     }
 
+    // const steveJobsImage = "https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg";
+
+    const uploadImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const {files} = event.target;
+        if (files?.[0]) {
+            const imageDto = URL.createObjectURL(files[0]);
+            console.log("THIS ONE: ", imageDto);
+            await axios.post(`http://localhost:8080/user/add/image`, {image: imageDto}, {
+                headers: {Authorization: `Bearer ${localStorage.getItem('token')}`},
+            }).then((res) => {
+                console.log(res);
+                console.log("this is imageDto", imageDto);
+                setProfileImage(imageDto);
+            });
+        }
+    }
     // const elonMuskImage = "https://upload.wikimedia.org/wikipedia/commons/e/e1/Elon_Musk_%28cropped%29.jpg";
     // const steveJobsImage = "https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg";
     const [profileImage, setProfileImage] = useState('');
@@ -237,32 +251,6 @@ const Profile = () => {
         )
     }
 
-    const InputFriendId = () => {
-        console.log('input friend id');
-        return (
-            <div>
-                <h2>Find new friends!</h2>
-                <TextField
-                id="input-with-icon-textfield"
-                label="Please enter [friend ID]"
-                size="medium"
-                InputProps={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                            <AccountCircle/>
-                        </InputAdornment>
-                    ),
-                    onChange: HandleInputID
-                }}
-                variant="standard"/><Button
-                variant="contained"
-                onClick={handleDecideIdButton}>
-                ID決定
-            </Button>
-            </div>
-        );
-    }
-
     const FriendListButton = () => {
         console.log('List button');
         return (
@@ -286,26 +274,14 @@ const Profile = () => {
         );
     }
 
-    const handleUploadImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { files } = event.target;
-        if (files?.[0]) {
-            const imageDto = URL.createObjectURL(files[0]);
-            console.log("THIS ONE: ", imageDto);
-            await axios.post(`http://localhost:8080/user/add/image`, { image: imageDto }, {
-                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-            }).then((res) => {
-                console.log(res);
-                console.log("this is imageDto", imageDto);
-                setProfileImage(imageDto);
-            });
-        }
-    };
-
     return (
         <div>
             <ShowAvatar user={user} profileImage={profileImage}/>
-            <ImageUploadButton onUpload={handleUploadImage}/>
-            <InputFriendId/>
+            <ImageUploadButton onUpload={uploadImage}/>
+            <InputFriendId
+                handleDecideIdButton={handleDecideIdButton}
+                handleInputID={HandleInputID}
+            />
             <FingerPrintButton/>
             <FriendListButton/>
             <MatchList matches={matchArr}/>
