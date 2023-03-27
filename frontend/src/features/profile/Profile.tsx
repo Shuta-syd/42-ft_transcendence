@@ -252,6 +252,29 @@ const Profile = () => {
         )
     }
 
+    const InputFriendId = () => {
+        console.log('input friend id');
+        return (
+            <div><TextField
+                id="input-with-icon-textfield"
+                label="Please enter [friend ID]"
+                size="medium"
+                InputProps={{
+                    startAdornment: (
+                        <InputAdornment position="start">
+                            <AccountCircle/>
+                        </InputAdornment>
+                    ),
+                    onChange: HandleInputID
+                }}
+                variant="standard"/><Button
+                variant="contained"
+                onClick={handleDecideIdButton}>
+                ID決定
+            </Button></div>
+        );
+    }
+
     return (
         <div>
             <Avatar
@@ -279,25 +302,7 @@ const Profile = () => {
             </IconButton>
             <p></p>
             <h2>Find new friends!</h2>
-            <TextField
-                id="input-with-icon-textfield"
-                label="Please enter [friend ID]"
-                size="medium"
-                InputProps={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                            <AccountCircle/>
-                        </InputAdornment>
-                    ),
-                    onChange: HandleInputID
-                }}
-                variant="standard"
-            />
-            <Button
-                variant="contained"
-                onClick={handleDecideIdButton}>
-                ID決定
-            </Button>
+            <InputFriendId/>
             <p></p>
             <FingerPrintButton/>
             <p></p>
