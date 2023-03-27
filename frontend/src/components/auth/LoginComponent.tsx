@@ -26,6 +26,10 @@ function LoginComponent() {
     }
   }
 
+  const handleClick = async () => {
+    await axios.post('http://localhost:8080/auth/logout');
+  }
+
   return (
       <form onSubmit={handleSubmit(onSubmit)}>
         <Box
@@ -67,9 +71,10 @@ function LoginComponent() {
               <FtLoginButtonComponent />
             </Stack>
           </Box>
-          <Link to='/signup'>signup user</Link>
+        <Link to='/signup'>signup user</Link>
+        <Button onClick={handleClick}>LOGOUT</Button>
         </Box>
-      </form>
+    </form>
   )
 }
 
