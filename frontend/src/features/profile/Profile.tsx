@@ -1,5 +1,5 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
-import {Avatar, Button, IconButton} from "@mui/material";
+import { Button, IconButton} from "@mui/material";
 import axios from "axios";
 import Rating from '@mui/material/Rating';
 import TextField from '@mui/material/TextField';
@@ -11,7 +11,7 @@ import {Match, User} from "../../types/PrismaType";
 import {fetchProfileUser} from "../../hooks/profile/useProfileUser";
 import {sendFriendRequest} from "../../hooks/profile/sendFriendRequests";
 import useQueryMatches from "../../hooks/match/useWueryMatch";
-
+import ShowAvatar from "../../components/profile/ShowAvatar";
 
 const Profile = () => {
     const [user, setUser] = useState<User>();
@@ -159,6 +159,7 @@ const Profile = () => {
 
         return (
             <div>
+                <h2>今までの戦績</h2>
                 {/* フィルタリングされた試合のみ表示 */}
                 {filteredMatches.map((match) => (
                     <div key={match.id}>
@@ -277,26 +278,6 @@ const Profile = () => {
         );
     }
 
-
-    const ShowAvatar = () => {
-        console.log('Show avatar');
-        return (
-            <div>
-                <Avatar
-                    variant="circular"
-                    color="success"
-                    alt={user?.name}
-                    src={profileImage}
-                    sx={{width: 200, height: 200, margin: 2}}
-                >
-                </Avatar>
-                <h1>
-                    {user?.name}
-                </h1>
-            </div>
-        );
-    }
-
     const ImageUploadButton = () => {
         console.log('Upload button');
         return (
@@ -342,12 +323,11 @@ const Profile = () => {
 
     return (
         <div>
-            <ShowAvatar/>
+            <ShowAvatar user={user} profileImage={profileImage}/>
             <ImageUploadButton/>
             <InputFriendId/>
             <FingerPrintButton/>
             <FriendListButton/>
-            <h2>今までの戦績</h2>
             <MatchList matches={matchArr}/>
             <ShowAchievement matches={matchArr}/>
         </div>
