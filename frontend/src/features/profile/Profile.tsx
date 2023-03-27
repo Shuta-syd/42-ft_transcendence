@@ -6,7 +6,7 @@ import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import io from "socket.io-client";
-import {PhotoCamera} from "@mui/icons-material";
+import {Fingerprint, PhotoCamera} from "@mui/icons-material";
 import {Match, User} from "../../types/PrismaType";
 import {fetchProfileUser} from "../../hooks/profile/useProfileUser";
 import {sendFriendRequest} from "../../hooks/profile/sendFriendRequests";
@@ -280,20 +280,27 @@ const Profile = () => {
                 ID決定
             </Button>
             <p></p>
+            <IconButton
+                aria-label="fingerprint"
+                color="secondary">
+                your id:
+                <Fingerprint />
+            </IconButton>
+            <p></p>
             <Button
                 variant="outlined"
                 color="primary"
                 size="large"
                 onClick={HandleFriendListButton}
             >
-                友達リスト
+                friend list
             </Button>
             <h1>
                 {friends.map((friend: User) => (
                     <div key={friend.id}>
                         {friend.name}
                         <FriendStatus friendName={friend.name}/>
-                    </div> // keyプロパティを追加
+                    </div>
                 ))}
             </h1>
             <h2>今までの戦績</h2>
