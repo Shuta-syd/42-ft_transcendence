@@ -1,9 +1,8 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
-import { Button, IconButton} from "@mui/material";
+import { Button } from "@mui/material";
 import axios from "axios";
 import Rating from '@mui/material/Rating';
 import io from "socket.io-client";
-import {Fingerprint} from "@mui/icons-material";
 import {Match, User} from "../../types/PrismaType";
 import {fetchProfileUser} from "../../hooks/profile/useProfileUser";
 import {sendFriendRequest} from "../../hooks/profile/sendFriendRequests";
@@ -11,6 +10,7 @@ import useQueryMatches from "../../hooks/match/useWueryMatch";
 import ShowAvatar from "../../components/profile/ShowAvatar";
 import ImageUploadButton from "../../components/profile/ImageUploadButton";
 import InputFriendId from "../../components/profile/InputFriendId";
+import FingerPrintButton from "../../components/profile/FingerPrintButton";
 
 const Profile = () => {
     const [user, setUser] = useState<User>();
@@ -235,22 +235,6 @@ const Profile = () => {
         navigator.clipboard.writeText(user?.id as string);
     }
 
-    const FingerPrintButton = () => {
-        console.log("FingerPrintButton clicked")
-        return (
-            <div>
-            <IconButton
-                aria-label="fingerprint"
-                color="secondary"
-                onClick={handleFingerPrintButton}
-            >
-                your id:
-                <Fingerprint />
-            </IconButton>
-            </div>
-        )
-    }
-
     const FriendListButton = () => {
         console.log('List button');
         return (
@@ -282,7 +266,7 @@ const Profile = () => {
                 handleDecideIdButton={handleDecideIdButton}
                 handleInputID={HandleInputID}
             />
-            <FingerPrintButton/>
+            <FingerPrintButton onClick={handleFingerPrintButton}/>
             <FriendListButton/>
             <MatchList matches={matchArr}/>
             <ShowAchievement matches={matchArr}/>
