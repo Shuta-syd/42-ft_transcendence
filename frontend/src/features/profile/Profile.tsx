@@ -14,11 +14,8 @@ import useQueryMatches from "../../hooks/match/useWueryMatch";
 
 
 const Profile = () => {
-
     const [user, setUser] = useState<User>();
-
     const socket = io("http://localhost:8080");
-
     const UserPromises = fetchProfileUser();
     useEffect(() => {
         UserPromises.then((userDto: User) => {
@@ -275,19 +272,29 @@ const Profile = () => {
         );
     }
 
+
+    const ShowAvatar = () => {
+        console.log('Show avatar');
+        return (
+            <div>
+                <Avatar
+                    variant="circular"
+                    color="success"
+                    alt={user?.name}
+                    src={profileImage}
+                    sx={{width: 200, height: 200, margin: 2}}
+                >
+                </Avatar>
+                <h1>
+                    {user?.name}
+                </h1>
+            </div>
+        );
+    }
+
     return (
         <div>
-            <Avatar
-                variant="circular"
-                color="success"
-                alt={user?.name}
-                src={profileImage}
-                sx={{width: 200, height: 200, margin: 2}}
-            >
-            </Avatar>
-            <h1>
-                {user?.name}
-            </h1>
+            <ShowAvatar/>
             <Button
                 variant="contained"
                 component="label"
