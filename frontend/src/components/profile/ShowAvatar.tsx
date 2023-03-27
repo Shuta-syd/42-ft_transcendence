@@ -17,8 +17,7 @@ const ShowAvatar = ({ user, profileImage }: ShowAvatarProps) => {
                 alt={user?.name}
                 src={profileImage}
                 sx={{width: 200, height: 200, margin: 2}}
-            >
-            </Avatar>
+            />
             <h1>
                 {user?.name}
             </h1>

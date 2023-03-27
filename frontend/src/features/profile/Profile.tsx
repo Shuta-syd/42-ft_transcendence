@@ -200,7 +200,7 @@ const Profile = () => {
             return <span>Loading...</span>;
         }
         return (
-            <span>{isOnline ? " -> Online" : " -> Offline"}</span>
+            <span>{isOnline ? " => 🤩" : " => 🫥"}</span>
         );
     }
 
@@ -249,7 +249,7 @@ const Profile = () => {
             </Button><h3>
                 {friends.map((friend: User) => (
                     <div key={friend.id}>
-                        {friend.name}
+                        [{friend.name}]
                         <FriendStatus friendName={friend.name}/>
                     </div>
                 ))}
