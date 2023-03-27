@@ -233,6 +233,25 @@ const Profile = () => {
         });
     }, []);
 
+    const handleFingerPrintButton = () => {
+        console.log("FingerPrintButton clicked", user?.id);
+        navigator.clipboard.writeText(user?.id as string);
+    }
+
+    const FingerPrintButton = () => {
+        console.log("FingerPrintButton clicked")
+        return (
+            <IconButton
+                aria-label="fingerprint"
+                color="secondary"
+                onClick={handleFingerPrintButton}
+            >
+                your id:
+                <Fingerprint />
+            </IconButton>
+        )
+    }
+
     return (
         <div>
             <Avatar
@@ -280,12 +299,7 @@ const Profile = () => {
                 ID決定
             </Button>
             <p></p>
-            <IconButton
-                aria-label="fingerprint"
-                color="secondary">
-                your id:
-                <Fingerprint />
-            </IconButton>
+            <FingerPrintButton/>
             <p></p>
             <Button
                 variant="outlined"
