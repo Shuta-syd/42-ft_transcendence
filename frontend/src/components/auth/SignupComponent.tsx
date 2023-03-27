@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import SignupStepper from "./SignupStepper";
+import UploadImageComponent from "./UploadImageComponent";
 import UserProfileFormComponent from "./UserProfileFormComponent";
 
 type SignupData = {
@@ -15,7 +16,7 @@ type SignupData = {
 
 function SignupComponent() {
   // eslint-disable-next-line no-unused-vars
-  const [activeStep, SetActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(0);
   const { control, handleSubmit, reset } = useForm<SignupData>({ defaultValues: { email: '', password: '' } });
 
   const onSubmit: SubmitHandler<SignupData> = async (data) => {
@@ -55,8 +56,13 @@ function SignupComponent() {
             textAlign='center'
           >
             <Typography variant="h5">Signup</Typography>
-            <SignupStepper activeStep={activeStep}/>
-            <UserProfileFormComponent control={control} />
+            <SignupStepper activeStep={activeStep} />
+            {activeStep === 0 ? (
+              <UserProfileFormComponent control={control} setActiveStep={setActiveStep} />
+            ) : (
+              <UploadImageComponent />
+            )
+            }
           </Stack>
         </Box>
         <Link to='/login'>login user</Link>

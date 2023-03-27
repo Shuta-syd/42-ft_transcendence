@@ -5,10 +5,11 @@ import FtLoginButtonComponent from "./FtLoginButtonComponent";
 
 type UserProfileFormComponentProps = {
   control: any; // useForm control
+  setActiveStep: any; // useState setter
 }
 
 export default function UserProfileFormComponent(props: UserProfileFormComponentProps) {
-  const { control } = props;
+  const { control, setActiveStep } = props;
 
   return (
     <>
@@ -33,7 +34,7 @@ export default function UserProfileFormComponent(props: UserProfileFormComponent
           <TextField fullWidth {...field} label='Enter Password' />
           )}
           />
-      <Button type="submit" variant="contained">SignUp</Button>
+      <Button variant="contained" onClick={() => { setActiveStep(1); }} >Next Step</Button>
       <FtLoginButtonComponent />
     </>
   )
