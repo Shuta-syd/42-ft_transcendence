@@ -24,13 +24,11 @@ export class FtStrategy extends PassportStrategy(Strategy, '42') {
     refreshToken: string,
     profile: Profile,
   ): Promise<User> {
-    const { username } = profile;
     const user = {
-      name: username,
-      email: profile['emails'][0]['value'],
-      password: username,
+      name: profile.username,
+      email: profile._json.email,
+      imageUrl: profile._json.image.link,
     };
-    console.log(user);
     return this.authService.validateUser(user);
   }
 }
