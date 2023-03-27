@@ -238,6 +238,7 @@ const Profile = () => {
     const FingerPrintButton = () => {
         console.log("FingerPrintButton clicked")
         return (
+            <div>
             <IconButton
                 aria-label="fingerprint"
                 color="secondary"
@@ -246,6 +247,7 @@ const Profile = () => {
                 your id:
                 <Fingerprint />
             </IconButton>
+            </div>
         )
     }
 
@@ -295,7 +297,7 @@ const Profile = () => {
         );
     }
 
-    const UploadButton = () => {
+    const ImageUploadButton = () => {
         console.log('Upload button');
         return (
             <div>
@@ -315,22 +317,18 @@ const Profile = () => {
         )
     }
 
-    return (
-        <div>
-            <ShowAvatar/>
-            <UploadButton/>
-            <InputFriendId/>
-            <FingerPrintButton/>
-            <p></p>
-            <Button
+    const FriendListButton = () => {
+        console.log('List button');
+        return (
+            <div>
+                <Button
                 variant="outlined"
                 color="primary"
                 size="large"
                 onClick={HandleFriendListButton}
             >
                 friend list
-            </Button>
-            <h1>
+            </Button><h1>
                 {friends.map((friend: User) => (
                     <div key={friend.id}>
                         {friend.name}
@@ -338,6 +336,17 @@ const Profile = () => {
                     </div>
                 ))}
             </h1>
+            </div>
+        );
+    }
+
+    return (
+        <div>
+            <ShowAvatar/>
+            <ImageUploadButton/>
+            <InputFriendId/>
+            <FingerPrintButton/>
+            <FriendListButton/>
             <h2>今までの戦績</h2>
             <MatchList matches={matchArr}/>
             <ShowAchievement matches={matchArr}/>
