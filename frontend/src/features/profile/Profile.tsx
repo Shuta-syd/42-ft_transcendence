@@ -265,11 +265,8 @@ const Profile = () => {
                 minHeight: "100vh"
             }}
         >
-            <Grid container spacing={3}>
-                <Grid
-                    item
-                    xs={10}
-                >
+            <Grid container spacing={5}>
+                <Grid item xs={10}>
                     <ShowAvatar user={user} profileImage={profileImage}/>
                 </Grid>
                 <Grid item xs={10} style={{color: "#3C444B"}}>

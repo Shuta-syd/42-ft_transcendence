@@ -45,7 +45,12 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 const ShowAvatar = ({ user, profileImage }: ShowAvatarProps) => {
     console.log('ShowAvatar', user, profileImage);
     return (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div
+            style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+        }}>
             <StyledBadge
                 sx={{
                     width: 300, // Update width here
