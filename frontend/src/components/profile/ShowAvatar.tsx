@@ -73,7 +73,7 @@ const ShowAvatar = ({ user, profileImage }: ShowAvatarProps) => {
                     style={{
                         fontSize: '3rem',
                         fontWeight: 'bold',
-                        color: 'white',
+                        color: '#3C444B',
                         marginBottom: 0,
                     }}
                 >
@@ -82,7 +82,7 @@ const ShowAvatar = ({ user, profileImage }: ShowAvatarProps) => {
                 <p
                     style={{
                         fontSize: '1.5rem',
-                        color: 'white',
+                        color: '#3C444B',
                         marginTop: '0.5rem',
                     }}
                 >
