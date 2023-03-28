@@ -14,6 +14,9 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
         backgroundColor: '#44b700',
         color: '#44b700',
         boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+        width: '15%',
+        height: '15%',
+        borderRadius: '50%',
         '&::after': {
             position: 'absolute',
             top: 0,
@@ -38,27 +41,32 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
     },
 }));
 
+
 const ShowAvatar = ({ user, profileImage }: ShowAvatarProps) => {
     console.log('ShowAvatar', user, profileImage);
     return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <StyledBadge
+                sx={{
+                    width: 300, // Update width here
+                    height: 300, // Update height here
+                    marginRight: 2
+                }}
                 overlap="circular"
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 variant={"dot"}
-                sx={{
-                    width: 250,
-                    height: 250,
-                    marginRight: 2
-            }}
             >
-            <Avatar
-                variant="circular"
-                color="success"
-                alt={user?.name}
-                src={profileImage}
-                sx={{ width: 200, height: 200, marginRight: 2 }}
-            />
+                <Avatar
+                    variant="circular"
+                    color="success"
+                    alt={user?.name}
+                    src={profileImage}
+                    sx={{
+                        width: 290, // Update width here
+                        height: 290, // Update height here
+                        marginRight: 2
+                    }}
+                />
             </StyledBadge>
             <div>
                 <h1
@@ -84,6 +92,5 @@ const ShowAvatar = ({ user, profileImage }: ShowAvatarProps) => {
         </div>
     );
 };
-
 
 export default ShowAvatar;
