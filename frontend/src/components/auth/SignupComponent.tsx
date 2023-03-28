@@ -11,13 +11,13 @@ type SignupData = {
   username: string;
   email: string;
   password: string;
+  image: string;
 }
 
 
 function SignupComponent() {
-  // eslint-disable-next-line no-unused-vars
   const [activeStep, setActiveStep] = useState(0);
-  const { control, handleSubmit, reset } = useForm<SignupData>({ defaultValues: { email: '', password: '' } });
+  const { control, handleSubmit, reset } = useForm<SignupData>({ defaultValues: { email: '', password: '', image: '' } });
 
   const onSubmit: SubmitHandler<SignupData> = async (data) => {
     try {
@@ -58,9 +58,9 @@ function SignupComponent() {
             <Typography variant="h5">Signup</Typography>
             <SignupStepper activeStep={activeStep} />
             {activeStep === 0 ? (
-              <UserProfileFormComponent control={control} setActiveStep={setActiveStep} />
+                <UserProfileFormComponent control={control} setActiveStep={setActiveStep} />
             ) : (
-              <UploadImageComponent />
+                <UploadImageComponent control={control} setActiveStep={setActiveStep} />
             )
             }
           </Stack>
