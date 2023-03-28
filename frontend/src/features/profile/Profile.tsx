@@ -3,6 +3,7 @@ import { Button } from "@mui/material";
 import axios from "axios";
 import Rating from '@mui/material/Rating';
 import io from "socket.io-client";
+import Grid from "@mui/material/Grid";
 import {Match, User} from "../../types/PrismaType";
 import {fetchProfileUser} from "../../hooks/profile/useProfileUser";
 import {sendFriendRequest} from "../../hooks/profile/sendFriendRequests";
@@ -260,16 +261,32 @@ const Profile = () => {
 
     return (
         <div>
-            <ShowAvatar user={user} profileImage={profileImage}/>
-            <ImageUploadButton onUpload={uploadImage}/>
-            <InputFriendId
-                handleDecideIdButton={handleDecideIdButton}
-                handleInputID={HandleInputID}
-            />
-            <FingerPrintButton onClick={handleFingerPrintButton}/>
-            <FriendListButton/>
-            <MatchList matches={matchArr}/>
-            <ShowAchievement matches={matchArr}/>
+            <Grid container spacing={3}>
+                <Grid item xs={30}>
+                    <ShowAvatar user={user} profileImage={profileImage}/>
+                </Grid>
+                <Grid item xs={30}>
+                    <ImageUploadButton onUpload={uploadImage}/>
+                </Grid>
+                <Grid item xs={30}>
+                    <InputFriendId
+                        handleDecideIdButton={handleDecideIdButton}
+                        handleInputID={HandleInputID}
+                    />
+                </Grid>
+                <Grid item xs={30}>
+                    <FingerPrintButton onClick={handleFingerPrintButton}/>
+                </Grid>
+                <Grid item xs={30}>
+                    <FriendListButton/>
+                </Grid>
+                <Grid item xs={30}>
+                    <MatchList matches={matchArr}/>
+                </Grid>
+                <Grid item xs={30}>
+                    <ShowAchievement matches={matchArr}/>
+                </Grid>
+            </Grid>
         </div>
     );
 }
