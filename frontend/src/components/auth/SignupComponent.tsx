@@ -17,7 +17,8 @@ type SignupData = {
 
 function SignupComponent() {
   const [activeStep, setActiveStep] = useState(0);
-  const { control, handleSubmit, reset } = useForm<SignupData>({ defaultValues: { email: '', password: '', image: '' } });
+  const [image, setImage] = useState('');
+  const { control, handleSubmit, reset, setValue } = useForm<SignupData>({ defaultValues: { username: '', email: '', password: '', image: '' } });
 
   const onSubmit: SubmitHandler<SignupData> = async (data) => {
     try {
@@ -25,6 +26,7 @@ function SignupComponent() {
         name: data.username,
         email: data.email,
         password: data.password,
+        image: data.image,
       });
       reset();
     } catch (error) {
@@ -32,6 +34,14 @@ function SignupComponent() {
     }
   }
 
+  const onFileChange = (e: any) => {
+    if (e.target.files === null) return;
+    const file = e.target.files[0];
+    if (!file) return;
+    const imageURL = URL.createObjectURL(file);
+    setImage(imageURL);
+    setValue('image', imageURL);
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -60,7 +70,7 @@ function SignupComponent() {
             {activeStep === 0 ? (
                 <UserProfileFormComponent control={control} setActiveStep={setActiveStep} />
             ) : (
-                <UploadImageComponent control={control} setActiveStep={setActiveStep} />
+                <UploadImageComponent image={image} onFileChange={onFileChange} setActiveStep={setActiveStep}  />
             )
             }
           </Stack>
