@@ -13,26 +13,47 @@ const InputFriendId = ({ handleDecideIdButton, handleInputID }: InputFriendIdPro
     console.log('InputFriendId');
     return (
         <div>
-            <h2>Find new friends!</h2>
-            <TextField
-                id="input-with-icon-textfield"
-                label="Please enter [friend ID]"
-                size="medium"
-                InputProps={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                            <AccountCircle />
-                        </InputAdornment>
-                    ),
-                    onChange: handleInputID,
+            <h1
+                style={{
+                    display: 'flex',
+                    alignItems: 'right',
+                    justifyContent: 'right',
+                    width: '100%',
+                    height: '100%',
                 }}
-                variant="standard"
-            />
-            <Button variant="contained" onClick={handleDecideIdButton}>
-                ID決定
-            </Button>
+            >
+                <TextField
+                    id="input-with-icon-textfield"
+                    label="Please enter [friend ID]"
+                    size="medium"
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment
+                                position="start"
+                            >
+                                <AccountCircle />
+                            </InputAdornment>
+                        ),
+                        onChange: handleInputID,
+                    }}
+                    variant="standard"
+                    style={{ width: 300, height: 50, marginTop: 10 }}
+                    InputLabelProps={{
+                        style: { fontSize: 25 },
+                    }}
+                />
+                <Button
+                    variant="contained"
+                    onClick={handleDecideIdButton}
+                    style={{ width: 100, height: 50, marginTop: 10 }}
+                >
+                    ID決定
+                </Button>
+            </h1>
         </div>
     );
 };
+
+
 
 export default InputFriendId;

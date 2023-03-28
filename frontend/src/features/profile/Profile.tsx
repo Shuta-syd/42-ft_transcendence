@@ -29,7 +29,7 @@ const Profile = () => {
     }
 
     const handleDecideIdButton = async () => {
-        sendFriendRequest(user?.id, inputId);
+        await sendFriendRequest(user?.id, inputId);
     }
 
     const getFriends = async () => {
