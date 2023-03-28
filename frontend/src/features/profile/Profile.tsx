@@ -260,30 +260,37 @@ const Profile = () => {
     }
 
     return (
-        <div>
+        <div
+            style={{ backgroundColor: "#EDF0F4",
+            minHeight: "100vh"
+        }}
+        >
             <Grid container spacing={3}>
-                <Grid item xs={30}>
+                <Grid
+                    item
+                    xs={10}
+                >
                     <ShowAvatar user={user} profileImage={profileImage}/>
                 </Grid>
-                <Grid item xs={30}>
+                <Grid item xs={10}>
                     <ImageUploadButton onUpload={uploadImage}/>
                 </Grid>
-                <Grid item xs={30}>
+                <Grid item xs={10}>
                     <InputFriendId
                         handleDecideIdButton={handleDecideIdButton}
                         handleInputID={HandleInputID}
                     />
                 </Grid>
-                <Grid item xs={30}>
+                <Grid item xs={10}>
                     <FingerPrintButton onClick={handleFingerPrintButton}/>
                 </Grid>
-                <Grid item xs={30}>
+                <Grid item xs={10}>
                     <FriendListButton/>
                 </Grid>
-                <Grid item xs={30}>
+                <Grid item xs={10}>
                     <MatchList matches={matchArr}/>
                 </Grid>
-                <Grid item xs={30}>
+                <Grid item xs={10}>
                     <ShowAchievement matches={matchArr}/>
                 </Grid>
             </Grid>
