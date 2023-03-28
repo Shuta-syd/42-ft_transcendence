@@ -81,7 +81,7 @@ export class AuthController {
       sameSite: 'lax',
       path: '/',
     });
-    res.redirect('http://localhost:3000/');
+    res.redirect('http://localhost:3000/user');
   }
 
   @Post('logout')
