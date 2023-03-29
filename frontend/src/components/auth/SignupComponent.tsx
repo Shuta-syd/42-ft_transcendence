@@ -29,17 +29,13 @@ function SignupComponent() {
         email: data.email,
         password: data.password,
         imageURL,
-      }, {
-        headers: {
-        'content-type': 'multipart/form-data',
-        },
       });
       reset();
       router('/user');
     } catch (error) {
       reset();
-      alert('ユーザ作成に失敗しました。もう一度ユーザ作成をしてください');
       setActiveStep(0);
+      alert('ユーザ作成に失敗しました。もう一度ユーザ作成をしてください');
     }
   }
 
