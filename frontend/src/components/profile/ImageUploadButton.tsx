@@ -11,20 +11,20 @@ const ImageUploadButton = ({ onUpload }: Props) => {
     return (
         <div
             style={{
-                display: 'flex',
-                alignItems: 'right',
-                justifyContent: 'right'
+                width: 380, // Update width here
+                height: 180,
+                marginRight: 750,
+                marginTop: 0,
             }}
         >
             <Button
-                sx={{
-                    width: 250, // Update width here
-                    height: 50,
-                    marginRight: 2,
-                }}
                 variant="contained"
                 component="label"
-                color="success"
+                color="primary"
+                sx={{
+                    width: 300, // Update width here
+                    height: 50,
+                }}
             >
                 Upload Profile Image
                 <input hidden accept="image/*" multiple type="file" onChange={event => onUpload(event)}/>

@@ -250,7 +250,7 @@ const Profile = () => {
             >
                 <Button
                 variant="outlined"
-                color="primary"
+                color="success"
                 size="large"
                 onClick={HandleFriendListButton}
             >
@@ -286,7 +286,12 @@ const Profile = () => {
                 <Grid item xs={5}>
                     <ShowAvatar user={user} profileImage={profileImage}/>
                 </Grid>
-                <Grid item xs={10} style={{color: "#3C444B"}}>
+                <Grid item xs={8} style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    color: "#3C444B"
+                }}>
                     <ImageUploadButton onUpload={uploadImage}/>
                 </Grid>
                 <Grid item xs={10}>
@@ -330,7 +335,7 @@ const Profile = () => {
                         display={"flex"}
                         alignItems={"center"}
                         justifyContent={"center"}
-                        marginTop={10}
+                        marginTop={3}
                     >
                         <FriendListButton/>
                     </Grid>
