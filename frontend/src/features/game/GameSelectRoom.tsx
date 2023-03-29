@@ -1,5 +1,6 @@
 import React, { useEffect, useState, ChangeEvent} from "react";
 import {Link} from "react-router-dom";
+import { Grid } from "@mui/material";
 import {Game, User} from "../../types/PrismaType";
 import { fetchGameRoomArr } from "../../hooks/game/useGameObserver";
 import {GameObserverReq, useGameUser} from "../../hooks/game/useGameuser";
@@ -53,21 +54,56 @@ const GameSelectRoom = () => {
 
 
     return (
-        <div>
+        <div
+            style={{
+                backgroundColor: "#EDF0F4",
+                minHeight: "100vh",
+                backgroundSize: "cover",
+            }}
+        >
+            <h2>
             <h1>[Room List]</h1>
+            </h2>
+            <Grid
+                container
+                justifyContent="center"
+                marginTop="-5%"
+                alignItems="center"
+                style={{ minHeight: "100vh" }}
+                fontSize="h5.fontSize"
+            >
+            <h1>
             {GameRoomArr.map((game) => (
                 <div key={game.id}>
                     <h2>[{game.id}] {game.player1} vs {game.player2}</h2>
                 </div>
             ))}
             <div>
-                <p>enterは2回以上押してください！</p>
-                <input type="text" value={tmpNumber} onChange={handleInputChange} />
-                <button onClick={handleButtonClick}>enter</button>
+                <input
+                    type="text"
+                    style={{
+                        borderRadius: "100px",
+                        fontSize: "3rem",
+                    }}
+                    value={tmpNumber}
+                    onChange={handleInputChange} />
+                <button
+                    onClick={handleButtonClick}
+                    style={{
+                        borderRadius: "100px",
+                        fontSize: "3rem",
+                }}
+                >enter</button>
+                <p
+                    style={{
+                        fontSize: "2rem",
+                    }}
+                >※ Please enter the button at least 2 times!</p>
                 {IsAssigned && <p>You are successfully assigned !!</p>}
-                {IsAssigned && <Link to={"/game/observer"}>lets go!</Link>}
-                <p>You are in {number}！</p>
+                {IsAssigned && <Link to={"/game/observer"}>lets go! room{number}!!</Link>}
             </div>
+            </h1>
+            </Grid>
         </div>
     )
 }
