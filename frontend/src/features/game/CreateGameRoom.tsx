@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
+import { Grid } from "@mui/material";
 import { Game, User } from "../../types/PrismaType";
 import { GameRoomReq, useGameUser } from "../../hooks/game/useGameuser";
 import { GameSocket } from "../../contexts/WebsocketContext";
@@ -40,16 +41,57 @@ const CreateGameRoom = () => {
         );
     }
 
+    const ShowPositions = () => {
+        if (user?.name) {
+            return (
+                <div>
+                    <h2>You are {user?.name}!!!</h2>
+                    <h2>You are in {roomId}!!!</h2>
+                    <h2>Player1 is {game?.player1}!!!</h2>
+                    <h2>Player2 is {game?.player2}!!!</h2>
+                </div>
+            );
+        }
+        return (
+            <div>
+                Your session is expired. Please login again...
+            </div>
+        );
+    }
+
 
     return (
-        <div>
-            <h1>[Random Match Room!!]</h1>
-            <h2>You are {user?.name}!!!</h2>
-            <h2>You are in {roomId}!!!</h2>
-            <h2>Player1 is {game?.player1}!!!</h2>
-            <h2>Player2 is {game?.player2}!!!</h2>
+        <div
+            style={{
+                backgroundColor: "#EDF0F4",
+                minHeight: "100vh",
+                backgroundSize: "cover",
+            }}
+        >
+            <h2>
+            <h1>[Random Match Room]</h1>
+            </h2>
+            <Grid
+                container
+                justifyContent="center"
+                marginTop="-5%"
+                alignItems="center"
+                style={{ minHeight: "100vh" }}
+                fontSize="h4.fontSize"
+            >
+                <h3>
+                    <ShowPositions />
             <h1>Your Room 👉 {ShowPage()} !!!</h1>
-            <button onClick={handleClick}>Exit Room</button>
+                </h3>
+            <button
+            style={{
+                height: "80px",
+                width: "100px",
+                fontSize: "20px",
+                color: "green"
+            }}
+                onClick={handleClick}>Exit Room</button>
+            </Grid>
         </div>
     );
 
