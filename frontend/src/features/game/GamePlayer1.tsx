@@ -329,11 +329,11 @@ const GamePlayer1 = () => {
                 minHeight: "100vh",
             }}
         >
-            <h2>
-                <h1>Player1: {user?.name}</h1>
-            </h2>
-            <Grid container>
             <h1>[PONG GAME]</h1>
+            <Grid container>
+                <h2>
+                    <h1>Player1: {user?.name}</h1>
+                </h2>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
             <LeveButton />
             </Grid>

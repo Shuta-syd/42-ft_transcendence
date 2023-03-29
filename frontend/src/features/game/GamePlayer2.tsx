@@ -254,11 +254,11 @@ const GamePlayer2 = () => {
                 minHeight: "100vh",
             }}
         >
-            <h2>
-                <h1>Player2: {user?.name}</h1>
-            </h2>
-            <Grid container>
             <h1>[PONG GAME]</h1>
+            <Grid container>
+                <h2>
+                    <h1>Player2: {user?.name}</h1>
+                </h2>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
             </Grid>
         </div>
