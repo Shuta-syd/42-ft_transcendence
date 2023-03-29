@@ -18,7 +18,7 @@ type SignupData = {
 function SignupComponent() {
   const router = useNavigate();
   const [activeStep, setActiveStep] = useState(0);
-  const [image, setImage] = useState<File>();
+  const [image, setImage] = useState('');
   const [imageURL, setImageURL] = useState('');
   const { control, handleSubmit, reset } = useForm<SignupData>({ defaultValues: { username: '', email: '', password: ''} });
 
@@ -28,7 +28,7 @@ function SignupComponent() {
         name: data.username,
         email: data.email,
         password: data.password,
-        imageURL,
+        image,
       });
       reset();
       router('/user');
@@ -43,8 +43,14 @@ function SignupComponent() {
     if (e.target.files === null) return;
     const file = e.target.files[0];
     if (!file) return;
-      setImage(file);
-      setImageURL(URL.createObjectURL(file));
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      const base64 = result.replace(/^data:image\/(png|jpg|jpeg);base64,/, '');
+      setImage(base64);
+    }
+    reader.readAsDataURL(file);
+    setImageURL(URL.createObjectURL(file));
   };
 
   return (
