@@ -210,19 +210,35 @@ const Profile = () => {
     // const steveJobsImage = "https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg";
 
     const uploadImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        const {files} = event.target;
+        const { files } = event.target;
         if (files?.[0]) {
-            const imageDto = URL.createObjectURL(files[0]);
-            console.log("THIS ONE: ", imageDto);
-            await axios.post(`http://localhost:8080/user/add/image`, {image: imageDto}, {
-                headers: {Authorization: `Bearer ${localStorage.getItem('token')}`},
-            }).then((res) => {
-                console.log(res);
-                console.log("this is imageDto", imageDto);
-                setProfileImage(imageDto);
-            });
+            const blobFiles = URL.createObjectURL(files[0]);
+            const file = files[0];
+            let base64: string;
+            console.log("THIS ONE: ", blobFiles);
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+
+            reader.onload = async () => {
+                base64 = reader.result as string;
+                console.log("base64: ", base64);
+
+                try {
+                    const response = await axios.post(
+                        "http://localhost:8080/user/add/image",
+                        { image: base64 },
+                        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+                    );
+                    console.log("THIS ONE: ", response);
+                    setProfileImage(base64);
+                } catch (error) {
+                    console.error(error);
+                    console.log("This file is too large!!!!");
+                }
+            };
         }
-    }
+    };
+
     // const elonMuskImage = "https://upload.wikimedia.org/wikipedia/commons/e/e1/Elon_Musk_%28cropped%29.jpg";
     // const steveJobsImage = "https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg";
     const [profileImage, setProfileImage] = useState('');
