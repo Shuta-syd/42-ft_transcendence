@@ -330,7 +330,7 @@ const Profile = () => {
                         display={"flex"}
                         alignItems={"center"}
                         justifyContent={"center"}
-                        marginTop={30}
+                        marginTop={10}
                     >
                         <FriendListButton/>
                     </Grid>
