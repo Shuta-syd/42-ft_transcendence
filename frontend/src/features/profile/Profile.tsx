@@ -1,27 +1,29 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
 import {Avatar, Button, IconButton} from "@mui/material";
 import axios from "axios";
-import Rating from '@mui/material/Rating';
 import TextField from '@mui/material/TextField';
+import Rating from '@mui/material/Rating';
 import InputAdornment from '@mui/material/InputAdornment';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import io from "socket.io-client";
+import * as SocketIOClient from 'socket.io-client';
 import {PhotoCamera} from "@mui/icons-material";
 import {Match, User} from "../../types/PrismaType";
-import {fetchProfileUser} from "../../hooks/profile/useProfileUser";
-import {sendFriendRequest} from "../../hooks/profile/sendFriendRequests";
+import { fetchProfileUser } from "../../hooks/profile/useProfileUser";
+import { sendFriendRequest } from "../../hooks/profile/sendFriendRequests";
 import useQueryMatches from "../../hooks/match/useWueryMatch";
 
 
 const Profile = () => {
 
     const [user, setUser] = useState<User>();
-
-    const socket = io("http://localhost:8080");
-
+    const [socket, setSocket] = useState<SocketIOClient.Socket>(); // Socketを状態として持つ
     const UserPromises = fetchProfileUser();
     useEffect(() => {
         UserPromises.then((userDto: User) => {
+            const params = { query: { name: userDto.name } };
+            const Tmpsocket = io("http://localhost:8080", params);
+            setSocket(Tmpsocket);
             setUser(userDto);
         });
     }, []);
@@ -36,7 +38,7 @@ const Profile = () => {
     }
 
     const getFriends = async () => {
-        const {data} = await axios.get<User[]>(`http://localhost:8080/user/friend`);
+        const { data } = await axios.get<User[]>(`http://localhost:8080/user/friend`);
         return data;
     }
 
@@ -47,8 +49,13 @@ const Profile = () => {
         friendsPromise.then((data) => {
             console.log('data => ', data[0]);
             setFriends(data);
+            data.map((friend: User) => {
+                const tmp:FriendProps = {
+                    friendName: friend.name
+                };
+                FriendStatus(tmp);
+            });
         });
-        console.log(friends[0]);
     };
 
     const [matchArr, setMatches] = useState<Match[]>([]);
@@ -61,7 +68,7 @@ const Profile = () => {
         });
     }, []);
 
-    function ShowResult(props: { p1: string, p2: string }) {
+    function ShowResult(props: {p1: string, p2: string}) {
         // console.log('winnerId', winnerId);
         if (winnerId === '1') {
             return (
@@ -69,7 +76,7 @@ const Profile = () => {
                     <div>
                         Winner
                         &nbsp;=&gt;
-                        {props.p1}!!!
+                        { props.p1  }!!!
                     </div>
                 </h2>
             );
@@ -79,7 +86,7 @@ const Profile = () => {
                 <div>
                     Winner
                     &nbsp;=&gt;
-                    {props.p2}!!!
+                    {  props.p2  }!!!
                 </div>
             </h2>
         );
@@ -88,57 +95,8 @@ const Profile = () => {
     interface MatchListProps {
         matches: Match[];
     }
-
-    function ShowAchievement({matches}: MatchListProps) {
-        const countMyWinTime =  () => {
-            let count: number = 0;
-            for (const match of matches) {
-                const winnerName = match.winner_id === '1' ? match.player1 : match.player2;
-                if (winnerName === user?.name) {
-                    count += 1;
-                }
-            }
-            return count;
-        }
-        enum Achievement {
-            "Beginner" = 0,
-            "Intermediate" = 5,
-            "Advanced" = 10,
-            "Expert" = 15,
-        }
-
-        const getAchievement = () => {
-            if (countMyWinTime() < Achievement.Intermediate) {
-                return "Beginner";
-            }
-            if (countMyWinTime() < Achievement.Advanced) {
-                return "Intermediate";
-            }
-            if (countMyWinTime() < Achievement.Expert) {
-                return "Advanced";
-            }
-            return "Expert";
-        };
-
-        return (
-            <div>
-                <h2>
-                    Your current achievement : {getAchievement()}
-                <p></p>
-                <Rating
-                    name={user?.name}
-                    defaultValue={countMyWinTime()}
-                    precision={0.5}
-                    max={20}
-                    readOnly
-                />
-                <p></p>
-                </h2>
-            </div>
-        );
-    }
-
-    function MatchList({matches}: MatchListProps) {
+    
+    function MatchList({ matches }: MatchListProps) {
         const [selectedPlayer, setSelectedPlayer] = useState(user?.name);
         const [filteredMatches, setFilteredMatches] = useState<Match[]>([]);
 
@@ -186,18 +144,14 @@ const Profile = () => {
 
         useEffect(() => {
             // WebSocketを使用して、友達のオンライン/オフライン状態を取得する
+            if (socket) {
             socket.emit("getFriendStatus", friendName);
-
-            // サーバーからの応答を受信する
-            socket.on("friendStatus", (status) => {
-                setIsOnline(status);
-            });
-
-            // コンポーネントのアンマウント時にWebSocket接続を解除する
-            return () => {
-                socket.off("friendStatus");
-            };
-        }, [friendName]);
+                // サーバーからの応答を受信する
+                socket.on("friendStatus", (status) => {
+                    setIsOnline(status);
+                });
+            }
+        }, []);
 
         if (isOnline === null) {
             return <span>Loading...</span>;
@@ -248,6 +202,55 @@ const Profile = () => {
             setProfileImage(us?.image);
         });
     }, []);
+
+    function ShowAchievement({matches}: MatchListProps) {
+        const countMyWinTime =  () => {
+            let count: number = 0;
+            for (const match of matches) {
+                const winnerName = match.winner_id === '1' ? match.player1 : match.player2;
+                if (winnerName === user?.name) {
+                    count += 1;
+                }
+            }
+            return count;
+        }
+        enum Achievement {
+            "Beginner" = 0,
+            "Intermediate" = 5,
+            "Advanced" = 10,
+            "Expert" = 15,
+        }
+
+        const getAchievement = () => {
+            if (countMyWinTime() < Achievement.Intermediate) {
+                return "Beginner";
+            }
+            if (countMyWinTime() < Achievement.Advanced) {
+                return "Intermediate";
+            }
+            if (countMyWinTime() < Achievement.Expert) {
+                return "Advanced";
+            }
+            return "Expert";
+        };
+
+        return (
+            <div>
+                <h2>
+                    Your current achievement : {getAchievement()}
+                    <p></p>
+                    <Rating
+                        name={user?.name}
+                        defaultValue={countMyWinTime()}
+                        precision={0.5}
+                        max={20}
+                        readOnly
+                    />
+                    <p></p>
+                </h2>
+            </div>
+        );
+    }
 
     return (
         <div>
