@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState} from "react";
-import {Button} from "@mui/material";
+import {Button, Grid} from "@mui/material";
 import axios from "axios";
 import {GameSocket} from "../../contexts/WebsocketContext";
 import {User} from "../../types/PrismaType";
@@ -329,12 +329,14 @@ const GamePlayer1 = () => {
                 minHeight: "100vh",
             }}
         >
-            <h1>[PONG GAME]</h1>
             <h2>
                 <h1>Player1: {user?.name}</h1>
             </h2>
+            <Grid container>
+            <h1>[PONG GAME]</h1>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
             <LeveButton />
+            </Grid>
         </div>
     );
 }
