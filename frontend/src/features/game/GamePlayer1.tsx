@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import {Button} from "@mui/material";
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
 import {GameSocket} from "../../contexts/WebsocketContext";
 import {User} from "../../types/PrismaType";
 import {useGameUser} from "../../hooks/game/useGameuser";
@@ -13,7 +12,6 @@ const GamePlayer1 = () => {
     let keycode = '';
     let leftScore = 0;
     let rightScore = 0;
-
     /* Ball macro */
     const BALLX = 455;
     const BALLY = 450;
@@ -220,7 +218,14 @@ const GamePlayer1 = () => {
             context.fillStyle = 'blue'
             context.font = "bold 50px 'ＭＳ 明朝'";
             context.fillText('You Lose!', 360,  300);
+            context.fillStyle = 'black'
+            context.fillText('5秒後にgameページに戻ります.', 100,  600);
             GameSocket.emit('TerminateGame', user.name);
+            if (window.location.pathname === "/game/player1") {
+                setTimeout(() => {
+                    window.location.href = "/game";
+                }, 3 * 1000);
+            }
         } else {
             const matchData = {
                 player1: user.name,
@@ -232,7 +237,14 @@ const GamePlayer1 = () => {
             context.fillStyle = 'red'
             context.font = "bold 50px 'ＭＳ 明朝'";
             context.fillText('You Win!', 360, 300);
+            context.fillStyle = 'black'
+            context.fillText('5秒後にgameページに戻ります.', 100,  600);
             GameSocket.emit('TerminateGame', user.name);
+            if (window.location.pathname === "/game/player1") {
+                setTimeout(() => {
+                    window.location.href = "/game";
+                }, 3 * 1000);
+            }
         }
     }
 
@@ -346,19 +358,6 @@ const GamePlayer1 = () => {
     }
 
 
-    function GameButton() {
-        const history = useNavigate();
-
-        function handleClick() {
-            history("/game");
-        }
-
-        return (
-            <button type="button" onClick={handleClick}>
-                Go game
-            </button>
-        );
-    }
     return (
         <div>
             <h1>[PONG GAME]</h1>
@@ -376,7 +375,6 @@ const GamePlayer1 = () => {
                     onClick={(e) => {
                         BallSpeedDown();
                     }}>LEVEL DOWN</Button>
-            <GameButton ></GameButton>
             <div>
                 <input type="text" value={uname} onChange={(event) => { setUname(event.target.value) }} />
             </div>

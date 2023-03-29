@@ -1,5 +1,4 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
-import {useNavigate} from "react-router-dom";
 import { GameSocket } from "../../contexts/WebsocketContext";
 import {User} from "../../types/PrismaType";
 import {useGameUser} from "../../hooks/game/useGameuser";
@@ -148,7 +147,6 @@ const GamePlayer2 = () => {
             name: user?.name.toString(),
         }
         GameSocket.emit('GameToServer', paddleAndRoom);
-
         /* draw part */
         leftPaddle.draw();
         rightPaddle.draw();
@@ -168,10 +166,24 @@ const GamePlayer2 = () => {
             context.fillStyle = 'blue'
             context.font = "bold 50px 'ＭＳ 明朝'";
             context.fillText('You Lose!', 360,  300);
+            context.fillStyle = 'black'
+            context.fillText('5秒後にgameページに戻ります.', 100,  600);
+            if (window.location.pathname === "/game/player2") {
+                setTimeout(() => {
+                    window.location.href = "/game";
+                }, 3 * 1000);
+            }
         } else {
             context.fillStyle = 'red'
             context.font = "bold 50px 'ＭＳ 明朝'";
             context.fillText('You Win!', 360, 300);
+            context.fillStyle = 'black'
+            context.fillText('5秒後にgameページに戻ります.', 100,  600);
+            if (window.location.pathname === "/game/player2") {
+                setTimeout(() => {
+                    window.location.href = "/game";
+                }, 3 * 1000);
+            }
         }
     }
 
@@ -286,26 +298,11 @@ const GamePlayer2 = () => {
         rightScore = Score.player2;
     });
 
-    function GameButton() {
-        const history = useNavigate();
-
-        function handleClick() {
-            history("/game");
-        }
-
-        return (
-            <button type="button" onClick={handleClick}>
-                Go game
-            </button>
-        );
-    }
-
     return (
         <div>
             <h1>[PONG GAME]</h1>
             <h1>Player2: {user?.name}</h1>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
-            <GameButton></GameButton>
             <div>
                 <input type="text" value={uname} onChange={(event) => { setUname(event.target.value) }} />
             </div>
