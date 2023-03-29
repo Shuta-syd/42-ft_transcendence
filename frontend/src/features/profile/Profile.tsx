@@ -90,6 +90,55 @@ const Profile = () => {
         matches: Match[];
     }
 
+    function ShowAchievement({matches}: MatchListProps) {
+        const countMyWinTime =  () => {
+            let count: number = 0;
+            for (const match of matches) {
+                const winnerName = match.winner_id === '1' ? match.player1 : match.player2;
+                if (winnerName === user?.name) {
+                    count += 1;
+                }
+            }
+            return count;
+        }
+        enum Achievement {
+            "Beginner" = 0,
+            "Intermediate" = 5,
+            "Advanced" = 10,
+            "Expert" = 15,
+        }
+
+        const getAchievement = () => {
+            if (countMyWinTime() < Achievement.Intermediate) {
+                return "Beginner";
+            }
+            if (countMyWinTime() < Achievement.Advanced) {
+                return "Intermediate";
+            }
+            if (countMyWinTime() < Achievement.Expert) {
+                return "Advanced";
+            }
+            return "Expert";
+        };
+
+        return (
+            <div>
+                <h2>
+                    Your current achievement : {getAchievement()}
+                <p></p>
+                <Rating
+                    name={user?.name}
+                    defaultValue={countMyWinTime()}
+                    precision={0.5}
+                    max={20}
+                    readOnly
+                />
+                <p></p>
+                </h2>
+            </div>
+        );
+    }
+
     function MatchList({matches}: MatchListProps) {
         const [selectedPlayer, setSelectedPlayer] = useState(user?.name);
         const [filteredMatches, setFilteredMatches] = useState<Match[]>([]);
@@ -195,12 +244,6 @@ const Profile = () => {
                 <PhotoCamera/>
             </IconButton>
             <p></p>
-            <Rating
-                name={user?.name}
-                defaultValue={4}
-                precision={0.5}
-            />
-            <p></p>
             <h2>Find new friends!</h2>
             <TextField
                 id="input-with-icon-textfield"
@@ -240,6 +283,7 @@ const Profile = () => {
             </h1>
             <h2>今までの戦績</h2>
             <MatchList matches={matchArr}/>
+            <ShowAchievement matches={matchArr}/>
         </div>
     );
 }
