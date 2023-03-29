@@ -10,22 +10,22 @@ const GameMatching = () => {
 
     const images = [
         {
-            url: '',
+            url: 'https://ogre.natalie.mu/media/news/stage/2022/1217/momochiato9_039.jpg?imwidth=750&imdensity=1',
             title: 'Random Match',
             width: '100%',
         },
         {
-            url: '',
+            url: 'https://www.pngitem.com/pimgs/m/201-2012190_invite-business-man-hd-png-download.png',
             title: 'Inviter',
             width: '100%',
         },
         {
-            url: '',
+            url: 'https://finansernextjs.wpengine.com/wp-content/uploads/2018/07/Challenger-bank.jpg',
             title: 'Participant',
             width: '100%',
         },
         {
-            url: '/public/observer.jpg',
+            url: 'https://www.travelvoice.jp/wp-content/uploads/2019/05/fans_on_stadium_game.jpg',
             title: 'Observer',
             width: '100%',
         }
