@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
 import { Box, Button } from "@mui/material";
-import React, { useState } from "react";
+import React from "react";
 
 type UploadImageComponentProps = {
   image: any;
