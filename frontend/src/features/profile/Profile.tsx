@@ -30,6 +30,8 @@ const Profile = () => {
 
     const handleDecideIdButton = async () => {
         await sendFriendRequest(user?.id, inputId);
+        // なぜsetInputId("")をここに書くとエラーになるのか？
+        setInputId("");
     }
 
     const getFriends = async () => {
@@ -160,7 +162,7 @@ const Profile = () => {
         return (
             <div>
                 {/* フィルタリングされた試合のみ表示 */}
-                <h3>[⇩ Previous Record]</h3>
+                {/* <h3>[⇩ Previous Record]</h3> */}
                 {filteredMatches.map((match) => (
                     <div key={match.id}>
                         <h3>
@@ -239,7 +241,13 @@ const Profile = () => {
     const FriendListButton = () => {
         console.log('List button');
         return (
-            <div>
+            <div
+                style={{
+                    display: "flex",
+                    justifyContent: "left",
+                    alignItems: "left",
+                }}
+            >
                 <Button
                 variant="outlined"
                 color="primary"
@@ -259,14 +267,23 @@ const Profile = () => {
         );
     }
 
+    // @ts-ignore
     return (
         <div
             style={{ backgroundColor: "#EDF0F4",
                 minHeight: "100vh"
             }}
         >
-            <Grid container spacing={5}>
-                <Grid item xs={10}>
+            <h2>
+            <h1>
+                [Profile]
+            </h1>
+            <Grid
+                container
+                spacing={5}
+                marginTop={10}
+            >
+                <Grid item xs={5}>
                     <ShowAvatar user={user} profileImage={profileImage}/>
                 </Grid>
                 <Grid item xs={10} style={{color: "#3C444B"}}>
@@ -282,7 +299,7 @@ const Profile = () => {
                             marginTop: "-20px",
                         }}
                     >
-                    Find your friend!
+                        Find your friend!
                     </h1>
                 </Grid>
                 <Grid
@@ -299,20 +316,37 @@ const Profile = () => {
                 <Grid item xs={10} style={{color: "#3C444B"}}>
                     <FingerPrintButton onClick={handleFingerPrintButton}/>
                 </Grid>
-                <Grid item xs={10} style={{color: "#3C444B"}}>
-                    <FriendListButton/>
-                </Grid>
-                <Grid item xs={10} style={{color: "#3C444B"}}>
-                    <MatchList matches={matchArr}/>
-                </Grid>
-                <Grid item xs={10} style={{color: "#3C444B"}}>
-                    <ShowAchievement matches={matchArr}/>
+                <Grid
+                    container
+                    direction={"column"}
+                    spacing={10}
+                >
+                    <Grid
+                        item
+                        xs={5}
+                        style={{
+                            color: "#3C444B"
+                    }}
+                        display={"flex"}
+                        alignItems={"center"}
+                        justifyContent={"center"}
+                        marginTop={30}
+                    >
+                        <FriendListButton/>
+                    </Grid>
+                    <Grid item xs={5} style={{color: "#3C444B"}}>
+                        <MatchList matches={matchArr}/>
+                    </Grid>
+                    <Grid item xs={5} style={{color: "#3C444B"}}>
+                        <ShowAchievement matches={matchArr}/>
+                    </Grid>
                 </Grid>
             </Grid>
+            </h2>
         </div>
     );
 
-}
 
+}
 
 export default Profile;

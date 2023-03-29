@@ -53,8 +53,8 @@ const ShowAvatar = ({ user, profileImage }: ShowAvatarProps) => {
         }}>
             <StyledBadge
                 sx={{
-                    width: 300, // Update width here
-                    height: 300, // Update height here
+                    width: 400, // Update width here
+                    height: 400, // Update height here
                     marginRight: 2
                 }}
                 overlap="circular"
@@ -67,8 +67,8 @@ const ShowAvatar = ({ user, profileImage }: ShowAvatarProps) => {
                     alt={user?.name}
                     src={profileImage}
                     sx={{
-                        width: 290, // Update width here
-                        height: 290, // Update height here
+                        width: 400, // Update width here
+                        height: 400, // Update height here
                         marginRight: 2
                     }}
                 />
@@ -76,23 +76,24 @@ const ShowAvatar = ({ user, profileImage }: ShowAvatarProps) => {
             <div>
                 <h1
                     style={{
-                        fontSize: '3rem',
+                        fontSize: '5rem',
                         fontWeight: 'bold',
                         color: '#3C444B',
                         marginBottom: 0,
+                        marginLeft: 50,
                     }}
                 >
                     {user?.name}
                 </h1>
-                <p
-                    style={{
-                        fontSize: '1.5rem',
-                        color: '#3C444B',
-                        marginTop: '0.5rem',
-                    }}
-                >
+                    <h2
+                        style={{
+                            fontSize: '2rem',
+                            color: '#3C444B',
+                            marginTop: '1rem',
+                            marginLeft: 80,
+                        }}>
                     {user?.email}
-                </p>
+                    </h2>
             </div>
         </div>
     );
