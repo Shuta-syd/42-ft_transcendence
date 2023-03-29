@@ -305,6 +305,23 @@ const GamePlayer1 = () => {
         ballDefaultSpeed -= 0.5;
     }
 
+    const LeveButton = () => (
+            <div>
+                <Button variant={"contained"}
+                        size={"large"}
+                        color={"success"}
+                        onClick={(e) => {
+                            BallSpeedUp();
+                        }}>LEVEL UP</Button>
+                <Button variant={"contained"}
+                        size={"large"}
+                        color={"error"}
+                        onClick={(e) => {
+                            BallSpeedDown();
+                        }}>LEVEL DOWN</Button>
+            </div>
+        )
+
     return (
         <div
             style={{
@@ -317,18 +334,7 @@ const GamePlayer1 = () => {
                 <h1>Player1: {user?.name}</h1>
             </h2>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
-            <Button variant={"contained"}
-                    size={"large"}
-                    color={"success"}
-                    onClick={(e) => {
-                        BallSpeedUp();
-                    }}>LEVEL UP</Button>
-            <Button variant={"contained"}
-                    size={"large"}
-                    color={"error"}
-                    onClick={(e) => {
-                        BallSpeedDown();
-                    }}>LEVEL DOWN</Button>
+            <LeveButton />
         </div>
     );
 }

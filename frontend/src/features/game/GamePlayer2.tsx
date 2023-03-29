@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState} from "react";
+import {Grid} from "@mui/material";
 import { GameSocket } from "../../contexts/WebsocketContext";
 import {User} from "../../types/PrismaType";
 import {useGameUser} from "../../hooks/game/useGameuser";
@@ -253,11 +254,13 @@ const GamePlayer2 = () => {
                 minHeight: "100vh",
             }}
         >
-            <h1>[PONG GAME]</h1>
             <h2>
-            <h1>Player2: {user?.name}</h1>
+                <h1>Player2: {user?.name}</h1>
             </h2>
+            <Grid container>
+            <h1>[PONG GAME]</h1>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
+            </Grid>
         </div>
     );
 }
