@@ -40,7 +40,7 @@ export class AuthService {
         email: dto.email,
         password: dto.password ? dto.password : '',
         name: dto.name,
-        image: dto.imageUrl,
+        image: Buffer.from(dto.image),
         isFtLogin: dto.isFtLogin ? dto.isFtLogin : false,
       },
     });

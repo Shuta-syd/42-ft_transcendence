@@ -27,7 +27,7 @@ export class FtStrategy extends PassportStrategy(Strategy, '42') {
     const user = {
       name: profile.username,
       email: profile._json.email,
-      imageUrl: profile._json.image.link,
+      image: profile._json.image.link,
     };
     return this.authService.validateUser(user);
   }
