@@ -55,6 +55,8 @@ export class AuthController {
       sameSite: 'lax',
       path: '/',
     });
+
+    res.redirect('http://localhost:3000/user');
     return {
       message: 'Login Success',
     };

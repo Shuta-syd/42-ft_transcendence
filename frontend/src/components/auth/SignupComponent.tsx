@@ -31,7 +31,7 @@ function SignupComponent() {
         image,
       });
       reset();
-      router('/user');
+      router('/login');
     } catch (error) {
       reset();
       setActiveStep(0);
