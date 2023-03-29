@@ -268,10 +268,13 @@ const Profile = () => {
     }
 
     // @ts-ignore
-    return (
+    return (;
         <div
             style={{ backgroundColor: "#EDF0F4",
-                minHeight: "100vh"
+                minHeight: "100vh",
+                backgroundImage: 'url(https://img.freepik.com/free-vector/dark-wall-background_1390-191.jpg)',
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "cover"
             }}
         >
             <h2>
