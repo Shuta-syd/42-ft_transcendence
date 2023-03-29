@@ -30,6 +30,7 @@ export class FtStrategy extends PassportStrategy(Strategy, '42') {
       email: profile['emails'][0]['value'],
       password: username,
     };
+    console.log(user);
     return this.authService.validateUser(user);
   }
 }

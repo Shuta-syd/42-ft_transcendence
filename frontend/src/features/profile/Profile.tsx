@@ -95,6 +95,7 @@ const Profile = () => {
     interface MatchListProps {
         matches: Match[];
     }
+    
     function MatchList({ matches }: MatchListProps) {
         const [selectedPlayer, setSelectedPlayer] = useState(user?.name);
         const [filteredMatches, setFilteredMatches] = useState<Match[]>([]);
@@ -196,12 +197,6 @@ const Profile = () => {
                 <PhotoCamera/>
             </IconButton>
             <p></p>
-            <Rating
-                name={user?.name}
-                defaultValue={4}
-                precision={0.5}
-            />
-            <p></p>
             <h2>Find new friends!</h2>
             <TextField
                 id="input-with-icon-textfield"
@@ -241,6 +236,7 @@ const Profile = () => {
             </h1>
             <h2>今までの戦績</h2>
             <MatchList matches={matchArr}/>
+            <ShowAchievement matches={matchArr}/>
         </div>
     );
 }
