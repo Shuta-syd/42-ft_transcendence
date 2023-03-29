@@ -1,4 +1,5 @@
-import React, { useRef, useEffect, useState, useCallback } from "react";
+import React, { useRef, useEffect, useState} from "react";
+import { Grid } from "@mui/material";
 import { GameSocket } from "../../contexts/WebsocketContext";
 import {User, Game} from '../../types/PrismaType';
 import {useGameUser} from "../../hooks/game/useGameuser";
@@ -199,20 +200,6 @@ const GamePlayer2 = () => {
         window.requestAnimationFrame(draw);
     }, [user, game]);
 
-    type Chat = {
-        socketId: string,
-        uname: string,
-        time: string,
-        text: string
-        name: string,
-    }
-    type ChatLog = Array<Chat>
-
-
-    const [chatLog, setChatLog] = useState<ChatLog>([])
-    const [uname, setUname] = useState<string>('')
-    const [text, setText] = useState<string>('')
-
 
     useEffect(() => {
         GameSocket.on('connect', () => {
@@ -225,32 +212,10 @@ const GamePlayer2 = () => {
         }
     }, [])
 
-    useEffect(() => {
-        GameSocket.on('chatToClient', (chat: Chat) => {
-            console.log('GAME CHAT受信', chat)
-            const newChatLog = [...chatLog]
-            newChatLog.push(chat)
-            setChatLog(newChatLog)
-        });
-    }, [chatLog])
-
-    const getNow = useCallback((): string => {
-        const datetime = new Date();
-        return `${datetime.getFullYear()}/${datetime.getMonth() + 1}/${datetime.getDate()} ${datetime.getHours()}:${datetime.getMinutes()}:${datetime.getSeconds()}`
-    }, [])
 
     useEffect(() => {
     }, [rightPaddle.y]);
 
-    const sendChat = useCallback((): void => {
-        if (!uname) {
-            alert('ユーザー名を入れてください。')
-            return;
-        }
-        console.log('送信')
-        GameSocket.emit('chatToServer', { uname, text, time: getNow(), name: user?.name});
-        setText('');
-    }, [uname, text])
 
     type PaddleAndRoom = {
         paddleHeight: number;
@@ -280,38 +245,17 @@ const GamePlayer2 = () => {
     });
 
     return (
-        <div>
+        <div
+            style={{
+                backgroundColor: "#EDF0F4",
+                minHeight: "100vh",
+            }}
+        >
             <h1>[PONG GAME]</h1>
+            <Grid container>
             <h1>[Observer]</h1>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
-            <div>
-                <input type="text" value={uname} onChange={(event) => { setUname(event.target.value) }} />
-            </div>
-            <section style={{ backgroundColor: 'rgba(30,130,80,0.3)', height: '50vh', overflow: 'scroll' }}>
-                <h2>GAME CHAT</h2>
-                <hr />
-                <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column' }}>
-                    {
-                        chatLog.map((chat, index) => (
-                            <li key={index} style={{ margin: uname === chat.uname ? '0 15px 0 auto ' : '0 auto 0 15px' }}>
-                                <div><small>{chat.time} [{chat.socketId}]</small></div>
-                                <div>【{chat.uname}】 : {chat.text}</div>
-                            </li>
-                        ))
-                    }
-                </ul>
-            </section>
-            <br />
-            <div>
-                送信内容
-            </div>
-            <div>
-                <input type="text" value={text} onChange={(event) => { setText(event.target.value) }} />
-            </div>
-            <br />
-            <div>
-                <button onClick={sendChat}> send </button>
-            </div>
+            </Grid>
         </div>
     );
 }
