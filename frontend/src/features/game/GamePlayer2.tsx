@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
+import {useNavigate} from "react-router-dom";
 import { GameSocket } from "../../contexts/WebsocketContext";
 import {User} from "../../types/PrismaType";
 import {useGameUser} from "../../hooks/game/useGameuser";
@@ -285,11 +286,26 @@ const GamePlayer2 = () => {
         rightScore = Score.player2;
     });
 
+    function GameButton() {
+        const history = useNavigate();
+
+        function handleClick() {
+            history("/game");
+        }
+
+        return (
+            <button type="button" onClick={handleClick}>
+                Go game
+            </button>
+        );
+    }
+
     return (
         <div>
             <h1>[PONG GAME]</h1>
             <h1>Player2: {user?.name}</h1>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
+            <GameButton></GameButton>
             <div>
                 <input type="text" value={uname} onChange={(event) => { setUname(event.target.value) }} />
             </div>

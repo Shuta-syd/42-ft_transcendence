@@ -1,10 +1,10 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import {Button} from "@mui/material";
 import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 import {GameSocket} from "../../contexts/WebsocketContext";
 import {User} from "../../types/PrismaType";
 import {useGameUser} from "../../hooks/game/useGameuser";
-
 
 const GamePlayer1 = () => {
     // global variables
@@ -268,6 +268,7 @@ const GamePlayer1 = () => {
         window.addEventListener('keydown', handleKeyDown);
     }, [user]);
 
+
     type Chat = {
         socketId: string,
         uname: string,
@@ -280,6 +281,7 @@ const GamePlayer1 = () => {
     const [chatLog, setChatLog] = useState<ChatLog>([])
     const [uname, setUname] = useState<string>('')
     const [text, setText] = useState<string>('')
+
 
 
     useEffect(() => {
@@ -343,6 +345,20 @@ const GamePlayer1 = () => {
         ballDefaultSpeed -= 0.5;
     }
 
+
+    function GameButton() {
+        const history = useNavigate();
+
+        function handleClick() {
+            history("/game");
+        }
+
+        return (
+            <button type="button" onClick={handleClick}>
+                Go game
+            </button>
+        );
+    }
     return (
         <div>
             <h1>[PONG GAME]</h1>
@@ -360,6 +376,7 @@ const GamePlayer1 = () => {
                     onClick={(e) => {
                         BallSpeedDown();
                     }}>LEVEL DOWN</Button>
+            <GameButton ></GameButton>
             <div>
                 <input type="text" value={uname} onChange={(event) => { setUname(event.target.value) }} />
             </div>
