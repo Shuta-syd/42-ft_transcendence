@@ -78,19 +78,27 @@ const CreateGameRoom = () => {
                 alignItems="center"
                 style={{ minHeight: "100vh" }}
                 fontSize="h4.fontSize"
+                direction="column"
             >
+                <Grid mr={10} spacing={50}>
                 <h3>
                     <ShowPositions />
             <h1>Your Room 👉 {ShowPage()} !!!</h1>
                 </h3>
+                </Grid>
+                <Grid mr={10} spacing={10}>
             <button
             style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
                 height: "80px",
                 width: "100px",
                 fontSize: "20px",
                 color: "green"
             }}
                 onClick={handleClick}>Exit Room</button>
+                </Grid>
             </Grid>
         </div>
     );
