@@ -13,6 +13,7 @@ model User {
   name            String
   password        String
   image           String
+  isFtLogin       Boolean @default(false)
   friends         User[]   @relation("Friends")
   friendRelation  User[]   @relation("Friends")
   memberships     Member[]

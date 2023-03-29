@@ -1,11 +1,16 @@
-import {Injectable} from '@nestjs/common';
-import {ConfigService} from '@nestjs/config';
-import {JwtService} from '@nestjs/jwt';
-import {User} from '@prisma/client';
-import {PrismaService} from 'src/prisma/prisma.service';
-import {SignUpUserDto} from 'src/user/dto/user.dto';
-import {AuthDto} from './dto/auth.dto';
-import {Jwt} from './type/auth.type';
+import {
+  BadRequestException,
+  Injectable,
+  NotAcceptableException,
+  NotFoundException,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { SignUpUserDto } from 'src/user/dto/user.dto';
+import { AuthDto } from './dto/auth.dto';
+import { Jwt } from './type/auth.type';
 
 @Injectable()
 export class AuthService {
@@ -27,7 +32,9 @@ export class AuthService {
 
     if (userExists) {
       // 既に存在する場合は、エラーをスローするか、処理を中断する
-      throw new Error('このメールアドレスは既に使用されています。');
+      throw new NotAcceptableException(
+        'このメールアドレスは既に使用されています。',
+      );
     }
 
     // 存在しない場合は、新しいユーザーを作成する
@@ -38,7 +45,7 @@ export class AuthService {
         name: dto.name,
         image:
           'https://upload.wikimedia.org/wikipedia/commons/e/e1/Elon_Musk_%28cropped%29.jpg',
-        // その他の必要なフィールドを追加する
+        isFtLogin: dto.isFtLogin ? dto.isFtLogin : false,
       },
     });
   }
@@ -53,8 +60,10 @@ export class AuthService {
         email: dto.email,
       },
     });
-    if (!user) throw new Error("user couldn't be found");
-    if (user.password !== dto.password) throw new Error('password is wrong');
+    if (user.isFtLogin) new BadRequestException('Please login with 42');
+    if (!user) throw new NotFoundException("user couldn't be found");
+    if (user.password !== dto.password)
+      throw new NotAcceptableException('password is wrong');
     return this.generateJwt(user.id, user.name);
   }
 
@@ -86,6 +95,7 @@ export class AuthService {
     if (user) {
       return user;
     }
-    return this.signupUser(userDto);
+
+    return this.signupUser({ ...userDto, isFtLogin: true });
   }
 }
