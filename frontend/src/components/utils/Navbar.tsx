@@ -25,7 +25,7 @@ function Navbar() {
               <Link to={"/match"} className={'NavbarLink'}>Match</Link>
             </Typography>
             <Typography mr={5}>
-              <Link to={"/profile"} className={'NavbarLink'}>Profile</Link>
+              <Link to={"/user"} className={'NavbarLink'}>Profile</Link>
             </Typography>
           </Box>
         </Toolbar>

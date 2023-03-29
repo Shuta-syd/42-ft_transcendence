@@ -7,4 +7,6 @@ export class SignUpUserDto {
   email: string;
   @ApiProperty()
   password: string;
+  @ApiProperty()
+  isFtLogin?: boolean;
 }
