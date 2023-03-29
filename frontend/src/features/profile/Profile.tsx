@@ -268,7 +268,7 @@ const Profile = () => {
     }
 
     // @ts-ignore
-    return (;
+    return (
         <div
             style={{ backgroundColor: "#EDF0F4",
                 minHeight: "100vh",
