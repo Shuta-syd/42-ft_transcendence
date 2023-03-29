@@ -1,8 +1,8 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
 import {Avatar, Button, IconButton} from "@mui/material";
 import axios from "axios";
-import Rating from '@mui/material/Rating';
 import TextField from '@mui/material/TextField';
+import Rating from '@mui/material/Rating';
 import InputAdornment from '@mui/material/InputAdornment';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import io from "socket.io-client";
@@ -169,6 +169,55 @@ const Profile = () => {
     const uploadImage = (event: React.ChangeEvent<HTMLInputElement>) => {
         // @ts-ignore
         setImage(URL.createObjectURL(event.target.files[0]));
+    }
+
+    function ShowAchievement({matches}: MatchListProps) {
+        const countMyWinTime =  () => {
+            let count: number = 0;
+            for (const match of matches) {
+                const winnerName = match.winner_id === '1' ? match.player1 : match.player2;
+                if (winnerName === user?.name) {
+                    count += 1;
+                }
+            }
+            return count;
+        }
+        enum Achievement {
+            "Beginner" = 0,
+            "Intermediate" = 5,
+            "Advanced" = 10,
+            "Expert" = 15,
+        }
+
+        const getAchievement = () => {
+            if (countMyWinTime() < Achievement.Intermediate) {
+                return "Beginner";
+            }
+            if (countMyWinTime() < Achievement.Advanced) {
+                return "Intermediate";
+            }
+            if (countMyWinTime() < Achievement.Expert) {
+                return "Advanced";
+            }
+            return "Expert";
+        };
+
+        return (
+            <div>
+                <h2>
+                    Your current achievement : {getAchievement()}
+                    <p></p>
+                    <Rating
+                        name={user?.name}
+                        defaultValue={countMyWinTime()}
+                        precision={0.5}
+                        max={20}
+                        readOnly
+                    />
+                    <p></p>
+                </h2>
+            </div>
+        );
     }
 
     return (
