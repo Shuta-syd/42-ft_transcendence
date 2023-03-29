@@ -1,8 +1,9 @@
+/* eslint-disable no-unused-vars */
 import { Box, Stack, Typography } from "@mui/material";
 import axios from "axios";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SignupStepper from "./SignupStepper";
 import UploadImageComponent from "./UploadImageComponent";
 import UserProfileFormComponent from "./UserProfileFormComponent";
@@ -15,6 +16,7 @@ type SignupData = {
 
 
 function SignupComponent() {
+  const router = useNavigate();
   const [activeStep, setActiveStep] = useState(0);
   const [image, setImage] = useState<File>();
   const [imageURL, setImageURL] = useState('');
@@ -26,15 +28,18 @@ function SignupComponent() {
         name: data.username,
         email: data.email,
         password: data.password,
-        image,
+        imageURL,
       }, {
         headers: {
         'content-type': 'multipart/form-data',
         },
       });
       reset();
+      router('/user');
     } catch (error) {
+      reset();
       alert('ユーザ作成に失敗しました。もう一度ユーザ作成をしてください');
+      setActiveStep(0);
     }
   }
 
