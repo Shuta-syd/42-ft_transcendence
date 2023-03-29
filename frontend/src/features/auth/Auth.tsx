@@ -1,24 +1,11 @@
-/* eslint-disable no-unused-vars */
-import { Button } from "@mui/material";
-import axios from "axios";
 import React from "react";
-import LoginComponent from "../../components/auth/LoginComponent";
-import SignupComponent from "../../components/auth/SignupComponent";
-import FtLoginComponent from "../../components/auth/FtLoginComponent";
+import AuthComponent from "../../components/auth/AuthComponent";
 
 
-function Auth() {
-  const handleClick = async () => {
-    const res = await axios.post('http://localhost:8080/auth/logout');
-    console.log(res.data);
-  }
-
+function Auth(props: { isLogin: boolean }) {
   return (
     <>
-      <FtLoginComponent />
-      <LoginComponent />
-      <SignupComponent />
-      <Button variant="contained" onClick={handleClick}>LOGOUT</Button>
+      <AuthComponent isLogin={props.isLogin} />
     </>
   )
 }
