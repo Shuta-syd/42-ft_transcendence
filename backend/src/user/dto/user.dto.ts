@@ -17,3 +17,8 @@ export class FriendReq {
   @ApiProperty()
   requestee: string;
 }
+
+export class AcceptFriend {
+  @ApiProperty()
+  friendId: string;
+}

@@ -17,7 +17,7 @@ import { ApiOperation } from '@nestjs/swagger';
 import { PrismaUser, SwaggerFriends } from 'src/swagger/type';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
-import { FriendReq } from './dto/user.dto';
+import { AcceptFriend, FriendReq } from './dto/user.dto';
 
 @ApiTags('user')
 @Controller('user')
@@ -71,7 +71,7 @@ export class UserController {
   @ApiOperation({
     description: 'send a Friend Request',
   })
-  async SetFriendReq(@Body() req: FriendReq): Promise<User> {
+  async SetFriendReq(@Body() req: FriendReq): Promise<string[]> {
     return this.userService.handleFriendReq(req);
   }
 
@@ -79,9 +79,16 @@ export class UserController {
   @ApiOperation({
     description: 'check the friend req of the name of user',
   })
-  async checkFriendReq(@Query('name') name: string): Promise<string[]> {
-    console.log('name = ', name);
+  async checkFriendReq(@Body('name') name: string): Promise<User> {
     return this.userService.getFriendReqs(name);
+  }
+
+  @Patch('friendReq')
+  @ApiOperation({
+    description: 'accept friend request and add friend',
+  })
+  async SetFriendR(@Req() req: Request, @Body() friendId: AcceptFriend): Promise<User> {
+    return this.userService.acceptFriendreq(req.user.id, friendId.friendId);
   }
 
   @Get('friend/search')
