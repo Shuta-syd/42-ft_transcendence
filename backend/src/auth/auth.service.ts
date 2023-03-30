@@ -44,12 +44,9 @@ export class AuthService {
 
     const salt = randomBytes(8).toString('hex');
     if (dto.password) {
-      const hash = (
-        (await asyncScrypt(dto.password, salt, 32)) as Buffer
-      ).toString();
-      hashedPassword = hash + '.' + salt;
+      const hash = (await asyncScrypt(dto.password, salt, 32)) as Buffer;
+      hashedPassword = hash.toString() + '.' + salt;
     }
-
     const newUser = await this.prisma.user.create({
       data: {
         email: dto.email,
@@ -76,13 +73,15 @@ export class AuthService {
     if (user.isFtLogin) new BadRequestException('Please login with 42');
     if (!user) throw new NotFoundException("user couldn't be found");
 
-    const [storedHash, salt] = user.password.split(',');
+    const [storedHash, salt] = user.password.split('.');
 
-    const hashedPassword = (
-      (await asyncScrypt(dto.password, salt, 32)) as Buffer
-    ).toString();
+    const hashedPassword = (await asyncScrypt(
+      dto.password,
+      salt,
+      32,
+    )) as Buffer;
 
-    if (!user.isFtLogin && storedHash !== hashedPassword)
+    if (!user.isFtLogin && storedHash !== hashedPassword.toString())
       throw new NotAcceptableException('password is wrong');
     return this.generateJwt(user.id, user.name);
   }
