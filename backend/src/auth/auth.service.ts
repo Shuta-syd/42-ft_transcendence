@@ -12,6 +12,7 @@ import { SignUpUserDto } from 'src/user/dto/user.dto';
 import { AuthDto } from './dto/auth.dto';
 import { Jwt } from './type/auth.type';
 
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -38,16 +39,16 @@ export class AuthService {
     }
 
     // 存在しない場合は、新しいユーザーを作成する
-    const newUser = await this.prisma.user.create({
+    return await this.prisma.user.create({
       data: {
         email: dto.email,
         password: dto.password,
         name: dto.name,
+        image:
+          'https://upload.wikimedia.org/wikipedia/commons/e/e1/Elon_Musk_%28cropped%29.jpg',
         isFtLogin: dto.isFtLogin ? dto.isFtLogin : false,
       },
     });
-
-    return newUser;
   }
 
   /**
