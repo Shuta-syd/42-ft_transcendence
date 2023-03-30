@@ -73,4 +73,16 @@ export class UserController {
   ): Promise<User[]> {
     return this.userService.searchFriend(req.user.id, name);
   }
+  @Post('add/image')
+  async addUserImage(
+    @Req() req: Request,
+    @Body() data: { image: string },
+  ): Promise<User> {
+    console.log('user.image => ', data.image);
+    return this.userService.addUserImage(req.user.id, data.image);
+  }
+  @Get('image')
+  async getUserImage(@Req() req: Request): Promise<string> {
+    return this.userService.getUserImage(req.user.id);
+  }
 }

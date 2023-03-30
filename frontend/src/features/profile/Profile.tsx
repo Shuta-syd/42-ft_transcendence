@@ -139,9 +139,6 @@ const Profile = () => {
         friendName: string;
     }
 
-
-    const steveJobsImage = "https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg";
-
     function FriendStatus({friendName}: FriendProps) {
         const [isOnline, setIsOnline] = useState(null);
 
@@ -164,12 +161,47 @@ const Profile = () => {
         );
     }
 
-    const [image, setImage] = useState(steveJobsImage);
+    // const steveJobsImage = "https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg";
+
+    const uploadImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { files } = event.target;
+        if (files?.[0]) {
+            const blobFiles = URL.createObjectURL(files[0]);
+            const file = files[0];
+            let base64: string;
+            console.log("THIS ONE: ", blobFiles);
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+
+            reader.onload = async () => {
+                base64 = reader.result as string;
+                console.log("base64: ", base64);
+
+                try {
+                    const response = await axios.post(
+                        "http://localhost:8080/user/add/image",
+                        { image: base64 },
+                        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+                    );
+                    console.log("THIS ONE: ", response);
+                    setProfileImage(base64);
+                } catch (error) {
+                    console.error(error);
+                    console.log("This file is too large!!!!");
+                }
+            };
+        }
+    };
+
     // const elonMuskImage = "https://upload.wikimedia.org/wikipedia/commons/e/e1/Elon_Musk_%28cropped%29.jpg";
-    const uploadImage = (event: React.ChangeEvent<HTMLInputElement>) => {
-        // @ts-ignore
-        setImage(URL.createObjectURL(event.target.files[0]));
-    }
+    // const steveJobsImage = "https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg";
+    const [profileImage, setProfileImage] = useState('');
+    useEffect(() => {
+        const profileUser = fetchProfileUser();
+        profileUser.then((us) => {
+            setProfileImage(us?.image);
+        });
+    }, []);
 
     function ShowAchievement({matches}: MatchListProps) {
         const countMyWinTime =  () => {
@@ -226,7 +258,7 @@ const Profile = () => {
                 variant="circular"
                 color="success"
                 alt={user?.name}
-                src={image}
+                src={profileImage}
                 sx={{width: 200, height: 200, margin: 2}}
             >
             </Avatar>
