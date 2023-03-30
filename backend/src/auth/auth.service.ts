@@ -49,6 +49,8 @@ export class AuthService {
         isFtLogin: dto.isFtLogin ? dto.isFtLogin : false,
       },
     });
+
+    return newUser;
   }
 
   /**
