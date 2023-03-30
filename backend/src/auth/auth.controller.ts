@@ -15,12 +15,11 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { Response } from 'express';
 import { PrismaUser } from 'src/swagger/type';
-import { SignUpUserDto } from 'src/user/dto/user.dto';
 import { UserService } from 'src/user/user.service';
 import { AuthService } from './auth.service';
 import { Request } from 'express';
 import { FtGuard } from './guards/ft.guard';
-import { AuthDto, Msg, OtpCodeDao } from './dto/auth.dto';
+import { AuthDto, Msg, OtpCodeDao, SignUpUserDto } from './dto/auth.dto';
 import { Jwt2FaGuard } from './guards/jwt-2fa.guard';
 import { APP_FILTER } from '@nestjs/core';
 
