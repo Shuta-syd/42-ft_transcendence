@@ -92,4 +92,28 @@ export class UserService {
 
     return result;
   }
+  /**
+   * @description User tableに対して、imageをsetできるようにする
+   * @param userId imageをsetしたいUserのID
+   * @param image setしたいimageのURL
+   * @return setしたUserのデータ
+   */
+  async addUserImage(userId: string, image: string) {
+    return this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        image: image,
+      },
+    });
+  }
+
+  /**
+   * @description Userのimageを取得する
+   */
+  async getUserImage(userId: string): Promise<string> {
+    const user = await this.getUserById(userId);
+    return user.image;
+  }
 }

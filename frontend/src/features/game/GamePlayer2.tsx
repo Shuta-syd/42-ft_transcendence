@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from "react";
+import {Button} from "@mui/material";
 import { GameSocket } from "../../contexts/WebsocketContext";
 import {User} from "../../types/PrismaType";
 import {useGameUser} from "../../hooks/game/useGameuser";
@@ -284,6 +285,7 @@ const GamePlayer2 = () => {
     });
 
     GameSocket.on('Ping', (name: string, SocketId: string) => {
+        console.log(name, SocketId, 'Ping');
         GameSocket.emit('Pong', user?.name);
     });
 
@@ -291,6 +293,10 @@ const GamePlayer2 = () => {
         player1: number
         player2: number
         name: string
+    }
+
+    function pageReload() {
+        window.location.reload();
     }
 
     GameSocket.on('ScoreToClient', (Score: Score, SocketId: string) => {
@@ -302,6 +308,14 @@ const GamePlayer2 = () => {
         <div>
             <h1>[PONG GAME]</h1>
             <h1>Player2: {user?.name}</h1>
+            <Button
+                variant="outlined"
+                color="primary"
+                size="large"
+                onClick={pageReload}
+            >
+                🦺RECONNECT🦺
+            </Button>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
             <div>
                 <input type="text" value={uname} onChange={(event) => { setUname(event.target.value) }} />
