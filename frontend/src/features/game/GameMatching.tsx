@@ -16,12 +16,12 @@ const GameMatching = () => {
         },
         {
             url: 'https://www.pngitem.com/pimgs/m/201-2012190_invite-business-man-hd-png-download.png',
-            title: 'Inviter',
+            title: 'Invite a Player',
             width: '100%',
         },
         {
             url: 'https://finansernextjs.wpengine.com/wp-content/uploads/2018/07/Challenger-bank.jpg',
-            title: 'Participant',
+            title: 'Join With Invite ID',
             width: '100%',
         },
         {
@@ -103,10 +103,10 @@ const GameMatching = () => {
 
         if (type === 'Random Match') {
             url = '/game/game_room/'
-        } else if (type === 'Inviter') {
+        } else if (type === 'Invite a Player') {
             url = '/game/invite_room/'
 
-        } else if (type === 'Participant') {
+        } else if (type === 'Join With Invite ID') {
             url = 'join_invited_room';
         } else if (type === 'Observer') {
             url = '/game/select_room';
@@ -124,7 +124,7 @@ const GameMatching = () => {
             <Box sx={{ display: 'flex', flexWrap: 'wrap', minWidth: 300, width: '100%' }}>
                 <Grid container direction={"column"}>
                 {images.map((image) => (
-                    <Grid item xs margin={2} key={image.title}>
+                    <Grid item xs margin={3} key={image.title}>
                     <ImageButton
                         focusRipple
                         key={image.title}
