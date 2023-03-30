@@ -12,6 +12,7 @@ import { SignUpUserDto } from 'src/user/dto/user.dto';
 import { AuthDto } from './dto/auth.dto';
 import { Jwt } from './type/auth.type';
 
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -44,8 +45,6 @@ export class AuthService {
         isFtLogin: dto.isFtLogin ? dto.isFtLogin : false,
       },
     });
-
-    return newUser;
   }
 
   /**
