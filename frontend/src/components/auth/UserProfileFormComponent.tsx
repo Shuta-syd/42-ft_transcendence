@@ -31,7 +31,7 @@ export default function UserProfileFormComponent(props: UserProfileFormComponent
         name='password'
         control={control}
         RenderComponent={(field: any) => (
-          <TextField fullWidth {...field} label='Enter Password' />
+          <TextField fullWidth {...field} label='Enter Password' type={'password'}/>
           )}
           />
       <Button variant="contained" onClick={() => { setActiveStep(1); }} >Next Step</Button>
