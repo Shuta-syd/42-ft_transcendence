@@ -100,7 +100,8 @@ const GameSelectRoom = () => {
                     }}
                 >※ Please enter the button at least 2 times!</p>
                 {IsAssigned && <p>You are successfully assigned !!</p>}
-                {IsAssigned && <Link to={"/game/observer"}>lets go! room{number}!!</Link>}
+                {IsAssigned && <Link
+                    to={"/game/observer"}>lets go! room{number}!!</Link>}
             </div>
             </h1>
             </Grid>

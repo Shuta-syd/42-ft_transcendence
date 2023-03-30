@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { Grid } from "@mui/material";
 import { User, InviteGame } from "../../types/PrismaType";
 import { GameInviteRoomReq, useGameUser } from "../../hooks/game/useGameuser";
 import {GameSocket} from "../../contexts/WebsocketContext";
@@ -24,14 +25,16 @@ const InviteRoom = () => {
         });
     }, [user]);
 
-    const [text, setText] = useState("");
+    // const [text, setText] = useState("");
 
     function handleCopy() {
-        navigator.clipboard.writeText(text);
+        if (roomId) {
+            navigator.clipboard.writeText(roomId);
+        }
     }
 
     useEffect(() => {
-        setText(`You have been invited by ${user?.name} to ${roomId}! Let's join now!\n`);
+        // setText(`You have been invited by ${user?.name} to ${roomId}! Let's join now!\n`);
     }, [user, roomId]);
 
     const handleClick = () => {
@@ -39,19 +42,57 @@ const InviteRoom = () => {
     };
 
     return (
-        <div>
+        <div
+            style={{
+                backgroundColor: "#EDF0F4",
+                minHeight: "100vh",
+                backgroundSize: "cover",
+            }}
+        >
             <h1>[Host Room!!]</h1>
+            <Grid
+                container
+                justifyContent="center"
+                marginTop="-5%"
+                alignItems="center"
+                style={{ minHeight: "100vh" }}
+                fontSize="h4.fontSize"
+                direction="column"
+            >
+
             <h2>You are {user?.name}!!!</h2>
             <h2>Invite Id is {roomId}!!!</h2>
             <p></p>
-            <p>{text}</p>
-            <button onClick={handleCopy}>Copy Text</button>
+            <button
+                style={{
+                    borderRadius: "100px",
+                    fontSize: "4rem",
+                }}
+                onClick={handleCopy}>Copy ID👍</button>
             <p></p>
             <div>
-                <Link to={"/game/player1"}>lets go!!</Link>
+                <Link
+                    style={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        fontSize: "50px",
+                    }}
+                    to={"/game/player1"}>lets go!!</Link>
                 <p></p>
             </div>
-            <button onClick={handleClick}>Exit Room</button>
+            <button
+                style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "80px",
+                    width: "100px",
+                    fontSize: "20px",
+                    color: "green"
+                }}
+                onClick={handleClick}>Exit Room</button>
+            </Grid>
         </div>
     );
 };

@@ -127,12 +127,20 @@ const JoinInvitedRoom = () => {
                 >You will fight against {Game?.player1}！</h2>}
 
             <Grid mr={10} spacing={10}>
+                <p></p>
+                <Grid mr={13} spacing={10}>
             <button
                 style={{
-                    borderRadius: "100px",
-                    fontSize: "4rem",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "80px",
+                    width: "100px",
+                    fontSize: "20px",
+                    color: "green"
                 }}
                 onClick={handleClick}>Exit Room</button>
+                    </Grid>
             </Grid>
             </Grid>
             </div>
