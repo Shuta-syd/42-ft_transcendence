@@ -4,8 +4,12 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 
-export type OnlineUsers = { [key: string]: string };
-export const OnlineUsers: OnlineUsers = {};
+interface OnlineUsers {
+  name: string;
+  clientId: string;
+}
+
+let OnlineUsers: OnlineUsers[] = [];
 
 import { Server, Socket } from 'socket.io';
 
@@ -15,15 +19,24 @@ export class UserGateway {
   server: Server;
 
   @SubscribeMessage('getFriendStatus')
-  handleGetFriendStatus(client: any, friendId: string): void {
+  handleGetFriendStatus(client: any, friend: string): void {
     // ここで、友達のオンライン/オフライン状態を取得し、クライアントに返す
-    const status = getFriendStatus(friendId);
+    console.log('getFrienedStatus', friend);
+    const status = getFriendStatus(friend);
     this.server.emit('friendStatus', status);
   }
 
+  // @SubscribeMessage('AssignOnline')
+  // assignOnline(client: any, name: string): void {
+  // }
+
   handleDisconnect(socket: any) {
     // 接続が切断されたときの処理
-    delete OnlineUsers[socket.id];
+    console.log('dissconected', socket.id);
+    const filteredUsers = OnlineUsers.filter(
+      (OnlineUsers) => OnlineUsers.clientId !== socket.id,
+    );
+    OnlineUsers = filteredUsers;
   }
 
   afterInit(server: Server) {
@@ -31,16 +44,38 @@ export class UserGateway {
   }
 
   handleConnection(client: Socket, ...args: any[]) {
-    //クライアント接続時
+    // 接続時
+
+    const query = client.handshake.query;
+    // クエリパラメータから特定のパラメータを取得
+    const exampleParam = query.exampleParam;
+    const name = Array.isArray(client.handshake.query.name)
+      ? client.handshake.query.name[0]
+      : client.handshake.query.name;
+    if (!name) {
+      return;
+    }
+    console.log('connected name = ', name);
+    console.log('connected id = ', client.id);
+    OnlineUsers.push({ name: name, clientId: client.id });
+    console.log(
+      'after connected [id] = ',
+      OnlineUsers.filter((user) => user.clientId === client.id).map(
+        (user) => user.name,
+      ),
+    );
   }
 }
 
-function getFriendStatus(friendId: string): boolean {
-  // if (OnlineUsers[friendId]) {
-  //   return true;
-  // } else {
-  //   return false;
-  // }
-  // これから追加
-  return Math.random() < 0.5;
+function getFriendStatus(friend: string): boolean {
+  const filteredUsers = OnlineUsers.filter(
+    (OnlineUsers) => OnlineUsers.name === friend,
+  );
+  if (filteredUsers.length > 0) {
+    console.log('true');
+    return true;
+  } else {
+    console.log('false');
+    return false;
+  }
 }

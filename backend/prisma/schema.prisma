@@ -15,6 +15,7 @@ model User {
   twoFactorSecret String?
   isTwoFactorEnabled Boolean @default(false)
   // OneTimePassword OneTimePassword?
+  image           String
   isFtLogin       Boolean @default(false)
   friends         User[]   @relation("Friends")
   friendRelation  User[]   @relation("Friends")
