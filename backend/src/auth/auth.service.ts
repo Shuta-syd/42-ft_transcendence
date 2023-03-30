@@ -43,7 +43,7 @@ export class AuthService {
     }
 
     const salt = randomBytes(8).toString('hex');
-    if (dto.password) {
+    if (dto.isFtLogin !== true) {
       const hash = (await asyncScrypt(dto.password, salt, 32)) as Buffer;
       hashedPassword = hash.toString() + '.' + salt;
     }
