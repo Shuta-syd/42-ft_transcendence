@@ -6,6 +6,7 @@ import { addAbortSignal } from 'stream';
 
 let playerId = 0;
 let tmpGame: Game;
+let player2Count = 0;
 
 export type NameToRoomIdDic = { [key: number]: string };
 export const NameToRoomIdDic: NameToRoomIdDic = {};
@@ -42,9 +43,10 @@ export class GameService {
       const game = this.prisma.game.create({
         data: {
           player1: playerName,
-          player2: '',
+          player2: 'player2_' + player2Count.toString(),
         },
       });
+      player2Count++;
       // ここの処理は改善できそう
       tmpGame = await game;
       game.then((Gamedto: Game) => {
@@ -128,9 +130,10 @@ export class GameService {
     const game = this.prisma.inviteGame.create({
       data: {
         player1: playerName,
-        player2: '',
+        player2: 'player2_' + player2Count.toString(),
       },
     });
+    player2Count++;
     game.then((Gamedto: InviteGame) => {
       NameToInviteRoomIdDic[playerName.toString()] = Gamedto.id.toString();
     });

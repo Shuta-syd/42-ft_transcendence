@@ -243,10 +243,23 @@ const GamePlayer1 = () => {
             setUser(userDto);
             GameSocket.emit('JoinRoom', userDto?.name);
             GameSocket.emit('Ping', userDto?.name);
-
         });
     }, []);
 
+
+    function pageReload() {
+        window.location.reload();
+    }
+
+    const sendPing = setInterval(() => {
+        if (user?.name) {
+            GameSocket.emit('Ping', user?.name);
+        }
+    }, 1000);
+
+    setTimeout(() => {
+        clearInterval(sendPing);
+    }, 10000000);
 
     useEffect(() => {
         const handleKeyUp = ():void => {
@@ -332,6 +345,7 @@ const GamePlayer1 = () => {
     });
 
     GameSocket.on('Pong', (name: string, socketid: string) => {
+        console.log('recieve pong ', name, socketid);
         isRecievePong = true;
         p2name = name;
     });
@@ -347,6 +361,14 @@ const GamePlayer1 = () => {
         <div>
             <h1>[PONG GAME]</h1>
             <h1>Player1: {user?.name}</h1>
+            <Button
+                variant="outlined"
+                color="primary"
+                size="large"
+                onClick={pageReload}
+            >
+                🦺RECONNECT🦺
+            </Button>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
             <Button variant={"contained"}
                     size={"large"}
