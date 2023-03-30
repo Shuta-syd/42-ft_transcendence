@@ -71,15 +71,13 @@ const InviteRoom = () => {
                 onClick={handleCopy}>Copy ID👍</button>
             <p></p>
             <div>
+                <h1>Your Room 👉
                 <Link
                     style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        fontSize: "50px",
                     }}
                     to={"/game/player1"}>lets go!!</Link>
                 <p></p>
+                </h1>
             </div>
             <button
                 style={{
