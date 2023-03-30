@@ -15,7 +15,8 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { SignUpUserDto } from 'src/user/dto/user.dto';
 import { AuthDto } from './dto/auth.dto';
 import { Jwt } from './type/auth.type';
-
+import { randomBytes, scrypt } from 'crypto';
+import { promisify } from 'util';
 
 @Injectable()
 export class AuthService {
@@ -30,20 +31,27 @@ export class AuthService {
    * @returns 作成したUserデータ
    */
   async signupUser(dto: SignUpUserDto): Promise<User> {
+    const asyncScrypt = promisify(scrypt);
+    let hashedPassword: string;
     const userExists = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
 
     if (userExists) {
-      throw new NotAcceptableException(
-        'このメールアドレスは既に使用されています。',
-      );
+      throw new NotAcceptableException('This email is already in use');
+    }
+
+    const salt = randomBytes(8).toString('hex');
+    if (dto.password) {
+      hashedPassword = (
+        (await asyncScrypt(dto.password, salt, 32)) as Buffer
+      ).toString();
     }
 
     const newUser = await this.prisma.user.create({
       data: {
         email: dto.email,
-        password: dto.password ? dto.password : '',
+        password: dto.password ? hashedPassword : '',
         name: dto.name,
         image: dto.image,
         isFtLogin: dto.isFtLogin ? dto.isFtLogin : false,
