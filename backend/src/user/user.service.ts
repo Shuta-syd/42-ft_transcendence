@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { User } from '@prisma/client';
+import { FriendReq } from './dto/user.dto';
 
 @Injectable()
 export class UserService {
@@ -115,5 +116,34 @@ export class UserService {
   async getUserImage(userId: string): Promise<string> {
     const user = await this.getUserById(userId);
     return user.image;
+  }
+
+  /**
+   * @description Friend 申請のhandler requesterの名前をdatebaseに格納
+   * @param req requestのオブジェクト
+   * @return setしたrequesteeのデータ
+   */
+  async handleFriendReq(req: FriendReq): Promise<User | null> {
+    const requestee = await this.prisma.user.findUnique({
+      where: {
+        name: req.requestee,
+      },
+    });
+    if (!requestee) {
+      return null;
+    }
+    const reqesters = requestee.friendReqs;
+    if (req.requester) {
+      reqesters.push(req.requester);
+    }
+    const updatedUser = await this.prisma.user.update({
+      where: {
+        name: req.requestee,
+      },
+      data: {
+        friendReqs: reqesters,
+      },
+    });
+    return updatedUser;
   }
 }

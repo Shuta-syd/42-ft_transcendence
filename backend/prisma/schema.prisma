@@ -8,19 +8,20 @@ datasource db {
 }
 
 model User {
-  id              String   @id @default(uuid())
-  email           String   @unique
-  name            String
-  password        String
-  twoFactorSecret String?
-  isTwoFactorEnabled Boolean @default(false)
+  id                 String              @id @default(uuid())
+  email              String              @unique
+  name               String              @unique
+  password           String
+  twoFactorSecret    String?
+  isTwoFactorEnabled Boolean             @default(false)
   // OneTimePassword OneTimePassword?
-  image           String
-  isFtLogin       Boolean @default(false)
-  friends         User[]   @relation("Friends")
-  friendRelation  User[]   @relation("Friends")
-  memberships     Member[]
-  banned   BanUserOnChatRoom[]
+  image              String
+  isFtLogin          Boolean             @default(false)
+  friends            User[]              @relation("Friends")
+  friendRelation     User[]              @relation("Friends")
+  memberships        Member[]
+  banned             BanUserOnChatRoom[]
+  friendReqs         String[]
 }
 
 // TODO: auth.serviceでuserテーブルを操作したくないから、OneTimePasswordテーブルで別操作したい
@@ -32,20 +33,20 @@ model User {
 // }
 
 model Member {
-  id       String   @id @default(uuid())
-  createAt DateTime @default(now())
+  id       String     @id @default(uuid())
+  createAt DateTime   @default(now())
   roomId   String
   userId   String
-  room     ChatRoom @relation(fields: [roomId], references: [id])
-  user     User     @relation(fields: [userId], references: [id])
-  role   MemberRole  @default(NORMAL)
-  isMute Boolean @default(false)
+  room     ChatRoom   @relation(fields: [roomId], references: [id])
+  user     User       @relation(fields: [userId], references: [id])
+  role     MemberRole @default(NORMAL)
+  isMute   Boolean    @default(false)
 }
 
 model ChatRoom {
-  id       String      @id @default(uuid())
-  name     String      @default("unknown")
-  password String      @default("")
+  id       String              @id @default(uuid())
+  name     String              @default("unknown")
+  password String              @default("")
   type     RoomType
   messages Message[]
   members  Member[]
@@ -53,25 +54,25 @@ model ChatRoom {
 }
 
 model Message {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  message   String
-  roomId    String
-  room      ChatRoom @relation(fields: [roomId], references: [id])
-  senderName String
+  id           String   @id @default(uuid())
+  createdAt    DateTime @default(now())
+  message      String
+  roomId       String
+  room         ChatRoom @relation(fields: [roomId], references: [id])
+  senderName   String
   senderUserId String
 }
 
 model BanUserOnChatRoom {
-  id String @id @default(uuid())
+  id           String   @id @default(uuid())
   baned_userId String
-  banned_user User @relation(fields: [baned_userId], references: [id])
-  roomId String
-  room   ChatRoom @relation(fields: [roomId], references: [id])
+  banned_user  User     @relation(fields: [baned_userId], references: [id])
+  roomId       String
+  room         ChatRoom @relation(fields: [roomId], references: [id])
 }
 
 model Match {
-  id        Int     @id @default(autoincrement())
+  id        Int    @id @default(autoincrement())
   player1   String
   player2   String
   winner_id Int
@@ -95,17 +96,14 @@ enum BanType {
   LOCAL
 }
 
-
 model Game {
-  id        Int     @id @default(autoincrement())
-  player1   String  @unique
-  player2   String  @unique
+  id      Int    @id @default(autoincrement())
+  player1 String @unique
+  player2 String @unique
 }
 
-
-
 model InviteGame {
-  id        String  @id @default(uuid())
-  player1   String  @unique
-  player2   String  @unique
+  id      String @id @default(uuid())
+  player1 String @unique
+  player2 String @unique
 }
