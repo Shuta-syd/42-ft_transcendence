@@ -5,6 +5,7 @@ import { User } from '@prisma/client';
 import { Strategy, Profile } from 'passport-42';
 import { AuthService } from '../auth.service';
 import { HttpService } from '@nestjs/axios';
+import { lastValueFrom, map } from 'rxjs';
 
 @Injectable()
 export class FtStrategy extends PassportStrategy(Strategy, '42') {
@@ -22,10 +23,11 @@ export class FtStrategy extends PassportStrategy(Strategy, '42') {
   }
 
   async convertToBase64(imageUrl: string): Promise<string> {
-    const response = await this.httpService
+    const response$ = this.httpService
       .get(imageUrl, { responseType: 'arraybuffer' })
-      .toPromise();
-    return Buffer.from(response.data, 'binary').toString('base64');
+      .pipe(map((res) => Buffer.from(res.data, 'binary').toString('base64')));
+    const base64 = await lastValueFrom(response$);
+    return base64;
   }
 
   async validate(
