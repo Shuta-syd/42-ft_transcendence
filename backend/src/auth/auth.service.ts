@@ -18,6 +18,8 @@ import { Jwt } from './type/auth.type';
 import { randomBytes, scrypt } from 'crypto';
 import { promisify } from 'util';
 
+const asyncScrypt = promisify(scrypt);
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -31,7 +33,6 @@ export class AuthService {
    * @returns 作成したUserデータ
    */
   async signupUser(dto: SignUpUserDto): Promise<User> {
-    const asyncScrypt = promisify(scrypt);
     let hashedPassword: string;
     const userExists = await this.prisma.user.findUnique({
       where: { email: dto.email },
@@ -43,9 +44,10 @@ export class AuthService {
 
     const salt = randomBytes(8).toString('hex');
     if (dto.password) {
-      hashedPassword = (
+      const hash = (
         (await asyncScrypt(dto.password, salt, 32)) as Buffer
       ).toString();
+      hashedPassword = hash + '.' + salt;
     }
 
     const newUser = await this.prisma.user.create({
@@ -73,7 +75,14 @@ export class AuthService {
     });
     if (user.isFtLogin) new BadRequestException('Please login with 42');
     if (!user) throw new NotFoundException("user couldn't be found");
-    if (!user.isFtLogin && user.password !== dto.password)
+
+    const [storedHash, salt] = user.password.split(',');
+
+    const hashedPassword = (
+      (await asyncScrypt(dto.password, salt, 32)) as Buffer
+    ).toString();
+
+    if (!user.isFtLogin && storedHash !== hashedPassword)
       throw new NotAcceptableException('password is wrong');
     return this.generateJwt(user.id, user.name);
   }
