@@ -75,6 +75,15 @@ export class UserController {
     return this.userService.handleFriendReq(req);
   }
 
+  @Get('friendReq')
+  @ApiOperation({
+    description: 'check the friend req of the name of user',
+  })
+  async checkFriendReq(@Query('name') name: string): Promise<string[]> {
+    console.log('name = ', name);
+    return this.userService.getFriendReqs(name);
+  }
+
   @Get('friend/search')
   async searchFriend(
     @Req() req: Request,

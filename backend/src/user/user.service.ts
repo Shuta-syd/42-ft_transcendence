@@ -146,4 +146,20 @@ export class UserService {
     });
     return updatedUser;
   }
+
+  async getFriendReqs(name: string): Promise<string[]> {
+    console.log('name = ', name);
+    const req = this.prisma.user.findUnique({
+      where: {
+        name: name,
+      },
+    });
+    if (!req) {
+      console.log('hoge');
+      return null;
+    }
+    req.then((user: User) => {
+      return user.friendReqs;
+    });
+  }
 }
