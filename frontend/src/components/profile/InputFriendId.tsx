@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import { Button } from '@mui/material';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import TextField from '@mui/material/TextField';
@@ -10,6 +10,12 @@ interface InputFriendIdProps {
 }
 
 const InputFriendId = ({ handleDecideIdButton, handleInputID }: InputFriendIdProps) => {
+    const [inputValue, setInputValue] = useState('');
+
+    const handleResetInput = () => {
+        setInputValue('');
+    };
+
     console.log('InputFriendId');
     return (
         <div>
@@ -24,11 +30,19 @@ const InputFriendId = ({ handleDecideIdButton, handleInputID }: InputFriendIdPro
                             <AccountCircle />
                         </InputAdornment>
                     ),
-                    onChange: handleInputID,
+                    onChange: (e: ChangeEvent<HTMLInputElement>) => {
+                        setInputValue(e.target.value);
+                        handleInputID(e);
+                    },
                 }}
                 variant="standard"
+                value={inputValue}
             />
-            <Button variant="contained" onClick={handleDecideIdButton}>
+            <Button variant="contained" onClick={() => {
+                // @ts-ignore
+                handleDecideIdButton();
+                handleResetInput();
+            }}>
                 ID決定
             </Button>
         </div>
