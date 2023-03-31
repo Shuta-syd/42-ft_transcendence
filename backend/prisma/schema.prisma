@@ -12,12 +12,24 @@ model User {
   email           String   @unique
   name            String
   password        String
+  twoFactorSecret String?
+  isTwoFactorEnabled Boolean @default(false)
+  // OneTimePassword OneTimePassword?
   image           String
+  isFtLogin       Boolean @default(false)
   friends         User[]   @relation("Friends")
   friendRelation  User[]   @relation("Friends")
   memberships     Member[]
   banned   BanUserOnChatRoom[]
 }
+
+// TODO: auth.serviceでuserテーブルを操作したくないから、OneTimePasswordテーブルで別操作したい
+// model OneTimePassword {
+//   authUser User @relation(fields: [authUserId], references: [id])
+//   authUserId String @id
+//   twoFactorSecret String?
+//   isTwoFactorEnabled Boolean @default(false)
+// }
 
 model Member {
   id       String   @id @default(uuid())

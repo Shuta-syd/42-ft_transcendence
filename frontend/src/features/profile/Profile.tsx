@@ -1,4 +1,4 @@
-import React, {ChangeEvent, useEffect, useState} from 'react';
+import React, { useEffect, useState} from 'react';
 import { Button } from "@mui/material";
 import axios from "axios";
 import Rating from '@mui/material/Rating';
@@ -6,11 +6,11 @@ import io from "socket.io-client";
 import Grid from "@mui/material/Grid";
 import {Match, User} from "../../types/PrismaType";
 import {fetchProfileUser} from "../../hooks/profile/useProfileUser";
-import {sendFriendRequest} from "../../hooks/profile/sendFriendRequests";
+// import {sendFriendRequest} from "../../hooks/profile/sendFriendRequests";
 import useQueryMatches from "../../hooks/match/useWueryMatch";
 import ShowAvatar from "../../components/profile/ShowAvatar";
 import ImageUploadButton from "../../components/profile/ImageUploadButton";
-import InputFriendId from "../../components/profile/InputFriendId";
+// import OldInputFriendId from "../../components/profile/OldInputFriendId";
 import FingerPrintButton from "../../components/profile/FingerPrintButton";
 
 const Profile = () => {
@@ -23,16 +23,14 @@ const Profile = () => {
         });
     }, []);
 
-    const [inputId, setInputId] = useState<string>("");
-    const HandleInputID = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setInputId(e.target.value);
-    }
+    // const [inputId, setInputId] = useState<string>('');
+    // const HandleInputID = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    //     setInputId(e.target.value);
+    // }
 
-    const handleDecideIdButton = async () => {
-        await sendFriendRequest(user?.id, inputId);
-        // なぜsetInputId("")をここに書くとエラーになるのか？
-        setInputId("");
-    }
+    // const handleDecideIdButton = async () => {
+    //     await sendFriendRequest(user?.id, inputId);
+    // }
 
     const getFriends = async () => {
         const {data} = await axios.get<User[]>(`http://localhost:8080/user/friend`);
@@ -162,7 +160,7 @@ const Profile = () => {
         return (
             <div>
                 {/* フィルタリングされた試合のみ表示 */}
-                {/* <h3>[⇩ Previous Record]</h3> */}
+                <h3>[⇩ Previous Record]</h3>
                 {filteredMatches.map((match) => (
                     <div key={match.id}>
                         <h3>
@@ -210,19 +208,35 @@ const Profile = () => {
     // const steveJobsImage = "https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg";
 
     const uploadImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        const {files} = event.target;
+        const { files } = event.target;
         if (files?.[0]) {
-            const imageDto = URL.createObjectURL(files[0]);
-            console.log("THIS ONE: ", imageDto);
-            await axios.post(`http://localhost:8080/user/add/image`, {image: imageDto}, {
-                headers: {Authorization: `Bearer ${localStorage.getItem('token')}`},
-            }).then((res) => {
-                console.log(res);
-                console.log("this is imageDto", imageDto);
-                setProfileImage(imageDto);
-            });
+            const blobFiles = URL.createObjectURL(files[0]);
+            const file = files[0];
+            let base64: string;
+            console.log("THIS ONE: ", blobFiles);
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+
+            reader.onload = async () => {
+                base64 = reader.result as string;
+                console.log("base64: ", base64);
+
+                try {
+                    const response = await axios.post(
+                        "http://localhost:8080/user/add/image",
+                        { image: base64 },
+                        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+                    );
+                    console.log("THIS ONE: ", response);
+                    setProfileImage(base64);
+                } catch (error) {
+                    console.error(error);
+                    console.log("This file is too large!!!!");
+                }
+            };
         }
-    }
+    };
+
     // const elonMuskImage = "https://upload.wikimedia.org/wikipedia/commons/e/e1/Elon_Musk_%28cropped%29.jpg";
     // const steveJobsImage = "https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg";
     const [profileImage, setProfileImage] = useState('');
@@ -241,16 +255,10 @@ const Profile = () => {
     const FriendListButton = () => {
         console.log('List button');
         return (
-            <div
-                style={{
-                    display: "flex",
-                    justifyContent: "left",
-                    alignItems: "left",
-                }}
-            >
+            <div>
                 <Button
                 variant="outlined"
-                color="success"
+                color="primary"
                 size="large"
                 onClick={HandleFriendListButton}
             >
@@ -316,10 +324,7 @@ const Profile = () => {
                     style={{color: "#3C444B"}}
                     marginTop={-10}
                 >
-                    <InputFriendId
-                        handleDecideIdButton={handleDecideIdButton}
-                        handleInputID={HandleInputID}
-                    />
+                     {/* <InputFriendId/> */}
                 </Grid>
                 <Grid item xs={10} style={{color: "#3C444B"}}>
                     <FingerPrintButton onClick={handleFingerPrintButton}/>
@@ -353,8 +358,7 @@ const Profile = () => {
             </h2>
         </div>
     );
-
-
 }
+
 
 export default Profile;

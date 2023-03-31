@@ -4,25 +4,33 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Patch,
   Post,
   Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { Response } from 'express';
 import { PrismaUser } from 'src/swagger/type';
 import { SignUpUserDto } from 'src/user/dto/user.dto';
+import { UserService } from 'src/user/user.service';
 import { AuthService } from './auth.service';
-import { AuthDto, Msg } from './dto/auth.dto';
 import { Request } from 'express';
 import { FtGuard } from './guards/ft.guard';
+import { AuthDto, Msg, OtpCodeDao } from './dto/auth.dto';
+import { Jwt2FaGuard } from './guards/jwt-2fa.guard';
+import { APP_FILTER } from '@nestjs/core';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly userService: UserService,
+  ) {}
 
   @Post('signup')
   @ApiOperation({
@@ -81,7 +89,7 @@ export class AuthController {
       sameSite: 'lax',
       path: '/',
     });
-    res.redirect('http://localhost:3000/');
+    res.redirect('http://localhost:3000/user');
   }
 
   @Post('logout')
@@ -99,6 +107,141 @@ export class AuthController {
     });
     return {
       message: 'Logout Success',
+    };
+  }
+
+  /**
+   * Two Factor Authentication
+   */
+
+  @Post('otp')
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(201)
+  @ApiOperation({
+    description: 'QRコードの元となるURLを作成',
+    summary: 'QRコードの元となるURLを作成',
+  })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'QR',
+  })
+  async createOtpAuthUrl(@Req() req: Request, @Res() res: Response) {
+    const { otpAuthUrl } = await this.authService.createOtpAuthUrl(req.user);
+    const jwt = await this.authService.generateJwt(req.user.id, req.user.name);
+
+    // 二要素はオンにしない、あくまでQRを作成するだけ
+    res.cookie('access_token', jwt.accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
+
+    // backendでqrcodeを生成しているが、Urlだけ返してフロント(next-qrcode)でQRを生成したい
+    return this.authService.pipeQrCodeStream(res, otpAuthUrl);
+  }
+
+  @Patch('otp/on')
+  @HttpCode(200)
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({
+    description: '二要素認証を有効にする',
+    summary: '二要素認証を有効にする',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '二要素オンメッセージ',
+    type: Msg,
+  })
+  async turnOnOtp(
+    @Req() req: Request,
+    @Body() { otpcode }: OtpCodeDao,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<Msg> {
+    const jwt = await this.authService.turnOnOtp(req.user, otpcode);
+
+    res.cookie('access_token', jwt.accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
+
+    return { message: 'One-Time-Password ON' };
+  }
+
+  @Patch('otp/off')
+  @HttpCode(200)
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({
+    description: '二要素認証を無効にする',
+    summary: '二要素認証を無効にする',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '二要素オフメッセージ',
+    type: Msg,
+  })
+  async turnOffOtp(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<Msg> {
+    const jwt = await this.authService.turnOffOtp(req.user);
+
+    res.cookie('access_token', jwt.accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
+
+    return { message: 'One-Time-Password OFF' };
+  }
+
+  @Post('otp/validation')
+  @HttpCode(200)
+  @UseGuards(AuthGuard('jwt'))
+  @ApiOperation({
+    description:
+      'ワンタイムパスワードをバリデーション, 2回目以降のログインに利用する',
+    summary: 'ワンタイムパスワードをバリデーション',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'ワンタイムパスワード成功',
+    type: Msg,
+  })
+  async validateOtp(
+    @Req() req: Request,
+    @Body() { otpcode }: OtpCodeDao,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<Msg> {
+    const jwt = await this.authService.validateOtp(req.user, otpcode);
+
+    res.cookie('access_token', jwt.accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
+    return { message: 'One Time Password SUCCESS' };
+  }
+
+  @Get('otp/test')
+  @HttpCode(200)
+  @UseGuards(Jwt2FaGuard)
+  @ApiOperation({
+    description: 'Jwt2FaGuardのテストエンドポイント',
+    summary: 'Jwt2FaGuardのテストエンドポイント',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '二要素成功メッセージ',
+    type: Msg,
+  })
+  async test2fa(): Promise<Msg> {
+    return {
+      message: '2FA Success, or 2FA OFF',
     };
   }
 }

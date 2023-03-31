@@ -1,55 +1,55 @@
-import React, { ChangeEvent } from 'react';
-import { Button } from '@mui/material';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import TextField from '@mui/material/TextField';
-import InputAdornment from '@mui/material/InputAdornment';
+import React, {useState} from 'react';
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import {User} from "../../types/PrismaType";
+import {sendFriendRequest} from "../../hooks/profile/sendFriendRequests";
+
+
 
 interface InputFriendIdProps {
-    handleDecideIdButton: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-    handleInputID: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    props: User | undefined;
 }
 
-const InputFriendId = ({ handleDecideIdButton, handleInputID }: InputFriendIdProps) => {
-    console.log('InputFriendId');
+const InputFriendId = (props: InputFriendIdProps) => {
+    const [inputValue, setInputValue] = useState<string>('');
+    const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
+
+    const handleInputChange = (event: any) => {
+        setInputValue(event.target.value);
+        setIsButtonDisabled(event.target.value === '');
+    }
+
+    const handleSubmit = async (event: any) => {
+        // console.log(`Submitting: ${inputValue}`);
+        console.log('hello', inputValue);
+        const res = await sendFriendRequest(props?.props?.id, inputValue);
+        console.log(res);
+        event.preventDefault();
+        setInputValue('');
+        setIsButtonDisabled(true);
+    }
+
+    console.log(`InputFriendId: ${props}`)
     return (
         <div>
-            <h1
-                style={{
-                    display: 'flex',
-                    alignItems: 'right',
-                    justifyContent: 'right',
-                    width: '100%',
-                    height: '100%',
-                }}
-            >
-                <TextField
-                    id="input-with-icon-textfield"
-                    label="Please enter [friend ID]"
-                    size="medium"
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment
-                                position="start"
-                            >
-                                <AccountCircle />
-                            </InputAdornment>
-                        ),
-                        onChange: handleInputID,
-                    }}
-                    variant="standard"
-                    style={{ width: 300, height: 50, marginTop: 10 }}
-                    InputLabelProps={{
-                        style: { fontSize: 25 },
-                    }}
+            <h2>Find new friends!</h2>
+            <form onSubmit={handleSubmit}>
+            <TextField
+                size={"small"}
+                label="Friend ID"
+                variant="outlined"
+                type={"text"}
+                value={inputValue}
+                onChange={handleInputChange}
                 />
-                <Button
-                    variant="contained"
-                    onClick={handleDecideIdButton}
-                    style={{ width: 100, height: 50, marginTop: 10 }}
-                >
-                    ID決定
-                </Button>
-            </h1>
+            <Button
+                variant={"contained"}
+                type={"submit"}
+                disabled={isButtonDisabled}
+            >
+                Submit
+            </Button>
+            </form>
         </div>
     );
 };

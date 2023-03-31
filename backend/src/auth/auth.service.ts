@@ -1,11 +1,20 @@
-import {Injectable} from '@nestjs/common';
-import {ConfigService} from '@nestjs/config';
-import {JwtService} from '@nestjs/jwt';
-import {User} from '@prisma/client';
-import {PrismaService} from 'src/prisma/prisma.service';
-import {SignUpUserDto} from 'src/user/dto/user.dto';
-import {AuthDto} from './dto/auth.dto';
-import {Jwt} from './type/auth.type';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+  NotAcceptableException,
+  NotFoundException,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
+import { authenticator } from 'otplib';
+import { toFileStream } from 'qrcode';
+import { Response } from 'express';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { SignUpUserDto } from 'src/user/dto/user.dto';
+import { AuthDto } from './dto/auth.dto';
+import { Jwt } from './type/auth.type';
 
 @Injectable()
 export class AuthService {
@@ -27,7 +36,9 @@ export class AuthService {
 
     if (userExists) {
       // 既に存在する場合は、エラーをスローするか、処理を中断する
-      throw new Error('このメールアドレスは既に使用されています。');
+      throw new NotAcceptableException(
+        'このメールアドレスは既に使用されています。',
+      );
     }
 
     // 存在しない場合は、新しいユーザーを作成する
@@ -38,7 +49,7 @@ export class AuthService {
         name: dto.name,
         image:
           'https://upload.wikimedia.org/wikipedia/commons/e/e1/Elon_Musk_%28cropped%29.jpg',
-        // その他の必要なフィールドを追加する
+        isFtLogin: dto.isFtLogin ? dto.isFtLogin : false,
       },
     });
   }
@@ -53,18 +64,25 @@ export class AuthService {
         email: dto.email,
       },
     });
-    if (!user) throw new Error("user couldn't be found");
-    if (user.password !== dto.password) throw new Error('password is wrong');
+    if (user.isFtLogin) new BadRequestException('Please login with 42');
+    if (!user) throw new NotFoundException("user couldn't be found");
+    if (user.password !== dto.password)
+      throw new NotAcceptableException('password is wrong');
     return this.generateJwt(user.id, user.name);
   }
 
   /**
    * @description Jwt Tokenを生成するための関数
    */
-  async generateJwt(userId: string, name: string): Promise<Jwt> {
+  async generateJwt(
+    userId: string,
+    name: string,
+    isTwoFactorActive = false,
+  ): Promise<Jwt> {
     const payload = {
       sub: userId,
       name,
+      isTwoFactorActive,
     };
     const secret = this.config.get('JWT_SECRET');
     const token = await this.jwt.signAsync(payload, {
@@ -86,6 +104,114 @@ export class AuthService {
     if (user) {
       return user;
     }
-    return this.signupUser(userDto);
+
+    return this.signupUser({ ...userDto, isFtLogin: true });
+  }
+
+  /**
+   * Two Factor Authentication
+   */
+
+  /**
+   * @description 二要素認証するためのシークレットを作成する
+   * @param user 二要素認証するユーザー
+   * @returns シークレットとURL
+   */
+  async createOtpAuthUrl(user: User) {
+    const secret = authenticator.generateSecret();
+
+    const otpAuthUrl = authenticator.keyuri(
+      user.name,
+      this.config.get('TWO_FACTOR_AUTHENTICATION_APP_NAME'),
+      secret,
+    );
+
+    // secretをデータベースに保存
+    await this.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        twoFactorSecret: secret,
+      },
+    });
+
+    return {
+      otpAuthUrl,
+    };
+  }
+
+  /**
+   * @description otpAuthUrlのQRコードを生成する
+   * @param stream
+   * @param otpAuthUrl
+   * @returns QRcode
+   */
+  async pipeQrCodeStream(stream: Response, otpAuthUrl: string) {
+    return toFileStream(stream, otpAuthUrl);
+  }
+
+  async turnOnOtp(user: User, otpCode: string) {
+    // userからsecretを取得するのではなく、データベースから取得したい
+
+    // 二要素が無効
+    if (!user.twoFactorSecret || user.twoFactorSecret === '') {
+      throw new BadRequestException('OneTimePasswordAuth is inactivate.');
+    }
+
+    const isCodeValid = authenticator.verify({
+      token: otpCode,
+      secret: user.twoFactorSecret,
+    });
+    if (!isCodeValid) {
+      throw new UnauthorizedException('Wrong authentication code');
+    }
+
+    await this.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        isTwoFactorEnabled: true,
+      },
+    });
+
+    return this.generateJwt(user.id, user.name, true);
+  }
+
+  async turnOffOtp(user: User) {
+    await this.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        isTwoFactorEnabled: false,
+        twoFactorSecret: null,
+      },
+    });
+
+    return this.generateJwt(user.id, user.name, false);
+  }
+
+  async validateOtp(user: User, otpCode: string) {
+    // userからsecretを取得するのではなく、データベースから取得したい
+    // 二要素認証がオフ
+    if (!user.isTwoFactorEnabled) {
+      throw new BadRequestException('Two-Factor-Auth OFF.');
+    }
+
+    if (!user.twoFactorSecret || user.twoFactorSecret === '') {
+      throw new BadRequestException('OneTimePassword is inactivate.');
+    }
+
+    const isCodeValid = authenticator.verify({
+      token: otpCode,
+      secret: user.twoFactorSecret,
+    });
+    if (!isCodeValid) {
+      throw new UnauthorizedException('Wrong authentication code');
+    }
+
+    return this.generateJwt(user.id, user.name, true);
   }
 }
