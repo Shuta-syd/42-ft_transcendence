@@ -1,4 +1,10 @@
-import { IsEmail, IsNotEmpty, IsNumber, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  Matches,
+  MinLength,
+} from 'class-validator';
 export class Msg {
   message: string;
 }
@@ -20,7 +26,7 @@ export class SignUpUserDto {
   @IsEmail()
   email: string;
   @IsNotEmpty()
-  @MinLength(9)
+  @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{9,}$/)
   password?: string;
   image?: string;
   isFtLogin?: boolean;
