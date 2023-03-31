@@ -40,14 +40,26 @@ const CreateGameRoom = () => {
         );
     }
 
+    function showPlayer2() {
+        const compare: string = 'player2_'
+        if (game?.player2.substring(0, 8) === compare.substring(0, 8)) {
+            return (
+                <h2>Player2: Loading</h2>
+            )
+        }
+            return (
+                <h2>Player2: {game?.player2}!!!</h2>
+            )
+
+    }
 
     return (
         <div>
             <h1>[Random Match Room!!]</h1>
             <h2>You are {user?.name}!!!</h2>
             <h2>You are in {roomId}!!!</h2>
-            <h2>Player1 is {game?.player1}!!!</h2>
-            <h2>Player2 is {game?.player2}!!!</h2>
+            <h2>Player1: {game?.player1}!!!</h2>
+            {showPlayer2()}
             <h1>Your Room 👉 {ShowPage()} !!!</h1>
             <button onClick={handleClick}>Exit Room</button>
         </div>
