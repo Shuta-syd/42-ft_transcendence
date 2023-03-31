@@ -2,13 +2,15 @@ import React, {useState} from 'react';
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import {User} from "../../types/PrismaType";
+import {sendFriendRequest} from "../../hooks/profile/sendFriendRequests";
+
 
 
 interface InputFriendIdProps {
-    user: User | undefined;
+    props: User | undefined;
 }
 
-const InputFriendId = (user: InputFriendIdProps) => {
+const InputFriendId = (props: InputFriendIdProps) => {
     const [inputValue, setInputValue] = useState<string>('');
     const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
 
@@ -17,17 +19,20 @@ const InputFriendId = (user: InputFriendIdProps) => {
         setIsButtonDisabled(event.target.value === '');
     }
 
-    const handleSubmit = (event: any) => {
+    const handleSubmit = async (event: any) => {
+        // console.log(`Submitting: ${inputValue}`);
+        console.log('hello', inputValue);
+        const res = await sendFriendRequest(props?.props?.id, inputValue);
+        console.log(res);
         event.preventDefault();
-
         setInputValue('');
         setIsButtonDisabled(true);
     }
 
-    console.log(`InputFriendId: ${user}`)
+    console.log(`InputFriendId: ${props}`)
     return (
         <div>
-            <h1>InputFriendId</h1>
+            <h2>Find new friends!</h2>
             <form onSubmit={handleSubmit}>
             <TextField
                 size={"small"}

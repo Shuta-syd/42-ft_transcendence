@@ -1,15 +1,15 @@
-import React, {ChangeEvent, useEffect, useState} from 'react';
+import React, { useEffect, useState} from 'react';
 import { Button } from "@mui/material";
 import axios from "axios";
 import Rating from '@mui/material/Rating';
 import io from "socket.io-client";
 import {Match, User} from "../../types/PrismaType";
 import {fetchProfileUser} from "../../hooks/profile/useProfileUser";
-import {sendFriendRequest} from "../../hooks/profile/sendFriendRequests";
+// import {sendFriendRequest} from "../../hooks/profile/sendFriendRequests";
 import useQueryMatches from "../../hooks/match/useWueryMatch";
 import ShowAvatar from "../../components/profile/ShowAvatar";
 import ImageUploadButton from "../../components/profile/ImageUploadButton";
-import OldInputFriendId from "../../components/profile/OldInputFriendId";
+// import OldInputFriendId from "../../components/profile/OldInputFriendId";
 import FingerPrintButton from "../../components/profile/FingerPrintButton";
 import InputFriendId from "../../components/profile/InputFriendId";
 
@@ -23,14 +23,14 @@ const Profile = () => {
         });
     }, []);
 
-    const [inputId, setInputId] = useState<string>('');
-    const HandleInputID = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setInputId(e.target.value);
-    }
+    // const [inputId, setInputId] = useState<string>('');
+    // const HandleInputID = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    //     setInputId(e.target.value);
+    // }
 
-    const handleDecideIdButton = async () => {
-        await sendFriendRequest(user?.id, inputId);
-    }
+    // const handleDecideIdButton = async () => {
+    //     await sendFriendRequest(user?.id, inputId);
+    // }
 
     const getFriends = async () => {
         const {data} = await axios.get<User[]>(`http://localhost:8080/user/friend`);
@@ -280,11 +280,11 @@ const Profile = () => {
         <div>
             <ShowAvatar user={user} profileImage={profileImage}/>
             <ImageUploadButton onUpload={uploadImage}/>
-            <InputFriendId user={user} />
-            <OldInputFriendId
-                handleDecideIdButton={handleDecideIdButton}
-                handleInputID={HandleInputID}
-            />
+            <InputFriendId props={user} />
+            {/* <OldInputFriendId */}
+            {/*    handleDecideIdButton={handleDecideIdButton} */}
+            {/*    handleInputID={HandleInputID} */}
+            {/* /> */}
             <FingerPrintButton onClick={handleFingerPrintButton}/>
             <FriendListButton/>
             <MatchList matches={matchArr}/>
