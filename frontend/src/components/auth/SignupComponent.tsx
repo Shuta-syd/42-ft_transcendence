@@ -7,8 +7,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Link, useNavigate } from "react-router-dom";
 import SignupStepper from "./SignupStepper";
 import UploadImageComponent from "./UploadImageComponent";
-import UserProfileFormComponent from "./UserProfileFormComponent";
 import SignupValidationSchema from "../../types/auth/SignupValidationSchema";
+import UserProfileFormComponent from "./UserProfileFormComponent";
 
 type SignupData = {
   username: string;
@@ -22,21 +22,22 @@ function SignupComponent() {
   const [activeStep, setActiveStep] = useState(0);
   const [image, setImage] = useState('');
   const [imageURL, setImageURL] = useState('');
-  const { control, handleSubmit, reset, formState: { errors } } = useForm<SignupData>({
+  const { control, handleSubmit, reset, formState: { errors, isValid } } = useForm<SignupData>({
+    mode: 'onBlur',
     defaultValues: { username: '', email: '', password: '' },
     resolver: yupResolver(SignupValidationSchema),
   });
 
   const onSubmit: SubmitHandler<SignupData> = async (data) => {
     try {
-      await axios.post('http://localhost:8080/auth/signup', {
-        name: data.username,
-        email: data.email,
-        password: data.password,
-        image,
-      });
-      reset();
-      router('/login');
+        await axios.post('http://localhost:8080/auth/signup', {
+          name: data.username,
+          email: data.email,
+          password: data.password,
+          image,
+        });
+        reset();
+        router('/login');
     } catch (error) {
       reset();
       setActiveStep(0);
@@ -83,7 +84,7 @@ function SignupComponent() {
             <Typography variant="h5">Signup</Typography>
             <SignupStepper activeStep={activeStep} />
             {activeStep === 0 ? (
-              <UserProfileFormComponent control={control} setActiveStep={setActiveStep} errors={ errors } />
+              <UserProfileFormComponent control={control} setActiveStep={setActiveStep} errors={errors} isValid={isValid} />
             ) : (
                 <UploadImageComponent image={imageURL} onFileChange={onFileChange} setActiveStep={setActiveStep}  />
             )

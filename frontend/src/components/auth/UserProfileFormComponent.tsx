@@ -7,10 +7,15 @@ type UserProfileFormComponentProps = {
   control: any; // useForm control
   setActiveStep: any; // useState setter
   errors: any; // useForm formState errors
+  isValid: boolean; // form is error or not
 }
 
 export default function UserProfileFormComponent(props: UserProfileFormComponentProps) {
-  const { control, setActiveStep, errors } = props;
+  const { control, setActiveStep, errors, isValid } = props;
+
+  const onNextButton = () => {
+    setActiveStep(1);
+  }
 
   return (
     <>
@@ -62,7 +67,7 @@ export default function UserProfileFormComponent(props: UserProfileFormComponent
           />
           )}
           />
-      <Button variant="contained" onClick={() => { setActiveStep(1); }} >Next Step</Button>
+      <Button disabled={!isValid} variant="contained" onClick={onNextButton} >Next Step</Button>
       <FtLoginButtonComponent />
     </>
   )
