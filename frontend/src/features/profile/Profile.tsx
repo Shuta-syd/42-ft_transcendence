@@ -12,6 +12,7 @@ import ShowAvatar from "../../components/profile/ShowAvatar";
 import ImageUploadButton from "../../components/profile/ImageUploadButton";
 // import OldInputFriendId from "../../components/profile/OldInputFriendId";
 import FingerPrintButton from "../../components/profile/FingerPrintButton";
+import InputFriendId from "../../components/profile/InputFriendId";
 
 const Profile = () => {
     const [user, setUser] = useState<User>();
@@ -280,7 +281,7 @@ const Profile = () => {
         <div
             style={{ backgroundColor: "#EDF0F4",
                 minHeight: "100vh",
-                backgroundImage: 'url(https://img.freepik.com/free-vector/dark-wall-background_1390-191.jpg)',
+                // backgroundImage: 'url(https://img.freepik.com/free-vector/dark-wall-background_1390-191.jpg)',
                 backgroundRepeat: "no-repeat",
                 backgroundSize: "cover"
             }}
@@ -324,7 +325,7 @@ const Profile = () => {
                     style={{color: "#3C444B"}}
                     marginTop={-10}
                 >
-                     {/* <InputFriendId/> */}
+                      <InputFriendId props={user}/>
                 </Grid>
                 <Grid item xs={10} style={{color: "#3C444B"}}>
                     <FingerPrintButton onClick={handleFingerPrintButton}/>
