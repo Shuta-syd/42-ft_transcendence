@@ -84,7 +84,6 @@ const Profile = () => {
     interface MatchListProps {
         matches: Match[];
     }
-<<<<<<< HEAD
 
     function ShowAchievement({matches}: MatchListProps) {
         const countMyWinTime =  () => {
@@ -135,11 +134,8 @@ const Profile = () => {
         );
     }
 
-    function MatchList({matches}: MatchListProps) {
-=======
-    
+
     function MatchList({ matches }: MatchListProps) {
->>>>>>> origin/main
         const [selectedPlayer, setSelectedPlayer] = useState(user?.name);
         const [filteredMatches, setFilteredMatches] = useState<Match[]>([]);
 

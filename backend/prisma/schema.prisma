@@ -12,12 +12,9 @@ model User {
   email           String   @unique
   name            String
   password        String
-<<<<<<< HEAD
-=======
   twoFactorSecret String?
   isTwoFactorEnabled Boolean @default(false)
   // OneTimePassword OneTimePassword?
->>>>>>> origin/main
   image           String
   isFtLogin       Boolean @default(false)
   friends         User[]   @relation("Friends")
