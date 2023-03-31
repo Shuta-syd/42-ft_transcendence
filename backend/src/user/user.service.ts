@@ -171,6 +171,7 @@ export class UserService {
     const tmpuser = JSON.parse(useridString);
     const tmpfriend = JSON.parse(friendString);
     this.addFriend(tmpuser, tmpfriend);
+    this.addFriend(tmpfriend, tmpuser);
     const user = this.prisma.user.findUnique({
       where: {
         id: userid,
