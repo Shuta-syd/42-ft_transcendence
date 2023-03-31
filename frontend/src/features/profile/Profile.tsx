@@ -302,28 +302,26 @@ const Profile = () => {
                         <ImageUploadButton onUpload={uploadImage} />
                     </Grid>
                     <Grid item xs={5}>
-                        <h1 style={{ display: "flex", alignItems: "flex-start", justifyContent: "flex-end", color: "#B5D3D5", marginTop: "-20px" }}>
+                        <h1 style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#B5D3D5", marginTop: "-20px" }}>
                             Find your friend!
                         </h1>
                     </Grid>
-                    <Grid item xs={10} style={{ color: "#3C444B" }} marginTop={-10}>
+                    <Grid item xs={10} style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#B5D3D5", marginTop: "-20px" }} marginTop={-10}>
                         <InputFriendId props={user} />
                     </Grid>
                     <Grid item xs={10} style={{ color: "#3C444B" }}>
                         <FingerPrintButton onClick={handleFingerPrintButton} />
                     </Grid>
-                    <Grid>
-                        <Grid item xs={5} style={{ color: "#3C444B" }} display={"flex"} alignItems={"center"} justifyContent={"center"} marginTop={3}>
+                        <Grid item xs={5} style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#B5D3D5", marginTop: "-20px" }} justifyContent={"center"} marginTop={3}>
                             <FriendListButton />
                         </Grid>
-                        <Grid item xs={5} style={{ color: "#3C444B" }}>
+                        <Grid item xs={5} style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#B5D3D5", marginTop: "-20px" }}>
                             <MatchList matches={matchArr} />
                         </Grid>
-                        <Grid item xs={5} style={{ color: "#3C444B" }}>
+                        <Grid item xs={5} style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#B5D3D5", marginTop: "-20px" }}>
                             <ShowAchievement matches={matchArr} />
                         </Grid>
                     </Grid>
-                </Grid>
             </h2>
         </div>
     );
