@@ -21,7 +21,11 @@ function LoginComponent() {
         password: data.password,
       });
       reset();
-    } catch (error) {
+    } catch (error: any) {
+      if (error.response) {
+        const { message } = error.response.data;
+        alert(message);
+      }else
       alert('ログインに失敗しました。もう一度ログインしてください');
     }
   }

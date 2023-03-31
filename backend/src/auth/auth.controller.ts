@@ -9,6 +9,8 @@ import {
   Req,
   Res,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -32,6 +34,7 @@ export class AuthController {
   ) {}
 
   @Post('signup')
+  @UsePipes(new ValidationPipe())
   @ApiOperation({
     description: 'create user',
     summary: 'create user',
@@ -46,6 +49,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @UsePipes(new ValidationPipe())
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     description: 'login user',
