@@ -293,14 +293,15 @@ const Profile = () => {
                 <h1>[Profile]</h1>
                 <Grid container
                     direction="column"
+                      spacing={2}
                 >
                     <Grid item xs={5}>
                         <ShowAvatar user={user} profileImage={profileImage} />
                     </Grid>
-                    <Grid item xs={8} style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#3C444B" }}>
+                    <Grid item xs={5} style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#3C444B" }}>
                         <ImageUploadButton onUpload={uploadImage} />
                     </Grid>
-                    <Grid item xs={10}>
+                    <Grid item xs={5}>
                         <h1 style={{ display: "flex", alignItems: "flex-start", justifyContent: "flex-end", color: "#B5D3D5", marginTop: "-20px" }}>
                             Find your friend!
                         </h1>

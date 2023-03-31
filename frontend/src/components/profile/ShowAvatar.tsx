@@ -53,8 +53,8 @@ const ShowAvatar = ({ user, profileImage }: ShowAvatarProps) => {
         }}>
             <StyledBadge
                 sx={{
-                    width: 500, // Update width here
-                    height: 500, // Update height here
+                    width: 400, // Update width here
+                    height: 400, // Update height here
                     marginRight: 2
                 }}
                 overlap="circular"
@@ -67,8 +67,8 @@ const ShowAvatar = ({ user, profileImage }: ShowAvatarProps) => {
                     alt={user?.name}
                     src={profileImage}
                     sx={{
-                        width: 500, // Update width here
-                        height: 500, // Update height here
+                        width: 400, // Update width here
+                        height: 400, // Update height here
                         marginRight: 2
                     }}
                 />

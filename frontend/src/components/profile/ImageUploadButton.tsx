@@ -11,7 +11,7 @@ const ImageUploadButton = ({ onUpload }: Props) => {
     return (
         <div
             style={{
-                width: 380, // Update width here
+                width: 380,
                 height: 180,
                 marginRight: 750,
                 marginTop: 0,
