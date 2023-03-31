@@ -6,10 +6,11 @@ import FtLoginButtonComponent from "./FtLoginButtonComponent";
 type UserProfileFormComponentProps = {
   control: any; // useForm control
   setActiveStep: any; // useState setter
+  errors: any; // useForm formState errors
 }
 
 export default function UserProfileFormComponent(props: UserProfileFormComponentProps) {
-  const { control, setActiveStep } = props;
+  const { control, setActiveStep, errors } = props;
 
   return (
     <>
@@ -17,21 +18,48 @@ export default function UserProfileFormComponent(props: UserProfileFormComponent
         name='username'
         control={control}
         RenderComponent={(field: any) => (
-          <TextField fullWidth {...field} label='Enter Your UserName' />
+          <TextField
+            required
+            fullWidth
+            {...field}
+            label='username'
+            placeholder='Enter Your UserName'
+            type={'username'}
+            helperText={errors.username?.message}
+            error={Boolean(errors.username)}
+          />
         )}
       />
       <FormController
         name='email'
         control={control}
         RenderComponent={(field: any) => (
-          <TextField fullWidth {...field} label='Enter Your Email Address' />
+          <TextField
+            required
+            fullWidth
+            {...field}
+            label='email'
+            type={'email'}
+            placeholder='Enter Your Email Address'
+            helperText={errors.email?.message}
+            error={Boolean(errors.email)}
+          />
         )}
       />
       <FormController
         name='password'
         control={control}
         RenderComponent={(field: any) => (
-          <TextField fullWidth {...field} label='Enter Password' type={'password'}/>
+          <TextField
+            required
+            fullWidth
+            {...field}
+            label='password'
+            placeholder='Enter Password'
+            type={'password'}
+            helperText={errors.password?.message}
+            error={Boolean(errors.password)}
+          />
           )}
           />
       <Button variant="contained" onClick={() => { setActiveStep(1); }} >Next Step</Button>
