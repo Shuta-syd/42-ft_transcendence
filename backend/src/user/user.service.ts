@@ -53,10 +53,6 @@ export class UserService {
         },
       },
     });
-    if (ret) {
-      console.log('hoge');
-      console.log(ret);
-    }
     return ret;
   }
 
@@ -137,7 +133,9 @@ export class UserService {
     if (!requestee) {
       return null;
     }
-    const reqesters = requestee.friendReqs;
+    const reqesters = requestee.friendReqs.filter(
+      (item: string) => item !== req.requester,
+    );
     if (req.requester) {
       reqesters.push(req.requester);
     }
@@ -155,7 +153,6 @@ export class UserService {
   }
 
   async getFriendReqs(name: string): Promise<User> {
-    console.log('name = ', name);
     const req = this.prisma.user.findUnique({
       where: {
         name: name,
@@ -173,8 +170,6 @@ export class UserService {
     const friendString = JSON.stringify(friendId);
     const tmpuser = JSON.parse(useridString);
     const tmpfriend = JSON.parse(friendString);
-    console.log(tmpuser);
-    console.log(tmpfriend);
     this.addFriend(tmpuser, tmpfriend);
     const user = this.prisma.user.findUnique({
       where: {

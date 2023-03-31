@@ -49,7 +49,6 @@ export class UserController {
     @Req() req: Request,
     @Body() data: { friendId: string },
   ): Promise<User> {
-    console.log('=>', req.user.id);
     return this.userService.addFriend(req.user.id, data.friendId);
   }
 
@@ -79,8 +78,11 @@ export class UserController {
   @ApiOperation({
     description: 'check the friend req of the name of user',
   })
-  async checkFriendReq(@Body('name') name: string): Promise<User> {
-    return this.userService.getFriendReqs(name);
+  async checkFriendReq(@Req() req: Request): Promise<User | null> {
+    if (req.user.name) {
+      return this.userService.getFriendReqs(req.user.name);
+    }
+    return null;
   }
 
   @Patch('friendReq')
@@ -103,7 +105,6 @@ export class UserController {
     @Req() req: Request,
     @Body() data: { image: string },
   ): Promise<User> {
-    console.log('user.image => ', data.image);
     return this.userService.addUserImage(req.user.id, data.image);
   }
   @Get('image')
