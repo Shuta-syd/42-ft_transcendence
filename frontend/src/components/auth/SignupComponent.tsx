@@ -90,7 +90,7 @@ function SignupComponent() {
                 case 1:
                   return <UploadImageComponent image={imageURL} onFileChange={onFileChange} setActiveStep={setActiveStep} />
                 case 2:
-                  return <TwoFactorSettingComponent />
+                  return <TwoFactorSettingComponent setActiveStep={setActiveStep}/>
                 default:
                   return null;
               }

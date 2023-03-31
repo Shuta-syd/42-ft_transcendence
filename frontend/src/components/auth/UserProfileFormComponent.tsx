@@ -11,13 +11,14 @@ type UserProfileFormComponentProps = {
 }
 
 export default function UserProfileFormComponent(props: UserProfileFormComponentProps) {
+  // eslint-disable-next-line no-unused-vars
   const { control, setActiveStep, errors, isValid } = props;
 
   const onNextButton = () => {
-    if (isValid)
+    // if (isValid)
       setActiveStep(1);
-    else
-      alert('入力に誤りがあります。');
+    // else
+      // alert('入力に誤りがあります。');
   }
 
   return (
