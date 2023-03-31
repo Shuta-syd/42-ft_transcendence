@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsNumber, Max } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsNumber, MinLength } from 'class-validator';
 export class Msg {
   message: string;
 }
@@ -15,11 +15,12 @@ export class OtpCodeDao {
 
 export class SignUpUserDto {
   @IsNotEmpty()
+  @MinLength(4)
   name: string;
   @IsEmail()
   email: string;
   @IsNotEmpty()
-  @Max(10)
+  @MinLength(9)
   password?: string;
   image?: string;
   isFtLogin?: boolean;

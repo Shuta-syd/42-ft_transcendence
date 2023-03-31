@@ -14,7 +14,10 @@ export default function UserProfileFormComponent(props: UserProfileFormComponent
   const { control, setActiveStep, errors, isValid } = props;
 
   const onNextButton = () => {
-    setActiveStep(1);
+    if (isValid)
+      setActiveStep(1);
+    else
+      alert('入力に誤りがあります。');
   }
 
   return (
@@ -67,7 +70,7 @@ export default function UserProfileFormComponent(props: UserProfileFormComponent
           />
           )}
           />
-      <Button disabled={!isValid} variant="contained" onClick={onNextButton} >Next Step</Button>
+      <Button variant="contained" onClick={onNextButton} >Next Step</Button>
       <FtLoginButtonComponent />
     </>
   )

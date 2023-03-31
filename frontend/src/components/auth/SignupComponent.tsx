@@ -23,7 +23,7 @@ function SignupComponent() {
   const [image, setImage] = useState('');
   const [imageURL, setImageURL] = useState('');
   const { control, handleSubmit, reset, formState: { errors, isValid } } = useForm<SignupData>({
-    mode: 'onBlur',
+    mode: 'all',
     defaultValues: { username: '', email: '', password: '' },
     resolver: yupResolver(SignupValidationSchema),
   });
@@ -39,7 +39,6 @@ function SignupComponent() {
         reset();
         router('/login');
     } catch (error) {
-      reset();
       setActiveStep(0);
       alert('ユーザ作成に失敗しました。もう一度ユーザ作成をしてください');
     }
