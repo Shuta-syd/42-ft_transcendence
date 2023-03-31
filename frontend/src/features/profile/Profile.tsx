@@ -279,83 +279,50 @@ const Profile = () => {
     // @ts-ignore
     return (
         <div
-            style={{ backgroundColor: "#EDF0F4",
+            style={{
+                backgroundColor: "#EDF0F4",
                 minHeight: "100vh",
-                // backgroundImage: 'url(https://img.freepik.com/free-vector/dark-wall-background_1390-191.jpg)',
                 backgroundRepeat: "no-repeat",
-                backgroundSize: "cover"
+                backgroundSize: "cover",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
             }}
         >
             <h2>
-            <h1>
-                [Profile]
-            </h1>
-            <Grid
-                container
-                spacing={5}
-                marginTop={10}
-            >
-                <Grid item xs={5}>
-                    <ShowAvatar user={user} profileImage={profileImage}/>
-                </Grid>
-                <Grid item xs={8} style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "#3C444B"
-                }}>
-                    <ImageUploadButton onUpload={uploadImage}/>
-                </Grid>
-                <Grid item xs={10}>
-                    <h1
-                        style={{
-                            display: "flex",
-                            alignItems: "flex-start",
-                            justifyContent: "flex-end",
-                            color: "#B5D3D5",
-                            marginTop: "-20px",
-                        }}
-                    >
-                        Find your friend!
-                    </h1>
-                </Grid>
-                <Grid
-                    item
-                    xs={10}
-                    style={{color: "#3C444B"}}
-                    marginTop={-10}
+                <h1>[Profile]</h1>
+                <Grid container
+                    direction="column"
                 >
-                      <InputFriendId props={user}/>
-                </Grid>
-                <Grid item xs={10} style={{color: "#3C444B"}}>
-                    <FingerPrintButton onClick={handleFingerPrintButton}/>
-                </Grid>
-                <Grid
-                    container
-                    direction={"column"}
-                    spacing={10}
-                >
-                    <Grid
-                        item
-                        xs={5}
-                        style={{
-                            color: "#3C444B"
-                    }}
-                        display={"flex"}
-                        alignItems={"center"}
-                        justifyContent={"center"}
-                        marginTop={3}
-                    >
-                        <FriendListButton/>
+                    <Grid item xs={5}>
+                        <ShowAvatar user={user} profileImage={profileImage} />
                     </Grid>
-                    <Grid item xs={5} style={{color: "#3C444B"}}>
-                        <MatchList matches={matchArr}/>
+                    <Grid item xs={8} style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#3C444B" }}>
+                        <ImageUploadButton onUpload={uploadImage} />
                     </Grid>
-                    <Grid item xs={5} style={{color: "#3C444B"}}>
-                        <ShowAchievement matches={matchArr}/>
+                    <Grid item xs={10}>
+                        <h1 style={{ display: "flex", alignItems: "flex-start", justifyContent: "flex-end", color: "#B5D3D5", marginTop: "-20px" }}>
+                            Find your friend!
+                        </h1>
+                    </Grid>
+                    <Grid item xs={10} style={{ color: "#3C444B" }} marginTop={-10}>
+                        <InputFriendId props={user} />
+                    </Grid>
+                    <Grid item xs={10} style={{ color: "#3C444B" }}>
+                        <FingerPrintButton onClick={handleFingerPrintButton} />
+                    </Grid>
+                    <Grid>
+                        <Grid item xs={5} style={{ color: "#3C444B" }} display={"flex"} alignItems={"center"} justifyContent={"center"} marginTop={3}>
+                            <FriendListButton />
+                        </Grid>
+                        <Grid item xs={5} style={{ color: "#3C444B" }}>
+                            <MatchList matches={matchArr} />
+                        </Grid>
+                        <Grid item xs={5} style={{ color: "#3C444B" }}>
+                            <ShowAchievement matches={matchArr} />
+                        </Grid>
                     </Grid>
                 </Grid>
-            </Grid>
             </h2>
         </div>
     );
