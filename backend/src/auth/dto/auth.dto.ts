@@ -21,6 +21,6 @@ export class SignUpUserDto {
   @IsNotEmpty()
   @Max(10)
   password?: string;
-  image: string;
+  image?: string;
   isFtLogin?: boolean;
 }
