@@ -22,13 +22,13 @@ const Profile = () => {
         });
     }, []);
 
-    const [inputId, setInputId] = useState<string>("");
+    const [inputId, setInputId] = useState<string>('');
     const HandleInputID = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setInputId(e.target.value);
     }
 
     const handleDecideIdButton = async () => {
-        sendFriendRequest(user?.id, inputId);
+        await sendFriendRequest(user?.id, inputId);
     }
 
     const getFriends = async () => {
