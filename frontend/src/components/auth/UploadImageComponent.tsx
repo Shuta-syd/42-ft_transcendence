@@ -30,7 +30,7 @@ export default function UploadImageComponent(props: UploadImageComponentProps) {
             <input hidden accept="image/*" type="file" onChange={(e) => { onFileChange(e); }}/>
           </Button>
         </Box>
-        <Button type='submit' variant="contained">Sign up</Button>
+        <Button variant="contained" onClick={() => setActiveStep(2) }>NEXT</Button>
       </Box>
     </>
   )

@@ -9,6 +9,7 @@ import SignupStepper from "./SignupStepper";
 import UploadImageComponent from "./UploadImageComponent";
 import SignupValidationSchema from "../../types/auth/SignupValidationSchema";
 import UserProfileFormComponent from "./UserProfileFormComponent";
+import TwoFactorSettingComponent from "./TwoFactorSettingComponent";
 
 type SignupData = {
   username: string;
@@ -82,12 +83,18 @@ function SignupComponent() {
           >
             <Typography variant="h5">Signup</Typography>
             <SignupStepper activeStep={activeStep} />
-            {activeStep === 0 ? (
-              <UserProfileFormComponent control={control} setActiveStep={setActiveStep} errors={errors} isValid={isValid} />
-            ) : (
-                <UploadImageComponent image={imageURL} onFileChange={onFileChange} setActiveStep={setActiveStep}  />
-            )
-            }
+            {(() => {
+              switch (activeStep) {
+                case 0:
+                  return <UserProfileFormComponent control={control} setActiveStep={setActiveStep} errors={errors} isValid={isValid} />
+                case 1:
+                  return <UploadImageComponent image={imageURL} onFileChange={onFileChange} setActiveStep={setActiveStep} />
+                case 2:
+                  return <TwoFactorSettingComponent />
+                default:
+                  return null;
+              }
+            })()}
           </Stack>
         </Box>
         <Link to='/login'>login user</Link>
