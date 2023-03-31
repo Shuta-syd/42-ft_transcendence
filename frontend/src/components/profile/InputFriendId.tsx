@@ -1,41 +1,50 @@
-import React, { ChangeEvent } from 'react';
-import { Button } from '@mui/material';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import TextField from '@mui/material/TextField';
-import InputAdornment from '@mui/material/InputAdornment';
+import React, {useState} from 'react';
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import {User} from "../../types/PrismaType";
+
 
 interface InputFriendIdProps {
-    handleDecideIdButton: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
-    handleInputID: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    user: User | undefined;
 }
 
+const InputFriendId = (user: InputFriendIdProps) => {
+    const [inputValue, setInputValue] = useState<string>('');
+    const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
 
+    const handleInputChange = (event: any) => {
+        setInputValue(event.target.value);
+        setIsButtonDisabled(event.target.value === '');
+    }
 
-const InputFriendId = ({ handleDecideIdButton, handleInputID }: InputFriendIdProps) => {
-    console.log('InputFriendId');
+    const handleSubmit = (event: any) => {
+        event.preventDefault();
+
+        setInputValue('');
+        setIsButtonDisabled(true);
+    }
+
+    console.log(`InputFriendId: ${user}`)
     return (
         <div>
-            <h2>Find new friends!</h2>
+            <h1>InputFriendId</h1>
+            <form onSubmit={handleSubmit}>
             <TextField
-                id="input-with-icon-textfield"
-                label="Please enter [friend ID]"
-                size="medium"
-                InputProps={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                            <AccountCircle />
-                        </InputAdornment>
-                    ),
-                    onChange: handleInputID,
-                }}
-                variant="standard"
-            />
+                size={"small"}
+                label="Friend ID"
+                variant="outlined"
+                type={"text"}
+                value={inputValue}
+                onChange={handleInputChange}
+                />
             <Button
-                variant="contained"
-                onClick={handleDecideIdButton}
+                variant={"contained"}
+                type={"submit"}
+                disabled={isButtonDisabled}
             >
-                ID決定
+                Submit
             </Button>
+            </form>
         </div>
     );
 };

@@ -9,8 +9,9 @@ import {sendFriendRequest} from "../../hooks/profile/sendFriendRequests";
 import useQueryMatches from "../../hooks/match/useWueryMatch";
 import ShowAvatar from "../../components/profile/ShowAvatar";
 import ImageUploadButton from "../../components/profile/ImageUploadButton";
-import InputFriendId from "../../components/profile/InputFriendId";
+import OldInputFriendId from "../../components/profile/OldInputFriendId";
 import FingerPrintButton from "../../components/profile/FingerPrintButton";
+import InputFriendId from "../../components/profile/InputFriendId";
 
 const Profile = () => {
     const [user, setUser] = useState<User>();
@@ -279,7 +280,8 @@ const Profile = () => {
         <div>
             <ShowAvatar user={user} profileImage={profileImage}/>
             <ImageUploadButton onUpload={uploadImage}/>
-            <InputFriendId
+            <InputFriendId user={user} />
+            <OldInputFriendId
                 handleDecideIdButton={handleDecideIdButton}
                 handleInputID={HandleInputID}
             />
