@@ -317,7 +317,7 @@ const Profile = () => {
                     <Grid item xs={10} style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#B5D3D5", marginTop: "-20px" }} marginTop={-10}>
                         <InputFriendId props={user} />
                     </Grid>
-                    <Grid item xs={10} style={{ color: "#3C444B" }}>
+                    <Grid item xs={10} style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#B5D3D5", marginTop: "20px" }}>
                         <FingerPrintButton onClick={handleFingerPrintButton} />
                     </Grid>
                         <Grid item xs={5} style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#B5D3D5", marginTop: "-20px" }} justifyContent={"center"} marginTop={3}>
