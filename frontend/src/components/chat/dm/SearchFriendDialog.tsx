@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { Box, Button, Dialog, Grid, IconButton, InputAdornment, TextField } from "@mui/material";
 import SearchIcon from '@mui/icons-material/Search';
 import React, { useEffect, useState } from "react";

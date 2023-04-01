@@ -5,7 +5,6 @@ import {GameSocket} from "../../contexts/WebsocketContext";
 import {User} from "../../types/PrismaType";
 import {useGameUser} from "../../hooks/game/useGameuser";
 
-
 const GamePlayer1 = () => {
     // global variables
     let context: CanvasRenderingContext2D | null;
@@ -13,7 +12,6 @@ const GamePlayer1 = () => {
     let keycode = '';
     let leftScore = 0;
     let rightScore = 0;
-
     /* Ball macro */
     const BALLX = 455;
     const BALLY = 450;
@@ -220,7 +218,14 @@ const GamePlayer1 = () => {
             context.fillStyle = 'blue'
             context.font = "bold 50px 'ＭＳ 明朝'";
             context.fillText('You Lose!', 360,  300);
+            context.fillStyle = 'black'
+            context.fillText('5秒後にgameページに戻ります.', 100,  600);
             GameSocket.emit('TerminateGame', user.name);
+            if (window.location.pathname === "/game/player1") {
+                setTimeout(() => {
+                    window.location.href = "/game";
+                }, 3 * 1000);
+            }
         } else {
             const matchData = {
                 player1: user.name,
@@ -232,7 +237,14 @@ const GamePlayer1 = () => {
             context.fillStyle = 'red'
             context.font = "bold 50px 'ＭＳ 明朝'";
             context.fillText('You Win!', 360, 300);
+            context.fillStyle = 'black'
+            context.fillText('5秒後にgameページに戻ります.', 100,  600);
             GameSocket.emit('TerminateGame', user.name);
+            if (window.location.pathname === "/game/player1") {
+                setTimeout(() => {
+                    window.location.href = "/game";
+                }, 3 * 1000);
+            }
         }
     }
 
@@ -281,6 +293,7 @@ const GamePlayer1 = () => {
         window.addEventListener('keydown', handleKeyDown);
     }, [user]);
 
+
     type Chat = {
         socketId: string,
         uname: string,
@@ -293,6 +306,7 @@ const GamePlayer1 = () => {
     const [chatLog, setChatLog] = useState<ChatLog>([])
     const [uname, setUname] = useState<string>('')
     const [text, setText] = useState<string>('')
+
 
 
     useEffect(() => {
@@ -356,6 +370,7 @@ const GamePlayer1 = () => {
     const BallSpeedDown = () => {
         ballDefaultSpeed -= 0.5;
     }
+
 
     return (
         <div>
