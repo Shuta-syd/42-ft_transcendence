@@ -310,8 +310,8 @@ const GamePlayer2 = () => {
             <h1>Player2: {user?.name}</h1>
             <Button
                 variant="outlined"
-                color="primary"
                 size="large"
+                color="primary"
                 onClick={pageReload}
             >
                 🦺RECONNECT🦺

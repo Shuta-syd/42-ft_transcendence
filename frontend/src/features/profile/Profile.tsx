@@ -13,6 +13,7 @@ import ImageUploadButton from "../../components/profile/ImageUploadButton";
 // import OldInputFriendId from "../../components/profile/OldInputFriendId";
 import FingerPrintButton from "../../components/profile/FingerPrintButton";
 import InputFriendId from "../../components/profile/InputFriendId";
+import FriendProfile from "./FriendProfile";
 
 const Profile = () => {
     const [user, setUser] = useState<User>();
@@ -246,8 +247,6 @@ const Profile = () => {
         }
     };
 
-    // const elonMuskImage = "https://upload.wikimedia.org/wikipedia/commons/e/e1/Elon_Musk_%28cropped%29.jpg";
-    // const steveJobsImage = "https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg";
     const [profileImage, setProfileImage] = useState('');
     useEffect(() => {
         const profileUser = fetchProfileUser();
@@ -277,6 +276,7 @@ const Profile = () => {
                     <div key={friend.id}>
                         [{friend.name}]
                         <FriendStatus friendName={friend.name}/>
+                        <FriendProfile friend={friend} />
                     </div>
                 ))}
             </h3>
