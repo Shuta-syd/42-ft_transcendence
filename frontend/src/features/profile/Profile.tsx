@@ -281,10 +281,6 @@ const Profile = () => {
             <ShowAvatar user={user} profileImage={profileImage}/>
             <ImageUploadButton onUpload={uploadImage}/>
             <InputFriendId props={user} />
-            {/* <OldInputFriendId */}
-            {/*    handleDecideIdButton={handleDecideIdButton} */}
-            {/*    handleInputID={HandleInputID} */}
-            {/* /> */}
             <FingerPrintButton onClick={handleFingerPrintButton}/>
             <FriendListButton/>
             <MatchList matches={matchArr}/>

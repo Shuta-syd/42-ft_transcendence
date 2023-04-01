@@ -360,13 +360,11 @@ const GamePlayer1 = () => {
         >
             <h1>[PONG GAME]</h1>
             <Grid container>
-                <h2>
-                    <h1>Player1: {user?.name}</h1>
-                </h2>
+                <h1>Player1: {user?.name}</h1>
                 <Button
                     variant="outlined"
                     color="primary"
-                    size="large"
+                    size="medium"
                     onClick={pageReload}
                 >
                     🦺RECONNECT🦺

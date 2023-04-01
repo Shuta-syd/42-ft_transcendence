@@ -279,7 +279,7 @@ const GamePlayer2 = () => {
             <Button
                 variant="outlined"
                 color="primary"
-                size="large"
+                size="medium"
                 onClick={pageReload}
             >
                 🦺RECONNECT🦺
