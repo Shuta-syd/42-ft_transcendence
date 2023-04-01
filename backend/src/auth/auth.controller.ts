@@ -52,10 +52,7 @@ export class AuthController {
     description: 'login user',
     summary: 'login user',
   })
-  async login(
-    @Body() dto: AuthDto,
-    @Res({ passthrough: true }) res: Response,
-  ): Promise<Msg> {
+  async login(@Body() dto: AuthDto, @Res({ passthrough: true }) res: Response) {
     const jwt = await this.authService.login(dto);
     res.cookie('access_token', jwt.accessToken, {
       httpOnly: true,
@@ -63,9 +60,7 @@ export class AuthController {
       sameSite: 'lax',
       path: '/',
     });
-    return {
-      message: 'Login Success',
-    };
+    return;
   }
 
   @Get('login/42')
