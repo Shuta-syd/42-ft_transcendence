@@ -29,29 +29,27 @@ export class AuthService {
    * @returns 作成したUserデータ
    */
   async signupUser(dto: SignUpUserDto): Promise<User> {
-    // メールアドレスが既に存在するかどうかを確認する
     const userExists = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
 
     if (userExists) {
-      // 既に存在する場合は、エラーをスローするか、処理を中断する
       throw new NotAcceptableException(
         'このメールアドレスは既に使用されています。',
       );
     }
 
-    // 存在しない場合は、新しいユーザーを作成する
-    return await this.prisma.user.create({
+    const newUser = await this.prisma.user.create({
       data: {
         email: dto.email,
-        password: dto.password,
+        password: dto.password ? dto.password : '',
         name: dto.name,
-        image:
-          'https://upload.wikimedia.org/wikipedia/commons/e/e1/Elon_Musk_%28cropped%29.jpg',
+        image: dto.image,
         isFtLogin: dto.isFtLogin ? dto.isFtLogin : false,
       },
     });
+
+    return newUser;
   }
 
   /**
@@ -66,7 +64,7 @@ export class AuthService {
     });
     if (user.isFtLogin) new BadRequestException('Please login with 42');
     if (!user) throw new NotFoundException("user couldn't be found");
-    if (user.password !== dto.password)
+    if (!user.isFtLogin && user.password !== dto.password)
       throw new NotAcceptableException('password is wrong');
     return this.generateJwt(user.id, user.name);
   }
