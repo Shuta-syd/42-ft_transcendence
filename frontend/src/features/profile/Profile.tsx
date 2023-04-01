@@ -119,7 +119,11 @@ const Profile = () => {
         };
 
         return (
-            <div>
+            <div
+                style={{
+                    color: '#3C444B'
+                }}
+            >
                 <h2>
                     Your current achievement : {getAchievement()}
                 <p></p>
@@ -159,9 +163,13 @@ const Profile = () => {
         }, []);
 
         return (
-            <div>
+            <div
+                style={{
+                    color: '#3C444B'
+                }}
+            >
                 {/* フィルタリングされた試合のみ表示 */}
-                <h3>[⇩ Previous Record]</h3>
+                <h3>[⇩BATTLE RECORD]</h3>
                 {filteredMatches.map((match) => (
                     <div key={match.id}>
                         <h3>
@@ -302,7 +310,7 @@ const Profile = () => {
                         <ImageUploadButton onUpload={uploadImage} />
                     </Grid>
                     <Grid item xs={5}>
-                        <h1 style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#B5D3D5", marginTop: "-20px" }}>
+                        <h1 style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#B2B9C5", marginTop: "-20px" }}>
                             Find your friend!
                         </h1>
                     </Grid>
