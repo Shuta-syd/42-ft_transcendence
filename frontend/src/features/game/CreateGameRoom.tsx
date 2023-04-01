@@ -58,7 +58,6 @@ const CreateGameRoom = () => {
         if (user?.name) {
             return (
                 <div>
-                    <h2>You are {user?.name}!!!</h2>
                     <h2>You are in {roomId}!!!</h2>
                     <h2>Player1 is {game?.player1}!!!</h2>
                     {showPlayer2()}
