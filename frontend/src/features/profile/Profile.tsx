@@ -1,24 +1,21 @@
-import React, {ChangeEvent, useEffect, useState} from 'react';
-import {Avatar, Button, IconButton} from "@mui/material";
+import React, { useEffect, useState} from 'react';
+import { Button } from "@mui/material";
 import axios from "axios";
 import Rating from '@mui/material/Rating';
-import TextField from '@mui/material/TextField';
-import InputAdornment from '@mui/material/InputAdornment';
-import AccountCircle from '@mui/icons-material/AccountCircle';
 import io from "socket.io-client";
-import {PhotoCamera} from "@mui/icons-material";
 import {Match, User} from "../../types/PrismaType";
 import {fetchProfileUser} from "../../hooks/profile/useProfileUser";
-import {sendFriendRequest} from "../../hooks/profile/sendFriendRequests";
+// import {sendFriendRequest} from "../../hooks/profile/sendFriendRequests";
 import useQueryMatches from "../../hooks/match/useWueryMatch";
-
+import ShowAvatar from "../../components/profile/ShowAvatar";
+import ImageUploadButton from "../../components/profile/ImageUploadButton";
+// import OldInputFriendId from "../../components/profile/OldInputFriendId";
+import FingerPrintButton from "../../components/profile/FingerPrintButton";
+import InputFriendId from "../../components/profile/InputFriendId";
 
 const Profile = () => {
-
     const [user, setUser] = useState<User>();
-
     const socket = io("http://localhost:8080");
-
     const UserPromises = fetchProfileUser();
     useEffect(() => {
         UserPromises.then((userDto: User) => {
@@ -26,14 +23,14 @@ const Profile = () => {
         });
     }, []);
 
-    const [inputId, setInputId] = useState<string>("");
-    const HandleInputID = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setInputId(e.target.value);
-    }
+    // const [inputId, setInputId] = useState<string>('');
+    // const HandleInputID = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    //     setInputId(e.target.value);
+    // }
 
-    const handleDecideIdButton = async () => {
-        sendFriendRequest(user?.id, inputId);
-    }
+    // const handleDecideIdButton = async () => {
+    //     await sendFriendRequest(user?.id, inputId);
+    // }
 
     const getFriends = async () => {
         const {data} = await axios.get<User[]>(`http://localhost:8080/user/friend`);
@@ -41,7 +38,6 @@ const Profile = () => {
     }
 
     const [friends, setFriends] = useState<User[]>([]);
-
 
     const HandleFriendListButton = () => {
         const friendsPromise = getFriends();
@@ -90,7 +86,57 @@ const Profile = () => {
         matches: Match[];
     }
 
-    function MatchList({matches}: MatchListProps) {
+    function ShowAchievement({matches}: MatchListProps) {
+        const countMyWinTime =  () => {
+            let count: number = 0;
+            for (const match of matches) {
+                const winnerName = match.winner_id === '1' ? match.player1 : match.player2;
+                if (winnerName === user?.name) {
+                    count += 1;
+                }
+            }
+            return count;
+        }
+        enum Achievement {
+            "Beginner" = 0,
+            "Intermediate" = 5,
+            "Advanced" = 10,
+            "Expert" = 15,
+        }
+
+        const getAchievement = () => {
+            if (countMyWinTime() < Achievement.Intermediate) {
+                return "Beginner";
+            }
+            if (countMyWinTime() < Achievement.Advanced) {
+                return "Intermediate";
+            }
+            if (countMyWinTime() < Achievement.Expert) {
+                return "Advanced";
+            }
+            return "Expert";
+        };
+
+        return (
+            <div>
+                <h2>
+                    Your current achievement : {getAchievement()}
+                <p></p>
+                <Rating
+                    name={user?.name}
+                    defaultValue={countMyWinTime()}
+                    precision={0.5}
+                    max={20}
+                    readOnly
+                />
+                <p></p>
+                </h2>
+            </div>
+        );
+    }
+
+
+    function MatchList({ matches }: MatchListProps) {
         const [selectedPlayer, setSelectedPlayer] = useState(user?.name);
         const [filteredMatches, setFilteredMatches] = useState<Match[]>([]);
 
@@ -115,11 +161,12 @@ const Profile = () => {
         return (
             <div>
                 {/* フィルタリングされた試合のみ表示 */}
+                <h3>[⇩ Previous Record]</h3>
                 {filteredMatches.map((match) => (
                     <div key={match.id}>
-                        <h1>
+                        <h3>
                             [{match.id}] {match.player1} vs {match.player2}
-                        </h1>
+                        </h3>
                         <div>
                             <ShowResult p1={match.player1} p2={match.player2}/>
                         </div>
@@ -132,9 +179,6 @@ const Profile = () => {
     interface FriendProps {
         friendName: string;
     }
-
-
-    const steveJobsImage = "https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg";
 
     function FriendStatus({friendName}: FriendProps) {
         const [isOnline, setIsOnline] = useState(null);
@@ -158,88 +202,93 @@ const Profile = () => {
             return <span>Loading...</span>;
         }
         return (
-            <span>{isOnline ? " -> Online" : " -> Offline"}</span>
+            <span>{isOnline ? " => 🤩" : " => 🫥"}</span>
         );
     }
 
-    const [image, setImage] = useState(steveJobsImage);
+    // const steveJobsImage = "https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg";
+
+    const uploadImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const { files } = event.target;
+        if (files?.[0]) {
+            const blobFiles = URL.createObjectURL(files[0]);
+            const file = files[0];
+            let base64: string;
+            console.log("THIS ONE: ", blobFiles);
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+
+            reader.onload = async () => {
+                base64 = reader.result as string;
+                console.log("base64: ", base64);
+
+                try {
+                    const response = await axios.post(
+                        "http://localhost:8080/user/add/image",
+                        { image: base64 },
+                        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+                    );
+                    console.log("THIS ONE: ", response);
+                    setProfileImage(base64);
+                } catch (error) {
+                    console.error(error);
+                    console.log("This file is too large!!!!");
+                }
+            };
+        }
+    };
+
     // const elonMuskImage = "https://upload.wikimedia.org/wikipedia/commons/e/e1/Elon_Musk_%28cropped%29.jpg";
-    const uploadImage = (event: React.ChangeEvent<HTMLInputElement>) => {
-        // @ts-ignore
-        setImage(URL.createObjectURL(event.target.files[0]));
+    // const steveJobsImage = "https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg";
+    const [profileImage, setProfileImage] = useState('');
+    useEffect(() => {
+        const profileUser = fetchProfileUser();
+        profileUser.then((us) => {
+            setProfileImage(us?.image);
+        });
+    }, []);
+
+    const handleFingerPrintButton = () => {
+        console.log("FingerPrintButton clicked", user?.id);
+        navigator.clipboard.writeText(user?.id as string);
     }
 
-    return (
-        <div>
-            <Avatar
-                variant="circular"
-                color="success"
-                alt={user?.name}
-                src={image}
-                sx={{width: 200, height: 200, margin: 2}}
-            >
-            </Avatar>
-            <h1>
-                {user?.name}
-            </h1>
-            <Button
-                variant="contained"
-                component="label"
-                color="success"
-            >
-                Upload
-                <input hidden accept="image/*" multiple type="file" onChange={event => uploadImage(event)}/>
-            </Button>
-            <IconButton color="primary" aria-label="upload picture" component="label">
-                <input hidden accept="image/*" type="file"/>
-                <PhotoCamera/>
-            </IconButton>
-            <p></p>
-            <Rating
-                name={user?.name}
-                defaultValue={4}
-                precision={0.5}
-            />
-            <p></p>
-            <h2>Find new friends!</h2>
-            <TextField
-                id="input-with-icon-textfield"
-                label="Please enter [friend ID]"
-                size="medium"
-                InputProps={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                            <AccountCircle/>
-                        </InputAdornment>
-                    ),
-                    onChange: HandleInputID
-                }}
-                variant="standard"
-            />
-            <Button
-                variant="contained"
-                onClick={handleDecideIdButton}>
-                ID決定
-            </Button>
-            <p></p>
-            <Button
+    const FriendListButton = () => {
+        console.log('List button');
+        return (
+            <div>
+                <Button
                 variant="outlined"
                 color="primary"
                 size="large"
                 onClick={HandleFriendListButton}
             >
-                友達リスト
-            </Button>
-            <h1>
+                friend list
+            </Button><h3>
                 {friends.map((friend: User) => (
                     <div key={friend.id}>
-                        {friend.name}
+                        [{friend.name}]
                         <FriendStatus friendName={friend.name}/>
-                    </div> // keyプロパティを追加
+                    </div>
                 ))}
-            </h1>
-            <h2>今までの戦績</h2>
+            </h3>
+            </div>
+        );
+    }
+
+    return (
+        <div>
+            <ShowAvatar user={user} profileImage={profileImage}/>
+            <ImageUploadButton onUpload={uploadImage}/>
+            <InputFriendId props={user} />
+            {/* <OldInputFriendId */}
+            {/*    handleDecideIdButton={handleDecideIdButton} */}
+            {/*    handleInputID={HandleInputID} */}
+            {/* /> */}
+            <FingerPrintButton onClick={handleFingerPrintButton}/>
+            <FriendListButton/>
             <MatchList matches={matchArr}/>
+            <ShowAchievement matches={matchArr}/>
         </div>
     );
 }

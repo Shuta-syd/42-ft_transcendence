@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState} from "react";
-import {Grid} from "@mui/material";
+import {Grid, Button} from "@mui/material";
 import { GameSocket } from "../../contexts/WebsocketContext";
 import {User} from "../../types/PrismaType";
 import {useGameUser} from "../../hooks/game/useGameuser";
@@ -168,10 +168,24 @@ const GamePlayer2 = () => {
             context.fillStyle = 'blue'
             context.font = "bold 50px 'ＭＳ 明朝'";
             context.fillText('You Lose!', 360,  300);
+            context.fillStyle = 'black'
+            context.fillText('5秒後にgameページに戻ります.', 100,  600);
+            if (window.location.pathname === "/game/player2") {
+                setTimeout(() => {
+                    window.location.href = "/game";
+                }, 3 * 1000);
+            }
         } else {
             context.fillStyle = 'red'
             context.font = "bold 50px 'ＭＳ 明朝'";
             context.fillText('You Win!', 360, 300);
+            context.fillStyle = 'black'
+            context.fillText('5秒後にgameページに戻ります.', 100,  600);
+            if (window.location.pathname === "/game/player2") {
+                setTimeout(() => {
+                    window.location.href = "/game";
+                }, 3 * 1000);
+            }
         }
     }
 
@@ -233,6 +247,7 @@ const GamePlayer2 = () => {
     });
 
     GameSocket.on('Ping', (name: string, SocketId: string) => {
+        console.log(name, SocketId, 'Ping');
         GameSocket.emit('Pong', user?.name);
     });
 
@@ -240,6 +255,10 @@ const GamePlayer2 = () => {
         player1: number
         player2: number
         name: string
+    }
+
+    function pageReload() {
+        window.location.reload();
     }
 
     GameSocket.on('ScoreToClient', (Score: Score, SocketId: string) => {
@@ -256,9 +275,15 @@ const GamePlayer2 = () => {
         >
             <h1>[PONG GAME]</h1>
             <Grid container>
-                <h2>
-                    <h1>Player2: {user?.name}</h1>
-                </h2>
+            <h1>Player2: {user?.name}</h1>
+            <Button
+                variant="outlined"
+                color="primary"
+                size="large"
+                onClick={pageReload}
+            >
+                🦺RECONNECT🦺
+            </Button>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
             </Grid>
         </div>

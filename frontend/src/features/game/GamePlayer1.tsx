@@ -220,7 +220,14 @@ const GamePlayer1 = () => {
             context.fillStyle = 'blue'
             context.font = "bold 50px 'ＭＳ 明朝'";
             context.fillText('You Lose!', 360,  300);
+            context.fillStyle = 'black'
+            context.fillText('5秒後にgameページに戻ります.', 100,  600);
             GameSocket.emit('TerminateGame', user.name);
+            if (window.location.pathname === "/game/player1") {
+                setTimeout(() => {
+                    window.location.href = "/game";
+                }, 3 * 1000);
+            }
         } else {
             const matchData = {
                 player1: user.name,
@@ -232,7 +239,14 @@ const GamePlayer1 = () => {
             context.fillStyle = 'red'
             context.font = "bold 50px 'ＭＳ 明朝'";
             context.fillText('You Win!', 360, 300);
+            context.fillStyle = 'black'
+            context.fillText('5秒後にgameページに戻ります.', 100,  600);
             GameSocket.emit('TerminateGame', user.name);
+            if (window.location.pathname === "/game/player1") {
+                setTimeout(() => {
+                    window.location.href = "/game";
+                }, 3 * 1000);
+            }
         }
     }
 
@@ -247,6 +261,20 @@ const GamePlayer1 = () => {
         });
     }, []);
 
+
+    function pageReload() {
+        window.location.reload();
+    }
+
+    const sendPing = setInterval(() => {
+        if (user?.name) {
+            GameSocket.emit('Ping', user?.name);
+        }
+    }, 1000);
+
+    setTimeout(() => {
+        clearInterval(sendPing);
+    }, 10000000);
 
     useEffect(() => {
         const handleKeyUp = ():void => {
@@ -294,6 +322,7 @@ const GamePlayer1 = () => {
     });
 
     GameSocket.on('Pong', (name: string, socketid: string) => {
+        console.log('recieve pong ', name, socketid);
         isRecievePong = true;
         p2name = name;
     });
@@ -305,7 +334,7 @@ const GamePlayer1 = () => {
         ballDefaultSpeed -= 0.5;
     }
 
-    const LeveButton = () => (
+    const LevelButton = () => (
             <div>
                 <Button variant={"contained"}
                         size={"large"}
@@ -334,8 +363,16 @@ const GamePlayer1 = () => {
                 <h2>
                     <h1>Player1: {user?.name}</h1>
                 </h2>
+                <Button
+                    variant="outlined"
+                    color="primary"
+                    size="large"
+                    onClick={pageReload}
+                >
+                    🦺RECONNECT🦺
+                </Button>
             <canvas ref={canvasRef} height={HEIGHT} width={WIDTH}/>
-            <LeveButton />
+            <LevelButton />
             </Grid>
         </div>
     );
