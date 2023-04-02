@@ -9,13 +9,24 @@ interface Props {
 const ImageUploadButton = ({ onUpload }: Props) => {
     console.log('Upload button');
     return (
-        <div>
+        <div
+            style={{
+                width: 380,
+                height: 180,
+                marginRight: 750,
+                marginTop: 0,
+            }}
+        >
             <Button
                 variant="contained"
                 component="label"
-                color="success"
+                color="primary"
+                sx={{
+                    width: 300, // Update width here
+                    height: 50,
+                }}
             >
-                Upload
+                Upload Profile Image
                 <input hidden accept="image/*" multiple type="file" onChange={event => onUpload(event)}/>
             </Button>
             <IconButton color="primary" aria-label="upload picture" component="label">

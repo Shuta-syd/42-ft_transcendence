@@ -9,13 +9,26 @@ interface Props {
 const FingerPrintButton = ({onClick}: Props) => {
     console.log("FingerPrintButton clicked");
     return (
-        <div>
+        <div
+            style={{
+                display: "flex",
+                justifyContent: "right",
+                alignItems: "right",
+                marginTop: "-50px",
+        }}
+        >
+            <h2
+                style={{
+                    color: "purple",
+                }}
+            >
+                {"YOUR ID => "}
+            </h2>
             <IconButton
                 aria-label="fingerprint"
                 color="secondary"
                 onClick={onClick}
             >
-                your id:
                 <Fingerprint />
             </IconButton>
         </div>
