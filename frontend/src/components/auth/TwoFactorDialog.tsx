@@ -4,6 +4,7 @@ import axios from "axios";
 import { useQRCode } from "next-qrcode";
 import ClearIcon from '@mui/icons-material/Clear';
 import React, { useEffect, useState } from "react";
+import { Navigate } from "react-router-dom";
 
 type TwoFactorDialogProps = {
   isOpen: boolean;
@@ -17,11 +18,14 @@ export default function TwoFactorDialog(props: TwoFactorDialogProps) {
   const [otpcode, setOtpcode] = useState('');
   const [loading, setLoading] = useState(true);
   const [loadingConfirm, setLoadingConfirm] = useState(false);
+  const [isAuth, setIsAuth] = useState(false);
 
   const get2faQRCode = async () => {
     try {
-      const { data } = await axios.post('http://localhost:8080/auth/otp' );
-      setQRCodeUrl(data);
+      if (qrCodeUrl === '') {
+        const { data } = await axios.post('http://localhost:8080/auth/otp');
+        setQRCodeUrl(data);
+      }
     } catch (error) {
       alert('2FA QRコード生成に失敗しました');
     } finally {
@@ -37,6 +41,7 @@ export default function TwoFactorDialog(props: TwoFactorDialogProps) {
 
   const closeDialog = () => {
     setIsOpen(false);
+    setOtpcode('');
   }
 
   const onConfirmButton = async () => {
@@ -44,6 +49,7 @@ export default function TwoFactorDialog(props: TwoFactorDialogProps) {
       setLoadingConfirm(true);
       await axios.patch('http://localhost:8080/auth/otp/on');
       await axios.post('http://localhost:8080/auth/otp/validation', { otpcode });
+      setIsAuth(true);
     } catch (error) {
       alert('ワンタイムパスワードが間違っています');
     } finally {
@@ -51,6 +57,10 @@ export default function TwoFactorDialog(props: TwoFactorDialogProps) {
         setLoadingConfirm(false);
       }, 500);
     }
+  }
+
+  if (isAuth) {
+    return <Navigate to={"/user"} replace />;
   }
 
   return (

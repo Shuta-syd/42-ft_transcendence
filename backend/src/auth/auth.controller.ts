@@ -194,16 +194,9 @@ export class AuthController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'ワンタイムパスワード成功',
-    type: Msg,
   })
-  async validateOtp(
-    @Req() req: Request,
-    @Body() { otpcode }: OtpCodeDao,
-  ): Promise<Msg> {
-    console.log(otpcode);
-    await this.authService.validateOtp(req.user, otpcode);
-
-    return { message: 'One Time Password SUCCESS' };
+  async validateOtp(@Req() req: Request, @Body() { otpcode }: OtpCodeDao) {
+    return this.authService.validateOtp(req.user, otpcode);
   }
 
   @Get('otp/test')

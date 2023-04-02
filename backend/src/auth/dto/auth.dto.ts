@@ -21,7 +21,7 @@ export class OtpCodeDao {
 
 export class SignUpUserDto {
   @IsNotEmpty()
-  @MinLength(4)
+  @MinLength(1)
   name: string;
   @IsEmail()
   email: string;
