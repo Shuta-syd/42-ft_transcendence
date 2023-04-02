@@ -287,10 +287,10 @@ const Profile = () => {
             }}
         >
             <h2>
-                <h1>[Profile]</h1>
+                <h1>[My Profile]</h1>
                 <Grid container
+                    spacing={2}
                     direction="column"
-                      spacing={2}
                 >
                     <Grid item xs={5}>
                         <ShowAvatar user={user} profileImage={profileImage} />
