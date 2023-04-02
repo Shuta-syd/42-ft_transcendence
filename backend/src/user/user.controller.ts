@@ -1,5 +1,6 @@
 import {
   Body,
+  Delete,
   Get,
   HttpStatus,
   Param,
@@ -66,21 +67,36 @@ export class UserController {
     return this.userService.getFriend(req.user.id);
   }
 
+  @Delete('friend')
+  @ApiOperation({
+    description: 'delete friend',
+    summary: 'delete friend',
+  })
+  async deleteFriend(
+    @Req() req: Request,
+    @Body() data: { friendId: string },
+  ): Promise<User> {
+    return this.userService.deleteFriend(req.user.id, data.friendId);
+  }
+
   @Post('friendReq')
   @ApiOperation({
     description: 'send a Friend Request',
   })
-  async SetFriendReq(@Body() req: FriendReq): Promise<string[]> {
-    return this.userService.handleFriendReq(req);
+  async SetFriendReq(
+    @Req() reqBody: Request,
+    @Body() friendId: AcceptFriend,
+  ): Promise<string[]> {
+    return this.userService.handleFriendReq(reqBody.user.id, friendId.friendId);
   }
 
   @Get('friendReq')
   @ApiOperation({
     description: 'check the friend req of the name of user',
   })
-  async checkFriendReq(@Req() req: Request): Promise<User | null> {
+  async checkFriendReq(@Req() req: Request): Promise<string[] | null> {
     if (req.user.name) {
-      return this.userService.getFriendReqs(req.user.name);
+      return this.userService.getFriendReqs(req.user.id);
     }
     return null;
   }
@@ -89,8 +105,22 @@ export class UserController {
   @ApiOperation({
     description: 'accept friend request and add friend',
   })
-  async SetFriendR(@Req() req: Request, @Body() friendId: AcceptFriend): Promise<User> {
+  async SetFriendR(
+    @Req() req: Request,
+    @Body() friendId: AcceptFriend,
+  ): Promise<User> {
     return this.userService.acceptFriendreq(req.user.id, friendId.friendId);
+  }
+
+  @Delete('friendReq')
+  @ApiOperation({
+    description: 'delete friend request',
+  })
+  async deleteFriendR(
+    @Req() req: Request,
+    @Body() friendId: AcceptFriend,
+  ): Promise<User> {
+    return this.userService.rejectFriendReq(req.user.id, friendId.friendId);
   }
 
   @Get('friend/search')
