@@ -140,7 +140,7 @@ const Profile = () => {
         );
     }
 
-    function MatchList({matches}: MatchListProps) {
+    function MatchList({ matches }: MatchListProps) {
         const [selectedPlayer, setSelectedPlayer] = useState(user?.name);
         const [filteredMatches, setFilteredMatches] = useState<Match[]>([]);
 
@@ -169,7 +169,7 @@ const Profile = () => {
                 }}
             >
                 {/* フィルタリングされた試合のみ表示 */}
-                <h3>[⇩BATTLE RECORD]</h3>
+                <h3>[⇩ Previous Record]</h3>
                 {filteredMatches.map((match) => (
                     <div key={match.id}>
                         <h3>

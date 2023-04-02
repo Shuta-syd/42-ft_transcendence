@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-arm64-openssl-1.1.x"]
 }
 
 datasource db {
@@ -23,6 +24,8 @@ model User {
   banned             BanUserOnChatRoom[]
   friendReqs         String[]
 }
+
+
 
 // TODO: auth.serviceでuserテーブルを操作したくないから、OneTimePasswordテーブルで別操作したい
 // model OneTimePassword {

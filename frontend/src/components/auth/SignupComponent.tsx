@@ -3,9 +3,11 @@ import { Box, Stack, Typography } from "@mui/material";
 import axios from "axios";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { yupResolver } from '@hookform/resolvers/yup';
 import { Link, useNavigate } from "react-router-dom";
 import SignupStepper from "./SignupStepper";
 import UploadImageComponent from "./UploadImageComponent";
+import SignupValidationSchema from "../../types/auth/SignupValidationSchema";
 import UserProfileFormComponent from "./UserProfileFormComponent";
 
 type SignupData = {
@@ -20,20 +22,23 @@ function SignupComponent() {
   const [activeStep, setActiveStep] = useState(0);
   const [image, setImage] = useState('');
   const [imageURL, setImageURL] = useState('');
-  const { control, handleSubmit, reset } = useForm<SignupData>({ defaultValues: { username: '', email: '', password: ''} });
+  const { control, handleSubmit, reset, formState: { errors, isValid } } = useForm<SignupData>({
+    mode: 'all',
+    defaultValues: { username: '', email: '', password: '' },
+    resolver: yupResolver(SignupValidationSchema),
+  });
 
   const onSubmit: SubmitHandler<SignupData> = async (data) => {
     try {
-      await axios.post('http://localhost:8080/auth/signup', {
-        name: data.username,
-        email: data.email,
-        password: data.password,
-        image,
-      });
-      reset();
-      router('/login');
+        await axios.post('http://localhost:8080/auth/signup', {
+          name: data.username,
+          email: data.email,
+          password: data.password,
+          image,
+        });
+        reset();
+        router('/login');
     } catch (error) {
-      reset();
       setActiveStep(0);
       alert('ユーザ作成に失敗しました。もう一度ユーザ作成をしてください');
     }
@@ -57,7 +62,7 @@ function SignupComponent() {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Box
         sx={{ width: '100%'}}
-        height={'30rem'}
+        height={'35rem'}
         border={2}
         borderRadius={'5px'}
         borderColor={'#e0e3e9'}
@@ -78,7 +83,7 @@ function SignupComponent() {
             <Typography variant="h5">Signup</Typography>
             <SignupStepper activeStep={activeStep} />
             {activeStep === 0 ? (
-                <UserProfileFormComponent control={control} setActiveStep={setActiveStep} />
+              <UserProfileFormComponent control={control} setActiveStep={setActiveStep} errors={errors} isValid={isValid} />
             ) : (
                 <UploadImageComponent image={imageURL} onFileChange={onFileChange} setActiveStep={setActiveStep}  />
             )

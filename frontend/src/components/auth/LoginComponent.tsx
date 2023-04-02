@@ -22,8 +22,12 @@ function LoginComponent() {
         password: data.password,
       });
       reset();
-      router('/user');
-    } catch (error) {
+    } catch (error: any) {
+      if (error.response) {
+        const { message } = error.response.data;
+        alert(message);
+        router('/user');
+      }else
       alert('ログインに失敗しました。もう一度ログインしてください');
     }
   }
@@ -66,7 +70,7 @@ function LoginComponent() {
                 name='password'
                 control={control}
                 RenderComponent={(field: any) => (
-                  <TextField fullWidth {...field} label='Enter Password' />
+                  <TextField fullWidth {...field} label='Enter Password' type={'password'}/>
                   )}
                   />
               <Button type="submit" variant="contained">Login</Button>
