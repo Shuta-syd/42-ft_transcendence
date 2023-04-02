@@ -6,11 +6,9 @@ import io from "socket.io-client";
 import Grid from "@mui/material/Grid";
 import {Match, User} from "../../types/PrismaType";
 import {fetchProfileUser} from "../../hooks/profile/useProfileUser";
-// import {sendFriendRequest} from "../../hooks/profile/sendFriendRequests";
 import useQueryMatches from "../../hooks/match/useWueryMatch";
 import ShowAvatar from "../../components/profile/ShowAvatar";
 import ImageUploadButton from "../../components/profile/ImageUploadButton";
-// import OldInputFriendId from "../../components/profile/OldInputFriendId";
 import FingerPrintButton from "../../components/profile/FingerPrintButton";
 import InputFriendId from "../../components/profile/InputFriendId";
 import FriendProfile from "./FriendProfile";
@@ -24,15 +22,6 @@ const Profile = () => {
             setUser(userDto);
         });
     }, []);
-
-    // const [inputId, setInputId] = useState<string>('');
-    // const HandleInputID = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    //     setInputId(e.target.value);
-    // }
-
-    // const handleDecideIdButton = async () => {
-    //     await sendFriendRequest(user?.id, inputId);
-    // }
 
     const getFriends = async () => {
         const {data} = await axios.get<User[]>(`http://localhost:8080/user/friend`);

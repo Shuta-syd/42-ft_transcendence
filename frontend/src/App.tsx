@@ -20,6 +20,8 @@ import JoinInvitedRoom from "./features/game/JoinInvitedRoom";
 import NewNavBar from './components/utils/NewNavbar';
 import PrivateRouter from "./utils/PrivateRouter";
 import Profile from "./features/profile/Profile";
+import FriendProfile from "./features/profile/FriendProfile";
+
 
 function App() {
   axios.defaults.withCredentials = true;
@@ -59,6 +61,7 @@ function App() {
           <Route path="/game/invite_room" element={<InviteRoom/>} />
           <Route path="/game/join_invited_room" element={<JoinInvitedRoom></JoinInvitedRoom>} />
           <Route path="/user" element={<Profile/>} />
+          <Route path="/other" element={<FriendProfile friend={undefined}/>} />
         </Routes>
       </Grid>
     </Grid>
