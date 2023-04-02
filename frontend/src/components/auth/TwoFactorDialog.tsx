@@ -39,7 +39,8 @@ export default function TwoFactorDialog(props: TwoFactorDialogProps) {
     get2faQRCode();
   }, []);
 
-  const closeDialog = () => {
+  const closeDialog = async () => {
+    await axios.patch('http://localhost:8080/auth/otp/off');
     setIsOpen(false);
     setOtpcode('');
   }
