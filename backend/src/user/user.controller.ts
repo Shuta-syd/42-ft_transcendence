@@ -76,6 +76,7 @@ export class UserController {
     @Req() req: Request,
     @Body() data: { friendId: string },
   ): Promise<User> {
+    this.userService.deleteFriend(data.friendId, req.user.id);
     return this.userService.deleteFriend(req.user.id, data.friendId);
   }
 
