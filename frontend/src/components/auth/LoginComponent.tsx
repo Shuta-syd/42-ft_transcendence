@@ -2,7 +2,7 @@ import { Box, Button, TextField, Stack, Typography } from "@mui/material";
 import axios from "axios";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import FormController from "../utils/FormController";
 import FtLoginButtonComponent from "./FtLoginButtonComponent";
 
@@ -12,6 +12,7 @@ type LoginData = {
 }
 
 function LoginComponent() {
+  const router = useNavigate();
   const { control, handleSubmit, reset } = useForm<LoginData>({ defaultValues: { email: '', password: '' } });
 
   const onSubmit: SubmitHandler<LoginData> = async (data) => {
@@ -25,6 +26,7 @@ function LoginComponent() {
       if (error.response) {
         const { message } = error.response.data;
         alert(message);
+        router('/user');
       }else
       alert('ログインに失敗しました。もう一度ログインしてください');
     }
