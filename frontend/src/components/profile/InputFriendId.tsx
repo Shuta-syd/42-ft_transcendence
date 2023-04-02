@@ -32,7 +32,6 @@ const InputFriendId = (props: InputFriendIdProps) => {
     console.log(`InputFriendId: ${props}`)
     return (
         <div>
-            <h2>Find new friends!</h2>
             <form onSubmit={handleSubmit}>
             <TextField
                 size={"small"}
@@ -53,5 +52,7 @@ const InputFriendId = (props: InputFriendIdProps) => {
         </div>
     );
 };
+
+
 
 export default InputFriendId;
