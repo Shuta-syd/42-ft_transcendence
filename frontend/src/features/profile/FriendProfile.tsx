@@ -23,16 +23,28 @@ const FriendProfile = (props: FriendProfileProps) => {
                 minHeight: "100vh",
                 backgroundRepeat: "no-repeat",
                 backgroundSize: "cover",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center"
+                // display: "flex",
+                // alignItems: "center",
+                // justifyContent: "center"
             }}
         >
             <Grid
                 container
                 direction="column"
+                spacing={2}
             >
-                <h1>[{friendName} Profile]</h1>
+                <Grid
+                    item xs={5}
+                    style={{
+                        fontSize: "4rem",
+                        fontWeight: "bold"
+                    }}
+                >
+                    [{friendName} Profile]
+                </Grid>
+                <Grid item md={12}>
+                    <h2>42</h2>
+                </Grid>
             </Grid>
         </div>
     );

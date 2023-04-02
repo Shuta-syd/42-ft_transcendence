@@ -289,7 +289,6 @@ const Profile = () => {
             <h2>
                 <h1>[My Profile]</h1>
                 <Grid container
-                    spacing={2}
                     direction="column"
                 >
                     <Grid item xs={5}>
