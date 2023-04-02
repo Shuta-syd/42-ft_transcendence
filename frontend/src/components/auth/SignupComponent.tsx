@@ -36,12 +36,12 @@ function SignupComponent() {
           email: data.email,
           password: data.password,
           image,
-        });
-      console.log(data);
-      await axios.post('http://localhost:8080/auth/login', {
-        email: data.email,
-        password: data.password,
-      });
+        }).then(async () => {
+          await axios.post('http://localhost:8080/auth/login', {
+            email: data.email,
+            password: data.password,
+          });
+        })
       reset();
       setActiveStep(2);
     } catch (error: any) {

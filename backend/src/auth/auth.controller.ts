@@ -199,16 +199,10 @@ export class AuthController {
   async validateOtp(
     @Req() req: Request,
     @Body() { otpcode }: OtpCodeDao,
-    @Res({ passthrough: true }) res: Response,
   ): Promise<Msg> {
-    const jwt = await this.authService.validateOtp(req.user, otpcode);
+    console.log(otpcode);
+    await this.authService.validateOtp(req.user, otpcode);
 
-    res.cookie('access_token', jwt.accessToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      path: '/',
-    });
     return { message: 'One Time Password SUCCESS' };
   }
 

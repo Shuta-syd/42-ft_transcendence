@@ -208,6 +208,8 @@ export class AuthService {
       throw new BadRequestException('OneTimePassword is inactivate.');
     }
 
+    console.log(user.twoFactorSecret);
+
     const isCodeValid = authenticator.verify({
       token: otpCode,
       secret: user.twoFactorSecret,
@@ -215,7 +217,5 @@ export class AuthService {
     if (!isCodeValid) {
       throw new UnauthorizedException('Wrong authentication code');
     }
-
-    return this.generateJwt(user.id, user.name, true);
   }
 }

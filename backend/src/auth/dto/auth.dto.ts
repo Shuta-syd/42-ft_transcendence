@@ -1,7 +1,7 @@
 import {
   IsEmail,
   IsNotEmpty,
-  IsNumber,
+  IsNumberString,
   Matches,
   MinLength,
 } from 'class-validator';
@@ -15,7 +15,7 @@ export class AuthDto {
   password: string;
 }
 export class OtpCodeDao {
-  @IsNumber()
+  @IsNumberString()
   otpcode: string;
 }
 

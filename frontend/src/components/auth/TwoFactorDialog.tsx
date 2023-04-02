@@ -33,7 +33,7 @@ export default function TwoFactorDialog(props: TwoFactorDialogProps) {
 
   useEffect(() => {
     get2faQRCode();
-  }, [isOpen]);
+  }, []);
 
   const closeDialog = () => {
     setIsOpen(false);
