@@ -19,7 +19,6 @@ type SignupData = {
 
 
 function SignupComponent() {
-  const router = useNavigate();
   const [activeStep, setActiveStep] = useState(0);
   const [image, setImage] = useState('');
   const [imageURL, setImageURL] = useState('');
@@ -31,22 +30,17 @@ function SignupComponent() {
 
   const onSubmit: SubmitHandler<SignupData> = async (data) => {
     try {
-        await axios.post('http://localhost:8080/auth/signup', {
+      await axios.post('http://localhost:8080/auth/signup', {
           name: data.username,
           email: data.email,
           password: data.password,
           image,
-        }).then(async () => {
-          await axios.post('http://localhost:8080/auth/login', {
-            email: data.email,
-            password: data.password,
-          });
         })
       reset();
       setActiveStep(2);
     } catch (error: any) {
       setActiveStep(0);
-      alert(error.message);
+      alert(error.response.data.message);
     }
   }
 

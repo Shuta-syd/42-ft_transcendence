@@ -31,7 +31,7 @@ export class AuthService {
    * @param dto 作成するUserデータ
    * @returns 作成したUserデータ
    */
-  async signupUser(dto: SignUpUserDto): Promise<User> {
+  async signupUser(dto: SignUpUserDto): Promise<Jwt> {
     let hashedPassword: string;
     const userExists = await this.prisma.user.findUnique({
       where: { email: dto.email },
@@ -56,7 +56,7 @@ export class AuthService {
       },
     });
 
-    return newUser;
+    return this.generateJwt(newUser.id, newUser.name);
   }
 
   /**
@@ -119,7 +119,12 @@ export class AuthService {
       return user;
     }
 
-    return this.signupUser({ ...userDto, isFtLogin: true });
+    await this.signupUser({ ...userDto, isFtLogin: true });
+    return this.prisma.user.findUnique({
+      where: {
+        email: userDto.email,
+      },
+    });
   }
 
   /**

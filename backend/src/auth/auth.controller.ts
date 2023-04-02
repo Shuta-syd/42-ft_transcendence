@@ -44,8 +44,18 @@ export class AuthController {
     description: 'The created the user',
     type: PrismaUser,
   })
-  async signupUser(@Body() userData: SignUpUserDto): Promise<User> {
-    return this.authService.signupUser(userData);
+  async signupUser(
+    @Body() userData: SignUpUserDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const jwt = await this.authService.signupUser(userData);
+    res.cookie('access_token', jwt.accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
+    return;
   }
 
   @Post('login')
