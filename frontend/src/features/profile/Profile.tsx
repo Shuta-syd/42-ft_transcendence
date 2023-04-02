@@ -3,6 +3,7 @@ import { Button } from "@mui/material";
 import axios from "axios";
 import Rating from '@mui/material/Rating';
 import io from "socket.io-client";
+import Grid from "@mui/material/Grid";
 import {Match, User} from "../../types/PrismaType";
 import {fetchProfileUser} from "../../hooks/profile/useProfileUser";
 // import {sendFriendRequest} from "../../hooks/profile/sendFriendRequests";
@@ -118,7 +119,11 @@ const Profile = () => {
         };
 
         return (
-            <div>
+            <div
+                style={{
+                    color: '#3C444B'
+                }}
+            >
                 <h2>
                     Your current achievement : {getAchievement()}
                 <p></p>
@@ -134,7 +139,6 @@ const Profile = () => {
             </div>
         );
     }
-
 
     function MatchList({ matches }: MatchListProps) {
         const [selectedPlayer, setSelectedPlayer] = useState(user?.name);
@@ -159,7 +163,11 @@ const Profile = () => {
         }, []);
 
         return (
-            <div>
+            <div
+                style={{
+                    color: '#3C444B'
+                }}
+            >
                 {/* フィルタリングされた試合のみ表示 */}
                 <h3>[⇩ Previous Record]</h3>
                 {filteredMatches.map((match) => (
@@ -276,19 +284,53 @@ const Profile = () => {
         );
     }
 
+    // @ts-ignore
     return (
-        <div>
-            <ShowAvatar user={user} profileImage={profileImage}/>
-            <ImageUploadButton onUpload={uploadImage}/>
-            <InputFriendId props={user} />
-            {/* <OldInputFriendId */}
-            {/*    handleDecideIdButton={handleDecideIdButton} */}
-            {/*    handleInputID={HandleInputID} */}
-            {/* /> */}
-            <FingerPrintButton onClick={handleFingerPrintButton}/>
-            <FriendListButton/>
-            <MatchList matches={matchArr}/>
-            <ShowAchievement matches={matchArr}/>
+        <div
+            style={{
+                backgroundColor: "#EDF0F4",
+                minHeight: "100vh",
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "cover",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
+            }}
+        >
+            <h2>
+                <h1>[Profile]</h1>
+                <Grid container
+                    direction="column"
+                      spacing={2}
+                >
+                    <Grid item xs={5}>
+                        <ShowAvatar user={user} profileImage={profileImage} />
+                    </Grid>
+                    <Grid item xs={5} style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#3C444B" }}>
+                        <ImageUploadButton onUpload={uploadImage} />
+                    </Grid>
+                    <Grid item xs={5}>
+                        <h1 style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#B2B9C5", marginTop: "-20px" }}>
+                            Find your friend!
+                        </h1>
+                    </Grid>
+                    <Grid item xs={10} style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#B5D3D5", marginTop: "-20px" }} marginTop={-10}>
+                        <InputFriendId props={user} />
+                    </Grid>
+                    <Grid item xs={10} style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#B5D3D5", marginTop: "20px" }}>
+                        <FingerPrintButton onClick={handleFingerPrintButton} />
+                    </Grid>
+                        <Grid item xs={5} style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#B5D3D5", marginTop: "-20px" }} justifyContent={"center"} marginTop={3}>
+                            <FriendListButton />
+                        </Grid>
+                        <Grid item xs={5} style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#B5D3D5", marginTop: "-20px" }}>
+                            <MatchList matches={matchArr} />
+                        </Grid>
+                        <Grid item xs={5} style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#B5D3D5", marginTop: "-20px" }}>
+                            <ShowAchievement matches={matchArr} />
+                        </Grid>
+                    </Grid>
+            </h2>
         </div>
     );
 }
