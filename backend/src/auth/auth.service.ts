@@ -163,20 +163,12 @@ export class AuthService {
     return toFileStream(stream, otpAuthUrl);
   }
 
-  async turnOnOtp(user: User, otpCode: string) {
+  async turnOnOtp(user: User) {
     // userからsecretを取得するのではなく、データベースから取得したい
 
     // 二要素が無効
     if (!user.twoFactorSecret || user.twoFactorSecret === '') {
       throw new BadRequestException('OneTimePasswordAuth is inactivate.');
-    }
-
-    const isCodeValid = authenticator.verify({
-      token: otpCode,
-      secret: user.twoFactorSecret,
-    });
-    if (!isCodeValid) {
-      throw new UnauthorizedException('Wrong authentication code');
     }
 
     await this.prisma.user.update({

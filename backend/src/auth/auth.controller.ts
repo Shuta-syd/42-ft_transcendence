@@ -141,10 +141,9 @@ export class AuthController {
   })
   async turnOnOtp(
     @Req() req: Request,
-    @Body() { otpcode }: OtpCodeDao,
     @Res({ passthrough: true }) res: Response,
   ): Promise<Msg> {
-    const jwt = await this.authService.turnOnOtp(req.user, otpcode);
+    const jwt = await this.authService.turnOnOtp(req.user);
 
     res.cookie('access_token', jwt.accessToken, {
       httpOnly: true,

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { Box, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, InputAdornment, Stack, TextField, Typography } from "@mui/material";
 import axios from "axios";
 import { useQRCode } from "next-qrcode";
 import ClearIcon from '@mui/icons-material/Clear';
@@ -14,11 +14,13 @@ export default function TwoFactorDialog(props: TwoFactorDialogProps) {
   const { isOpen, setIsOpen } = props;
   const { Canvas } = useQRCode();
   const [qrCodeUrl, setQRCodeUrl] = useState('');
+  const [otpcode, setOtpcode] = useState('');
   const [loading, setLoading] = useState(true);
+  const [loadingConfirm, setLoadingConfirm] = useState(false);
 
   const get2faQRCode = async () => {
     try {
-      const { data } = await axios.post('http://localhost:8080/auth/otp');
+      const { data } = await axios.post('http://localhost:8080/auth/otp' );
       setQRCodeUrl(data);
     } catch (error) {
       alert('2FA QRコード生成に失敗しました');
@@ -35,6 +37,20 @@ export default function TwoFactorDialog(props: TwoFactorDialogProps) {
 
   const closeDialog = () => {
     setIsOpen(false);
+  }
+
+  const onConfirmButton = async () => {
+    try {
+      setLoadingConfirm(true);
+      await axios.patch('http://localhost:8080/auth/otp/on');
+      await axios.post('http://localhost:8080/auth/otp/validation', { otpcode });
+    } catch (error) {
+      alert('ワンタイムパスワードが間違っています');
+    } finally {
+      setTimeout(() => {
+        setLoadingConfirm(false);
+      }, 500);
+    }
   }
 
   return (
@@ -71,7 +87,26 @@ export default function TwoFactorDialog(props: TwoFactorDialogProps) {
               }
             </Box>
             <Typography>3. Enter the 6-digit code from your 2FA app</Typography>
-            <TextField fullWidth/>
+            <TextField
+              value={otpcode}
+              onChange={(e) => { setOtpcode(e.target.value) }}
+              fullWidth
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Button variant="contained" onClick={onConfirmButton} sx={{ width: '5rem', height: '2.5rem' }}>
+                      {loadingConfirm ? (
+                        <Box sx={{ color: 'white', display: 'flex', alignItems: 'center'}} >
+                          <CircularProgress color="inherit" size={30}/>
+                        </Box>
+                      ) : (
+                        <>Confirm</>
+                      )}
+                    </Button>
+                  </InputAdornment>
+                )
+              }}
+            />
           </Stack>
         </DialogContent>
       </Dialog>
