@@ -15,6 +15,10 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { SignUpUserDto } from 'src/user/dto/user.dto';
 import { AuthDto } from './dto/auth.dto';
 import { Jwt } from './type/auth.type';
+import { randomBytes, scrypt } from 'crypto';
+import { promisify } from 'util';
+
+const asyncScrypt = promisify(scrypt);
 
 @Injectable()
 export class AuthService {
@@ -29,20 +33,24 @@ export class AuthService {
    * @returns 作成したUserデータ
    */
   async signupUser(dto: SignUpUserDto): Promise<User> {
+    let hashedPassword: string;
     const userExists = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
 
     if (userExists) {
-      throw new NotAcceptableException(
-        'このメールアドレスは既に使用されています。',
-      );
+      throw new NotAcceptableException('This email is already in use');
     }
 
+    const salt = randomBytes(8).toString('hex');
+    if (dto.isFtLogin !== true) {
+      const hash = (await asyncScrypt(dto.password, salt, 32)) as Buffer;
+      hashedPassword = hash.toString() + '.' + salt;
+    }
     const newUser = await this.prisma.user.create({
       data: {
         email: dto.email,
-        password: dto.password ? dto.password : '',
+        password: dto.password ? hashedPassword : '',
         name: dto.name,
         image: dto.image,
         isFtLogin: dto.isFtLogin ? dto.isFtLogin : false,
@@ -64,7 +72,16 @@ export class AuthService {
     });
     if (user.isFtLogin) new BadRequestException('Please login with 42');
     if (!user) throw new NotFoundException("user couldn't be found");
-    if (!user.isFtLogin && user.password !== dto.password)
+
+    const [storedHash, salt] = user.password.split('.');
+
+    const hashedPassword = (await asyncScrypt(
+      dto.password,
+      salt,
+      32,
+    )) as Buffer;
+
+    if (!user.isFtLogin && storedHash !== hashedPassword.toString())
       throw new NotAcceptableException('password is wrong');
     return this.generateJwt(user.id, user.name);
   }
