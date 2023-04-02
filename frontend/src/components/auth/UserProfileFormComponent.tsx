@@ -15,10 +15,10 @@ export default function UserProfileFormComponent(props: UserProfileFormComponent
   const { control, setActiveStep, errors, isValid } = props;
 
   const onNextButton = () => {
-    // if (isValid)
+    if (isValid)
       setActiveStep(1);
-    // else
-      // alert('入力に誤りがあります。');
+    else
+      alert('入力に誤りがあります。');
   }
 
   return (

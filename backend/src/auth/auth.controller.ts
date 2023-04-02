@@ -123,20 +123,8 @@ export class AuthController {
     status: HttpStatus.CREATED,
     description: 'QR',
   })
-  async createOtpAuthUrl(@Req() req: Request, @Res() res: Response) {
-    const { otpAuthUrl } = await this.authService.createOtpAuthUrl(req.user);
-    const jwt = await this.authService.generateJwt(req.user.id, req.user.name);
-
-    // 二要素はオンにしない、あくまでQRを作成するだけ
-    res.cookie('access_token', jwt.accessToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      path: '/',
-    });
-
-    // backendでqrcodeを生成しているが、Urlだけ返してフロント(next-qrcode)でQRを生成したい
-    return this.authService.pipeQrCodeStream(res, otpAuthUrl);
+  async createOtpAuthUrl(@Req() req: Request): Promise<string> {
+    return await this.authService.createOtpAuthUrl(req.user);
   }
 
   @Patch('otp/on')

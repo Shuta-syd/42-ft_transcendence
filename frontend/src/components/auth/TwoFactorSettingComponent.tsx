@@ -1,13 +1,12 @@
 import { Box, Button, FormControlLabel, Stack, Switch, Typography } from "@mui/material";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import TwoFactorDialog from "./TwoFactorDialog";
 
-type TwoFactorSettingComponentProps = {
-  setActiveStep: any; // useState stepper
-}
 
-export default function TwoFactorSettingComponent(props: TwoFactorSettingComponentProps) {
-  const { setActiveStep } = props;
-  const [checked, setChecked] = useState(false);
+export default function TwoFactorSettingComponent() {
+  const router = useNavigate();
+  const [checked, setChecked] = useState(false); // trueのときdialog表示
 
   const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setChecked(event.target.checked);
@@ -27,9 +26,9 @@ export default function TwoFactorSettingComponent(props: TwoFactorSettingCompone
         <FormControlLabel control={<Switch onChange={handleOnChange} checked={checked}/>} label="2FA OFF / ON" />
       </Stack>
       <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Button variant="contained" onClick={() => setActiveStep(0)}>BACK</Button>
-        <Button type='submit' variant="contained">Signup</Button>
+        <Button variant="contained" onClick={() => {router('/user')}}>SKIP</Button>
       </Box>
+      <TwoFactorDialog isOpen={checked} setIsOpen={setChecked}/>
     </>
   )
 }

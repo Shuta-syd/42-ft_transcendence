@@ -37,11 +37,16 @@ function SignupComponent() {
           password: data.password,
           image,
         });
-        reset();
-        router('/login');
-    } catch (error) {
+      console.log(data);
+      await axios.post('http://localhost:8080/auth/login', {
+        email: data.email,
+        password: data.password,
+      });
+      reset();
+      setActiveStep(2);
+    } catch (error: any) {
       setActiveStep(0);
-      alert('ユーザ作成に失敗しました。もう一度ユーザ作成をしてください');
+      alert(error.message);
     }
   }
 
@@ -90,7 +95,7 @@ function SignupComponent() {
                 case 1:
                   return <UploadImageComponent image={imageURL} onFileChange={onFileChange} setActiveStep={setActiveStep} />
                 case 2:
-                  return <TwoFactorSettingComponent setActiveStep={setActiveStep}/>
+                  return <TwoFactorSettingComponent />
                 default:
                   return null;
               }

@@ -131,7 +131,7 @@ export class AuthService {
    * @param user 二要素認証するユーザー
    * @returns シークレットとURL
    */
-  async createOtpAuthUrl(user: User) {
+  async createOtpAuthUrl(user: User): Promise<string> {
     const secret = authenticator.generateSecret();
 
     const otpAuthUrl = authenticator.keyuri(
@@ -150,9 +150,7 @@ export class AuthService {
       },
     });
 
-    return {
-      otpAuthUrl,
-    };
+    return otpAuthUrl;
   }
 
   /**
