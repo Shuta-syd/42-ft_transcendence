@@ -1,4 +1,4 @@
-import { Avatar, Box, Grid, Typography } from "@mui/material";
+import { Avatar, Box, CircularProgress, Grid, Typography } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -24,6 +24,7 @@ export default function UserParticipantList(props: UserParticipantListProps) {
   const [userId, setUserId] = useState<string>();
   const [myRole, setMyRole] = useState<string>('');
   const [members, setMembers] = useState<MemberPayload[]>([]);
+  const [Loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getUserId = async () => {
@@ -55,13 +56,26 @@ export default function UserParticipantList(props: UserParticipantListProps) {
           }
         }
       } catch (error) {
-        loadMember();
+        alert('メンバーが正しく取得できませんでした。ブラウザをリフレッシュしてください');
+      } finally {
+        setTimeout(() => {
+          setLoading(false);
+        }, 800);
       }
     }
 
     loadMember();
   }, [roomId, userId]);
 
+  if (Loading) {
+    return (
+      <>
+        <Box height={'5rem'} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <CircularProgress/>
+        </Box>
+      </>
+    )
+  }
 
   return (
     <>
