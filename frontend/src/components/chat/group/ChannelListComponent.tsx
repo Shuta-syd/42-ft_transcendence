@@ -38,13 +38,14 @@ export default function ChannelListComponent(props: ChannelListComponentProps) {
 
   useEffect(() => {
     try {
+      setLoading(true);
       getChannels().then((data) => { setChannels(data); })
     } catch (error) {
       alert('チャンネル取得に失敗しました。ブラウザをリフレッシュしてください');
     } finally {
       setTimeout(() => {
         setLoading(false);
-      }, 500);
+      }, 300);
     }
   }, [])
 

@@ -40,6 +40,7 @@ export default function UserParticipantList(props: UserParticipantListProps) {
   useEffect(() => {
     const loadMember = async () => {
       try {
+        setLoading(true);
         const { data } = await axios.get(`http://localhost:8080/chat/room/${roomId}`);
         if (data.members) {
           const newMembers: MemberPayload[] = data.members.map((member: any) => ({
@@ -60,7 +61,7 @@ export default function UserParticipantList(props: UserParticipantListProps) {
       } finally {
         setTimeout(() => {
           setLoading(false);
-        }, 500);
+        }, 300);
       }
     }
 

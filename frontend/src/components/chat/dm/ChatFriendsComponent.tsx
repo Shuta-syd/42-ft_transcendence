@@ -45,6 +45,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
 
   useEffect(() => {
     try {
+      setLoading(true);
       getUserDM().then((data) => {
         setDMRooms([]);
         data.map((room => setDMRooms((prev: any) => [...prev, { id: room.id, name: getFriendNameFromRoomName(room.name) }]))
@@ -55,7 +56,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
     } finally {
       setTimeout(() => {
         setLoading(false);
-      }, 500);
+      }, 300);
     }
   }, [userName])
 
