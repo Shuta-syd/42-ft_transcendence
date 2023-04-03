@@ -7,7 +7,6 @@ interface FriendProfileProps {
     friend: User | undefined;
 }
 
-
 const FriendProfile = (props: FriendProfileProps) => {
     // prerequisite: friend definition
     // if you pass the info of props, you should change initial value of useState

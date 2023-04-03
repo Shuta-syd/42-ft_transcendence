@@ -287,14 +287,18 @@ const Profile = () => {
             }}
         >
             <h2>
-                <h1>[My Profile]</h1>
                 <Grid container
                     direction="column"
                 >
                     <Grid item xs={5}>
                         <ShowAvatar user={user} profileImage={profileImage} />
                     </Grid>
-                    <Grid item xs={5} style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#3C444B" }}>
+                    <Grid item xs={5}
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                color: "#3C444B" }}>
                         <ImageUploadButton onUpload={uploadImage} />
                     </Grid>
                     <Grid item xs={5}>
