@@ -20,7 +20,7 @@ type SignupData = {
 
 function SignupComponent() {
   const [activeStep, setActiveStep] = useState(0);
-  const [image, setImage] = useState('');
+  const [image, setImage] = useState<File>();
   const [imageURL, setImageURL] = useState('');
   const { control, handleSubmit, reset, formState: { errors, isValid } } = useForm<SignupData>({
     mode: 'all',
@@ -48,13 +48,7 @@ function SignupComponent() {
     if (e.target.files === null) return;
     const file = e.target.files[0];
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result as string;
-      const base64 = result.replace(/^data:image\/(png|jpg|jpeg);base64,/, '');
-      setImage(base64);
-    }
-    reader.readAsDataURL(file);
+    setImage(file);
     setImageURL(URL.createObjectURL(file));
   };
 
