@@ -53,7 +53,9 @@ export class AuthService {
 
     const mb = (await this.calcImageSize(dto.image)) / 1024;
     if (mb > 10) {
-      throw new NotAcceptableException('This image is too large');
+      throw new NotAcceptableException(
+        'This image is too large. max size is 10MB',
+      );
     }
 
     const salt = randomBytes(8).toString('hex');
