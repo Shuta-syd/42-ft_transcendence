@@ -28,6 +28,6 @@ export class SignUpUserDto {
   @IsNotEmpty()
   @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{9,}$/)
   password?: string;
-  image?: File | string;
+  image?: string;
   isFtLogin?: boolean;
 }

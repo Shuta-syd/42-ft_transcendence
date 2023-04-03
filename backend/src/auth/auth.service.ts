@@ -51,12 +51,9 @@ export class AuthService {
       throw new NotAcceptableException('This userName is already in use');
     }
 
-    let image: string;
-    if (typeof dto.image !== 'string') {
-      image = await this.convertFileToBase64(dto.image);
-      console.log(this.calcImageSize(image));
-    } else {
-      image = dto.image;
+    const mb = (await this.calcImageSize(dto.image)) / 1024;
+    if (mb > 10) {
+      throw new NotAcceptableException('This image is too large');
     }
 
     const salt = randomBytes(8).toString('hex');
@@ -69,7 +66,7 @@ export class AuthService {
         email: dto.email,
         password: dto.password ? hashedPassword : '',
         name: dto.name,
-        image: image,
+        image: dto.image,
         isFtLogin: dto.isFtLogin ? dto.isFtLogin : false,
       },
     });
@@ -248,20 +245,8 @@ export class AuthService {
     return base64;
   }
 
-  async convertFileToBase64(file: File): Promise<string> {
-    let base64: string;
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result as string;
-      base64 = result.replace(/^data:image\/(png|jpg|jpeg);base64,/, '');
-    };
-    reader.readAsDataURL(file);
-    return base64;
-  }
-
   async calcImageSize(base64: string): Promise<number> {
     const decoded = Buffer.from(base64, 'base64');
-    return decoded.length;
+    return decoded.length / 1024;
   }
 }
