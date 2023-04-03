@@ -1,6 +1,7 @@
 import { Avatar, Box, Grid, Typography } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
+import { Link } from "react-router-dom";
 import React, {useEffect, useState } from "react";
 import InvitationButton from "../group/InvitationButton";
 import AdminButton from "./AdminButton";
@@ -76,11 +77,15 @@ export default function UserParticipantList(props: UserParticipantListProps) {
             <Box>
               <Grid container sx={{ display: 'flex', alignItems: 'center' }}>
                 <Grid item mr={2}>
+                  <Link to={'/user'}>
                   <Avatar ><PersonIcon /></Avatar>
+                  </Link>
                 </Grid>
                 <Grid item>
                   <Typography variant="subtitle1">
-                    {member.name}
+                    <Link to={'/user'} className={'UserParticipantLink'}>
+                      {member.name}
+                    </Link>
                   </Typography>
                   {member.userId === userId ?
                     (
