@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {Grid} from "@mui/material"
 import {User} from "../../types/PrismaType";
+import ShowAvatar from "../../components/profile/ShowAvatar";
 
 interface FriendProfileProps {
     friend: User | undefined;
@@ -42,8 +43,8 @@ const FriendProfile = (props: FriendProfileProps) => {
                 >
                     [{friendName} Profile]
                 </Grid>
-                <Grid item md={12}>
-                    <h2>42</h2>
+                <Grid item xs={5}>
+                    <ShowAvatar user={props.friend} profileImage={props.friend?.image} />
                 </Grid>
             </Grid>
         </div>
