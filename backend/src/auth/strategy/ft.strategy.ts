@@ -24,7 +24,7 @@ export class FtStrategy extends PassportStrategy(Strategy, '42') {
     refreshToken: string,
     profile: Profile,
   ): Promise<User> {
-    const image = await this.authService.convertToBase64(
+    const image = await this.authService.convertURLToBase64(
       profile._json.image.link,
     );
     const user = {

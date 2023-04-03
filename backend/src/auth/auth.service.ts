@@ -51,6 +51,14 @@ export class AuthService {
       throw new NotAcceptableException('This userName is already in use');
     }
 
+    let image: string;
+    if (typeof dto.image !== 'string') {
+      image = await this.convertFileToBase64(dto.image);
+      console.log(this.calcImageSize(image));
+    } else {
+      image = dto.image;
+    }
+
     const salt = randomBytes(8).toString('hex');
     if (dto.isFtLogin !== true) {
       const hash = (await asyncScrypt(dto.password, salt, 32)) as Buffer;
@@ -61,7 +69,7 @@ export class AuthService {
         email: dto.email,
         password: dto.password ? hashedPassword : '',
         name: dto.name,
-        image: dto.image,
+        image: image,
         isFtLogin: dto.isFtLogin ? dto.isFtLogin : false,
       },
     });
@@ -232,11 +240,28 @@ export class AuthService {
     }
   }
 
-  async convertToBase64(imageUrl: string): Promise<string> {
+  async convertURLToBase64(imageUrl: string): Promise<string> {
     const response$ = this.httpService
       .get(imageUrl, { responseType: 'arraybuffer' })
       .pipe(map((res) => Buffer.from(res.data, 'binary').toString('base64')));
     const base64 = await lastValueFrom(response$);
     return base64;
+  }
+
+  async convertFileToBase64(file: File): Promise<string> {
+    let base64: string;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      base64 = result.replace(/^data:image\/(png|jpg|jpeg);base64,/, '');
+    };
+    reader.readAsDataURL(file);
+    return base64;
+  }
+
+  async calcImageSize(base64: string): Promise<number> {
+    const decoded = Buffer.from(base64, 'base64');
+    return decoded.length;
   }
 }
