@@ -39,8 +39,8 @@ function SignupComponent() {
       reset();
       setActiveStep(2);
     } catch (error: any) {
-      setActiveStep(0);
       alert(error.response.data.message);
+      setActiveStep(0);
     }
   }
 

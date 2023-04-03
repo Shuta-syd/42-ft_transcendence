@@ -41,7 +41,7 @@ export class AuthService {
       throw new NotAcceptableException('This email is already in use');
     }
     const userNameExit = await this.prisma.user.findUnique({
-      where: { email: dto.email },
+      where: { name: dto.name },
     });
 
     if (userNameExit) {
