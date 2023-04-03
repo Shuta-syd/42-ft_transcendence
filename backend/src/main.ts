@@ -17,7 +17,6 @@ async function bootstrap() {
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('swagger', app, swaggerDocument);
 
-  app.useGlobalPipes(new ValidationPipe());
   app.enableCors({
     credentials: true,
     origin: ['http://localhost:3000'], //許可したいfrontsideのURL
