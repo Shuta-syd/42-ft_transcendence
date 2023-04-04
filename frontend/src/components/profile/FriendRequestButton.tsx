@@ -1,19 +1,25 @@
-import React from "react";
-import {Button} from "@mui/material";
+import React, { useState } from "react";
+import { Button } from "@mui/material";
 
 const FriendRequestButton = () => {
-    console.log("Friend Request Button");
+    const [isFollowing, setIsFollowing] = useState(false);
+
+    const handleClick = () => {
+        console.log("Friend Request Button");
+        setIsFollowing(!isFollowing);
+    };
+
     return (
         <>
             <Button
                 variant="contained"
                 size={"large"}
+                onClick={handleClick}
             >
-                Follow
+                {isFollowing ? "Unfollow" : "Follow"}
             </Button>
         </>
     );
-}
-
+};
 
 export default FriendRequestButton;
