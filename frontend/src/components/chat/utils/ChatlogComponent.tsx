@@ -87,7 +87,6 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
           <Grid
             container
             alignItems={'end'}
-            justifyContent={'flex-end'}
           >
               <Grid
                 item
@@ -97,7 +96,7 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
                   sx={{ display: 'flex', justifyContent: 'end'}}
                   mr={2}
                 >
-                  <Box>
+                  <Box textAlign={'left'}>
                     <Typography variant="caption" >You {chat.time}</Typography>
                     <Box
                       padding={'1rem'}
@@ -115,7 +114,7 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
                   </Box>
                 </Box>
             </Grid>
-            <Grid item xs={0.5}>
+            <Grid item>
               <Avatar><PersonIcon/></Avatar>
             </Grid>
           </Grid>
@@ -130,9 +129,8 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
           <Grid
             container
             alignItems={'end'}
-            justifyContent={'flex-end'}
           >
-            <Grid item xs={0.5}>
+            <Grid item>
               <Avatar><PersonIcon/></Avatar>
             </Grid>
             <Grid item xs>
