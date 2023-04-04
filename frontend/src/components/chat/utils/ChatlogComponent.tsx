@@ -74,25 +74,27 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
                 item
                 xs
               >
-                <Typography variant="caption" >You {chat.time}</Typography>
                 <Box
                   sx={{ display: 'flex', justifyContent: 'end'}}
                   mr={2}
                 >
-                  <Box
-                    mb={1}
-                    padding={'1rem'}
-                    justifyContent='center'
-                    sx={{
-                      backgroundColor: '#d0d3e4', color: '#3C444B', display: 'flex', alignItems: 'center',
-                      borderRadius: '20px 20px 0px 20px',
-                    }}
-                  >
+                  <Box>
+                    <Typography variant="caption" >You {chat.time}</Typography>
                     <Box
-                      maxWidth={'95%'}
-                      textAlign={'left'}
+                      mb={1}
+                      padding={'1rem'}
+                      justifyContent='center'
+                      sx={{
+                        backgroundColor: '#d0d3e4', color: '#3C444B', display: 'flex', alignItems: 'center',
+                        borderRadius: '20px 20px 0px 20px',
+                      }}
                     >
-                      {chat.text}
+                      <Box
+                        maxWidth={'95%'}
+                        textAlign={'center'}
+                      >
+                        {chat.text}
+                      </Box>
                     </Box>
                   </Box>
                 </Box>
