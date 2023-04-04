@@ -44,8 +44,18 @@ export class AuthController {
     description: 'The created the user',
     type: PrismaUser,
   })
-  async signupUser(@Body() userData: SignUpUserDto): Promise<User> {
-    return this.authService.signupUser(userData);
+  async signupUser(
+    @Body() userData: SignUpUserDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const jwt = await this.authService.signupUser(userData);
+    res.cookie('access_token', jwt.accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
+    return;
   }
 
   @Post('login')
@@ -123,20 +133,8 @@ export class AuthController {
     status: HttpStatus.CREATED,
     description: 'QR',
   })
-  async createOtpAuthUrl(@Req() req: Request, @Res() res: Response) {
-    const { otpAuthUrl } = await this.authService.createOtpAuthUrl(req.user);
-    const jwt = await this.authService.generateJwt(req.user.id, req.user.name);
-
-    // 二要素はオンにしない、あくまでQRを作成するだけ
-    res.cookie('access_token', jwt.accessToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      path: '/',
-    });
-
-    // backendでqrcodeを生成しているが、Urlだけ返してフロント(next-qrcode)でQRを生成したい
-    return this.authService.pipeQrCodeStream(res, otpAuthUrl);
+  async createOtpAuthUrl(@Req() req: Request): Promise<string> {
+    return await this.authService.createOtpAuthUrl(req.user);
   }
 
   @Patch('otp/on')
@@ -153,10 +151,9 @@ export class AuthController {
   })
   async turnOnOtp(
     @Req() req: Request,
-    @Body() { otpcode }: OtpCodeDao,
     @Res({ passthrough: true }) res: Response,
   ): Promise<Msg> {
-    const jwt = await this.authService.turnOnOtp(req.user, otpcode);
+    const jwt = await this.authService.turnOnOtp(req.user);
 
     res.cookie('access_token', jwt.accessToken, {
       httpOnly: true,
@@ -207,22 +204,9 @@ export class AuthController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'ワンタイムパスワード成功',
-    type: Msg,
   })
-  async validateOtp(
-    @Req() req: Request,
-    @Body() { otpcode }: OtpCodeDao,
-    @Res({ passthrough: true }) res: Response,
-  ): Promise<Msg> {
-    const jwt = await this.authService.validateOtp(req.user, otpcode);
-
-    res.cookie('access_token', jwt.accessToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      path: '/',
-    });
-    return { message: 'One Time Password SUCCESS' };
+  async validateOtp(@Req() req: Request, @Body() { otpcode }: OtpCodeDao) {
+    return this.authService.validateOtp(req.user, otpcode);
   }
 
   @Get('otp/test')

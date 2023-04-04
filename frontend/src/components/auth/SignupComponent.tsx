@@ -9,6 +9,7 @@ import SignupStepper from "./SignupStepper";
 import UploadImageComponent from "./UploadImageComponent";
 import SignupValidationSchema from "../../types/auth/SignupValidationSchema";
 import UserProfileFormComponent from "./UserProfileFormComponent";
+import TwoFactorSettingComponent from "./TwoFactorSettingComponent";
 
 type SignupData = {
   username: string;
@@ -18,7 +19,6 @@ type SignupData = {
 
 
 function SignupComponent() {
-  const router = useNavigate();
   const [activeStep, setActiveStep] = useState(0);
   const [image, setImage] = useState('');
   const [imageURL, setImageURL] = useState('');
@@ -30,17 +30,17 @@ function SignupComponent() {
 
   const onSubmit: SubmitHandler<SignupData> = async (data) => {
     try {
-        await axios.post('http://localhost:8080/auth/signup', {
+      await axios.post('http://localhost:8080/auth/signup', {
           name: data.username,
           email: data.email,
           password: data.password,
           image,
-        });
-        reset();
-        router('/login');
-    } catch (error) {
+        })
+      reset();
+      setActiveStep(2);
+    } catch (error: any) {
       setActiveStep(0);
-      alert('ユーザ作成に失敗しました。もう一度ユーザ作成をしてください');
+      alert(error.response.data.message);
     }
   }
 
@@ -82,12 +82,18 @@ function SignupComponent() {
           >
             <Typography variant="h5">Signup</Typography>
             <SignupStepper activeStep={activeStep} />
-            {activeStep === 0 ? (
-              <UserProfileFormComponent control={control} setActiveStep={setActiveStep} errors={errors} isValid={isValid} />
-            ) : (
-                <UploadImageComponent image={imageURL} onFileChange={onFileChange} setActiveStep={setActiveStep}  />
-            )
-            }
+            {(() => {
+              switch (activeStep) {
+                case 0:
+                  return <UserProfileFormComponent control={control} setActiveStep={setActiveStep} errors={errors} isValid={isValid} />
+                case 1:
+                  return <UploadImageComponent image={imageURL} onFileChange={onFileChange} setActiveStep={setActiveStep} />
+                case 2:
+                  return <TwoFactorSettingComponent />
+                default:
+                  return null;
+              }
+            })()}
           </Stack>
         </Box>
         <Link to='/login'>login user</Link>

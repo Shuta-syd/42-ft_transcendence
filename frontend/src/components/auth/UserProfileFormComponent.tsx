@@ -11,6 +11,7 @@ type UserProfileFormComponentProps = {
 }
 
 export default function UserProfileFormComponent(props: UserProfileFormComponentProps) {
+  // eslint-disable-next-line no-unused-vars
   const { control, setActiveStep, errors, isValid } = props;
 
   const onNextButton = () => {

@@ -31,7 +31,7 @@ export class AuthService {
    * @param dto 作成するUserデータ
    * @returns 作成したUserデータ
    */
-  async signupUser(dto: SignUpUserDto): Promise<User> {
+  async signupUser(dto: SignUpUserDto): Promise<Jwt> {
     let hashedPassword: string;
     const userExists = await this.prisma.user.findUnique({
       where: { email: dto.email },
@@ -56,7 +56,7 @@ export class AuthService {
       },
     });
 
-    return newUser;
+    return this.generateJwt(newUser.id, newUser.name);
   }
 
   /**
@@ -119,7 +119,12 @@ export class AuthService {
       return user;
     }
 
-    return this.signupUser({ ...userDto, isFtLogin: true });
+    await this.signupUser({ ...userDto, isFtLogin: true });
+    return this.prisma.user.findUnique({
+      where: {
+        email: userDto.email,
+      },
+    });
   }
 
   /**
@@ -131,7 +136,7 @@ export class AuthService {
    * @param user 二要素認証するユーザー
    * @returns シークレットとURL
    */
-  async createOtpAuthUrl(user: User) {
+  async createOtpAuthUrl(user: User): Promise<string> {
     const secret = authenticator.generateSecret();
 
     const otpAuthUrl = authenticator.keyuri(
@@ -150,9 +155,7 @@ export class AuthService {
       },
     });
 
-    return {
-      otpAuthUrl,
-    };
+    return otpAuthUrl;
   }
 
   /**
@@ -165,20 +168,12 @@ export class AuthService {
     return toFileStream(stream, otpAuthUrl);
   }
 
-  async turnOnOtp(user: User, otpCode: string) {
+  async turnOnOtp(user: User) {
     // userからsecretを取得するのではなく、データベースから取得したい
 
     // 二要素が無効
     if (!user.twoFactorSecret || user.twoFactorSecret === '') {
       throw new BadRequestException('OneTimePasswordAuth is inactivate.');
-    }
-
-    const isCodeValid = authenticator.verify({
-      token: otpCode,
-      secret: user.twoFactorSecret,
-    });
-    if (!isCodeValid) {
-      throw new UnauthorizedException('Wrong authentication code');
     }
 
     await this.prisma.user.update({
@@ -225,7 +220,5 @@ export class AuthService {
     if (!isCodeValid) {
       throw new UnauthorizedException('Wrong authentication code');
     }
-
-    return this.generateJwt(user.id, user.name, true);
   }
 }
