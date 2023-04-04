@@ -3,8 +3,10 @@ import axios from "axios";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
+import { yupResolver } from '@hookform/resolvers/yup';
 import FormController from "../utils/FormController";
 import FtLoginButtonComponent from "./FtLoginButtonComponent";
+import LoginValidationSchema from "../../types/auth/LoginValidationSchema";
 
 type LoginData = {
   email: string;
@@ -13,7 +15,11 @@ type LoginData = {
 
 function LoginComponent() {
   const router = useNavigate();
-  const { control, handleSubmit, reset } = useForm<LoginData>({ defaultValues: { email: '', password: '' } });
+  const { control, handleSubmit, reset, formState: { errors } } = useForm<LoginData>({
+    mode: 'onSubmit',
+    defaultValues: { email: '', password: '' },
+    resolver: yupResolver(LoginValidationSchema),
+  });
 
   const onSubmit: SubmitHandler<LoginData> = async (data) => {
     try {
@@ -22,11 +28,11 @@ function LoginComponent() {
         password: data.password,
       });
       reset();
+      router('/user');
     } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
         alert(message);
-        router('/user');
       }else
       alert('ログインに失敗しました。もう一度ログインしてください');
     }
@@ -63,14 +69,29 @@ function LoginComponent() {
                 name='email'
                 control={control}
                 RenderComponent={(field: any) => (
-                  <TextField fullWidth {...field} label='Enter Your Email Address' />
+                  <TextField
+                    fullWidth
+                    {...field}
+                    label='email'
+                    placeholder='Enter Your Email Address'
+                    helperText={errors.email?.message}
+                    error={Boolean(errors.email)}
+                  />
                 )}
               />
               <FormController
                 name='password'
                 control={control}
                 RenderComponent={(field: any) => (
-                  <TextField fullWidth {...field} label='Enter Password' type={'password'}/>
+                  <TextField
+                    fullWidth
+                    {...field}
+                    label='password'
+                    placeholder='Enter Password'
+                    type={'password'}
+                    helperText={errors.password?.message}
+                    error={Boolean(errors.password)}
+                  />
                   )}
                   />
               <Button type="submit" variant="contained">Login</Button>

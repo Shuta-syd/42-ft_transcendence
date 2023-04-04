@@ -4,7 +4,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import SignupStepper from "./SignupStepper";
 import UploadImageComponent from "./UploadImageComponent";
 import SignupValidationSchema from "../../types/auth/SignupValidationSchema";
@@ -39,8 +39,8 @@ function SignupComponent() {
       reset();
       setActiveStep(2);
     } catch (error: any) {
-      setActiveStep(0);
       alert(error.response.data.message);
+      setActiveStep(0);
     }
   }
 

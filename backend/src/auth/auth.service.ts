@@ -33,12 +33,19 @@ export class AuthService {
    */
   async signupUser(dto: SignUpUserDto): Promise<Jwt> {
     let hashedPassword: string;
-    const userExists = await this.prisma.user.findUnique({
+    const emailExit = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
 
-    if (userExists) {
+    if (emailExit) {
       throw new NotAcceptableException('This email is already in use');
+    }
+    const userNameExit = await this.prisma.user.findUnique({
+      where: { name: dto.name },
+    });
+
+    if (userNameExit) {
+      throw new NotAcceptableException('This userName is already in use');
     }
 
     const salt = randomBytes(8).toString('hex');
