@@ -100,17 +100,14 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
                   <Box>
                     <Typography variant="caption" >You {chat.time}</Typography>
                     <Box
-                      mb={1}
                       padding={'1rem'}
-                      justifyContent='center'
                       sx={{
-                        backgroundColor: '#d0d3e4', color: '#3C444B', display: 'flex', alignItems: 'center',
-                        borderRadius: '20px 20px 0px 20px',
+                        backgroundColor: '#d0d3e4', color: '#3C444B', display: 'flex',
+                        alignItems: 'center', justifyContent: 'center', borderRadius: '20px 20px 0px 20px',
                       }}
                     >
                       <Box
-                        maxWidth={'95%'}
-                        textAlign={'center'}
+                        textAlign={'left'}
                       >
                         {chat.text}
                       </Box>
@@ -133,26 +130,27 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
           <Grid
             container
             alignItems={'end'}
+            justifyContent={'flex-end'}
           >
-                <Grid item mr={2} xs={0.5}>
+            <Grid item xs={0.5}>
               <Avatar><PersonIcon/></Avatar>
             </Grid>
             <Grid item xs>
               <Box
-                sx={{ display: 'flex'}}
+                sx={{ display: 'flex', justifyContent: 'start'}}
+                ml={2}
                >
-                <Box>
+                <Box textAlign={'right'}>
                   <Typography variant="caption" >{chat.senderName}  {chat.time}</Typography>
                   <Box
-                    mb={1}
                     padding={'1rem'}
                     sx={{
-                      backgroundColor: '#ffffff', color: '#3C444B', display: 'flex', alignItems: 'center',
-                      borderRadius: '20px 20px 20px 0px',
+                      backgroundColor: '#ffffff', color: '#3C444B', display: 'flex',
+                      alignItems: 'center', justifyContent: 'center', borderRadius: '20px 20px 20px 0px',
                     }}
                   >
                     <Box
-                      maxWidth={'95%'}
+                      textAlign={'left'}
                     >
                       {chat.text}
                     </Box>
