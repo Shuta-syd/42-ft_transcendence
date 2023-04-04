@@ -54,17 +54,17 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
   return (
     <Box
       width={'95%'}
+      height={'100%'}
       sx={{ color: '#3C444B', overflow: 'auto'}}
     >
       {chatLog.map((chat, idx) => (
         userId === chat.senderUserId ? (
           <Box
-          key={idx}
-          mb={2}
-          width={'100%'}
-          height={'5rem'}
-          sx={{ display: 'flex', alignItems: 'center'}}
-        >
+            key={idx}
+            mb={2}
+            width={'100%'}
+            sx={{ display: 'flex', alignItems: 'center'}}
+          >
           <Grid
             container
             alignItems={'end'}
@@ -72,16 +72,16 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
           >
               <Grid
                 item
+                xs
               >
                 <Typography variant="caption" >You {chat.time}</Typography>
                 <Box
-                  sx={{ display: 'flex', justifyContent: 'end', wordBreak: 'break-word'}}
+                  sx={{ display: 'flex', justifyContent: 'end'}}
                   mr={2}
                 >
                   <Box
-                    maxWidth={'30rem'}
-                    width={ chat.text.length * 0.7 > 8 ? `calc(0.6rem * ${chat.text.length})` : `calc(1.1rem * ${chat.text.length})`}
-                    minHeight={'3rem'}
+                    mb={1}
+                    padding={'1rem'}
                     justifyContent='center'
                     sx={{
                       backgroundColor: '#d0d3e4', color: '#3C444B', display: 'flex', alignItems: 'center',
@@ -89,7 +89,7 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
                     }}
                   >
                     <Box
-                      width={'80%'}
+                      maxWidth={'95%'}
                       textAlign={'center'}
                     >
                       {chat.text}
@@ -97,7 +97,7 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
                   </Box>
                 </Box>
             </Grid>
-            <Grid item mr={2}>
+            <Grid item xs={0.5}>
               <Avatar><PersonIcon/></Avatar>
             </Grid>
           </Grid>
@@ -106,8 +106,8 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
           <Box
           key={idx}
           mb={2}
-          width={'100%'}
-          height={'5rem'}
+          width={'95%'}
+          height={'100%'}
           sx={{ display: 'flex', alignItems: 'center' }}
         >
           <Grid
@@ -120,20 +120,19 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
             <Grid item>
               <Typography variant="caption" >{chat.senderName}  {chat.time}</Typography>
               <Box
-                  sx={{ display: 'flex', wordBreak: 'break-word'}}
+                  sx={{ display: 'flex'}}
                   mr={2}
                 >
                 <Box
-                  width={ chat.text.length * 0.7 > 8 ? `calc(0.6rem * ${chat.text.length})` : `calc(1.1rem * ${chat.text.length})`}
-                  minHeight={'3rem'}
-                  justifyContent='center'
+                  mb={1}
+                  padding={'1rem'}
                   sx={{
                     backgroundColor: '#ffffff', color: '#3C444B', display: 'flex', alignItems: 'center',
                     borderRadius: '20px 20px 20px 0px',
                   }}
                 >
                   <Box
-                    width={'80%'}
+                    maxWidth={'95%'}
                     textAlign={'center'}
                   >
                     {chat.text}
