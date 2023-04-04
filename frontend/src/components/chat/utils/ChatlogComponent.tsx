@@ -1,4 +1,4 @@
-import { Avatar, Box, Grid, Typography } from "@mui/material";
+import { Avatar, Box, CircularProgress, Grid, Typography } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
 import React, { createRef, useEffect, useLayoutEffect, useState } from "react";
@@ -24,6 +24,7 @@ type ChatlogComponentProps = {
 export default function ChatlogComponent(props: ChatlogComponentProps) {
   const { roomId, socket, userId } = props;
   const [chatLog, setChatLog] = useState<ChatLog>([]);
+  const [Loading, setLoading] = useState(true);
   const latestChatRef = createRef<HTMLDivElement>();
 
   useEffect(() => {
@@ -36,7 +37,7 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
     latestChatRef.current?.scrollIntoView();
   }, [chatLog, latestChatRef])
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const fetchChat = async () => {
       setChatLog([]);
       const { data } = await axios.get<Message[]>(`http://localhost:8080/chat/room/log/${roomId}`);
@@ -48,8 +49,26 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
       }
     }
 
-    fetchChat();
+    try {
+      fetchChat();
+    } catch (error) {
+      alert('チャットを正しくロードできませんでした。ブラウザをリフレッシュしてください');
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 300);
+    }
   }, [roomId])
+
+  if (Loading) {
+    return (
+      <>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <CircularProgress />
+        </Box>
+      </>
+    )
+  }
 
   return (
     <Box
@@ -108,35 +127,35 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
           <Box
           key={idx}
           mb={2}
-          width={'95%'}
-          height={'100%'}
+          width={'100%'}
           sx={{ display: 'flex', alignItems: 'center' }}
         >
           <Grid
             container
             alignItems={'end'}
           >
-            <Grid item mr={2}>
+                <Grid item mr={2} xs={0.5}>
               <Avatar><PersonIcon/></Avatar>
             </Grid>
-            <Grid item>
-              <Typography variant="caption" >{chat.senderName}  {chat.time}</Typography>
+            <Grid item xs>
               <Box
-                  sx={{ display: 'flex'}}
-                  mr={2}
-                >
-                <Box
-                  mb={1}
-                  padding={'1rem'}
-                  sx={{
-                    backgroundColor: '#ffffff', color: '#3C444B', display: 'flex', alignItems: 'center',
-                    borderRadius: '20px 20px 20px 0px',
-                  }}
-                >
+                sx={{ display: 'flex'}}
+               >
+                <Box>
+                  <Typography variant="caption" >{chat.senderName}  {chat.time}</Typography>
                   <Box
-                    maxWidth={'95%'}
+                    mb={1}
+                    padding={'1rem'}
+                    sx={{
+                      backgroundColor: '#ffffff', color: '#3C444B', display: 'flex', alignItems: 'center',
+                      borderRadius: '20px 20px 20px 0px',
+                    }}
                   >
-                    {chat.text}
+                    <Box
+                      maxWidth={'95%'}
+                    >
+                      {chat.text}
+                    </Box>
                   </Box>
                 </Box>
               </Box>
