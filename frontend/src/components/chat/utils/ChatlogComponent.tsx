@@ -90,7 +90,7 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
                   >
                     <Box
                       maxWidth={'95%'}
-                      textAlign={'center'}
+                      textAlign={'left'}
                     >
                       {chat.text}
                     </Box>
@@ -133,7 +133,6 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
                 >
                   <Box
                     maxWidth={'95%'}
-                    textAlign={'center'}
                   >
                     {chat.text}
                   </Box>
