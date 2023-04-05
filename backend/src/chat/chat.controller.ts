@@ -133,7 +133,7 @@ export class ChatController {
     @Body() dto: AddMemberDto,
   ): Promise<ChatRoom> {
     const me = await this.chatService.addMember(req.user.id, dto);
-    return this.getChatRoomById(me.roomId);
+    return this.chatService.getChatRoomById(me.roomId);
   }
 
   @ApiOperation({

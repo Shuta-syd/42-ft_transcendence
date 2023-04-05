@@ -49,7 +49,7 @@ export default function SearchChannelDialog(props: SearchChannelDialogProps) {
   const handleOnClick = async (roomId: string, password?: string) => {
     try {
       const { data } = await axios.post(`http://localhost:8080/chat/member/add/me`, { roomId, status: 'NORMAL', password });
-      setChannels((prev: any) => [...prev, { name: data.name, id: data.id }]);
+      setChannels((prev: any) => [...prev, { name: data.name, id: data.id, members: data.members }]);
       setSearchResult(searchResult.filter((room: any) => room.id !== roomId));
     } catch (error) {
       alert('チャンネルに参加失敗しました');
