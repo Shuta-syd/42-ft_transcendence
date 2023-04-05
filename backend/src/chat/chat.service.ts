@@ -7,7 +7,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ChatRoom, Member, Message, User } from '@prisma/client';
-import { Msg } from 'src/auth/dto/auth.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import {
@@ -36,7 +35,7 @@ export class ChatService {
   /**
    * @description ChatRoomを作成してuserIdのユーザをMemberとして追加する
    */
-  async crateChatRoom(userId: string, dto: CreateChatRoom) {
+  async crateChatRoom(userId: string, dto: CreateChatRoom): Promise<ChatRoom> {
     let hashedPassword: string = dto.password;
 
     if (dto.type === 'PROTECT') {
@@ -44,7 +43,7 @@ export class ChatService {
       const hash = (await asyncScrypt(dto.password, salt, 32)) as Buffer;
       hashedPassword = hash.toString() + '.' + salt;
     }
-    this.prisma.chatRoom
+    const room = this.prisma.chatRoom
       .create({
         data: {
           type: dto.type,
@@ -60,6 +59,7 @@ export class ChatService {
         });
         return room;
       });
+    return room;
   }
 
   /**
@@ -411,12 +411,18 @@ export class ChatService {
     if (executor.role !== 'OWNER' && executor.role !== 'ADMIN')
       throw new ForbiddenException('You could not mute');
 
-    const member = await this.prisma.member.update({
+    const member = await this.prisma.member.findUnique({
+      where: {
+        id: dto.memberId,
+      },
+    });
+    if (member.role === 'OWNER')
+      throw new ForbiddenException('OWNER cannot be kicked');
+
+    await this.prisma.member.update({
       where: { id: memberId },
       data: { isMute: isMute === true ? true : false },
     });
-
-    if (!member) throw new Error('mutation exception error');
   }
 
   /**
@@ -429,9 +435,59 @@ export class ChatService {
     if (executor.role !== 'OWNER' && executor.role !== 'ADMIN')
       throw new ForbiddenException('You could not mute');
 
+    const member = await this.prisma.member.findUnique({
+      where: {
+        id: dto.memberId,
+      },
+    });
+    if (member.role === 'OWNER')
+      throw new ForbiddenException('OWNER cannot be kicked');
+
     await this.prisma.member.delete({
       where: { id: memberId },
     });
+  }
+
+  /**
+   * @description OWNERが退出した時にOWNER権限を委譲する関数
+   */
+  async giveOwnerShip() {
+    const secondAdmin = await this.prisma.member.findFirst({
+      where: {
+        role: 'ADMIN',
+      },
+      orderBy: {
+        createAt: 'asc',
+      },
+    });
+
+    if (secondAdmin == undefined || secondAdmin == null) {
+      const members = await this.prisma.member.findMany({
+        orderBy: {
+          createAt: 'asc',
+        },
+        take: 2,
+      });
+      if (members[1] !== null && members[1] !== undefined) {
+        await this.prisma.member.update({
+          where: {
+            id: members[1].id,
+          },
+          data: {
+            role: 'OWNER',
+          },
+        });
+      }
+    } else {
+      await this.prisma.member.update({
+        where: {
+          id: secondAdmin.id,
+        },
+        data: {
+          role: 'OWNER',
+        },
+      });
+    }
   }
 
   /**
@@ -441,6 +497,10 @@ export class ChatService {
     const { roomId } = dto;
     const member = await this.getMyMember(userId, roomId);
     if (!member) throw new NotFoundException('member not found');
+
+    if (member.role === 'OWNER') {
+      await this.giveOwnerShip();
+    }
 
     await this.prisma.member.delete({
       where: { id: member.id },
