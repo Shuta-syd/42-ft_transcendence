@@ -94,6 +94,8 @@ export class ChatService {
       });
     });
 
+    console.log(alreadyCreated);
+
     // すでにDMルームがあった場合はそのルームを返す
     if (alreadyCreated !== undefined)
       return { room: alreadyCreated, isNew: false };
@@ -355,16 +357,15 @@ export class ChatService {
     const room = await this.getChatRoomById(dto.roomId);
     if (!room) throw new NotFoundException('chat room is not found');
 
-    const [storedHash, salt] = room.password.split('.');
+    if (room.type === 'PROTECT') {
+      const [storedHash, salt] = room.password.split('.');
 
-    const hashedPassword = (await asyncScrypt(
-      dto.password,
-      salt,
-      32,
-    )) as Buffer;
-
-    if (room.type === 'PROTECT' && storedHash !== hashedPassword.toString())
-      throw new UnauthorizedException('Password is wrong');
+      const hashedPassword = (
+        (await asyncScrypt(dto.password, salt, 32)) as Buffer
+      ).toString();
+      if (storedHash !== hashedPassword.toString())
+        throw new UnauthorizedException('Password is wrong');
+    }
 
     const members = await this.prisma.chatRoom
       .findUnique({
