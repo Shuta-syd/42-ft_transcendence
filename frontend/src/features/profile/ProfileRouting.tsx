@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { User } from '../../types/PrismaType';
+import Profile from './Profile';
 
 const ProfileRouting = () => {
     const { id } = useParams();
@@ -16,12 +17,14 @@ const ProfileRouting = () => {
     const renderProfileStatus = () => {
         if (!person)
             return null;
-        return person.id === id ? 'ME' : 'OTHER';
+        if (person?.name === id) {
+            return <Profile />
+        }
+        return <div>ME</div>;
     };
 
     return (
         <div>
-            <h2>Content</h2>
             <p>{renderProfileStatus()}</p>
         </div>
     );
