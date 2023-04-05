@@ -16,6 +16,8 @@ import { AuthDto, SignUpUserDto } from './dto/auth.dto';
 import { Jwt } from './type/auth.type';
 import { randomBytes, scrypt } from 'crypto';
 import { promisify } from 'util';
+import { HttpService } from '@nestjs/axios';
+import { lastValueFrom, map } from 'rxjs';
 
 const asyncScrypt = promisify(scrypt);
 
@@ -25,6 +27,7 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
     private readonly config: ConfigService,
+    private readonly httpService: HttpService,
   ) {}
 
   /**
@@ -46,6 +49,13 @@ export class AuthService {
 
     if (userNameExit) {
       throw new NotAcceptableException('This userName is already in use');
+    }
+
+    const mb = (await this.calcImageSize(dto.image)) / 1024;
+    if (mb > 10) {
+      throw new NotAcceptableException(
+        'This image is too large. max size is 10MB',
+      );
     }
 
     const salt = randomBytes(8).toString('hex');
@@ -227,5 +237,18 @@ export class AuthService {
     if (!isCodeValid) {
       throw new UnauthorizedException('Wrong authentication code');
     }
+  }
+
+  async convertURLToBase64(imageUrl: string): Promise<string> {
+    const response$ = this.httpService
+      .get(imageUrl, { responseType: 'arraybuffer' })
+      .pipe(map((res) => Buffer.from(res.data, 'binary').toString('base64')));
+    const base64 = await lastValueFrom(response$);
+    return base64;
+  }
+
+  async calcImageSize(base64: string): Promise<number> {
+    const decoded = Buffer.from(base64, 'base64');
+    return decoded.length / 1024;
   }
 }
