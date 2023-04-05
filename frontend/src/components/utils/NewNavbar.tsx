@@ -1,12 +1,12 @@
-import { Box, Grid, IconButton, Stack } from "@mui/material";
-import Looks4Icon from '@mui/icons-material/Looks4';
+import { Avatar, Box, Grid, IconButton, Stack } from "@mui/material";
 import VideogameAssetOutlinedIcon from '@mui/icons-material/VideogameAssetOutlined';
 import ForumOutlinedIcon from '@mui/icons-material/ForumOutlined';
 import ChatOutlinedIcon from '@mui/icons-material/ChatOutlined';
 import PersonIcon from '@mui/icons-material/Person';
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import '../../styles/Navbar.css'
+import LogoImg from '../../assets/logo.png';
+import '../../styles/Navbar.css';
 
 export default function NewNavBar() {
   const path = useLocation().pathname;
@@ -28,10 +28,7 @@ export default function NewNavBar() {
         >
           <Link to={'/login'}>
             <IconButton>
-              <Looks4Icon
-                fontSize="large"
-                sx={{color: '#B2B9C5'}}
-                />
+              <Avatar src={LogoImg} />
             </IconButton>
           </Link>
         </Box>
