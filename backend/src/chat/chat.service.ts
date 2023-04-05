@@ -18,6 +18,10 @@ import {
   MuteMemberDto,
   SendChatDto,
 } from './dto/chat.dto';
+import { randomBytes, scrypt } from 'crypto';
+import { promisify } from 'util';
+
+const asyncScrypt = promisify(scrypt);
 
 @Injectable()
 export class ChatService {
@@ -25,7 +29,6 @@ export class ChatService {
     private prisma: PrismaService,
     private userService: UserService,
   ) {}
-
   /**
    * === Chat Room ===
    */
@@ -33,12 +36,19 @@ export class ChatService {
   /**
    * @description ChatRoomを作成してuserIdのユーザをMemberとして追加する
    */
-  async crateChatRoom(userId: string, dto: CreateChatRoom): Promise<ChatRoom> {
-    return this.prisma.chatRoom
+  async crateChatRoom(userId: string, dto: CreateChatRoom) {
+    let hashedPassword: string = dto.password;
+
+    if (dto.type === 'PROTECT') {
+      const salt = randomBytes(8).toString('hex');
+      const hash = (await asyncScrypt(dto.password, salt, 32)) as Buffer;
+      hashedPassword = hash.toString() + '.' + salt;
+    }
+    this.prisma.chatRoom
       .create({
         data: {
           type: dto.type,
-          password: dto.password,
+          password: hashedPassword,
           name: dto.name === undefined ? 'unknown' : dto.name,
         },
       })
@@ -240,10 +250,17 @@ export class ChatService {
     if (executor.role !== 'OWNER')
       throw new ForbiddenException('You are not a channel owner');
 
+    let hashedPassword: string = dto.password;
+    if (dto.type === 'PROTECT') {
+      const salt = randomBytes(8).toString('hex');
+      const hash = (await asyncScrypt(dto.password, salt, 32)) as Buffer;
+      hashedPassword = hash.toString() + '.' + salt;
+    }
+
     return this.prisma.chatRoom.update({
       where: { id: roomId },
       data: {
-        password: dto.password,
+        password: hashedPassword,
         name: dto.name,
         type: dto.type,
       },
@@ -337,7 +354,16 @@ export class ChatService {
 
     const room = await this.getChatRoomById(dto.roomId);
     if (!room) throw new NotFoundException('chat room is not found');
-    else if (room.type === 'PROTECT' && dto.password !== room.password)
+
+    const [storedHash, salt] = room.password.split('.');
+
+    const hashedPassword = (await asyncScrypt(
+      dto.password,
+      salt,
+      32,
+    )) as Buffer;
+
+    if (room.type === 'PROTECT' && storedHash !== hashedPassword.toString())
       throw new UnauthorizedException('Password is wrong');
 
     const members = await this.prisma.chatRoom
