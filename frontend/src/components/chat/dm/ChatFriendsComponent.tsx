@@ -1,5 +1,4 @@
 import { Avatar, Box, CircularProgress, Grid, Typography } from "@mui/material";
-import PersonIcon from '@mui/icons-material/Person';
 import { Link, useLocation } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
@@ -123,7 +122,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
             className={'FriendList'}
             >
               <Grid item mr={2} ml={3}>
-                <Avatar ><PersonIcon /></Avatar>
+                <Avatar src={`${room.image}`} />
               </Grid>
               <Grid item>
               <Typography variant="subtitle1">
