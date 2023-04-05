@@ -62,7 +62,7 @@ export default function UserParticipantList(props: UserParticipantListProps) {
       } finally {
         setTimeout(() => {
           setLoading(false);
-        }, 300);
+        }, 200);
       }
     }
 
