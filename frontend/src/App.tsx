@@ -20,6 +20,7 @@ import JoinInvitedRoom from "./features/game/JoinInvitedRoom";
 import NewNavBar from './components/utils/NewNavbar';
 import PrivateRouter from "./utils/PrivateRouter";
 import ProfileRouting from "./features/profile/ProfileRouting";
+import Profile from "./features/profile/Profile";
 
 
 function App() {
@@ -60,6 +61,7 @@ function App() {
           <Route path="/game/game_room" element={<CreateGameRoom/>} />
           <Route path="/game/invite_room" element={<InviteRoom/>} />
           <Route path="/game/join_invited_room" element={<JoinInvitedRoom></JoinInvitedRoom>} />
+          <Route path={"/user"} element={<Profile />}/>
           <Route path={"/user/:id"} element={<ProfileRouting />}/>
         </Routes>
       </Grid>

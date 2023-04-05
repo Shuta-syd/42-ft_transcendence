@@ -212,7 +212,7 @@ const Profile = () => {
             const blobFiles = URL.createObjectURL(files[0]);
             const file = files[0];
             let base64: string;
-            console.log("THIS ONE: ", blobFiles);
+            console.log("THIS ONE: </>", blobFiles);
             const reader = new FileReader();
             reader.readAsDataURL(file);
 

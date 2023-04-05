@@ -20,7 +20,6 @@ const FriendProfile = (props: FriendProfileProps) => {
     // prerequisite: friend definition
     // if you pass the info of props, you should change initial value of useState
 
-
     const [friendName, setFriendName] = useState<string>('React');
     useEffect(() => {
         if (props.friend) {
