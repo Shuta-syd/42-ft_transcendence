@@ -223,6 +223,13 @@ export class ChatService {
           },
         },
       },
+      include: {
+        members: {
+          include: {
+            user: true,
+          },
+        },
+      },
     });
     return channels;
   }
