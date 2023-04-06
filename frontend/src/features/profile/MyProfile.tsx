@@ -10,6 +10,7 @@ import useQueryMatches from "../../hooks/match/useWueryMatch";
 import ShowAvatar from "../../components/profile/ShowAvatar";
 import ImageUploadButton from "../../components/profile/ImageUploadButton";
 // import OtherPeopleProfile from "./OtherPeopleProfile";
+import NotificationButton from "../../components/profile/NotificationButton";
 
 const MyProfile = () => {
     const [user, setUser] = useState<User>();
@@ -290,6 +291,15 @@ const MyProfile = () => {
                     }}
                 >
                     [My Profile]
+                </Grid>
+                <Grid item xs={5}
+                      sx={{
+                          display: "flex",
+                            alignItems: "flex-end",
+                            justifyContent: "flex-end",
+                      }}
+                >
+                    <NotificationButton />
                 </Grid>
                 <Grid item xs={5}>
                     <ShowAvatar user={user} profileImage={profileImage} />
