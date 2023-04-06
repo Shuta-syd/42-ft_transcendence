@@ -19,16 +19,20 @@ const ProfileRouting = () => {
         });
     }, []);
 
+    /* nonLogin userの情報 */
     useEffect(() => {
-        const fetchNonLoginUser = async (nm: string) => {
+        const fetchNonLoginUser = async (nm: string | undefined) => {
             const { data } = await axios.get<User>(`http://localhost:8080/user/name`,{
                 params: {
                     nm,
                 },
             })
             setNonLoginUser(data);
+        };
+        if (name) {
+            fetchNonLoginUser(name).then(r => console.log(r));
+            console.log(nonLoginUser);
         }
-        fetchNonLoginUser('jack').then(r => console.log(r));
     },  []);
 
     const renderProfileStatus = () => {
@@ -36,9 +40,11 @@ const ProfileRouting = () => {
         if (loginUser?.name === name) {
             return <Profile />
         }
-
+        if (loginUser?.name !== name && nonLoginUser?.name === name) {
         /* login userがparamのnameと一致しなかった時にはFriend Profile Componentにuserのpropsを渡して表示する */
-        return <FriendProfile friend={nonLoginUser}/>;
+            return <FriendProfile friend={nonLoginUser}/>;
+        }
+        return <h1>THE NAME PERSON IS NOT EXIST</h1>;
     };
 
     return (
