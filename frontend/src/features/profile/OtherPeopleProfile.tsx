@@ -5,11 +5,11 @@ import ShowAvatar from "../../components/profile/ShowAvatar";
 import FriendRequestButton from "../../components/profile/FriendRequestButton";
 import FriendListButton from "../../components/profile/FriendListButton";
 
-interface FriendProfileProps {
+interface OtherPeopleProfileProps {
     friend: User | undefined;
 }
 
-const FriendProfile = (props: FriendProfileProps) => (
+const OtherPeopleProfile = (props: OtherPeopleProfileProps) => (
         <div
             style={{
                 backgroundColor: "#EDF0F4",
@@ -61,4 +61,4 @@ const FriendProfile = (props: FriendProfileProps) => (
         </div>
     )
 
-export default FriendProfile;
+export default OtherPeopleProfile;

@@ -11,9 +11,9 @@ import ShowAvatar from "../../components/profile/ShowAvatar";
 import ImageUploadButton from "../../components/profile/ImageUploadButton";
 import FingerPrintButton from "../../components/profile/FingerPrintButton";
 import InputFriendId from "../../components/profile/InputFriendId";
-import FriendProfile from "./FriendProfile";
+import OtherPeopleProfile from "./OtherPeopleProfile";
 
-const Profile = () => {
+const MyProfile = () => {
     const [user, setUser] = useState<User>();
     const socket = io("http://localhost:8080");
     const UserPromises = fetchProfileUser();
@@ -262,7 +262,7 @@ const Profile = () => {
                     <div key={friend.id}>
                         [{friend.name}]
                         <FriendStatus friendName={friend.name}/>
-                        <FriendProfile friend={friend} />
+                        <OtherPeopleProfile friend={friend} />
                     </div>
                 ))}
             </h3>
@@ -325,4 +325,4 @@ const Profile = () => {
 }
 
 
-export default Profile;
+export default MyProfile;

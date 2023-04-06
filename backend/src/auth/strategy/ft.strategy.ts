@@ -2,7 +2,7 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { User } from '@prisma/client';
-import { Strategy, Profile } from 'passport-42';
+import { Strategy, MyProfile } from 'passport-42';
 import { AuthService } from '../auth.service';
 
 @Injectable()
@@ -22,7 +22,7 @@ export class FtStrategy extends PassportStrategy(Strategy, '42') {
   async validate(
     accessToken: string,
     refreshToken: string,
-    profile: Profile,
+    profile: MyProfile,
   ): Promise<User> {
     const image = await this.authService.convertURLToBase64(
       profile._json.image.link,
