@@ -274,15 +274,23 @@ const MyProfile = () => {
                 minHeight: "100vh",
                 backgroundRepeat: "no-repeat",
                 backgroundSize: "cover",
-                display: "flex",
                 alignItems: "center",
                 justifyContent: "center"
             }}
         >
             <Grid container
                 direction="column"
+                spacing={3}
             >
-                <h1>[My Profile]</h1>
+                <Grid item
+                    xs={5}
+                    sx={{
+                        fontSize: "3.4rem",
+                        fontWeight: "bold"
+                    }}
+                >
+                    [My Profile]
+                </Grid>
                 <Grid item xs={5}>
                     <ShowAvatar user={user} profileImage={profileImage} />
                 </Grid>
