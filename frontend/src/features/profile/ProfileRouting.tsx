@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { User } from '../../types/PrismaType';
 import Profile from './Profile';
+import FriendProfile from './FriendProfile';
 import {fetchProfileUser} from "../../hooks/profile/useProfileUser";
 
 const ProfileRouting = () => {
@@ -19,13 +20,15 @@ const ProfileRouting = () => {
     }, []);
 
     useEffect(() => {
-        const fetchNonLoginUser = async () => {
-            const { data } = await axios.get<User>(`http://localhost:8080/user/friend/nameSearch`);
+        const fetchNonLoginUser = async (nm: string) => {
+            const { data } = await axios.get<User>(`http://localhost:8080/user/name`,{
+                params: {
+                    nm,
+                },
+            })
             setNonLoginUser(data);
         }
-        fetchNonLoginUser().then(r =>
-            console.log('nonLoginUser', nonLoginUser)
-        );
+        fetchNonLoginUser('jack');
     },  []);
 
     const renderProfileStatus = () => {
@@ -35,7 +38,7 @@ const ProfileRouting = () => {
         }
 
         /* login userがparamのnameと一致しなかった時にはFriend Profile Componentにuserのpropsを渡して表示する */
-        return <h1>IT IS NOT MY PAGE</h1>;
+        return <FriendProfile friend={nonLoginUser}/>;
     };
 
     return (
