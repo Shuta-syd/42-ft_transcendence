@@ -1,21 +1,19 @@
 import React, { useEffect, useState} from 'react';
-import { Button } from "@mui/material";
+// import { Button } from "@mui/material";
 import axios from "axios";
 import Rating from '@mui/material/Rating';
-import io from "socket.io-client";
+// import io from "socket.io-client";
 import Grid from "@mui/material/Grid";
 import {Match, User} from "../../types/PrismaType";
 import {fetchProfileUser} from "../../hooks/profile/useProfileUser";
 import useQueryMatches from "../../hooks/match/useWueryMatch";
 import ShowAvatar from "../../components/profile/ShowAvatar";
 import ImageUploadButton from "../../components/profile/ImageUploadButton";
-import FingerPrintButton from "../../components/profile/FingerPrintButton";
-import InputFriendId from "../../components/profile/InputFriendId";
-import OtherPeopleProfile from "./OtherPeopleProfile";
+// import OtherPeopleProfile from "./OtherPeopleProfile";
 
 const MyProfile = () => {
     const [user, setUser] = useState<User>();
-    const socket = io("http://localhost:8080");
+    // const socket = io("http://localhost:8080");
     const UserPromises = fetchProfileUser();
     useEffect(() => {
         UserPromises.then((userDto: User) => {
@@ -23,24 +21,24 @@ const MyProfile = () => {
         });
     }, []);
 
-    const getFriends = async () => {
-        const {data} = await axios.get<User[]>(`http://localhost:8080/user/friend`);
-        return data;
-    }
+    // const getFriends = async () => {
+    //     const {data} = await axios.get<User[]>(`http://localhost:8080/user/friend`);
+    //     return data;
+    // }
 
-    const [friends, setFriends] = useState<User[]>([]);
+    // const [friends, setFriends] = useState<User[]>([]);
 
-    const HandleFriendListButton = () => {
-        const friendsPromise = getFriends();
-        friendsPromise.then((data) => {
-            console.log('data => ', data[0]);
-            setFriends(data);
-        });
-        console.log(friends[0]);
-    };
+    // const HandleFriendListButton = () => {
+    //     const friendsPromise = getFriends();
+    //     friendsPromise.then((data) => {
+    //         console.log('data => ', data[0]);
+    //         setFriends(data);
+    //     });
+    //     console.log(friends[0]);
+    // };
 
     const [matchArr, setMatches] = useState<Match[]>([]);
-    const [winnerId] = useState<string>('');
+    // const [winnerId] = useState<string>('');
     const MatchPromises = useQueryMatches();
     useEffect(() => {
         MatchPromises.then((matches: Match[]) => {
@@ -49,29 +47,29 @@ const MyProfile = () => {
         });
     }, []);
 
-    function ShowResult(props: { p1: string, p2: string }) {
-        // console.log('winnerId', winnerId);
-        if (winnerId === '1') {
-            return (
-                <h2>
-                    <div>
-                        Winner
-                        &nbsp;=&gt;
-                        {props.p1}!!!
-                    </div>
-                </h2>
-            );
-        }
-        return (
-            <h2>
-                <div>
-                    Winner
-                    &nbsp;=&gt;
-                    {props.p2}!!!
-                </div>
-            </h2>
-        );
-    }
+    // function ShowResult(props: { p1: string, p2: string }) {
+    //     // console.log('winnerId', winnerId);
+    //     if (winnerId === '1') {
+    //         return (
+    //             <h2>
+    //                 <div>
+    //                     Winner
+    //                     &nbsp;=&gt;
+    //                     {props.p1}!!!
+    //                 </div>
+    //             </h2>
+    //         );
+    //     }
+    //     return (
+    //         <h2>
+    //             <div>
+    //                 Winner
+    //                 &nbsp;=&gt;
+    //                 {props.p2}!!!
+    //             </div>
+    //         </h2>
+    //     );
+    // }
 
     interface MatchListProps {
         matches: Match[];
@@ -130,80 +128,80 @@ const MyProfile = () => {
         );
     }
 
-    function MatchList({ matches }: MatchListProps) {
-        const [selectedPlayer, setSelectedPlayer] = useState(user?.name);
-        const [filteredMatches, setFilteredMatches] = useState<Match[]>([]);
+    // function MatchList({ matches }: MatchListProps) {
+    //     const [selectedPlayer, setSelectedPlayer] = useState(user?.name);
+    //     const [filteredMatches, setFilteredMatches] = useState<Match[]>([]);
+    //
+    //     useEffect(() => {
+    //         ユーザー情報を取得する非同期処理
+            // const getUserInfo = async () => {
+            //     const userDto = await fetchProfileUser();
+            //     if (userDto) {
+            //         setSelectedPlayer(userDto.name);
+            //     }
+            // };
+            // getUserInfo();
+        // }, []);
 
-        useEffect(() => {
-            // ユーザー情報を取得する非同期処理
-            const getUserInfo = async () => {
-                const userDto = await fetchProfileUser();
-                if (userDto) {
-                    setSelectedPlayer(userDto.name);
-                }
-            };
-            getUserInfo();
-        }, []);
+        // useEffect(() => {
+        //     選択されたプレーヤー名が空の場合は全ての試合を表示する
+        //     player1もしくはplayer2に選択されたプレーヤー名を含む試合をフィルタリングする
+            // const filtered = matches.filter((match) => match.player1 === selectedPlayer || match.player2 === selectedPlayer);
+            // setFilteredMatches(filtered);
+        // }, []);
 
-        useEffect(() => {
-            // 選択されたプレーヤー名が空の場合は全ての試合を表示する
-            // player1もしくはplayer2に選択されたプレーヤー名を含む試合をフィルタリングする
-            const filtered = matches.filter((match) => match.player1 === selectedPlayer || match.player2 === selectedPlayer);
-            setFilteredMatches(filtered);
-        }, []);
+        // return (
+        //     <div
+        //         style={{
+        //             color: '#3C444B'
+        //         }}
+        //     >
+        //         {/* フィルタリングされた試合のみ表示 */}
+        //         <h3>[⇩ Previous Record]</h3>
+        //         {filteredMatches.map((match) => (
+        //             <div key={match.id}>
+        //                 <h3>
+        //                     [{match.id}] {match.player1} vs {match.player2}
+        //                 </h3>
+        //                 <div>
+        //                     <ShowResult p1={match.player1} p2={match.player2}/>
+        //                 </div>
+        //             </div>
+        //         ))}
+        //     </div>
+        // );
+    // }
 
-        return (
-            <div
-                style={{
-                    color: '#3C444B'
-                }}
-            >
-                {/* フィルタリングされた試合のみ表示 */}
-                <h3>[⇩ Previous Record]</h3>
-                {filteredMatches.map((match) => (
-                    <div key={match.id}>
-                        <h3>
-                            [{match.id}] {match.player1} vs {match.player2}
-                        </h3>
-                        <div>
-                            <ShowResult p1={match.player1} p2={match.player2}/>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        );
-    }
+    // interface FriendProps {
+    //     friendName: string;
+    // }
 
-    interface FriendProps {
-        friendName: string;
-    }
-
-    function FriendStatus({friendName}: FriendProps) {
-        const [isOnline, setIsOnline] = useState(null);
-
-        useEffect(() => {
-            // WebSocketを使用して、友達のオンライン/オフライン状態を取得する
-            socket.emit("getFriendStatus", friendName);
-
+    // function FriendStatus({friendName}: FriendProps) {
+    //     const [isOnline, setIsOnline] = useState(null);
+    //
+    //     useEffect(() => {
+    //         WebSocketを使用して、友達のオンライン/オフライン状態を取得する
+            // socket.emit("getFriendStatus", friendName);
+            //
             // サーバーからの応答を受信する
-            socket.on("friendStatus", (status) => {
-                setIsOnline(status);
-            });
-
+            // socket.on("friendStatus", (status) => {
+            //     setIsOnline(status);
+            // });
+            //
             // コンポーネントのアンマウント時にWebSocket接続を解除する
-            return () => {
-                socket.off("friendStatus");
-            };
-        }, [friendName]);
-
-        if (isOnline === null) {
-            return <span>Loading...</span>;
-        }
-        return (
-            <span>{isOnline ? " => 🤩" : " => 🫥"}</span>
-        );
-    }
-
+            // return () => {
+            //     socket.off("friendStatus");
+            // };
+        // }, [friendName]);
+        //
+        // if (isOnline === null) {
+        //     return <span>Loading...</span>;
+        // }
+        // return (
+        //     <span>{isOnline ? " => 🤩" : " => 🫥"}</span>
+        // );
+    // }
+    //
     // const steveJobsImage = "https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg";
 
     const uploadImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -244,32 +242,31 @@ const MyProfile = () => {
         });
     }, []);
 
-    const handleFingerPrintButton = () => {
-        navigator.clipboard.writeText(user?.id as string);
-    }
+    // const handleFingerPrintButton = () => {
+    //     navigator.clipboard.writeText(user?.id as string);
+    // }
+    //
+    // const FriendListButton = () => (
+    //         <div>
+    //             <Button
+    //             variant="outlined"
+    //             color="primary"
+    //             size="large"
+    //             onClick={HandleFriendListButton}
+    //         >
+    //             friend list
+    //         </Button><h3>
+    //             {friends.map((friend: User) => (
+    //                 <div key={friend.id}>
+    //                     [{friend.name}]
+    //                     <FriendStatus friendName={friend.name}/>
+    //                     <OtherPeopleProfile friend={friend} />
+    //                 </div>
+    //             ))}
+    //         </h3>
+    //         </div>
+    //     )
 
-    const FriendListButton = () => (
-            <div>
-                <Button
-                variant="outlined"
-                color="primary"
-                size="large"
-                onClick={HandleFriendListButton}
-            >
-                friend list
-            </Button><h3>
-                {friends.map((friend: User) => (
-                    <div key={friend.id}>
-                        [{friend.name}]
-                        <FriendStatus friendName={friend.name}/>
-                        <OtherPeopleProfile friend={friend} />
-                    </div>
-                ))}
-            </h3>
-            </div>
-        )
-
-    // @ts-ignore
     return (
         <div
             style={{
@@ -282,47 +279,27 @@ const MyProfile = () => {
                 justifyContent: "center"
             }}
         >
-            <h2>
-                <Grid container
-                    direction="column"
-                >
+            <Grid container
+                direction="column"
+            >
                 <h1>[My Profile]</h1>
-                    <Grid item xs={5}>
-                        <ShowAvatar user={user} profileImage={profileImage} />
-                    </Grid>
-                    <Grid item xs={5}
-                            style={{
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                color: "#3C444B" }}>
-                        <ImageUploadButton onUpload={uploadImage} />
-                    </Grid>
-                    <Grid item xs={5}>
-                        <h1 style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#B2B9C5", marginTop: "-20px" }}>
-                            Find your friend!
-                        </h1>
-                    </Grid>
-                    <Grid item xs={10} style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#B5D3D5", marginTop: "-20px" }} marginTop={-10}>
-                        <InputFriendId props={user} />
-                    </Grid>
-                    <Grid item xs={10} style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#B5D3D5", marginTop: "20px" }}>
-                        <FingerPrintButton onClick={handleFingerPrintButton} />
-                    </Grid>
-                        <Grid item xs={5} style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#B5D3D5", marginTop: "-20px" }} justifyContent={"center"} marginTop={3}>
-                            <FriendListButton />
-                        </Grid>
-                        <Grid item xs={5} style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#B5D3D5", marginTop: "-20px" }}>
-                            <MatchList matches={matchArr} />
-                        </Grid>
-                        <Grid item xs={5} style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#B5D3D5", marginTop: "-20px" }}>
-                            <ShowAchievement matches={matchArr} />
-                        </Grid>
-                    </Grid>
-            </h2>
+                <Grid item xs={5}>
+                    <ShowAvatar user={user} profileImage={profileImage} />
+                </Grid>
+                <Grid item xs={5}
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: "#3C444B" }}>
+                    <ImageUploadButton onUpload={uploadImage} />
+                </Grid>
+                <Grid item xs={5} style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#B5D3D5", marginTop: "-20px" }}>
+                    <ShowAchievement matches={matchArr} />
+                </Grid>
+            </Grid>
         </div>
     );
 }
-
 
 export default MyProfile;
