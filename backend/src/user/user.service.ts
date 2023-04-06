@@ -163,6 +163,8 @@ export class UserService {
         },
       },
     });
+  }
+  /**
    * @description Friend 申請のhandler requesterの名前をdatebaseに格納
    * @return setしたrequesteeのデータ
    * @param userId
