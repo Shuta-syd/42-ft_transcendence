@@ -9,6 +9,8 @@ const FriendRequestButton = () => {
         setIsFollowing(!isFollowing);
     };
 
+    /* 既存APIを用いて、friend reqを調整する */
+
     return (
         <>
             <Button
