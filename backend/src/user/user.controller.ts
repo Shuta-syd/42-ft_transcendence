@@ -18,7 +18,7 @@ import { ApiOperation } from '@nestjs/swagger';
 import { PrismaUser, SwaggerFriends } from 'src/swagger/type';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
-import { AcceptFriend, FriendReq } from './dto/user.dto';
+import { AcceptFriend } from './dto/user.dto';
 
 @ApiTags('user')
 @Controller('user')
@@ -40,6 +40,14 @@ export class UserController {
     return req.user;
   }
 
+  /**
+   * @param id
+   * idによってuser情報を取得できるようなエンドポイント
+   */
+  @Get('id')
+  async getUserById(@Query('id') id: string): Promise<User> {
+    return this.userService.getUserById(id);
+  }
   @Patch('friend')
   @ApiOperation({
     description:
