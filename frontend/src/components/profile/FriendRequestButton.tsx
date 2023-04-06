@@ -1,15 +1,40 @@
-import React, { useState } from "react";
+import React, { useState} from "react";
 import { Button } from "@mui/material";
+import axios from "axios";
+// import fetchProfileUser from "../../hooks/profile/useProfileUser"
+import { User } from '../../types/PrismaType';
 
-const FriendRequestButton = () => {
+interface FriendRequestButtonProps {
+    user: User | undefined;
+}
+
+const FriendRequestButton = (props: FriendRequestButtonProps) => {
     const [isFollowing, setIsFollowing] = useState(false);
+    // const [loginUser, setLoginUser] = useState<User>();
+
+    /* 自分が誰なのかという情報 */
+    // useEffect(() => {
+    //     const UserPromises = fetchProfileUser();
+    //     UserPromises.then((userDto: User) => {
+    //         setLoginUser(userDto);
+    //     });
+    // }, []);
+
 
     const handleClick = () => {
         console.log("Friend Request Button");
         setIsFollowing(!isFollowing);
-    };
 
-    /* 既存APIを用いて、friend reqを調整する */
+
+        /* login user -> other peopleに対してfriend requestを送信する */
+        axios.post(`http://localhost:8080/user/friendReq`, {
+            friendId: props.user?.id,
+        }).then((res) => {
+            console.log('success!', res);
+        }, (err) => {
+            console.log('error!', err);
+        },);
+    };
 
     return (
         <>
