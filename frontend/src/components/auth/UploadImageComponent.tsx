@@ -10,7 +10,6 @@ type UploadImageComponentProps = {
 export default function UploadImageComponent(props: UploadImageComponentProps) {
   const { image, setActiveStep, onFileChange  } = props;
 
-
   return (
     <>
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -30,7 +29,7 @@ export default function UploadImageComponent(props: UploadImageComponentProps) {
             <input hidden accept="image/*" type="file" onChange={(e) => { onFileChange(e); }}/>
           </Button>
         </Box>
-        <Button type='submit' variant="contained">Sign up</Button>
+        <Button type='submit' variant="contained">Signup</Button>
       </Box>
     </>
   )

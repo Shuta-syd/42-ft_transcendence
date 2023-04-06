@@ -1,7 +1,7 @@
 import { Step, StepLabel, Stepper } from "@mui/material";
 import React from "react";
 
-const steps = ['Enter your user profile', 'Upload your profile image'];
+const steps = ['Enter user profile', 'Upload profile image', 'Setting 2FA'];
 
 type SignupStepperProps = {
   activeStep: any; // useState value

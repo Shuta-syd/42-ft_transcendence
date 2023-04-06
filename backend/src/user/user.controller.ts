@@ -1,5 +1,6 @@
 import {
   Body,
+  Delete,
   Get,
   HttpStatus,
   Param,
@@ -17,6 +18,7 @@ import { ApiOperation } from '@nestjs/swagger';
 import { PrismaUser, SwaggerFriends } from 'src/swagger/type';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
+import { AcceptFriend, FriendReq } from './dto/user.dto';
 
 @ApiTags('user')
 @Controller('user')
@@ -48,7 +50,6 @@ export class UserController {
     @Req() req: Request,
     @Body() data: { friendId: string },
   ): Promise<User> {
-    console.log('=>', req.user.id);
     return this.userService.addFriend(req.user.id, data.friendId);
   }
 
@@ -66,6 +67,63 @@ export class UserController {
     return this.userService.getFriend(req.user.id);
   }
 
+  @Delete('friend')
+  @ApiOperation({
+    description: 'delete friend',
+    summary: 'delete friend',
+  })
+  async deleteFriend(
+    @Req() req: Request,
+    @Body() data: { friendId: string },
+  ): Promise<User> {
+    this.userService.deleteFriend(data.friendId, req.user.id);
+    return this.userService.deleteFriend(req.user.id, data.friendId);
+  }
+
+  @Post('friendReq')
+  @ApiOperation({
+    description: 'send a Friend Request',
+  })
+  async SetFriendReq(
+    @Req() reqBody: Request,
+    @Body() friendId: AcceptFriend,
+  ): Promise<string[]> {
+    return this.userService.handleFriendReq(reqBody.user.id, friendId.friendId);
+  }
+
+  @Get('friendReq')
+  @ApiOperation({
+    description: 'check the friend req of the name of user',
+  })
+  async checkFriendReq(@Req() req: Request): Promise<string[] | null> {
+    if (req.user.name) {
+      return this.userService.getFriendReqs(req.user.id);
+    }
+    return null;
+  }
+
+  @Patch('friendReq')
+  @ApiOperation({
+    description: 'accept friend request and add friend',
+  })
+  async SetFriendR(
+    @Req() req: Request,
+    @Body() friendId: AcceptFriend,
+  ): Promise<User> {
+    return this.userService.acceptFriendreq(req.user.id, friendId.friendId);
+  }
+
+  @Delete('friendReq')
+  @ApiOperation({
+    description: 'delete friend request',
+  })
+  async deleteFriendR(
+    @Req() req: Request,
+    @Body() friendId: AcceptFriend,
+  ): Promise<User> {
+    return this.userService.rejectFriendReq(req.user.id, friendId.friendId);
+  }
+
   @Get('friend/search')
   async searchFriend(
     @Req() req: Request,
@@ -78,7 +136,6 @@ export class UserController {
     @Req() req: Request,
     @Body() data: { image: string },
   ): Promise<User> {
-    console.log('user.image => ', data.image);
     return this.userService.addUserImage(req.user.id, data.image);
   }
   @Get('image')

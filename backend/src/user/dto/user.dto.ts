@@ -12,3 +12,15 @@ export class SignUpUserDto {
   @ApiProperty()
   isFtLogin?: boolean;
 }
+
+export class FriendReq {
+  @ApiProperty()
+  requester: string;
+  @ApiProperty()
+  requestee: string;
+}
+
+export class AcceptFriend {
+  @ApiProperty()
+  friendId: string;
+}

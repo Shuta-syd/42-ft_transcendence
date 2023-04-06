@@ -12,9 +12,14 @@ import { authenticator } from 'otplib';
 import { toFileStream } from 'qrcode';
 import { Response } from 'express';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { SignUpUserDto } from 'src/user/dto/user.dto';
-import { AuthDto } from './dto/auth.dto';
+import { AuthDto, SignUpUserDto } from './dto/auth.dto';
 import { Jwt } from './type/auth.type';
+import { randomBytes, scrypt } from 'crypto';
+import { promisify } from 'util';
+import { HttpService } from '@nestjs/axios';
+import { lastValueFrom, map } from 'rxjs';
+
+const asyncScrypt = promisify(scrypt);
 
 @Injectable()
 export class AuthService {
@@ -22,34 +27,53 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
     private readonly config: ConfigService,
+    private readonly httpService: HttpService,
   ) {}
 
   /**
    * @param dto 作成するUserデータ
    * @returns 作成したUserデータ
    */
-  async signupUser(dto: SignUpUserDto): Promise<User> {
-    const userExists = await this.prisma.user.findUnique({
+  async signupUser(dto: SignUpUserDto): Promise<Jwt> {
+    let hashedPassword: string;
+    const emailExit = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
 
-    if (userExists) {
+    if (emailExit) {
+      throw new NotAcceptableException('This email is already in use');
+    }
+    const userNameExit = await this.prisma.user.findUnique({
+      where: { name: dto.name },
+    });
+
+    if (userNameExit) {
+      throw new NotAcceptableException('This userName is already in use');
+    }
+
+    const mb = (await this.calcImageSize(dto.image)) / 1024;
+    if (mb > 10) {
       throw new NotAcceptableException(
-        'このメールアドレスは既に使用されています。',
+        'This image is too large. max size is 10MB',
       );
     }
 
+    const salt = randomBytes(8).toString('hex');
+    if (dto.isFtLogin !== true) {
+      const hash = (await asyncScrypt(dto.password, salt, 32)) as Buffer;
+      hashedPassword = hash.toString() + '.' + salt;
+    }
     const newUser = await this.prisma.user.create({
       data: {
         email: dto.email,
-        password: dto.password ? dto.password : '',
+        password: dto.password ? hashedPassword : '',
         name: dto.name,
         image: dto.image,
         isFtLogin: dto.isFtLogin ? dto.isFtLogin : false,
       },
     });
 
-    return newUser;
+    return this.generateJwt(newUser.id, newUser.name);
   }
 
   /**
@@ -64,7 +88,16 @@ export class AuthService {
     });
     if (user.isFtLogin) new BadRequestException('Please login with 42');
     if (!user) throw new NotFoundException("user couldn't be found");
-    if (!user.isFtLogin && user.password !== dto.password)
+
+    const [storedHash, salt] = user.password.split('.');
+
+    const hashedPassword = (await asyncScrypt(
+      dto.password,
+      salt,
+      32,
+    )) as Buffer;
+
+    if (!user.isFtLogin && storedHash !== hashedPassword.toString())
       throw new NotAcceptableException('password is wrong');
     return this.generateJwt(user.id, user.name);
   }
@@ -103,7 +136,12 @@ export class AuthService {
       return user;
     }
 
-    return this.signupUser({ ...userDto, isFtLogin: true });
+    await this.signupUser({ ...userDto, isFtLogin: true });
+    return this.prisma.user.findUnique({
+      where: {
+        email: userDto.email,
+      },
+    });
   }
 
   /**
@@ -115,7 +153,7 @@ export class AuthService {
    * @param user 二要素認証するユーザー
    * @returns シークレットとURL
    */
-  async createOtpAuthUrl(user: User) {
+  async createOtpAuthUrl(user: User): Promise<string> {
     const secret = authenticator.generateSecret();
 
     const otpAuthUrl = authenticator.keyuri(
@@ -134,9 +172,7 @@ export class AuthService {
       },
     });
 
-    return {
-      otpAuthUrl,
-    };
+    return otpAuthUrl;
   }
 
   /**
@@ -149,20 +185,12 @@ export class AuthService {
     return toFileStream(stream, otpAuthUrl);
   }
 
-  async turnOnOtp(user: User, otpCode: string) {
+  async turnOnOtp(user: User) {
     // userからsecretを取得するのではなく、データベースから取得したい
 
     // 二要素が無効
     if (!user.twoFactorSecret || user.twoFactorSecret === '') {
       throw new BadRequestException('OneTimePasswordAuth is inactivate.');
-    }
-
-    const isCodeValid = authenticator.verify({
-      token: otpCode,
-      secret: user.twoFactorSecret,
-    });
-    if (!isCodeValid) {
-      throw new UnauthorizedException('Wrong authentication code');
     }
 
     await this.prisma.user.update({
@@ -209,7 +237,18 @@ export class AuthService {
     if (!isCodeValid) {
       throw new UnauthorizedException('Wrong authentication code');
     }
+  }
 
-    return this.generateJwt(user.id, user.name, true);
+  async convertURLToBase64(imageUrl: string): Promise<string> {
+    const response$ = this.httpService
+      .get(imageUrl, { responseType: 'arraybuffer' })
+      .pipe(map((res) => Buffer.from(res.data, 'binary').toString('base64')));
+    const base64 = await lastValueFrom(response$);
+    return base64;
+  }
+
+  async calcImageSize(base64: string): Promise<number> {
+    const decoded = Buffer.from(base64, 'base64');
+    return decoded.length / 1024;
   }
 }
