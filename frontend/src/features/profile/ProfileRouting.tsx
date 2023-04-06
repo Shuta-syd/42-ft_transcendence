@@ -24,16 +24,20 @@ const ProfileRouting = () => {
         const fetchNonLoginUser = async (nm: string | undefined) => {
             const { data } = await axios.get<User>(`http://localhost:8080/user/name`,{
                 params: {
-                    nm,
-                },
+                    name: nm,
+                }
             })
             setNonLoginUser(data);
         };
         if (name) {
-            fetchNonLoginUser(name).then(r => console.log(r));
-            console.log(nonLoginUser);
+            console.log('name', name);
+            fetchNonLoginUser(name);
         }
     },  []);
+
+    useEffect(() => {
+        console.log('nonLoginUser', nonLoginUser);
+    }, [nonLoginUser]);
 
     const renderProfileStatus = () => {
         /* login userがparamのnameと一致した時にはProfile Componentを表示する */
@@ -49,7 +53,7 @@ const ProfileRouting = () => {
 
     return (
         <div>
-            <p>{renderProfileStatus()}</p>
+            <>{renderProfileStatus()}</>
         </div>
     );
 };

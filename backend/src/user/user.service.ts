@@ -125,7 +125,7 @@ export class UserService {
     return this.prisma.user.findFirst({
       where: {
         name: {
-          contains: name,
+          equals: name,
         },
       },
     });
