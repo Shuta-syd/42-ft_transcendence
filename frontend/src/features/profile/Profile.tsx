@@ -43,10 +43,10 @@ const Profile = () => {
     const HandleFriendListButton = () => {
         const friendsPromise = getFriends();
         friendsPromise.then((data) => {
-            console.log('data => ', data[0]);
+            // console.log('data => ', data[0]);
             setFriends(data);
         });
-        console.log(friends[0]);
+        // console.log(friends[0]);
     };
 
     const [matchArr, setMatches] = useState<Match[]>([]);
@@ -219,28 +219,28 @@ const Profile = () => {
     const uploadImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const { files } = event.target;
         if (files?.[0]) {
-            const blobFiles = URL.createObjectURL(files[0]);
+            // const blobFiles = URL.createObjectURL(files[0]);
             const file = files[0];
             let base64: string;
-            console.log("THIS ONE: ", blobFiles);
+            // console.log("THIS ONE: ", blobFiles);
             const reader = new FileReader();
             reader.readAsDataURL(file);
 
             reader.onload = async () => {
                 base64 = reader.result as string;
-                console.log("base64: ", base64);
+                // console.log("base64: ", base64);
 
                 try {
-                    const response = await axios.post(
+                    await axios.post(
                         "http://localhost:8080/user/add/image",
                         { image: base64 },
                         { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
                     );
-                    console.log("THIS ONE: ", response);
+                    // console.log("THIS ONE: ", response);
                     setProfileImage(base64);
                 } catch (error) {
                     console.error(error);
-                    console.log("This file is too large!!!!");
+                    // console.log("This file is too large!!!!");
                 }
             };
         }
@@ -257,7 +257,7 @@ const Profile = () => {
     }, []);
 
     const handleFingerPrintButton = () => {
-        console.log("FingerPrintButton clicked", user?.id);
+        // console.log("FingerPrintButton clicked", user?.id);
         navigator.clipboard.writeText(user?.id as string);
     }
 
