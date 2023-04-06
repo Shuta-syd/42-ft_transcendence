@@ -12,7 +12,7 @@ const FriendRequestButton = (props: FriendRequestButtonProps) => {
     const [isFollowing, setIsFollowing] = useState(false);
     // const [loginUser, setLoginUser] = useState<User>();
 
-    /* 自分が誰なのかという情報 */
+    // /* 自分が誰なのかという情報 */
     // useEffect(() => {
     //     const UserPromises = fetchProfileUser();
     //     UserPromises.then((userDto: User) => {
