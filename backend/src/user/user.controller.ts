@@ -85,4 +85,8 @@ export class UserController {
   async getUserImage(@Req() req: Request): Promise<string> {
     return this.userService.getUserImage(req.user.id);
   }
+  @Get('nameSearch')
+  async searchFriendByName(@Body('name') name: string): Promise<User> {
+    return this.userService.searchFriendByName(name);
+  }
 }

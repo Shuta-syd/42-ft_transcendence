@@ -116,4 +116,18 @@ export class UserService {
     const user = await this.getUserById(userId);
     return user.image;
   }
+
+  /**
+   * @param name
+   * @returns nameを含むUser
+   */
+  searchFriendByName(name: string): Promise<User> {
+    return this.prisma.user.findFirst({
+      where: {
+        name: {
+          contains: name,
+        },
+      },
+    });
+  }
 }
