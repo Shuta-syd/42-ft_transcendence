@@ -220,11 +220,11 @@ const GamePlayer2 = () => {
 
     useEffect(() => {
         GameSocket.on('connect', () => {
-            console.log('接続ID : ', GameSocket.id)
+            // console.log('接続ID : ', GameSocket.id)
         })
 
         return () => {
-            console.log('切断')
+            // console.log('切断')
             GameSocket.disconnect()
         }
     }, [])

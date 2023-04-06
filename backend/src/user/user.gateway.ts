@@ -32,7 +32,7 @@ export class UserGateway {
 
   handleDisconnect(socket: any) {
     // 接続が切断されたときの処理
-    console.log('dissconected', socket.id);
+    // console.log('dissconected', socket.id);
     const filteredUsers = OnlineUsers.filter(
       (OnlineUsers) => OnlineUsers.clientId !== socket.id,
     );
