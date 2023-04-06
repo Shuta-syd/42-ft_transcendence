@@ -6,24 +6,37 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 
 const NotificationButton = () => {
     const [friendIds, setFriendIds] = useState<string[]>([]);
+    const [nbNotification, setNbNotification] = useState<number>(0);
     const [showRequests, setShowRequests] = useState<boolean>(false);
 
     useEffect(() => {
         const people = axios.get<string[]>(`http://localhost:8080/user/friendReq`);
         people.then((res) => {
             setFriendIds(res.data);
+            setNbNotification(res.data.length);
         });
     }, []);
+
+
+    const ItemToName = (item: string) => {
+        const name = axios.get<string>(`http://localhost:8080/user`, {
+            params: {id: item}
+        }).catch((err) => console.log(err));
+        name.then((res) =>
+            res?.data
+        );
+        return item;
+    }
 
     const OpenRequests = (props: { ss: string[] }) => {
         const items = props.ss;
 
         return (
-            <ul>
+            <>
                 {items.map((item, index) => (
-                    <li key={index}>{item}</li>
+                    <li key={index}>{ItemToName(item)}</li>
                 ))}
-            </ul>
+            </>
         );
     }
 
@@ -32,11 +45,11 @@ const NotificationButton = () => {
     }
 
     return (
-        <Grid item xs={4}>
+        <Grid item xs={5}>
             <Badge
                 color={"error"}
                 overlap="circular"
-                badgeContent={friendIds.length}
+                badgeContent={nbNotification}
                 anchorOrigin={{
                     vertical: "top",
                     horizontal: "right",
@@ -50,11 +63,10 @@ const NotificationButton = () => {
                     onClick={handleClick}
                 />
             </Badge>
-            {showRequests && (
-                <div>
-                    <OpenRequests ss={friendIds}/>
-                </div>
+            <Grid>
+            {showRequests && (<OpenRequests ss={friendIds}/>
             )}
+            </Grid>
         </Grid>
     )
 }
