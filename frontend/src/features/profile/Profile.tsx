@@ -286,6 +286,7 @@ const Profile = () => {
                 <Grid container
                     direction="column"
                 >
+                <h1>[My Profile]</h1>
                     <Grid item xs={5}>
                         <ShowAvatar user={user} profileImage={profileImage} />
                     </Grid>
