@@ -1,5 +1,5 @@
 import { Box, Grid } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { io, Socket } from "socket.io-client";
 import { ChatRoom } from "../../../types/PrismaType";
@@ -11,17 +11,20 @@ import ChannelGroupComponent from "./ChannelGroupComponent";
  */
 export default function ChannelComponent() {
   const socket: Socket = io('http://localhost:8080/chat');
+  const didLogRef = useRef(false);
   const [channels, setChannels] = useState<ChatRoom[]>([]);
 
   useEffect(() => {
-    socket.on('connect', () => {
-      console.log(`[Channel] Connect: ${socket.id}`);
-    })
+    if (didLogRef.current === false) {
+      didLogRef.current = true;
+      socket.on('connect', () => {
+      })
 
-    return () => {
-      console.log(`[Channel] Disconnect: ${socket.id}`);
-      socket.disconnect();
+      return () => {
+        socket.disconnect();
+      }
     }
+    return () => {};
   }, [socket]);
 
 
