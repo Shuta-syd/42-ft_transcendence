@@ -28,7 +28,7 @@ const ProfileRouting = () => {
             })
             setNonLoginUser(data);
         }
-        fetchNonLoginUser('jack');
+        fetchNonLoginUser('jack').then(r => console.log(r));
     },  []);
 
     const renderProfileStatus = () => {
