@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { Grid } from "@mui/material";
 import axios from "axios";
 import Auth from "./features/auth/Auth";
@@ -23,15 +23,14 @@ import Profile from "./features/profile/Profile";
 
 function App() {
   axios.defaults.withCredentials = true;
-  const path = useLocation().pathname;
 
   return (
     <Grid container>
-      { path !=='/login' && path !== '/signup' ? <NewNavBar /> : <></>}
+      <NewNavBar />
       <Grid item xs>
         <Routes>
           <Route path="/login" element={<Auth isLogin={true} />} />
-          <Route path="/signup" element={<Auth isLogin={false}/>} />
+          <Route path="/signup" element={<Auth isLogin={false} />} />
           <Route path="/chat" element={
             <PrivateRouter>
               <Chat />
