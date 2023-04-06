@@ -1,13 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import {Badge } from '@mui/material';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import Grid from '@mui/material/Grid';
 import axios from 'axios';
-import NotificationsIcon from '@mui/icons-material/Notifications';
+import {User} from "../../types/PrismaType";
 
 const NotificationButton = () => {
     const [friendIds, setFriendIds] = useState<string[]>([]);
     const [nbNotification, setNbNotification] = useState<number>(0);
     const [showRequests, setShowRequests] = useState<boolean>(false);
+    const [user, setUser] = useState<User>();
 
     useEffect(() => {
         const people = axios.get<string[]>(`http://localhost:8080/user/friendReq`);
@@ -19,13 +21,20 @@ const NotificationButton = () => {
 
 
     const ItemToName = (item: string) => {
-        const name = axios.get<string>(`http://localhost:8080/user`, {
-            params: {id: item}
-        }).catch((err) => console.log(err));
-        name.then((res) =>
-            res?.data
-        );
-        return item;
+        const otherPerson = axios.get<User>(`http://localhost:8080/user/id`, {
+            params: {
+                id: item
+            }
+        });
+        otherPerson.then((res) => {
+            setUser(res.data);
+            console.log(res.data);
+            console.log(user);
+            return res.data.name;
+        }, (err) => {
+            console.log(err);
+        });
+        return "error";
     }
 
     const OpenRequests = (props: { ss: string[] }) => {
