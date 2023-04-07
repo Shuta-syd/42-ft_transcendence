@@ -6,7 +6,7 @@ import { User } from "../../types/PrismaType";
 
 interface ShowAvatarProps {
     user?: User;
-    profileImage: string;
+    profileImage: string | undefined;
 }
 
 const StyledBadge = styled(Badge)(({ theme }) => ({

@@ -13,8 +13,8 @@ const ImageUploadButton = ({ onUpload }: Props) => {
             style={{
                 width: 380,
                 height: 180,
-                marginRight: 750,
-                marginTop: 0,
+                marginRight: 130,
+                marginTop: 20,
             }}
         >
             <Button
@@ -23,7 +23,7 @@ const ImageUploadButton = ({ onUpload }: Props) => {
                 color="primary"
                 sx={{
                     width: 300, // Update width here
-                    height: 50,
+                    height: 40,
                 }}
             >
                 Upload Profile Image
