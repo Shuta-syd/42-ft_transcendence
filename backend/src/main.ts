@@ -4,7 +4,6 @@ import { AppModule } from './app.module';
 import { PrismaService } from './prisma/prisma.service';
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
-import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -17,7 +16,6 @@ async function bootstrap() {
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('swagger', app, swaggerDocument);
 
-  // app.useGlobalPipes(new ValidationPipe());
   app.enableCors({
     credentials: true,
     origin: ['http://localhost:3000'], //許可したいfrontsideのURL

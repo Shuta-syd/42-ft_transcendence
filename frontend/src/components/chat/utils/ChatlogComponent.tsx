@@ -1,4 +1,4 @@
-import { Avatar, Box, Grid, Typography } from "@mui/material";
+import { Avatar, Box, CircularProgress, Grid, Typography } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
 import React, { createRef, useEffect, useLayoutEffect, useState } from "react";
@@ -24,6 +24,7 @@ type ChatlogComponentProps = {
 export default function ChatlogComponent(props: ChatlogComponentProps) {
   const { roomId, socket, userId } = props;
   const [chatLog, setChatLog] = useState<ChatLog>([]);
+  const [Loading, setLoading] = useState(true);
   const latestChatRef = createRef<HTMLDivElement>();
 
   useEffect(() => {
@@ -36,7 +37,7 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
     latestChatRef.current?.scrollIntoView();
   }, [chatLog, latestChatRef])
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const fetchChat = async () => {
       setChatLog([]);
       const { data } = await axios.get<Message[]>(`http://localhost:8080/chat/room/log/${roomId}`);
@@ -48,56 +49,72 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
       }
     }
 
-    fetchChat();
+    try {
+      fetchChat();
+    } catch (error) {
+      alert('チャットを正しくロードできませんでした。ブラウザをリフレッシュしてください');
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 300);
+    }
   }, [roomId])
+
+  if (Loading) {
+    return (
+      <>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <CircularProgress />
+        </Box>
+      </>
+    )
+  }
 
   return (
     <Box
       width={'95%'}
+      height={'100%'}
       sx={{ color: '#3C444B', overflow: 'auto'}}
     >
       {chatLog.map((chat, idx) => (
         userId === chat.senderUserId ? (
           <Box
-          key={idx}
-          mb={2}
-          width={'100%'}
-          height={'5rem'}
-          sx={{ display: 'flex', alignItems: 'center'}}
-        >
+            key={idx}
+            mb={2}
+            width={'100%'}
+            sx={{ display: 'flex', alignItems: 'center'}}
+          >
           <Grid
             container
             alignItems={'end'}
-            justifyContent={'flex-end'}
           >
               <Grid
                 item
+                xs
               >
-                <Typography variant="caption" >You {chat.time}</Typography>
                 <Box
-                  sx={{ display: 'flex', justifyContent: 'end', wordBreak: 'break-word'}}
+                  sx={{ display: 'flex', justifyContent: 'end'}}
                   mr={2}
                 >
-                  <Box
-                    maxWidth={'30rem'}
-                    width={ chat.text.length * 0.7 > 8 ? `calc(0.6rem * ${chat.text.length})` : `calc(1.1rem * ${chat.text.length})`}
-                    minHeight={'3rem'}
-                    justifyContent='center'
-                    sx={{
-                      backgroundColor: '#d0d3e4', color: '#3C444B', display: 'flex', alignItems: 'center',
-                      borderRadius: '20px 20px 0px 20px',
-                    }}
-                  >
+                  <Box textAlign={'left'}>
+                    <Typography variant="caption" >You {chat.time}</Typography>
                     <Box
-                      width={'80%'}
-                      textAlign={'center'}
+                      padding={'1rem'}
+                      sx={{
+                        backgroundColor: '#d0d3e4', color: '#3C444B', display: 'flex',
+                        alignItems: 'center', justifyContent: 'center', borderRadius: '20px 20px 0px 20px',
+                      }}
                     >
-                      {chat.text}
+                      <Box
+                        textAlign={'left'}
+                      >
+                        {chat.text}
+                      </Box>
                     </Box>
                   </Box>
                 </Box>
             </Grid>
-            <Grid item mr={2}>
+            <Grid item>
               <Avatar><PersonIcon/></Avatar>
             </Grid>
           </Grid>
@@ -107,36 +124,34 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
           key={idx}
           mb={2}
           width={'100%'}
-          height={'5rem'}
           sx={{ display: 'flex', alignItems: 'center' }}
         >
           <Grid
             container
             alignItems={'end'}
           >
-            <Grid item mr={2}>
+            <Grid item>
               <Avatar><PersonIcon/></Avatar>
             </Grid>
-            <Grid item>
-              <Typography variant="caption" >{chat.senderName}  {chat.time}</Typography>
+            <Grid item xs>
               <Box
-                  sx={{ display: 'flex', wordBreak: 'break-word'}}
-                  mr={2}
-                >
-                <Box
-                  width={ chat.text.length * 0.7 > 8 ? `calc(0.6rem * ${chat.text.length})` : `calc(1.1rem * ${chat.text.length})`}
-                  minHeight={'3rem'}
-                  justifyContent='center'
-                  sx={{
-                    backgroundColor: '#ffffff', color: '#3C444B', display: 'flex', alignItems: 'center',
-                    borderRadius: '20px 20px 20px 0px',
-                  }}
-                >
+                sx={{ display: 'flex', justifyContent: 'start'}}
+                ml={2}
+               >
+                <Box textAlign={'right'}>
+                  <Typography variant="caption" >{chat.senderName}  {chat.time}</Typography>
                   <Box
-                    width={'80%'}
-                    textAlign={'center'}
+                    padding={'1rem'}
+                    sx={{
+                      backgroundColor: '#ffffff', color: '#3C444B', display: 'flex',
+                      alignItems: 'center', justifyContent: 'center', borderRadius: '20px 20px 20px 0px',
+                    }}
                   >
-                    {chat.text}
+                    <Box
+                      textAlign={'left'}
+                    >
+                      {chat.text}
+                    </Box>
                   </Box>
                 </Box>
               </Box>
