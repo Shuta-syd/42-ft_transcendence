@@ -147,6 +147,26 @@ export class UserController {
    * Block
    */
   @ApiOperation({
+    summary: 'Check if a user is blocked',
+    description: 'Determine whether the specified user ID is blocked.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'A boolean value indicating if the user is blocked',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'The specified user ID does not exist',
+  })
+  @Get('block/:userId')
+  async isUserBlocked(
+    @Req() req: Request,
+    @Param('userId') userId: string,
+  ): Promise<boolean> {
+    return this.userService.isUserBlocked(req.user.id, userId);
+  }
+
+  @ApiOperation({
     summary: 'Block a user',
     description: 'Adds the specified user ID to the block list.',
   })

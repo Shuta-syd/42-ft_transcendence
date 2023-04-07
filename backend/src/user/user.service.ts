@@ -270,6 +270,36 @@ export class UserService {
    ******************/
 
   /**
+   * 指定されたユーザーIDがブロックされているかどうかを判断する。
+   * @param blockerId ブロックを確認したいユーザーのID
+   * @param blockedId ブロック確認対象のユーザーのID
+   * @returns 指定されたユーザーIDがブロックされている場合はtrue、そうでない場合はfalse
+   * @throws NotFoundException 指定されたユーザーIDが存在しない場合
+   */
+  async isUserBlocked(blockerId: string, blockedId: string): Promise<boolean> {
+    // blockerとblockedが存在しているか確認
+    const blocker = await this.getUserById(blockerId);
+    if (!blocker) {
+      throw new NotFoundException(`User with ID "${blockerId}" not found.`);
+    }
+    const blocked = await this.getUserById(blockedId);
+    if (!blocked) {
+      throw new NotFoundException(`User with ID "${blockedId}" not found.`);
+    }
+
+    const blockRelation = await this.prisma.blockList.findUnique({
+      where: {
+        blockerId_blockedId: {
+          blockerId: blockerId,
+          blockedId: blockedId,
+        },
+      },
+    });
+
+    return !!blockRelation;
+  }
+
+  /**
    * ブロックリストにエントリを追加してユーザーをブロックする。
    * @param blockerId ブロックするユーザーのID
    * @param blockedId ブロックされるユーザーのID
@@ -281,27 +311,17 @@ export class UserService {
       throw new BadRequestException('You cannot block yourself.');
     }
     // blokerId、blockedIdのUserがいるか存在確認
-    const blocker = await this.prisma.user.findUnique({
-      where: { id: blockerId },
-    });
+    const blocker = await this.getUserById(blockerId);
     if (!blocker) {
       throw new NotFoundException(`User with ID "${blockerId}" not found.`);
     }
-    const blocked = await this.prisma.user.findUnique({
-      where: { id: blockedId },
-    });
+    const blocked = await this.getUserById(blockedId);
     if (!blocked) {
       throw new NotFoundException(`User with ID "${blockedId}" not found.`);
     }
+
     // 既にブロック関係があるか確認
-    const isExistingBlock = await this.prisma.blockList.findUnique({
-      where: {
-        blockerId_blockedId: {
-          blockerId: blockerId,
-          blockedId: blockedId,
-        },
-      },
-    });
+    const isExistingBlock = await this.isUserBlocked(blockerId, blockedId);
     if (isExistingBlock) {
       throw new ConflictException('The block relationship already exists.');
     }
@@ -327,15 +347,11 @@ export class UserService {
       throw new BadRequestException('You cannot block yourself.');
     }
     // blokerId、blockedIdのUserがいるか存在確認
-    const blocker = await this.prisma.user.findUnique({
-      where: { id: blockerId },
-    });
+    const blocker = await this.getUserById(blockerId);
     if (!blocker) {
       throw new NotFoundException(`User with ID "${blockerId}" not found.`);
     }
-    const blocked = await this.prisma.user.findUnique({
-      where: { id: blockedId },
-    });
+    const blocked = await this.getUserById(blockedId);
     if (!blocked) {
       throw new NotFoundException(`User with ID "${blockedId}" not found.`);
     }
