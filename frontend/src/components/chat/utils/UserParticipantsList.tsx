@@ -1,6 +1,7 @@
-import { Avatar, Box, Grid, Typography } from "@mui/material";
+import { Avatar, Box, CircularProgress, Grid, Typography } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
+import { Link } from "react-router-dom";
 import React, {useEffect, useState } from "react";
 import InvitationButton from "../group/InvitationButton";
 import AdminButton from "./AdminButton";
@@ -23,6 +24,7 @@ export default function UserParticipantList(props: UserParticipantListProps) {
   const [userId, setUserId] = useState<string>();
   const [myRole, setMyRole] = useState<string>('');
   const [members, setMembers] = useState<MemberPayload[]>([]);
+  const [Loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getUserId = async () => {
@@ -38,6 +40,7 @@ export default function UserParticipantList(props: UserParticipantListProps) {
   useEffect(() => {
     const loadMember = async () => {
       try {
+        setLoading(true);
         const { data } = await axios.get(`http://localhost:8080/chat/room/${roomId}`);
         if (data.members) {
           const newMembers: MemberPayload[] = data.members.map((member: any) => ({
@@ -54,13 +57,26 @@ export default function UserParticipantList(props: UserParticipantListProps) {
           }
         }
       } catch (error) {
-        loadMember();
+        alert('メンバーが正しく取得できませんでした。ブラウザをリフレッシュしてください');
+      } finally {
+        setTimeout(() => {
+          setLoading(false);
+        }, 300);
       }
     }
 
     loadMember();
   }, [roomId, userId]);
 
+  if (Loading) {
+    return (
+      <>
+        <Box height={'5rem'} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <CircularProgress/>
+        </Box>
+      </>
+    )
+  }
 
   return (
     <>
@@ -76,11 +92,15 @@ export default function UserParticipantList(props: UserParticipantListProps) {
             <Box>
               <Grid container sx={{ display: 'flex', alignItems: 'center' }}>
                 <Grid item mr={2}>
+                  <Link to={`/user/${member.userId}`}>
                   <Avatar ><PersonIcon /></Avatar>
+                  </Link>
                 </Grid>
                 <Grid item>
                   <Typography variant="subtitle1">
-                    {member.name}
+                    <Link to={`/user/${member.userId}`} className={'UserParticipantLink'}>
+                      {member.name}
+                    </Link>
                   </Typography>
                   {member.userId === userId ?
                     (
