@@ -1,4 +1,4 @@
-import { Avatar, Grid, Typography } from "@mui/material";
+import { Avatar, Box, CircularProgress, Grid, Typography } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
 import React, { useEffect, useState } from "react";
@@ -22,6 +22,7 @@ export default function ChannelListComponent(props: ChannelListComponentProps) {
   const { socket, channels, setChannels, isLeave } = props;
   const roomID = useLocation().pathname.split('/')[3];
   const [prevRoomId, setPrevRoomId] = useState<string>();
+  const [Loading, setLoading] = useState(true);
 
   const getChannels = async (): Promise<ChatRoom[]> => {
     const res = await axios.get(`http://localhost:8080/chat/channel`);
@@ -36,9 +37,27 @@ export default function ChannelListComponent(props: ChannelListComponentProps) {
   }, [roomID, socket]);
 
   useEffect(() => {
-    getChannels().then((data) => { setChannels(data); })
+    try {
+      setLoading(true);
+      getChannels().then((data) => { setChannels(data); })
+    } catch (error) {
+      alert('チャンネル取得に失敗しました。ブラウザをリフレッシュしてください');
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 300);
+    }
   }, [])
 
+  if (Loading) {
+    return (
+      <>
+        <Box height={'3rem'} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <CircularProgress/>
+        </Box>
+      </>
+    )
+  }
 
   return (
     <>

@@ -1,4 +1,4 @@
-import { Avatar, Grid, Typography } from "@mui/material";
+import { Avatar, Box, CircularProgress, Grid, Typography } from "@mui/material";
 import PersonIcon from '@mui/icons-material/Person';
 import { Link, useLocation } from "react-router-dom";
 import React, { useEffect, useState } from "react";
@@ -24,6 +24,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
   const { socket, setDMRooms, DMRooms, isLeave, userName } = props;
   const roomID = useLocation().pathname.split('/')[3];
   const [prevRoomId, setPrevRoomId] = useState<string>();
+  const [Loading, setLoading] = useState(true);
 
   const getFriendNameFromRoomName = (room: string): string => {
     let friendName: string = '';
@@ -43,11 +44,20 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
   };
 
   useEffect(() => {
-    getUserDM().then((data) => {
-      setDMRooms([]);
-      data.map((room => setDMRooms((prev: any) => [...prev, { id: room.id, name: getFriendNameFromRoomName(room.name) }]))
-      )
-    })
+    try {
+      setLoading(true);
+      getUserDM().then((data) => {
+        setDMRooms([]);
+        data.map((room => setDMRooms((prev: any) => [...prev, { id: room.id, name: getFriendNameFromRoomName(room.name) }]))
+        )
+      })
+    } catch (error) {
+      alert('DM取得に失敗しました。ブラウザをリフレッシュしてください');
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 300);
+    }
   }, [userName])
 
 
@@ -61,6 +71,16 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
 
   const handleClick = (roomId: string) => {
     socket.emit('join_chat_room', { id: roomId })
+  }
+
+  if (Loading) {
+    return (
+      <>
+        <Box height={'3rem'} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <CircularProgress/>
+        </Box>
+      </>
+    )
   }
 
   return (
