@@ -15,7 +15,7 @@ type ChannelCreateDialogProps = {
 type CreateChannelDto = {
   name: string;
   type: string;
-  password?: string;
+  password: string;
 }
 
 /**
@@ -33,8 +33,12 @@ export default function ChannelCreateDialog(props: ChannelCreateDialogProps) {
   })
 
   const onSubmit: SubmitHandler<CreateChannelDto> = async (data) => {
-    const res = await axios.post(`http://localhost:8080/chat/room`, { type: data.type, name: data.name, password: data.password })
-    setChannels((prev: any) => [...prev, { name: data.name, id: res.data.id }])
+    try {
+      const res = await axios.post(`http://localhost:8080/chat/room`, { type: data.type, name: data.name, password: data.password })
+      setChannels((prev: any) => [...prev, { name: data.name, id: res.data.id }])
+    } catch (error: any) {
+      alert(error.response.data.message);
+    }
     reset();
     handleClose();
   }
