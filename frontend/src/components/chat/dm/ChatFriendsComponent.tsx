@@ -64,7 +64,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
     } finally {
       setTimeout(() => {
         setLoading(false);
-      }, 500);
+      }, 300);
     }
   }, [userName])
 
