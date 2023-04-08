@@ -6,30 +6,32 @@ interface Props {
     onClick: () => void;
 }
 
-const FingerPrintButton = ({onClick}: Props) => (
-        <div
-            style={{
-                display: "flex",
-                justifyContent: "right",
-                alignItems: "right",
-                marginTop: "-50px",
+function FingerPrintButton({ onClick }: Props) {
+  return (
+    <div
+    style={{
+        display: "flex",
+        justifyContent: "right",
+        alignItems: "right",
+        marginTop: "-50px",
+}}
+>
+    <h2
+        style={{
+            color: "purple",
         }}
-        >
-            <h2
-                style={{
-                    color: "purple",
-                }}
-            >
-                {"YOUR ID => "}
-            </h2>
-            <IconButton
-                aria-label="fingerprint"
-                color="secondary"
-                onClick={onClick}
-            >
-                <Fingerprint />
-            </IconButton>
-        </div>
-)
+    >
+        {"YOUR ID => "}
+    </h2>
+    <IconButton
+        aria-label="fingerprint"
+        color="secondary"
+        onClick={onClick}
+    >
+        <Fingerprint />
+    </IconButton>
+</div>
+  )
+}
 
 export default FingerPrintButton;

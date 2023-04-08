@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { Route, Routes } from 'react-router-dom';
 import { Grid } from "@mui/material";
 import axios from "axios";
@@ -20,9 +20,25 @@ import JoinInvitedRoom from "./features/game/JoinInvitedRoom";
 import NewNavBar from './components/utils/NewNavbar';
 import PrivateRouter from "./utils/PrivateRouter";
 import Profile from "./features/profile/Profile";
+import { RootWebsocketContext } from "./contexts/WebsocketContext";
 
 function App() {
   axios.defaults.withCredentials = true;
+  const rootSocket = useContext(RootWebsocketContext);
+  const didLogRef = useRef(false);
+
+  useEffect(() => {
+    if (didLogRef.current === false) {
+      didLogRef.current = true;
+      rootSocket.on('connect', () => {
+        console.log('RootSocket connected');
+      });
+      return () => {
+        rootSocket.disconnect();
+      }
+    }
+   }, []);
+
 
   return (
     <Grid container>
