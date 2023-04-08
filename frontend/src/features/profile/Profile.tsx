@@ -40,12 +40,12 @@ const Profile = () => {
     };
 
     const [matchArr, setMatches] = useState<Match[]>([]);
-    const [winnerId, setWinnerId] = useState<string>('');
+    const [winnerId] = useState<string>('');
     const MatchPromises = useQueryMatches();
     useEffect(() => {
         MatchPromises.then((matches: Match[]) => {
             setMatches(matches);
-            setWinnerId(matches[matches.length - 1].winner_id);
+            // setWinnerId(matches[matches.length - 1].winner_id);
         });
     }, []);
 
@@ -245,13 +245,10 @@ const Profile = () => {
     }, []);
 
     const handleFingerPrintButton = () => {
-        console.log("FingerPrintButton clicked", user?.id);
         navigator.clipboard.writeText(user?.id as string);
     }
 
-    const FriendListButton = () => {
-        console.log('List button');
-        return (
+    const FriendListButton = () => (
             <div>
                 <Button
                 variant="outlined"
@@ -270,8 +267,7 @@ const Profile = () => {
                 ))}
             </h3>
             </div>
-        );
-    }
+        )
 
     // @ts-ignore
     return (
