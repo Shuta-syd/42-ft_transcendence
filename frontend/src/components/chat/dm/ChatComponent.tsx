@@ -13,6 +13,7 @@ export default function ChatComponent() {
   const [userName, setUserName] = useState('');
   const didLogRef = useRef(false);
   const socket: Socket = io('http://localhost:8080/chat', {
+    autoConnect: false,
     transports: ['websocket']
   });
   const [Loading, setLoading] = useState(true);
@@ -20,6 +21,19 @@ export default function ChatComponent() {
   useEffect(() => {
     try {
       getUserName().then((name) => { setUserName(name); });
+
+      if (didLogRef.current === false) {
+        didLogRef.current = true;
+        socket.on('connect', () => {
+            console.log('Chat Socket connected');
+        });
+
+        socket.connect();
+
+          return () => {
+            socket.disconnect();
+          }
+        }
     } catch (error) {
       alert('ユーザ名取得に失敗しました');
     } finally {
@@ -27,27 +41,17 @@ export default function ChatComponent() {
         setLoading(false);
       }, 200);
     }
-  }, [])
-
-  useEffect(() => {
-    if (didLogRef.current === false) {
-      didLogRef.current = true;
-        socket.on('connect', () => {
-        });
-
-        return () => {
-          socket.disconnect();
-        }
-      }
     return () => {};
   }, [])
 
   if (Loading) {
-    <Box height={'100vh'} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-    <Box height={'10vh'} width={'10vw'}>
-      <CircularProgress/>
-    </Box>
-  </Box>
+    return (
+      <Box height={'100vh'} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Box height={'10vh'} width={'10vw'}>
+          <CircularProgress/>
+        </Box>
+      </Box>
+    )
   }
 
   return (
