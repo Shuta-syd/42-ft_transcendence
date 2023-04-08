@@ -1,5 +1,4 @@
-import { Avatar, AvatarGroup, Box, CircularProgress, Grid, Typography } from "@mui/material";
-import axios from "axios";
+import { Avatar, AvatarGroup, Grid, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Socket } from "socket.io-client";
@@ -21,12 +20,6 @@ export default function ChannelListComponent(props: ChannelListComponentProps) {
   const { socket, channels, setChannels, isLeave } = props;
   const roomID = useLocation().pathname.split('/')[3];
   const [prevRoomId, setPrevRoomId] = useState<string>();
-  const [Loading, setLoading] = useState(true);
-
-  const getChannels = async (): Promise<ChatRoom[]> => {
-    const res = await axios.get(`http://localhost:8080/chat/channel`);
-    return res.data;
-  }
 
   useEffect(() => {
     if (roomID === undefined) return;
@@ -36,33 +29,6 @@ export default function ChannelListComponent(props: ChannelListComponentProps) {
     socket.emit('join_chat_room', { id: roomID });
     setPrevRoomId(roomID);
   }, [roomID, socket, prevRoomId]);
-
-  useEffect(() => {
-    try {
-      setLoading(true);
-      getChannels().then((data) => { setChannels(data); })
-    } catch (error) {
-      alert('チャンネル取得に失敗しました。ブラウザをリフレッシュしてください');
-    } finally {
-      setTimeout(() => {
-        setLoading(false);
-      }, 300);
-    }
-  }, [])
-
-  if (Loading) {
-    return (
-      <>
-        <Box
-          height={'3rem'}
-          sx={{
-          display: 'flex', alignItems: 'center', justifyContent: 'center'
-        }}>
-          <CircularProgress/>
-        </Box>
-      </>
-    )
-  }
 
   return (
     <>
