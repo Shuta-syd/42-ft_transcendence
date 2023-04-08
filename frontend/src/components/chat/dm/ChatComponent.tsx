@@ -13,7 +13,6 @@ export default function ChatComponent() {
   const [userName, setUserName] = useState('');
   const didLogRef = useRef(false);
   const socket: Socket = io('http://localhost:8080/chat', {
-    autoConnect: false,
     transports: ['websocket']
   });
   const [Loading, setLoading] = useState(true);

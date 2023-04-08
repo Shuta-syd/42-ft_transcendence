@@ -15,7 +15,6 @@ import NewNavBar from './components/utils/NewNavbar';
 import PrivateRouter from "./utils/PrivateRouter";
 import ProfileRouting from "./features/profile/ProfileRouting";
 import { RootWebsocketContext } from "./contexts/WebsocketContext";
-// eslint-disable-next-line import/no-named-as-default
 import Profile from "./features/profile/Profile";
 
 
@@ -45,23 +44,26 @@ function App() {
         <Routes>
           <Route path="/login" element={<Auth isLogin={true} />} />
           <Route path="/signup" element={<Auth isLogin={false} />} />
-          <Route path="/chat" element={
+          <Route
+            path="/chat"
+            element={
             <PrivateRouter>
               <Chat />
             </PrivateRouter>
-          }/>
+          }>
             <Route path="room" element={<ChatComponent />}>
               <Route path=":roomId" element={<ChatWindowComponent />} />
             </Route>
-            <Route path="/channel" element={
+          </Route>
+          <Route path="/channel" element={
               <PrivateRouter>
-                <Channel />
-              </PrivateRouter>
-            }>
-              <Route path="room" element={<ChannelComponent />}>
-                <Route path=":roomId" element={<ChannelWindowComponent />} />
-              </Route>
+              <Channel />
+            </PrivateRouter>
+          }>
+            <Route path="room" element={<ChannelComponent />}>
+              <Route path=":roomId" element={<ChannelWindowComponent />} />
             </Route>
+          </Route>
           <Route path="/game" element={
             <PrivateRouter>
               <GameMatching/>
