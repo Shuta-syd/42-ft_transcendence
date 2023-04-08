@@ -6,9 +6,7 @@ interface Props {
     onClick: () => void;
 }
 
-const FingerPrintButton = ({onClick}: Props) => {
-    console.log("FingerPrintButton clicked");
-    return (
+const FingerPrintButton = ({onClick}: Props) => (
         <div
             style={{
                 display: "flex",
@@ -32,7 +30,6 @@ const FingerPrintButton = ({onClick}: Props) => {
                 <Fingerprint />
             </IconButton>
         </div>
-    )
-}
+)
 
 export default FingerPrintButton;

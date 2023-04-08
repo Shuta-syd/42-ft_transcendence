@@ -6,9 +6,7 @@ interface Props {
     onUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const ImageUploadButton = ({ onUpload }: Props) => {
-    console.log('Upload button');
-    return (
+const ImageUploadButton = ({ onUpload }: Props) => (
         <div
             style={{
                 width: 380,
@@ -34,7 +32,6 @@ const ImageUploadButton = ({ onUpload }: Props) => {
                 <PhotoCamera/>
             </IconButton>
         </div>
-    )
-}
+  )
 
 export default ImageUploadButton;

@@ -42,9 +42,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 
-const ShowAvatar = ({ user, profileImage }: ShowAvatarProps) => {
-    console.log('ShowAvatar', user, profileImage);
-    return (
+const ShowAvatar = ({ user, profileImage }: ShowAvatarProps) => (
         <div
             style={{
                 display: 'flex',
@@ -96,7 +94,6 @@ const ShowAvatar = ({ user, profileImage }: ShowAvatarProps) => {
                     </h2>
             </div>
         </div>
-    );
-};
+);
 
 export default ShowAvatar;

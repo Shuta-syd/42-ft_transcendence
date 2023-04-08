@@ -44,7 +44,7 @@ const JoinInvitedRoom = () => {
                     setIsUncorrect(false);
                 }
                 else {
-                    console.log("hoge")
+                    // console.log("hoge")
                     setIsUncorrect(true);
                 }
                 }

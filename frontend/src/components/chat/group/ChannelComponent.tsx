@@ -10,7 +10,10 @@ import ChannelGroupComponent from "./ChannelGroupComponent";
  * @returns Channel画面のコンポーネント
  */
 export default function ChannelComponent() {
-  const socket: Socket = io('http://localhost:8080/chat');
+  const socket: Socket = io('http://localhost:8080/chat', {
+    autoConnect: false,
+    transports: ['websocket']
+  });
   const didLogRef = useRef(false);
   const [channels, setChannels] = useState<ChatRoom[]>([]);
 
@@ -25,7 +28,7 @@ export default function ChannelComponent() {
       }
     }
     return () => {};
-  }, [socket]);
+  }, []);
 
 
   return (

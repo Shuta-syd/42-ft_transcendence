@@ -12,7 +12,10 @@ import ChatGroupComponent from "./ChatGroupComponent";
 export default function ChatComponent() {
   const [userName, setUserName] = useState('');
   const didLogRef = useRef(false);
-  const socket: Socket = io('http://localhost:8080/chat')
+  const socket: Socket = io('http://localhost:8080/chat', {
+    autoConnect: false,
+    transports: ['websocket']
+  });
   const [Loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -38,7 +41,7 @@ export default function ChatComponent() {
         }
       }
     return () => {};
-  }, [socket])
+  }, [])
 
   if (Loading) {
     <Box height={'100vh'} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

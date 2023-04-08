@@ -322,7 +322,7 @@ const GamePlayer1 = () => {
     });
 
     GameSocket.on('Pong', (name: string, socketid: string) => {
-        console.log('recieve pong ', name, socketid);
+        // console.log('recieve pong ', name, socketid);
         isRecievePong = true;
         p2name = name;
     });
