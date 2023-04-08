@@ -6,13 +6,12 @@ import io from "socket.io-client";
 import Grid from "@mui/material/Grid";
 import {Match, User} from "../../types/PrismaType";
 import {fetchProfileUser} from "../../hooks/profile/useProfileUser";
-// import {sendFriendRequest} from "../../hooks/profile/sendFriendRequests";
 import useQueryMatches from "../../hooks/match/useWueryMatch";
 import ShowAvatar from "../../components/profile/ShowAvatar";
 import ImageUploadButton from "../../components/profile/ImageUploadButton";
-// import OldInputFriendId from "../../components/profile/OldInputFriendId";
 import FingerPrintButton from "../../components/profile/FingerPrintButton";
 import InputFriendId from "../../components/profile/InputFriendId";
+import FriendProfile from "./FriendProfile";
 
 const Profile = () => {
     const [user, setUser] = useState<User>();
@@ -23,15 +22,6 @@ const Profile = () => {
             setUser(userDto);
         });
     }, []);
-
-    // const [inputId, setInputId] = useState<string>('');
-    // const HandleInputID = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    //     setInputId(e.target.value);
-    // }
-
-    // const handleDecideIdButton = async () => {
-    //     await sendFriendRequest(user?.id, inputId);
-    // }
 
     const getFriends = async () => {
         const {data} = await axios.get<User[]>(`http://localhost:8080/user/friend`);
@@ -50,12 +40,12 @@ const Profile = () => {
     };
 
     const [matchArr, setMatches] = useState<Match[]>([]);
-    const [winnerId, setWinnerId] = useState<string>('');
+    const [winnerId] = useState<string>('');
     const MatchPromises = useQueryMatches();
     useEffect(() => {
         MatchPromises.then((matches: Match[]) => {
             setMatches(matches);
-            setWinnerId(matches[matches.length - 1].winner_id);
+            // setWinnerId(matches[matches.length - 1].winner_id);
         });
     }, []);
 
@@ -246,8 +236,6 @@ const Profile = () => {
         }
     };
 
-    // const elonMuskImage = "https://upload.wikimedia.org/wikipedia/commons/e/e1/Elon_Musk_%28cropped%29.jpg";
-    // const steveJobsImage = "https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg";
     const [profileImage, setProfileImage] = useState('');
     useEffect(() => {
         const profileUser = fetchProfileUser();
@@ -257,13 +245,10 @@ const Profile = () => {
     }, []);
 
     const handleFingerPrintButton = () => {
-        // console.log("FingerPrintButton clicked", user?.id);
         navigator.clipboard.writeText(user?.id as string);
     }
 
-    const FriendListButton = () => {
-        console.log('List button');
-        return (
+    const FriendListButton = () => (
             <div>
                 <Button
                 variant="outlined"
@@ -277,12 +262,12 @@ const Profile = () => {
                     <div key={friend.id}>
                         [{friend.name}]
                         <FriendStatus friendName={friend.name}/>
+                        <FriendProfile friend={friend} />
                     </div>
                 ))}
             </h3>
             </div>
-        );
-    }
+        )
 
     // @ts-ignore
     return (
@@ -298,15 +283,18 @@ const Profile = () => {
             }}
         >
             <h2>
-                <h1>[Profile]</h1>
                 <Grid container
                     direction="column"
-                      spacing={2}
                 >
                     <Grid item xs={5}>
                         <ShowAvatar user={user} profileImage={profileImage} />
                     </Grid>
-                    <Grid item xs={5} style={{ display: "flex", alignItems: "center", justifyContent: "center", color: "#3C444B" }}>
+                    <Grid item xs={5}
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                color: "#3C444B" }}>
                         <ImageUploadButton onUpload={uploadImage} />
                     </Grid>
                     <Grid item xs={5}>
