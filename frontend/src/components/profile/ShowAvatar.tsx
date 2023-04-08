@@ -6,7 +6,7 @@ import { User } from "../../types/PrismaType";
 
 interface ShowAvatarProps {
     user?: User;
-    profileImage: string;
+    profileImage: string | undefined;
 }
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
@@ -42,9 +42,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 }));
 
 
-const ShowAvatar = ({ user, profileImage }: ShowAvatarProps) => {
-    console.log('ShowAvatar', user, profileImage);
-    return (
+const ShowAvatar = ({ user, profileImage }: ShowAvatarProps) => (
         <div
             style={{
                 display: 'flex',
@@ -97,6 +95,5 @@ const ShowAvatar = ({ user, profileImage }: ShowAvatarProps) => {
             </div>
         </div>
     );
-};
 
 export default ShowAvatar;

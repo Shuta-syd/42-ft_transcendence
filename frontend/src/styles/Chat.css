@@ -35,3 +35,8 @@ input[type=text]::placeholder {
   background-color: #f7f8fa;
   border-radius: 5%;
 }
+
+.UserParticipantLink {
+  text-decoration: none;
+  color: #3C444B;
+}

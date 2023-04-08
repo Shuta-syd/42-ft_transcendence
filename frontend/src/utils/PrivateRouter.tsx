@@ -1,4 +1,4 @@
-import { CircularProgress } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import userAuth from "./userAuth";
@@ -18,7 +18,7 @@ export default function PrivateRouter({ children }: { children: JSX.Element }) {
       } finally {
         setTimeout(() => {
           setLoading(false);
-        }, 500);
+        }, 1000);
       }
     };
 
@@ -26,7 +26,13 @@ export default function PrivateRouter({ children }: { children: JSX.Element }) {
   }, []);
 
   if (loading) {
-    return <CircularProgress />;
+    return (
+      <Box height={'100vh'} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Box height={'10vh'} width={'10vw'}>
+          <CircularProgress/>
+        </Box>
+      </Box>
+    );
   }
 
   if (!auth) {

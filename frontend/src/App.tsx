@@ -12,13 +12,16 @@ import ChannelWindowComponent from "./components/chat/group/ChannelWindowCompone
 import GameMatching from "./features/game/GameMatching";
 import NewNavBar from './components/utils/NewNavbar';
 import PrivateRouter from "./utils/PrivateRouter";
+import ProfileRouting from "./features/profile/ProfileRouting";
 import Profile from "./features/profile/Profile";
 import GameRouting from "./features/game/GameRouting";
+
 
 function App() {
   axios.defaults.withCredentials = true;
   const path = useLocation().pathname;
 
+  // @ts-ignore
   return (
     <Grid container>
       { path !=='/login' && path !== '/signup' ? <NewNavBar /> : <></>}
@@ -44,11 +47,16 @@ function App() {
               <Route path=":roomId" element={<ChannelWindowComponent />} />
             </Route>
           </Route>
-          <Route>
-            <Route path="/game" element={<GameMatching />} />
-            <Route path={"/game/:room"} element={<GameRouting />} />
-          </Route>
-          <Route path="/user" element={<Profile/>} />
+          <Route path="/game" element={<GameMatching />} />
+            <Route path="/game/player1" element={<GamePlayer1/>} />
+            <Route path="/game/player2" element={<GamePlayer2/>} />
+          <Route path="/game/observer" element={<GameObserver/>} />
+          <Route path="/game/select_room" element={<GameSelectRoom/>} />
+          <Route path="/game/game_room" element={<CreateGameRoom/>} />
+          <Route path="/game/invite_room" element={<InviteRoom/>} />
+          <Route path="/game/join_invited_room" element={<JoinInvitedRoom></JoinInvitedRoom>} />
+          <Route path={"/user"} element={<Profile />}/>
+          <Route path={"/user/:name"} element={<ProfileRouting />}/>
         </Routes>
       </Grid>
     </Grid>
