@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {Grid} from "@mui/material"
 import {User} from "../../types/PrismaType";
 import ShowAvatar from "../../components/profile/ShowAvatar";
@@ -59,6 +59,7 @@ const FriendProfile = (props: FriendProfileProps) => (
                 </Grid>
             </Grid>
         </div>
-    )
+    );
+}
 
 export default FriendProfile;
