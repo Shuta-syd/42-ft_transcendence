@@ -1,9 +1,10 @@
 import { Box, CircularProgress, Grid } from "@mui/material";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
-import { io, Socket } from "socket.io-client";
+import { Socket } from "socket.io-client";
 import getUserName from "../../../utils/getUserName";
 import ChatGroupComponent from "./ChatGroupComponent";
+import useSocket from "../../../hooks/useSocket";
 
 
 /**
@@ -11,29 +12,12 @@ import ChatGroupComponent from "./ChatGroupComponent";
  */
 export default function ChatComponent() {
   const [userName, setUserName] = useState('');
-  const didLogRef = useRef(false);
-  const socket: Socket = io('http://localhost:8080/chat', {
-    autoConnect: false,
-    transports: ['websocket']
-  });
+  const socket: Socket = useSocket('http://localhost:8080/chat');
   const [Loading, setLoading] = useState(true);
 
   useEffect(() => {
     try {
       getUserName().then((name) => { setUserName(name); });
-
-      if (didLogRef.current === false) {
-        didLogRef.current = true;
-        socket.on('connect', () => {
-            console.log('Chat Socket connected');
-        });
-
-        socket.connect();
-
-          return () => {
-            socket.disconnect();
-          }
-        }
     } catch (error) {
       alert('ユーザ名取得に失敗しました');
     } finally {

@@ -31,7 +31,6 @@ export class UserGateway {
   // }
 
   handleDisconnect(socket: any) {
-    // console.log('dissconected', socket.id);
     const filteredUsers = OnlineUsers.filter(
       (OnlineUsers) => OnlineUsers.clientId !== socket.id,
     );
