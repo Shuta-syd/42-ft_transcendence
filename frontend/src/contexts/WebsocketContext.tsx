@@ -12,7 +12,6 @@ export const GameWebsocketProvider = GameWebsocketContext.Provider;
  * アプリの全体を管理するsocket
  */
 export const RootSocket = io('http://localhost:8080', {
-  autoConnect: false,
   transports: ['websocket']
 })
 export const RootWebsocketContext = createContext<Socket>(RootSocket);
