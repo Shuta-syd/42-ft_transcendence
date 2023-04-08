@@ -30,11 +30,12 @@ export default function ChannelListComponent(props: ChannelListComponentProps) {
 
   useEffect(() => {
     if (roomID === undefined) return;
+    if (prevRoomId === roomID) return;
     if (prevRoomId)
       socket.emit('leave_chat_room', { id: prevRoomId });
     socket.emit('join_chat_room', { id: roomID });
     setPrevRoomId(roomID);
-  }, [roomID, socket]);
+  }, [roomID, socket, prevRoomId]);
 
   useEffect(() => {
     try {

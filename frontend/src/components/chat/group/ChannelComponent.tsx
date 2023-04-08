@@ -1,35 +1,18 @@
 import { Box, Grid } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
-import { io, Socket } from "socket.io-client";
+import { Socket } from "socket.io-client";
 import { ChatRoom } from "../../../types/PrismaType";
 import ChannelGroupComponent from "./ChannelGroupComponent";
+import useSocket from "../../../hooks/useSocket";
 
 
 /**
  * @returns Channel画面のコンポーネント
  */
 export default function ChannelComponent() {
-  const socket: Socket = io('http://localhost:8080/chat', {
-    autoConnect: false,
-    transports: ['websocket']
-  });
-  const didLogRef = useRef(false);
+  const socket: Socket = useSocket('http://localhost:8080/chat');
   const [channels, setChannels] = useState<ChatRoom[]>([]);
-
-  useEffect(() => {
-    if (didLogRef.current === false) {
-      didLogRef.current = true;
-      socket.on('connect', () => {
-      })
-
-      return () => {
-        socket.disconnect();
-      }
-    }
-    return () => {};
-  }, []);
-
 
   return (
     <>

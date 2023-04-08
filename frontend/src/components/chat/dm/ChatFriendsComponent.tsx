@@ -71,7 +71,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
 
 
   useEffect(() => {
-    if (roomID === undefined) return;
+    if (roomID === undefined) return; // リロードするとJoinしないバグ解消する
     if (prevRoomId === roomID) return;
     if (prevRoomId)
       socket.emit('leave_chat_room', { id: prevRoomId });
