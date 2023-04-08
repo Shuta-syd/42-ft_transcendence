@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Badge } from '@mui/material';
+import {Badge, Button } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import Grid from '@mui/material/Grid';
 import axios from 'axios';
@@ -39,8 +39,16 @@ const NotificationButton = () => {
             {friends.map((f) => (
                 <React.Fragment key={f.id}>
                     <p>{f.name}</p>
-                    <button>Accept</button>
-                    <button>Decline</button>
+                    <Button
+                        variant="contained"
+                    >
+                        Accept
+                    </Button>
+                    <Button
+                        variant="outlined"
+                    >
+                        Decline
+                    </Button>
                 </React.Fragment>
             ))}
         </div>
