@@ -62,7 +62,7 @@ function App() {
           <Route path="/game/invite_room" element={<InviteRoom/>} />
           <Route path="/game/join_invited_room" element={<JoinInvitedRoom></JoinInvitedRoom>} />
           <Route path={"/user"} element={<Profile />}/>
-          <Route path={"/user/:id"} element={<ProfileRouting />}/>
+          <Route path={"/user/:name"} element={<ProfileRouting />}/>
         </Routes>
       </Grid>
     </Grid>

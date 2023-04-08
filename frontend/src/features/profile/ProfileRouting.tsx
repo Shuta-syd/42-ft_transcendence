@@ -1,40 +1,59 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 import { User } from '../../types/PrismaType';
 import Profile from './Profile';
+import FriendProfile from './FriendProfile';
 import {fetchProfileUser} from "../../hooks/profile/useProfileUser";
 
 const ProfileRouting = () => {
-    const { id } = useParams();
-    const [person, setPerson] = useState<User>();
+    const { name } = useParams();
     const [loginUser, setLoginUser] = useState<User>();
+    const [nonLoginUser, setNonLoginUser] = useState<User>();
 
-    const UserPromises = fetchProfileUser();
+    /* 自分が誰なのかという情報 */
     useEffect(() => {
+        const UserPromises = fetchProfileUser();
         UserPromises.then((userDto: User) => {
             setLoginUser(userDto);
         });
     }, []);
 
+    /* nonLogin userの情報 */
     useEffect(() => {
-        axios.get<User>(`http://localhost:8080/user`).then((res) => {
-            setPerson(res.data);
-        });
-    }, [id]);
+        const fetchNonLoginUser = async (nm: string | undefined) => {
+            const { data } = await axios.get<User>(`http://localhost:8080/user/name`,{
+                params: {
+                    name: nm,
+                }
+            })
+            setNonLoginUser(data);
+        };
+        if (name) {
+            console.log('name', name);
+            fetchNonLoginUser(name);
+        }
+    },  []);
+
+    useEffect(() => {
+        console.log('nonLoginUser', nonLoginUser);
+    }, [nonLoginUser]);
 
     const renderProfileStatus = () => {
-        if (!person)
-            return null;
-        if (loginUser?.name === id) {
+        /* login userがparamのnameと一致した時にはProfile Componentを表示する */
+        if (loginUser?.name === name) {
             return <Profile />
         }
-        return <h1>IT IS NOT MY PAGE</h1>;
+        if (loginUser?.name !== name && nonLoginUser?.name === name) {
+        /* login userがparamのnameと一致しなかった時にはFriend Profile Componentにuserのpropsを渡して表示する */
+            return <FriendProfile friend={nonLoginUser}/>;
+        }
+        return <h1>THE NAME PERSON IS NOT EXIST</h1>;
     };
 
     return (
         <div>
-            <p>{renderProfileStatus()}</p>
+            <>{renderProfileStatus()}</>
         </div>
     );
 };
