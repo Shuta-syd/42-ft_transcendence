@@ -44,8 +44,8 @@ export class UserController {
    * @param id
    * idによってuser情報を取得できるようなエンドポイント
    */
-  @Get('id')
-  async getUserById(@Query('id') id: string): Promise<User> {
+  @Post('id')
+  async getUserById(@Body('id') id: string): Promise<User> {
     return this.userService.getUserById(id);
   }
   @Patch('friend')

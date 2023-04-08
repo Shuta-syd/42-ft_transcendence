@@ -7,49 +7,47 @@ import {User} from "../../types/PrismaType";
 
 const NotificationButton = () => {
     const [friendIds, setFriendIds] = useState<string[]>([]);
+    const [friends, setFriends] = useState<User[]>([]);
     const [nbNotification, setNbNotification] = useState<number>(0);
     const [showRequests, setShowRequests] = useState<boolean>(false);
-    const [user, setUser] = useState<User>();
+    // const [user, setUser] = useState<User>();
 
     useEffect(() => {
-        const people = axios.get<string[]>(`http://localhost:8080/user/friendReq`);
-        people.then((res) => {
+        /* requestしてきたpeopleをfetch */
+        const reqPeople = axios.get<string[]>(`http://localhost:8080/user/friendReq`);
+        reqPeople.then((res) => {
             setFriendIds(res.data);
             setNbNotification(res.data.length);
         });
     }, []);
 
-
-    const ItemToName = (item: string) => {
-        const otherPerson = axios.get<User>(`http://localhost:8080/user/id`, {
-            params: {
-                id: item
-            }
+    useEffect(() => {
+        // friendIdsに応じたidからuserを取得して、friendsに格納していく
+        friendIds.forEach((id) => {
+            const friend = axios.post<User>(`http://localhost:8080/user/id`, {id});
+            console.log(friend);
+            friend.then((res) => {
+                setFriends((prev) => [...prev, res.data]);
+            });
         });
-        otherPerson.then((res) => {
-            setUser(res.data);
-            console.log(res.data);
-            console.log(user);
-            return res.data.name;
-        }, (err) => {
-            console.log(err);
-        });
-        return "error";
-    }
+    }, [friendIds]);
 
-    const OpenRequests = (props: { ss: string[] }) => {
-        const items = props.ss;
 
-        return (
-            <>
-                {items.map((item, index) => (
-                    <li key={index}>{ItemToName(item)}</li>
-                ))}
-            </>
-        );
-    }
+    // fs is an array of friend
+    const OpenRequests = () => (
+        <div>
+            {friends.map((f) => (
+                <React.Fragment key={f.id}>
+                    <p>{f.name}</p>
+                    <button>Accept</button>
+                    <button>Decline</button>
+                </React.Fragment>
+            ))}
+        </div>
+    );
 
     const handleClick = () => {
+        console.log("clicked");
         setShowRequests(!showRequests);
     }
 
@@ -73,8 +71,7 @@ const NotificationButton = () => {
                 />
             </Badge>
             <Grid>
-            {showRequests && (<OpenRequests ss={friendIds}/>
-            )}
+            {showRequests && (<OpenRequests/>)}
             </Grid>
         </Grid>
     )
