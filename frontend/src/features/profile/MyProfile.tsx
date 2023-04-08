@@ -203,7 +203,6 @@ const MyProfile = () => {
         // );
     // }
     //
-    // const steveJobsImage = "https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg";
 
     const uploadImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const { files } = event.target;
@@ -243,10 +242,6 @@ const MyProfile = () => {
         });
     }, []);
 
-    // const handleFingerPrintButton = () => {
-    //     navigator.clipboard.writeText(user?.id as string);
-    // }
-    //
     // const FriendListButton = () => (
     //         <div>
     //             <Button
@@ -292,12 +287,11 @@ const MyProfile = () => {
                 >
                     [My Profile]
                 </Grid>
-                <Grid item xs={5}
-                      sx={{
-                          display: "flex",
-                            alignItems: "flex-end",
-                            justifyContent: "flex-end",
-                      }}
+                <Grid item xs={5} sx={{
+                    display: "flex",
+                    alignItems: "flex-end",
+                    justifyContent: "flex-end",
+                }}
                 >
                     <NotificationButton />
                 </Grid>
