@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import {Grid} from "@mui/material"
 import {User} from "../../types/PrismaType";
 import ShowAvatar from "../../components/profile/ShowAvatar";
@@ -48,7 +48,7 @@ const FriendProfile = (props: FriendProfileProps) => (
                     <FriendRequestButton />
                 </Grid>
                 <Grid
-                item xs={5}
+                    item xs={5}
                     sx={{
                         display: "flex",
                         alignItems: "center",
@@ -59,7 +59,6 @@ const FriendProfile = (props: FriendProfileProps) => (
                 </Grid>
             </Grid>
         </div>
-    );
-}
+    )
 
 export default FriendProfile;
