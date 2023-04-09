@@ -29,7 +29,6 @@ const InputFriendId = (props: InputFriendIdProps) => {
         setIsButtonDisabled(true);
     }
 
-    console.log(`InputFriendId: ${props}`)
     return (
         <div>
             <h2>Find new friends!</h2>

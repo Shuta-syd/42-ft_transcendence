@@ -156,6 +156,19 @@ export class UserService {
   }
 
   /**
+   * @param name
+   * @returns nameを含むUser
+   */
+  searchFriendByName(name: string): Promise<User> {
+    return this.prisma.user.findFirst({
+      where: {
+        name: {
+          equals: name,
+        },
+      },
+    });
+  }
+  /**
    * @description Friend 申請のhandler requesterの名前をdatebaseに格納
    * @return setしたrequesteeのデータ
    * @param userId
