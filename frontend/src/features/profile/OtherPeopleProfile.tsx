@@ -48,7 +48,7 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => (
                     <FriendRequestButton user={props.friend}/>
                 </Grid>
                 <Grid
-                item xs={5}
+                    item xs={5}
                     sx={{
                         display: "flex",
                         alignItems: "center",

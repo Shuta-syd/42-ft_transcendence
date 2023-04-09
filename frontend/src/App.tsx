@@ -14,7 +14,7 @@ import NewNavBar from './components/utils/NewNavbar';
 import PrivateRouter from "./utils/PrivateRouter";
 import ProfileRouting from "./features/profile/ProfileRouting";
 import MyProfile from "./features/profile/MyProfile";
-import GameRouting from "./features/game/GameRouting";
+import GameRouting from "./features/game/GameRouting"
 
 
 function App() {
@@ -47,12 +47,10 @@ function App() {
               <Route path=":roomId" element={<ChannelWindowComponent />} />
             </Route>
           </Route>
-          <Route>
-            <Route path="/game" element={<GameMatching />} />
+          <Route path="/game" element={<GameMatching />} />
             <Route path={"/game/:room"} element={<GameRouting />} />
-          </Route>
           <Route path={"/user"} element={<MyProfile />}/>
-          <Route path={"/user/:name"} element={<ProfileRouting />}/>
+            <Route path={"/user/:name"} element={<ProfileRouting />}/>
         </Routes>
       </Grid>
     </Grid>
