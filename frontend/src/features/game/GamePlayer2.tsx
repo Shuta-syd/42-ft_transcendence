@@ -1,10 +1,11 @@
 import React, { useRef, useEffect, useState} from "react";
-import {Grid, Button} from "@mui/material";
-import { GameSocket } from "../../contexts/WebsocketContext";
-import {User} from "../../types/PrismaType";
-import {useGameUser} from "../../hooks/game/useGameuser";
+import { Grid, Button } from "@mui/material";
+import { Socket } from "socket.io-client";
+import { User } from "../../types/PrismaType";
+import { useGameUser } from "../../hooks/game/useGameuser";
 
-const GamePlayer2 = () => {
+const GamePlayer2 = (props: { socket: Socket }) => {
+  const { socket } = props;
     // global variables
     let context: CanvasRenderingContext2D | null;
     let keycode = '';
@@ -147,7 +148,7 @@ const GamePlayer2 = () => {
             paddleHeight: rightPaddle.y,
             name: user?.name.toString(),
         }
-        GameSocket.emit('GameToServer', paddleAndRoom);
+        socket.emit('GameToServer', paddleAndRoom);
 
         /* draw part */
         leftPaddle.draw();
@@ -194,7 +195,7 @@ const GamePlayer2 = () => {
     useEffect(() => {
         UserPromises.then((userDto: User) => {
             setUser(userDto);
-            GameSocket.emit('JoinRoom', userDto.name);
+            socket.emit('JoinRoom', userDto.name);
         });
     }, []);
 
@@ -219,13 +220,13 @@ const GamePlayer2 = () => {
     }, [user]);
 
     useEffect(() => {
-        GameSocket.on('connect', () => {
-            // console.log('接続ID : ', GameSocket.id)
+        socket.on('connect', () => {
+            // console.log('接続ID : ', socket.id)
         })
 
         return () => {
             // console.log('切断')
-            GameSocket.disconnect()
+            socket.disconnect()
         }
     }, [])
 
@@ -237,18 +238,18 @@ const GamePlayer2 = () => {
         name: string;
     };
 
-    GameSocket.on('GameToClient', (leftPaddley: PaddleAndRoom, socketid: string) => {
-        if (GameSocket.id !== socketid)
+    socket.on('GameToClient', (leftPaddley: PaddleAndRoom, socketid: string) => {
+        if (socket.id !== socketid)
             leftPaddle.y = leftPaddley.paddleHeight;
     });
-    GameSocket.on('BallPosToClient', (BallPos: BallPos, SocketId: string) => {
+    socket.on('BallPosToClient', (BallPos: BallPos, SocketId: string) => {
         ball.x = BallPos.x;
         ball.y = BallPos.y;
     });
 
-    GameSocket.on('Ping', (name: string, SocketId: string) => {
+    socket.on('Ping', (name: string, SocketId: string) => {
         console.log(name, SocketId, 'Ping');
-        GameSocket.emit('Pong', user?.name);
+        socket.emit('Pong', user?.name);
     });
 
     type Score = {
@@ -261,7 +262,7 @@ const GamePlayer2 = () => {
         window.location.reload();
     }
 
-    GameSocket.on('ScoreToClient', (Score: Score, SocketId: string) => {
+    socket.on('ScoreToClient', (Score: Score, SocketId: string) => {
         leftScore = Score.player1;
         rightScore = Score.player2;
     });

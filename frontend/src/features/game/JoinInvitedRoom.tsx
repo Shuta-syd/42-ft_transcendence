@@ -1,13 +1,13 @@
 import React, {ChangeEvent, useEffect, useState} from "react";
 import { Link } from "react-router-dom";
 import { Grid } from "@mui/material";
+import { Socket } from "socket.io-client";
 import {User, InviteGame } from "../../types/PrismaType";
 import {useGameUser} from "../../hooks/game/useGameuser";
 import GameInvitedGuestReq from "../../hooks/game/useInvitedRoom";
-import {GameSocket} from "../../contexts/WebsocketContext";
 
-const JoinInvitedRoom = () => {
-
+const JoinInvitedRoom = (props: {socket: Socket}) => {
+    const {socket} = props;
     const [tmpNumber, setTmpNumber] = useState<string>('');
     const [roomId, setRoomid] = useState<string>('');
     const [IsAssigned, setIsAsssigned] = useState<boolean>(false);
@@ -53,7 +53,7 @@ const JoinInvitedRoom = () => {
     };
 
     const handleClick = () => {
-        GameSocket.emit('TerminateGame', user?.name);
+        socket.emit('TerminateGame', user?.name);
     };
 
     return (

@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState} from "react";
 import {Button, Grid} from "@mui/material";
 import axios from "axios";
-import {GameSocket} from "../../contexts/WebsocketContext";
-import {User} from "../../types/PrismaType";
-import {useGameUser} from "../../hooks/game/useGameuser";
+import { Socket } from "socket.io-client";
+import { User } from "../../types/PrismaType";
+import { useGameUser } from "../../hooks/game/useGameuser";
 
 
-const GamePlayer1 = () => {
+const GamePlayer1 = (props: { socket: Socket }) => {
+  const { socket } = props;
+
     // global variables
     let context: CanvasRenderingContext2D | null;
     let canvas:  HTMLCanvasElement | null;
@@ -158,7 +160,7 @@ const GamePlayer1 = () => {
             paddleHeight: rightPaddle.y,
             name: user?.name.toString(),
         }
-        GameSocket.emit('GameToServer', paddleAndRoom);
+        socket.emit('GameToServer', paddleAndRoom);
         keycode = '';
 
         /* send ball pos to server */
@@ -176,7 +178,7 @@ const GamePlayer1 = () => {
         const vectorMiddleTo1X = BallPos.x - MIDDLEX;
         const reverseVectorMiddleTo1X = -vectorMiddleTo1X;
         BallPos.x = MIDDLEX + reverseVectorMiddleTo1X;
-        GameSocket.emit('BallPosToServer', BallPos);
+        socket.emit('BallPosToServer', BallPos);
 
         /* draw part */
         leftPaddle.draw();
@@ -195,7 +197,7 @@ const GamePlayer1 = () => {
             player2: leftScore,
             name: user.name,
         }
-        GameSocket.emit('ScoreToServer', score);
+        socket.emit('ScoreToServer', score);
 
         context.fillStyle = 'black';
         context.font = "bold 50px 'ＭＳ 明朝'";
@@ -222,7 +224,7 @@ const GamePlayer1 = () => {
             context.fillText('You Lose!', 360,  300);
             context.fillStyle = 'black'
             context.fillText('5秒後にgameページに戻ります.', 100,  600);
-            GameSocket.emit('TerminateGame', user.name);
+            socket.emit('TerminateGame', user.name);
             if (window.location.pathname === "/game/player1") {
                 setTimeout(() => {
                     window.location.href = "/game";
@@ -241,7 +243,7 @@ const GamePlayer1 = () => {
             context.fillText('You Win!', 360, 300);
             context.fillStyle = 'black'
             context.fillText('5秒後にgameページに戻ります.', 100,  600);
-            GameSocket.emit('TerminateGame', user.name);
+            socket.emit('TerminateGame', user.name);
             if (window.location.pathname === "/game/player1") {
                 setTimeout(() => {
                     window.location.href = "/game";
@@ -255,8 +257,8 @@ const GamePlayer1 = () => {
     useEffect(() => {
         UserPromises.then((userDto: User) => {
             setUser(userDto);
-            GameSocket.emit('JoinRoom', userDto?.name);
-            GameSocket.emit('Ping', userDto?.name);
+            socket.emit('JoinRoom', userDto?.name);
+            socket.emit('Ping', userDto?.name);
 
         });
     }, []);
@@ -268,7 +270,7 @@ const GamePlayer1 = () => {
 
     const sendPing = setInterval(() => {
         if (user?.name) {
-            GameSocket.emit('Ping', user?.name);
+            socket.emit('Ping', user?.name);
         }
     }, 1000);
 
@@ -297,13 +299,13 @@ const GamePlayer1 = () => {
     }, [user]);
 
     useEffect(() => {
-        GameSocket.on('connect', () => {
-            console.log('接続ID : ', GameSocket.id);
+        socket.on('connect', () => {
+            console.log('接続ID : ', socket.id);
         })
 
         return () => {
             console.log('切断')
-            GameSocket.disconnect()
+            socket.disconnect()
         }
     }, [])
 
@@ -316,12 +318,12 @@ const GamePlayer1 = () => {
         name: string;
     };
 
-    GameSocket.on('GameToClient', (leftPaddley: PaddleAndRoom, socketid: string) => {
-        if (GameSocket.id !== socketid)
+    socket.on('GameToClient', (leftPaddley: PaddleAndRoom, socketid: string) => {
+        if (socket.id !== socketid)
             leftPaddle.y = leftPaddley.paddleHeight;
     });
 
-    GameSocket.on('Pong', (name: string, socketid: string) => {
+    socket.on('Pong', (name: string, socketid: string) => {
         // console.log('recieve pong ', name, socketid);
         isRecievePong = true;
         p2name = name;

@@ -55,7 +55,9 @@ function App() {
               <Route path=":roomId" element={<ChatWindowComponent />} />
             </Route>
           </Route>
-          <Route path="/channel" element={
+          <Route
+            path="/channel"
+            element={
               <PrivateRouter>
               <Channel />
             </PrivateRouter>
@@ -64,13 +66,18 @@ function App() {
               <Route path=":roomId" element={<ChannelWindowComponent />} />
             </Route>
           </Route>
-          <Route path="/game" element={
+          <Route
+            path="/game"
+            element={
             <PrivateRouter>
               <GameMatching/>
             </PrivateRouter>
-          } />
-              <Route path={"/game/:room"} element={<GameRouting />} />
-          <Route path={"/user"} element={
+          } >
+            <Route path={"/game/:room"} element={<GameRouting />} />
+          </Route>
+          <Route
+            path={"/user"}
+            element={
             <PrivateRouter>
               <Profile />
             </PrivateRouter>
