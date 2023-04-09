@@ -1,12 +1,14 @@
 import { Box, Button, TextField, Stack, Typography } from "@mui/material";
 import axios from "axios";
-import React from "react";
+import React, { useContext } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
+import { Socket } from "socket.io-client";
 import { yupResolver } from '@hookform/resolvers/yup';
 import FormController from "../utils/FormController";
 import FtLoginButtonComponent from "./FtLoginButtonComponent";
 import LoginValidationSchema from "../../types/auth/LoginValidationSchema";
+import { RootWebsocketContext } from "../../contexts/WebsocketContext";
 
 type LoginData = {
   email: string;
@@ -15,6 +17,7 @@ type LoginData = {
 
 function LoginComponent() {
   const router = useNavigate();
+  const rootSocket: Socket = useContext(RootWebsocketContext);
   const { control, handleSubmit, reset, formState: { errors } } = useForm<LoginData>({
     mode: 'onSubmit',
     defaultValues: { email: '', password: '' },
@@ -29,6 +32,7 @@ function LoginComponent() {
       });
       reset();
       router('/user');
+      rootSocket.emit('online_status_check');
     } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;

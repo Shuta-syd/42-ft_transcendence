@@ -9,6 +9,8 @@ import { MatchModule } from './match/match.module';
 import { AuthModule } from './auth/auth.module';
 import { GameModule } from './game/game.module';
 import { AppGateway } from './app.gateway';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -18,8 +20,10 @@ import { AppGateway } from './app.gateway';
     MatchModule,
     AuthModule,
     GameModule,
+    JwtModule,
+    ConfigModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService, AppGateway],
+  providers: [AppService, PrismaService, AppGateway, ConfigService, JwtService],
 })
 export class AppModule {}
