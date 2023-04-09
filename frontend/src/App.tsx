@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect } from "react";
 import { Route, Routes } from 'react-router-dom';
 import { Grid } from "@mui/material";
 import axios from "axios";
@@ -21,19 +21,14 @@ import Profile from "./features/profile/Profile";
 function App() {
   axios.defaults.withCredentials = true;
   const rootSocket = useContext(RootWebsocketContext);
-  const didLogRef = useRef(false);
 
   useEffect(() => {
-    if (didLogRef.current === false) {
-      didLogRef.current = true;
       rootSocket.on('connect', () => {
         console.log('RootSocket connected');
       });
       return () => {
         rootSocket.disconnect();
       }
-    }
-    return () => {}
    }, []);
 
 
@@ -72,9 +67,8 @@ function App() {
             <PrivateRouter>
               <GameMatching/>
             </PrivateRouter>
-          } >
-            <Route path={"/game/:room"} element={<GameRouting />} />
-          </Route>
+          } />
+          <Route path={"/game/:room"} element={<GameRouting />} />
           <Route
             path={"/user"}
             element={

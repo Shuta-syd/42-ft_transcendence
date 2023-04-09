@@ -47,17 +47,17 @@ type TerminateGame = {
 
 @WebSocketGateway({
   cors: {
-    origin: '*',
+    origin: ['http://localhost:3000'],
   },
+  namespace: '/game',
 })
 export class GameGateway {
   constructor(private readonly gameService: GameService) {}
   @WebSocketServer()
   server: Server;
-
+  private logger: Logger = new Logger('GameGateway');
   private rooms = {};
 
-  private logger: Logger = new Logger('EventsGateway');
   //クライアント側から「chatToServer」という名前のメッセージ（？）をリッスン（好きに命名できる）
   @SubscribeMessage('chatToServer')
   chatting(
@@ -194,8 +194,8 @@ export class GameGateway {
   }
 
   // 接続が切断されたときの処理
-  handleDisconnect(socket: any) {
-    // console.log(`game Client disconnected: ${socket.id}`);
+  handleDisconnect(socket: Socket) {
+    this.logger.log(`[Game] Client disconnected: ${socket.id}`);
     // ルームからユーザーを削除します
     Object.keys(this.rooms).forEach((room) => {
       this.rooms[room] = this.rooms[room].filter((id) => id !== socket.id);
@@ -210,7 +210,6 @@ export class GameGateway {
   }
 
   handleConnection(client: Socket, ...args: any[]) {
-    //クライアント接続時
-    // this.logger.log(`Client connected: ${client.id}`);
+    this.logger.log(`[Game] Client connected: ${client.id}`);
   }
 }
