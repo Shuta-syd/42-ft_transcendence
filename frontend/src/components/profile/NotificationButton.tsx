@@ -55,8 +55,18 @@ const NotificationButton = () => {
         })
     }
 
-    const handleDecline = () => {
-        console.log("decline");
+    const handleDecline = (declinePersonId: string) => {
+        console.log("decline", declinePersonId);
+        // @delete http://localhost:8080/user/friendReqでacceptできる
+        // bodyはfriend idのみ
+        const res = axios.delete<User>('http://localhost:8080/user/friendReq', {
+            data: {friendId: declinePersonId}
+        });
+        res.then((response) => {
+            console.log(response);
+        }).catch((err) => {
+            console.log(err);
+        })
     }
 
     // fs is an array of friend
@@ -91,7 +101,7 @@ const NotificationButton = () => {
                         <Button
                             variant="outlined"
                             color="error"
-                            onClick={handleDecline}
+                            onClick={() => handleDecline(f.id)}
                         >
                             Decline
                         </Button>
