@@ -35,10 +35,16 @@ const NotificationButton = () => {
 
     // fs is an array of friend
     const OpenRequests = () => (
-        <div>
+        <div
+            style={{
+                position: "absolute",
+                color: "#B2B9C5"
+            }}
+        >
             {friends.map((f) => (
-                <React.Fragment key={f.id}>
-                    <p>{f.name}</p>
+                <React.Fragment
+                    key={f.id}>
+                    <h2>・friend request from {f.name}</h2>
                     <Button
                         variant="contained"
                     >
