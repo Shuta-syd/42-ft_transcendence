@@ -24,7 +24,6 @@ function App() {
 
   useEffect(() => {
       rootSocket.on('connect', () => {
-        console.log('RootSocket connected');
       });
       return () => {
         rootSocket.disconnect();

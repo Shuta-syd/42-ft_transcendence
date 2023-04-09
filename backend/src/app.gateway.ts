@@ -1,15 +1,19 @@
-import { Logger } from '@nestjs/common';
+import { Logger, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import {
   ConnectedSocket,
-  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
-  OnGatewayInit,
   SubscribeMessage,
   WebSocketGateway,
-  WebSocketServer,
 } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+import { User } from '@prisma/client';
+import { Socket } from 'socket.io';
+
+enum Status {
+  ONLINE = 1,
+  INGAME = 2,
+}
 
 @WebSocketGateway({
   cors: {
@@ -17,14 +21,17 @@ import { Server } from 'socket.io';
   },
   namespace: '/',
 })
-export class AppGateway
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
-{
-  @WebSocketServer()
-  server: Server;
-  private logger: Logger = new Logger('AppGateway');
+export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  private readonly logger: Logger;
+  private userIdToStatus: Map<string, Status>;
+
+  constructor() {
+    this.logger = new Logger('AppGateway');
+    this.userIdToStatus = new Map<string, Status>();
+  }
 
   handleConnection(client: any, ...args: any[]) {
+    console.log(client);
     this.logger.log(`[App] Client connected ${client.id}`);
   }
 
@@ -34,5 +41,19 @@ export class AppGateway
 
   afterInit(server: any) {
     this.logger.log('[App] Initialized');
+  }
+
+  @SubscribeMessage('online_status_check')
+  @UseGuards(AuthGuard('jwt'))
+  onlineStatusCheck(@ConnectedSocket() client: Socket, user: User) {
+    this.userIdToStatus.set(user.id, Status.ONLINE);
+    this.logger.log(`[App] ${user.id} is online`);
+  }
+
+  @SubscribeMessage('in_game_status_check')
+  @UseGuards(AuthGuard('jwt'))
+  inGameStatusCheck(@ConnectedSocket() client: Socket, user: User) {
+    this.userIdToStatus.set(user.id, Status.INGAME);
+    this.logger.log(`[App] ${user.id} is in game`);
   }
 }
