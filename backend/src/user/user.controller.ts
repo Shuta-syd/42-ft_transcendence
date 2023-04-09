@@ -5,6 +5,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   Query,
@@ -155,13 +156,17 @@ export class UserController {
     description: 'A boolean value indicating if the user is blocked',
   })
   @ApiResponse({
+    status: 400,
+    description: 'The specified user ID is not a valid UUID',
+  })
+  @ApiResponse({
     status: 404,
     description: 'The specified user ID does not exist',
   })
   @Get('block/:userId')
   async isUserBlocked(
     @Req() req: Request,
-    @Param('userId') userId: string,
+    @Param('userId', ParseUUIDPipe) userId: string,
   ): Promise<boolean> {
     return this.userService.isUserBlocked(req.user.id, userId);
   }
@@ -191,7 +196,7 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   async blockUser(
     @Req() req: Request,
-    @Param('userId') userId: string,
+    @Param('userId', ParseUUIDPipe) userId: string,
   ): Promise<User> {
     return this.userService.blockUser(req.user.id, userId);
   }
@@ -217,7 +222,7 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   async unblockUser(
     @Req() req: Request,
-    @Param('userId') userId: string,
+    @Param('userId', ParseUUIDPipe) userId: string,
   ): Promise<User> {
     return this.userService.unblockUser(req.user.id, userId);
   }
