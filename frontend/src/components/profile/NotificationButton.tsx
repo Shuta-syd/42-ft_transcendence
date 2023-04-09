@@ -40,6 +40,24 @@ const NotificationButton = () => {
         });
     }, [friendIds]);
 
+    // [memo]
+    // accept or declineをしたuserに関してはfriendReqから削除するAPIが必要になる
+
+    const handleAccept = (acceptPersonId: string) => {
+        console.log("accept", acceptPersonId);
+        // @patch http://localhost:8080/user/friendReqでacceptできる
+        // bodyはfriend idのみ
+        const res = axios.patch<User>('http://localhost:8080/user/friendReq', {friendId: acceptPersonId});
+        res.then((response) => {
+            console.log(response);
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
+
+    const handleDecline = () => {
+        console.log("decline");
+    }
 
     // fs is an array of friend
     const OpenRequests = () => (
@@ -63,10 +81,18 @@ const NotificationButton = () => {
                         </Typography>
                     </CardContent>
                     <CardActions>
-                        <Button variant="contained" color="success">
+                        <Button
+                            variant="contained"
+                            color="success"
+                            onClick={() => handleAccept(f.id)}
+                        >
                             Accept
                         </Button>
-                        <Button variant="outlined" color="error">
+                        <Button
+                            variant="outlined"
+                            color="error"
+                            onClick={handleDecline}
+                        >
                             Decline
                         </Button>
                     </CardActions>
