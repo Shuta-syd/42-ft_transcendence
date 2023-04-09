@@ -1,9 +1,17 @@
-import React, {useEffect, useState} from 'react';
-import {Badge, Button } from '@mui/material';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import Grid from '@mui/material/Grid';
-import axios from 'axios';
-import {User} from "../../types/PrismaType";
+import React, { useEffect, useState } from "react";
+import {
+    Badge,
+    Button,
+    Card,
+    CardContent,
+    CardActions,
+    Typography,
+} from "@mui/material";
+import { Box } from "@mui/system";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import Grid from "@mui/material/Grid";
+import axios from "axios";
+import { User } from "../../types/PrismaType";
 
 const NotificationButton = () => {
     const [friendIds, setFriendIds] = useState<string[]>([]);
@@ -35,30 +43,38 @@ const NotificationButton = () => {
 
     // fs is an array of friend
     const OpenRequests = () => (
-        <div
+        <Box
             style={{
                 position: "absolute",
-                color: "#B2B9C5"
+                color: "#B2B9C5",
+                maxWidth: "400px",
             }}
         >
             {friends.map((f) => (
-                <React.Fragment
-                    key={f.id}>
-                    <h2>・friend request from {f.name}</h2>
-                    <Button
-                        variant="contained"
-                    >
-                        Accept
-                    </Button>
-                    <Button
-                        variant="outlined"
-                    >
-                        Decline
-                    </Button>
-                </React.Fragment>
+                <Card
+                    key={f.id}
+                    sx={{
+                        marginBottom: "1rem",
+                        backgroundColor: "#EDF0F4",
+                }}>
+                    <CardContent>
+                        <Typography variant="h6" component="h2">
+                            Friend request from {f.name}
+                        </Typography>
+                    </CardContent>
+                    <CardActions>
+                        <Button variant="contained" color="success">
+                            Accept
+                        </Button>
+                        <Button variant="outlined" color="error">
+                            Decline
+                        </Button>
+                    </CardActions>
+                </Card>
             ))}
-        </div>
+        </Box>
     );
+
 
     const handleClick = () => {
         console.log("clicked");
