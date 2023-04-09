@@ -23,7 +23,6 @@ enum Status {
   cors: {
     origin: ['http://localhost:3000'],
   },
-  namespace: '/',
 })
 export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger: Logger;

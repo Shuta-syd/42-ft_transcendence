@@ -2,7 +2,6 @@ import React, { useEffect, useState} from 'react';
 import { Button } from "@mui/material";
 import axios from "axios";
 import Rating from '@mui/material/Rating';
-import io from "socket.io-client";
 import Grid from "@mui/material/Grid";
 import {Match, User} from "../../types/PrismaType";
 import {fetchProfileUser} from "../../hooks/profile/useProfileUser";
@@ -15,7 +14,6 @@ import FriendProfile from "./FriendProfile";
 
 const Profile = () => {
     const [user, setUser] = useState<User>();
-    const socket = io("http://localhost:8080");
     const UserPromises = fetchProfileUser();
     useEffect(() => {
         UserPromises.then((userDto: User) => {
@@ -174,35 +172,35 @@ const Profile = () => {
         );
     }
 
-    interface FriendProps {
-        friendName: string;
-    }
+    // interface FriendProps {
+    //     friendName: string;
+    // }
 
-    function FriendStatus({friendName}: FriendProps) {
-        const [isOnline, setIsOnline] = useState(null);
+    // function FriendStatus({friendName}: FriendProps) {
+        // const [isOnline, setIsOnline] = useState(null);
 
-        useEffect(() => {
+        // useEffect(() => {
             // WebSocketを使用して、友達のオンライン/オフライン状態を取得する
-            socket.emit("getFriendStatus", friendName);
+            // socket.emit("getFriendStatus", friendName);
 
             // サーバーからの応答を受信する
-            socket.on("friendStatus", (status) => {
-                setIsOnline(status);
-            });
+            // socket.on("friendStatus", (status) => {
+            //     setIsOnline(status);
+            // });
 
             // コンポーネントのアンマウント時にWebSocket接続を解除する
-            return () => {
-                socket.off("friendStatus");
-            };
-        }, [friendName]);
+            // return () => {
+            //     socket.off("friendStatus");
+            // };
+        // }, [friendName]);
 
-        if (isOnline === null) {
-            return <span>Loading...</span>;
-        }
-        return (
-            <span>{isOnline ? " => 🤩" : " => 🫥"}</span>
-        );
-    }
+        // if (isOnline === null) {
+        //     return <span>Loading...</span>;
+        // }
+        // return (
+        //     <span>{isOnline ? " => 🤩" : " => 🫥"}</span>
+        // );
+    // }
 
     // const steveJobsImage = "https://cdn.profoto.com/cdn/053149e/contentassets/d39349344d004f9b8963df1551f24bf4/profoto-albert-watson-steve-jobs-pinned-image-original.jpg?width=1280&quality=75&format=jpg";
 
@@ -261,7 +259,7 @@ const Profile = () => {
                 {friends.map((friend: User) => (
                     <div key={friend.id}>
                         [{friend.name}]
-                        <FriendStatus friendName={friend.name}/>
+                        {/* <FriendStatus friendName={friend.name}/> */}
                         <FriendProfile friend={friend} />
                     </div>
                 ))}

@@ -27,11 +27,9 @@ export class ChatGateway
 
   handleDisconnect(client: Socket) {
     this.logger.log(`[Chat] Client disconnected: ${client.id}`);
-    this.logger.log(`=================================================`);
   }
 
   handleConnection(client: Socket, ...args: any[]) {
-    this.logger.log(`=================================================`);
     this.logger.log(`[Chat] Client connected ${client.id}`);
   }
 
@@ -51,7 +49,6 @@ export class ChatGateway
     @MessageBody() payload: { id: string },
     @ConnectedSocket() client: Socket,
   ) {
-    this.logger.log(`=================================================`);
     this.logger.log(
       'Join Room: ',
       `client[${client.id}] join ChatRoom ${payload.id}`,
@@ -68,7 +65,6 @@ export class ChatGateway
       'Leave Room: ',
       `client[${client.id}] leave ChatRoom ${payload.id}`,
     );
-    this.logger.log(`=================================================`);
     client.leave(payload.id);
   }
 
