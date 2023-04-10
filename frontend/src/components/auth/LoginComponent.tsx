@@ -43,6 +43,7 @@ function LoginComponent() {
   }
 
   const handleClick = async () => {
+    rootSocket.emit('online_status_update');
     await axios.post('http://localhost:8080/auth/logout');
   }
 

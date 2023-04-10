@@ -50,8 +50,7 @@ export class ChatGateway
     @ConnectedSocket() client: Socket,
   ) {
     this.logger.log(
-      'Join Room: ',
-      `client[${client.id}] join ChatRoom ${payload.id}`,
+      `Join Room: client (id: ${client.id}) join ChatRoom (id: ${payload.id}`,
     );
     client.join(payload.id);
   }
@@ -62,8 +61,7 @@ export class ChatGateway
     @ConnectedSocket() client: Socket,
   ) {
     this.logger.log(
-      'Leave Room: ',
-      `client[${client.id}] leave ChatRoom ${payload.id}`,
+      `Join Room: client (id: ${client.id}) leave ChatRoom (id: ${payload.id}`,
     );
     client.leave(payload.id);
   }
