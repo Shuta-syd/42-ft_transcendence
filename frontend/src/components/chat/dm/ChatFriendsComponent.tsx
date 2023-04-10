@@ -1,5 +1,4 @@
 import { Avatar, Box, CircularProgress, Grid, Typography } from "@mui/material";
-import PersonIcon from '@mui/icons-material/Person';
 import { Link, useLocation } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
@@ -38,19 +37,28 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
     return friendName;
   }
 
-  const getUserDM = async (): Promise<ChatRoom[]> => {
-    const res = await axios.get(`http://localhost:8080/chat/dm`);
-    return res.data;
-  };
+  const getUserDM = async () => {
+    const { data } = await axios.get(`http://localhost:8080/chat/dm`);
+    if (data) {
+      setDMRooms([]);
+      data.map((room: any) => {
+        const friendName = getFriendNameFromRoomName(room.name);
+        const friend = room.members.filter((member: any) => member.user.name === friendName);
+
+        const newDMRoom = {
+          id: room.id,
+          name: friendName,
+          image: friend[0].user.image,
+        }
+        setDMRooms((prev: any) => [...prev, newDMRoom]);
+      })
+    }
+  }
 
   useEffect(() => {
     try {
       setLoading(true);
-      getUserDM().then((data) => {
-        setDMRooms([]);
-        data.map((room => setDMRooms((prev: any) => [...prev, { id: room.id, name: getFriendNameFromRoomName(room.name) }]))
-        )
-      })
+      getUserDM();
     } catch (error) {
       alert('DM取得に失敗しました。ブラウザをリフレッシュしてください');
     } finally {
@@ -94,7 +102,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
               className={'FriendListActive'}
             >
               <Grid item mr={2} ml={3}>
-                <Avatar ><PersonIcon /></Avatar>
+                <Avatar src={`${room.image}`} />
               </Grid>
               <Grid item>
                 <Typography variant="subtitle1">
@@ -114,7 +122,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
             className={'FriendList'}
             >
               <Grid item mr={2} ml={3}>
-                <Avatar ><PersonIcon /></Avatar>
+                <Avatar src={`${room.image}`} />
               </Grid>
               <Grid item>
               <Typography variant="subtitle1">

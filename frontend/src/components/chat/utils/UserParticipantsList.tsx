@@ -1,5 +1,4 @@
 import { Avatar, Box, CircularProgress, Grid, Typography } from "@mui/material";
-import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
 import { Link } from "react-router-dom";
 import React, {useEffect, useState } from "react";
@@ -11,6 +10,7 @@ type MemberPayload = {
   name: string;
   isMute: boolean;
   userId: string;
+  image: string;
   role: string;
 }
 
@@ -48,6 +48,7 @@ export default function UserParticipantList(props: UserParticipantListProps) {
             name: member.user.name,
             isMute: member.isMute,
             userId: member.user.id,
+            image: member.user.image,
             role: member.role
           }));
           setMembers(newMembers);
@@ -93,7 +94,7 @@ export default function UserParticipantList(props: UserParticipantListProps) {
               <Grid container sx={{ display: 'flex', alignItems: 'center' }}>
                 <Grid item mr={2}>
                   <Link to={`/user/${member.userId}`}>
-                  <Avatar ><PersonIcon /></Avatar>
+                    <Avatar src={`${member.image}`} />
                   </Link>
                 </Grid>
                 <Grid item>

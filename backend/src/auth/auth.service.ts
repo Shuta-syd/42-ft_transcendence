@@ -244,7 +244,7 @@ export class AuthService {
       .get(imageUrl, { responseType: 'arraybuffer' })
       .pipe(map((res) => Buffer.from(res.data, 'binary').toString('base64')));
     const base64 = await lastValueFrom(response$);
-    return base64;
+    return 'data:image/jpeg;base64,' + base64;
   }
 
   async calcImageSize(base64: string): Promise<number> {

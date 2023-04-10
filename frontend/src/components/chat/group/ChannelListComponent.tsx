@@ -1,5 +1,4 @@
-import { Avatar, Box, CircularProgress, Grid, Typography } from "@mui/material";
-import PersonIcon from '@mui/icons-material/Person';
+import { Avatar, AvatarGroup, Box, CircularProgress, Grid, Typography } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -52,7 +51,11 @@ export default function ChannelListComponent(props: ChannelListComponentProps) {
   if (Loading) {
     return (
       <>
-        <Box height={'3rem'} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Box
+          height={'3rem'}
+          sx={{
+          display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}>
           <CircularProgress/>
         </Box>
       </>
@@ -74,7 +77,11 @@ export default function ChannelListComponent(props: ChannelListComponentProps) {
             className={'ChannelListActive'}
           >
             <Grid item mr={2} ml={3}>
-              <Avatar><PersonIcon /></Avatar>
+              <AvatarGroup max={3}>
+                {room.members?.map((member: any, id: number) => (
+                  <Avatar key={id} src={`${member.user.image}`} />
+                )) }
+              </AvatarGroup>
             </Grid>
             <Grid item>
               <Typography variant='subtitle1'>
@@ -94,7 +101,11 @@ export default function ChannelListComponent(props: ChannelListComponentProps) {
           className={'ChannelList'}
         >
           <Grid item mr={2} ml={3}>
-            <Avatar><PersonIcon /></Avatar>
+            <AvatarGroup max={3}>
+            {room.members?.map((member: any, id: number) => (
+                  <Avatar key={id} src={`${member.user.image}`} />
+                )) }
+            </AvatarGroup>
           </Grid>
           <Grid item>
             <Typography variant='subtitle1'>

@@ -143,7 +143,13 @@ export class ChatService {
           },
         },
       },
-      include: { members: true },
+      include: {
+        members: {
+          include: {
+            user: true,
+          },
+        },
+      },
     });
 
     return DirectMessageRooms;
@@ -214,6 +220,13 @@ export class ChatService {
         members: {
           some: {
             userId: userId,
+          },
+        },
+      },
+      include: {
+        members: {
+          include: {
+            user: true,
           },
         },
       },
