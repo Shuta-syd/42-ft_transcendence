@@ -1,7 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { User } from '@prisma/client';
-import { FriendReq } from './dto/user.dto';
 
 @Injectable()
 export class UserService {
@@ -272,5 +276,145 @@ export class UserService {
         },
       });
     });
+  }
+
+  /******************
+   ***** Block ******
+   ******************/
+
+  /**
+   * 指定されたユーザーIDがブロックされているかどうかを判断する。
+   * @param blockerId ブロックを確認したいユーザーのID
+   * @param blockedId ブロック確認対象のユーザーのID
+   * @returns 指定されたユーザーIDがブロックされている場合はtrue、そうでない場合はfalse
+   * @throws NotFoundException 指定されたユーザーIDが存在しない場合
+   */
+  async isUserBlocked(blockerId: string, blockedId: string): Promise<boolean> {
+    // blockerとblockedが存在しているか確認
+    const blocker = await this.getUserById(blockerId);
+    if (!blocker) {
+      throw new NotFoundException(`User with ID "${blockerId}" not found.`);
+    }
+    const blocked = await this.getUserById(blockedId);
+    if (!blocked) {
+      throw new NotFoundException(`User with ID "${blockedId}" not found.`);
+    }
+
+    const blockRelation = await this.prisma.blockList.findUnique({
+      where: {
+        blockerId_blockedId: {
+          blockerId: blockerId,
+          blockedId: blockedId,
+        },
+      },
+    });
+
+    return !!blockRelation;
+  }
+
+  /**
+   * ブロックリストにエントリを追加してユーザーをブロックする。
+   * @param blockerId ブロックするユーザーのID
+   * @param blockedId ブロックされるユーザーのID
+   * @returns ブロック関係が作成された後、ブロックしたユーザーのUserインスタンス
+   */
+  async blockUser(blockerId: string, blockedId: string): Promise<User> {
+    // blockerIdとblockedIdが同じであればエラー
+    if (blockerId === blockedId) {
+      throw new BadRequestException('You cannot block yourself.');
+    }
+    // blokerId、blockedIdのUserがいるか存在確認
+    const blocker = await this.getUserById(blockerId);
+    if (!blocker) {
+      throw new NotFoundException(`User with ID "${blockerId}" not found.`);
+    }
+    const blocked = await this.getUserById(blockedId);
+    if (!blocked) {
+      throw new NotFoundException(`User with ID "${blockedId}" not found.`);
+    }
+
+    // 既にブロック関係があるか確認
+    const isExistingBlock = await this.isUserBlocked(blockerId, blockedId);
+    if (isExistingBlock) {
+      throw new ConflictException('The block relationship already exists.');
+    }
+    // BlockListテーブルにブロック関係を追加
+    await this.prisma.blockList.create({
+      data: {
+        blockerId: blockerId,
+        blockedId: blockedId,
+      },
+    });
+    return blocker;
+  }
+
+  /**
+   * ブロックリストからエントリを削除してユーザーのブロックを解除する。
+   * @param blockerId ブロックを解除したいユーザーのID
+   * @param blockedId ブロック解除されるユーザーのID
+   * @returns ブロック関係が削除された後、ブロックを解除したユーザーのUserインスタンス
+   */
+  async unblockUser(blockerId: string, blockedId: string): Promise<User> {
+    // blockerIdとblockedIdが同じであればエラー
+    if (blockerId === blockedId) {
+      throw new BadRequestException('You cannot block yourself.');
+    }
+    // blokerId、blockedIdのUserがいるか存在確認
+    const blocker = await this.getUserById(blockerId);
+    if (!blocker) {
+      throw new NotFoundException(`User with ID "${blockerId}" not found.`);
+    }
+    const blocked = await this.getUserById(blockedId);
+    if (!blocked) {
+      throw new NotFoundException(`User with ID "${blockedId}" not found.`);
+    }
+
+    try {
+      // BlockListテーブルからブロック関係を削除
+      await this.prisma.blockList.delete({
+        where: {
+          blockerId_blockedId: {
+            blockerId: blockerId,
+            blockedId: blockedId,
+          },
+        },
+      });
+    } catch (error) {
+      // 削除しようとしたブロック関係が見つからなかった場合、エラーを返す
+      if (error.code === 'P2025') {
+        throw new NotFoundException(
+          `Block relation between user with ID "${blockerId}" and user with ID "${blockedId}" not found.`,
+        );
+      } else {
+        throw error;
+      }
+    }
+
+    return blocker;
+  }
+
+  /**
+   * 指定されたユーザーIDのブロックリストを取得する。
+   * @param userId ブロックリストを取得したいユーザーのID
+   * @returns 指定されたユーザーIDのブロックリストに含まれるユーザーの配列
+   */
+  async getBlockList(userId: string): Promise<User[]> {
+    // userIdのUserがいるか存在確認
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        blockingUsers: {
+          include: {
+            blocked: true,
+          },
+        },
+      },
+    });
+    if (!user) {
+      throw new NotFoundException(`User with ID "${userId}" not found.`);
+    }
+
+    // ブロックリストに含まれるユーザーの配列を返す
+    return user.blockingUsers.map((blocklist) => blocklist.blocked);
   }
 }

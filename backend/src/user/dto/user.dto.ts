@@ -1,3 +1,11 @@
+import {
+  IsEmail,
+  IsString,
+  IsOptional,
+  IsBoolean,
+  IsArray,
+  IsUUID,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class SignUpUserDto {
@@ -23,4 +31,33 @@ export class FriendReq {
 export class AcceptFriend {
   @ApiProperty()
   friendId: string;
+}
+
+export class UserDto {
+  @ApiProperty()
+  @IsUUID()
+  id: string;
+  @ApiProperty()
+  @IsEmail()
+  email: string;
+  @ApiProperty()
+  @IsString()
+  name: string;
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  twoFactorSecret?: string;
+  @ApiProperty()
+  @IsBoolean()
+  isTwoFactorEnabled: boolean;
+  @ApiProperty()
+  @IsString()
+  image: string;
+  @ApiProperty()
+  @IsBoolean()
+  isFtLogin: boolean;
+  @ApiProperty()
+  @IsArray()
+  @IsUUID(4, { each: true })
+  friendReqs: string[];
 }
