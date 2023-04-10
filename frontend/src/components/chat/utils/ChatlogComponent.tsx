@@ -116,7 +116,11 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
             </Grid>
             <Grid item>
               <Avatar>
-                <img src={memberImage.get(chat.senderUserId) as string} alt="memberImage" />
+                  <img
+                    src={memberImage.get(chat.senderUserId) as string}
+                    alt="memberImage"
+                    style={{ width: '100%', height: '100%' }}
+                  />
               </Avatar>
             </Grid>
           </Grid>
@@ -134,7 +138,11 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
           >
             <Grid item>
               <Avatar>
-                <img src={memberImage.get(chat.senderUserId) as string} alt="memberImage" />
+                <img
+                  src={memberImage.get(chat.senderUserId) as string}
+                  alt="memberImage"
+                  style={{ width: '100%', height: '100%' }}
+                />
               </Avatar>
             </Grid>
             <Grid item xs>
