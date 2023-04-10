@@ -21,7 +21,7 @@ export default function ChannelDisplayComponent(props: ChannelDisplayComponentPr
   const [myUserId, setMyUserId] = useState<string>('');
   const [userName, setUserName] = useState('');
   const [myRole, setMyRole] = useState<string>('');
-  const [roomName, setRoomName] = useState('');
+  const [room, setRoom] = useState<ChatRoom>({id: '', name: ''});
   const { createMessageMutation } = useMutationMessage(socket, roomId, false);
   const [text, setText] = useState('');
   const textfieldElm = useRef<HTMLInputElement>(null);
@@ -41,9 +41,9 @@ export default function ChannelDisplayComponent(props: ChannelDisplayComponentPr
   }, [socket]);
 
   useEffect(() => {
-    channels.map((room: ChatRoom) => {
-      if (room.id === roomId) {
-        setRoomName(room.name);
+    channels.map((channel: ChatRoom) => {
+      if (channel.id === roomId) {
+        setRoom(channel);
       }
     })
   }, [channels, roomId])
@@ -101,7 +101,7 @@ export default function ChannelDisplayComponent(props: ChannelDisplayComponentPr
                 mt={1} ml={2}
                 sx={{ color: '#3C444B' }}
               >
-                @{roomName}
+                @{room.name}
               </Typography>
             </Grid>
             <Grid item>
@@ -118,7 +118,7 @@ export default function ChannelDisplayComponent(props: ChannelDisplayComponentPr
         sx={{ display: 'flex', justifyContent: 'center' }}
         height={`calc(85% - ${textfieldElm?.current?.clientHeight}px)`}
       >
-        <ChatlogComponent roomId={roomId} socket={socket} userId={myUserId} />
+        <ChatlogComponent room={room} socket={socket} userId={myUserId} />
         </Box>
       <Box
         display='flex'

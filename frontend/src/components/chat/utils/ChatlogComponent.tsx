@@ -3,7 +3,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
 import React, { createRef, useEffect, useLayoutEffect, useState } from "react";
 import { Socket } from "socket.io-client";
-import { Message } from "../../../types/PrismaType";
+import { ChatRoom, Message } from "../../../types/PrismaType";
 import convertDate from "../../../utils/convertDate";
 
 type MessagePayload = {
@@ -17,12 +17,12 @@ type ChatLog = MessagePayload[];
 
 type ChatlogComponentProps = {
   userId: string;
-  roomId: string;
+  room: ChatRoom;
   socket: Socket;
 }
 
 export default function ChatlogComponent(props: ChatlogComponentProps) {
-  const { roomId, socket, userId } = props;
+  const { room, socket, userId } = props;
   const [chatLog, setChatLog] = useState<ChatLog>([]);
   const [Loading, setLoading] = useState(true);
   const latestChatRef = createRef<HTMLDivElement>();
@@ -40,7 +40,7 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
   useEffect(() => {
     const fetchChat = async () => {
       setChatLog([]);
-      const { data } = await axios.get<Message[]>(`http://localhost:8080/chat/room/log/${roomId}`);
+      const { data } = await axios.get<Message[]>(`http://localhost:8080/chat/room/log/${room.id}`);
       if (data) {
         data?.map((obj) => {
           const chat: MessagePayload = { senderUserId: obj.senderUserId, senderName: obj.senderName, time: convertDate(obj.createdAt), text: obj.message };
@@ -58,7 +58,7 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
         setLoading(false);
       }, 300);
     }
-  }, [roomId])
+  }, [room])
 
   if (Loading) {
     return (
