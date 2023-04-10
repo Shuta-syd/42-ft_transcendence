@@ -35,7 +35,7 @@ const GameRouting = () => {
 
     return <div>
         <h1>
-        THIS PAGE IS NOT FOUND
+            THIS PAGE IS NOT FOUND
         </h1>
     </div>
 }

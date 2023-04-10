@@ -41,6 +41,20 @@ export class UserController {
     return req.user;
   }
 
+  @Get('other')
+  @ApiOperation({
+    description: 'find other user by userId',
+    summary: 'find other user by userId',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'The found the other user',
+    type: PrismaUser,
+  })
+  async getUserById(@Query('id') id: string): Promise<User> {
+    return this.userService.getUserById(id);
+  }
+
   @Patch('friend')
   @ApiOperation({
     description:
@@ -77,7 +91,7 @@ export class UserController {
     @Req() req: Request,
     @Body() data: { friendId: string },
   ): Promise<User> {
-    this.userService.deleteFriend(data.friendId, req.user.id);
+    await this.userService.deleteFriend(data.friendId, req.user.id);
     return this.userService.deleteFriend(req.user.id, data.friendId);
   }
 
@@ -132,6 +146,7 @@ export class UserController {
   ): Promise<User[]> {
     return this.userService.searchFriend(req.user.id, name);
   }
+
   @Post('add/image')
   async addUserImage(
     @Req() req: Request,
@@ -139,6 +154,7 @@ export class UserController {
   ): Promise<User> {
     return this.userService.addUserImage(req.user.id, data.image);
   }
+
   @Get('image')
   async getUserImage(@Req() req: Request): Promise<string> {
     return this.userService.getUserImage(req.user.id);

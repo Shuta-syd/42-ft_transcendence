@@ -10,7 +10,7 @@ const FriendListButton = (props: FriendListButtonProps) => {
 
     return (
         <>
-            Hello
+
         </>
     );
 }

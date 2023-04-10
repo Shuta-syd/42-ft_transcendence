@@ -10,11 +10,11 @@ import Channel from "./features/channel/Channel";
 import ChannelComponent from "./components/chat/group/ChannelComponent";
 import ChannelWindowComponent from "./components/chat/group/ChannelWindowComponent";
 import GameMatching from "./features/game/GameMatching";
-import GameRouting from "./features/game/GameRouting";
 import NewNavBar from './components/utils/NewNavbar';
 import PrivateRouter from "./utils/PrivateRouter";
 import ProfileRouting from "./features/profile/ProfileRouting";
-import Profile from "./features/profile/Profile";
+import MyProfile from "./features/profile/MyProfile";
+import GameRouting from "./features/game/GameRouting"
 
 
 function App() {
@@ -23,37 +23,37 @@ function App() {
 
   // @ts-ignore
   return (
-      <Grid container>
-        { path !=='/login' && path !== '/signup' ? <NewNavBar /> : <></>}
-        <Grid item xs>
-          <Routes>
-            <Route path="/login" element={<Auth isLogin={true} />} />
-            <Route path="/signup" element={<Auth isLogin={false}/>} />
-            <Route path="/chat" element={
-              <PrivateRouter>
-                <Chat />
-              </PrivateRouter>
-            }>
-              <Route path="room" element={<ChatComponent />}>
-                <Route path=":roomId" element={<ChatWindowComponent />} />
-              </Route>
+    <Grid container>
+      { path !=='/login' && path !== '/signup' ? <NewNavBar /> : <></>}
+      <Grid item xs>
+        <Routes>
+          <Route path="/login" element={<Auth isLogin={true} />} />
+          <Route path="/signup" element={<Auth isLogin={false}/>} />
+          <Route path="/chat" element={
+            <PrivateRouter>
+              <Chat />
+            </PrivateRouter>
+          }>
+            <Route path="room" element={<ChatComponent />}>
+              <Route path=":roomId" element={<ChatWindowComponent />} />
             </Route>
-            <Route path="/channel" element={
-              <PrivateRouter>
-                <Channel />
-              </PrivateRouter>
-            }>
-              <Route path="room" element={<ChannelComponent />}>
-                <Route path=":roomId" element={<ChannelWindowComponent />} />
-              </Route>
+          </Route>
+          <Route path="/channel" element={
+            <PrivateRouter>
+              <Channel />
+            </PrivateRouter>
+          }>
+            <Route path="room" element={<ChannelComponent />}>
+              <Route path=":roomId" element={<ChannelWindowComponent />} />
             </Route>
-            <Route path="/game" element={<GameMatching />} />
-              <Route path={"/game/:room"} element={<GameRouting />} />
-            <Route path={"/user"} element={<Profile />}/>
-              <Route path={"/user/:name"} element={<ProfileRouting />}/>
-          </Routes>
-        </Grid>
+          </Route>
+          <Route path="/game" element={<GameMatching />} />
+            <Route path={"/game/:room"} element={<GameRouting />} />
+          <Route path={"/user"} element={<MyProfile />}/>
+            <Route path={"/user/:name"} element={<ProfileRouting />}/>
+        </Routes>
       </Grid>
+    </Grid>
   )
 }
 export default App;
