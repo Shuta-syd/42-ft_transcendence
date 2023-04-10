@@ -50,8 +50,7 @@ function SignupComponent() {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
-      const result = reader.result as string;
-      const base64 = result.replace(/^data:image\/(png|jpg|jpeg);base64,/, '');
+      const base64 = reader.result as string;
       setImage(base64);
     }
     reader.readAsDataURL(file);

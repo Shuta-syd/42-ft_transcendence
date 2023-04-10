@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Typography } from "@mui/material";
+import { Avatar, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
 import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
@@ -66,8 +66,14 @@ export default function InvitationButton(props: InvitationButtonProps) {
 
   return (
     <>
-      <CustomButton fullWidth variant="contained" onClick={handleOpen}>
-        Invite your friend
+      <CustomButton
+        fullWidth
+        variant="contained"
+        onClick={handleOpen}
+      >
+        <Box sx={{ fontSize: '1vw' }}>
+          Invite your friend
+        </Box>
       </CustomButton>
       <Dialog open={isOpen}>
         <DialogTitle>Your Friends List</DialogTitle>
