@@ -1,20 +1,18 @@
 import {
   Body,
+  Controller,
   Delete,
   Get,
   HttpStatus,
-  Param,
   Patch,
   Post,
   Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { Controller } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from '@prisma/client';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PrismaUser, SwaggerFriends } from 'src/swagger/type';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
@@ -40,14 +38,20 @@ export class UserController {
     return req.user;
   }
 
-  /**
-   * @param id
-   * idによってuser情報を取得できるようなエンドポイント
-   */
-  @Post('id')
-  async getUserById(@Body('id') id: string): Promise<User> {
+  @Get('other')
+  @ApiOperation({
+    description: 'find other user by userId',
+    summary: 'find other user by userId',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'The found the other user',
+    type: PrismaUser,
+  })
+  async getUserById(@Query('id') id: string): Promise<User> {
     return this.userService.getUserById(id);
   }
+
   @Patch('friend')
   @ApiOperation({
     description:
@@ -84,7 +88,7 @@ export class UserController {
     @Req() req: Request,
     @Body() data: { friendId: string },
   ): Promise<User> {
-    this.userService.deleteFriend(data.friendId, req.user.id);
+    await this.userService.deleteFriend(data.friendId, req.user.id);
     return this.userService.deleteFriend(req.user.id, data.friendId);
   }
 
@@ -118,6 +122,7 @@ export class UserController {
     @Req() req: Request,
     @Body() friendId: AcceptFriend,
   ): Promise<User> {
+    console.log('backend', req.user.id, friendId.friendId);
     return this.userService.acceptFriendreq(req.user.id, friendId.friendId);
   }
 
@@ -139,6 +144,7 @@ export class UserController {
   ): Promise<User[]> {
     return this.userService.searchFriend(req.user.id, name);
   }
+
   @Post('add/image')
   async addUserImage(
     @Req() req: Request,
@@ -146,10 +152,12 @@ export class UserController {
   ): Promise<User> {
     return this.userService.addUserImage(req.user.id, data.image);
   }
+
   @Get('image')
   async getUserImage(@Req() req: Request): Promise<string> {
     return this.userService.getUserImage(req.user.id);
   }
+
   @Get('name')
   async searchFriendByName(@Query('name') name: string): Promise<User> {
     return this.userService.searchFriendByName(name);
