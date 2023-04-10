@@ -1,9 +1,8 @@
 import { Avatar, Box, CircularProgress, Grid, Typography } from "@mui/material";
-import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
 import React, { createRef, useEffect, useLayoutEffect, useState } from "react";
 import { Socket } from "socket.io-client";
-import { ChatRoom, Message } from "../../../types/PrismaType";
+import { Message } from "../../../types/PrismaType";
 import convertDate from "../../../utils/convertDate";
 
 type MessagePayload = {
@@ -17,12 +16,13 @@ type ChatLog = MessagePayload[];
 
 type ChatlogComponentProps = {
   userId: string;
-  room: ChatRoom;
+  roomId: string;
   socket: Socket;
+  memberImage: Map<string, string>;
 }
 
 export default function ChatlogComponent(props: ChatlogComponentProps) {
-  const { room, socket, userId } = props;
+  const { roomId, socket, userId, memberImage } = props;
   const [chatLog, setChatLog] = useState<ChatLog>([]);
   const [Loading, setLoading] = useState(true);
   const latestChatRef = createRef<HTMLDivElement>();
@@ -40,7 +40,7 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
   useEffect(() => {
     const fetchChat = async () => {
       setChatLog([]);
-      const { data } = await axios.get<Message[]>(`http://localhost:8080/chat/room/log/${room.id}`);
+      const { data } = await axios.get<Message[]>(`http://localhost:8080/chat/room/log/${roomId}`);
       if (data) {
         data?.map((obj) => {
           const chat: MessagePayload = { senderUserId: obj.senderUserId, senderName: obj.senderName, time: convertDate(obj.createdAt), text: obj.message };
@@ -58,7 +58,7 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
         setLoading(false);
       }, 300);
     }
-  }, [room])
+  }, [roomId])
 
   if (Loading) {
     return (
@@ -115,7 +115,9 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
                 </Box>
             </Grid>
             <Grid item>
-              <Avatar><PersonIcon/></Avatar>
+              <Avatar>
+                <img src={memberImage.get(chat.senderUserId) as string} alt="memberImage" />
+              </Avatar>
             </Grid>
           </Grid>
         </Box>
@@ -131,7 +133,9 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
             alignItems={'end'}
           >
             <Grid item>
-              <Avatar><PersonIcon/></Avatar>
+              <Avatar>
+                <img src={memberImage.get(chat.senderUserId) as string} alt="memberImage" />
+              </Avatar>
             </Grid>
             <Grid item xs>
               <Box

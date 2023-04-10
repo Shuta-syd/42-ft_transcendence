@@ -16,15 +16,15 @@ export default function ChannelComponent() {
   const [channels, setChannels] = useState<ChatRoom[]>([]);
   const [Loading, setLoading] = useState(true);
 
-  const getChannels = async (): Promise<ChatRoom[]> => {
-    const res = await axios.get(`http://localhost:8080/chat/channel`);
-    return res.data;
+  const getChannels = async () => {
+    const { data } = await axios.get(`http://localhost:8080/chat/channel`);
+    setChannels(data);
   }
 
   useEffect(() => {
     try {
       setLoading(true);
-      getChannels().then((data) => { setChannels(data); })
+      getChannels();
     } catch (error) {
       alert('チャンネル取得に失敗しました。ブラウザをリフレッシュしてください');
     } finally {

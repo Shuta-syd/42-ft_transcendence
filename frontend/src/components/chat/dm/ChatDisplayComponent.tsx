@@ -6,7 +6,6 @@ import { Socket } from "socket.io-client";
 import useMutationMessage from "../../../hooks/chat/useMutationMessage";
 import TextFieldComponent from "../../utils/TextFieldComponent";
 import ChatlogComponent from "../utils/ChatlogComponent";
-import { ChatRoom } from "../../../types/PrismaType";
 
 type ChannelDisplayComponentProps = {
   socket: Socket;
@@ -14,20 +13,20 @@ type ChannelDisplayComponentProps = {
   userName: string;
 }
 
-
 export default function ChatDisplayComponent(props: ChannelDisplayComponentProps) {
   const { roomId, socket, userName } = props;
   const [myUserId, setMyUserId] = useState<string>('');
-  const [room, setRoom] = useState<ChatRoom>({id: '', name: ''});
+  const [roomName, setRoomName] = useState('');
+  const [memberImages, setMemberImages] = useState<Map<string, string>>(new Map());
   const { createMessageMutation } = useMutationMessage(socket, roomId, true);
   const [text, setText] = useState('');
   const textfieldElm = useRef<HTMLInputElement>(null);
   const router = useNavigate();
 
-  const getFriendNameFromRoomName = (user: string, roomName: string): string => {
+  const getFriendNameFromRoomName = (user: string, room: string): string => {
     let friendName: string = '';
 
-    const names = roomName.split(',');
+    const names = room.split(',');
     names.map((name) => {
       if (name !== user)
         friendName = name;
@@ -35,7 +34,7 @@ export default function ChatDisplayComponent(props: ChannelDisplayComponentProps
     return friendName;
   }
 
-  const getRoom = useCallback(async (): Promise<any> => {
+  const getRoom = useCallback(async (): Promise<string> => {
     try {
       const res = await axios.get(`http://localhost:8080/chat/room/${roomId}`);
       return res.data;
@@ -53,7 +52,15 @@ export default function ChatDisplayComponent(props: ChannelDisplayComponentProps
     }
 
     getUserId();
-    getRoom().then((ret: any) => { setRoom(room); })
+    getRoom().then((room: any) => {
+      setRoomName(room.name);
+      const memberImage: Map<string, string> = new Map();
+      room.members.map((member: any) => {
+        memberImage.set(member.user.id, member.user.image);
+      })
+      if (memberImage)
+        setMemberImages(memberImage);
+    })
   }, [roomId])
 
 
@@ -90,7 +97,7 @@ export default function ChatDisplayComponent(props: ChannelDisplayComponentProps
             mt={1} ml={2}
             sx={{ color: '#3C444B' }}
           >
-            @{getFriendNameFromRoomName(userName, room.name)}
+            @{getFriendNameFromRoomName(userName, roomName)}
           </Typography>
         </Box>
       </Grid>
@@ -98,7 +105,7 @@ export default function ChatDisplayComponent(props: ChannelDisplayComponentProps
         sx={{ display: 'flex', justifyContent: 'center' }}
         height={`calc(85% - ${textfieldElm?.current?.clientHeight}px)`}
       >
-        <ChatlogComponent room={room} socket={socket} userId={myUserId}/>
+        <ChatlogComponent roomId={roomId} socket={socket} userId={myUserId} memberImage={memberImages} />
         </Box>
       <Box
         display='flex'

@@ -21,9 +21,10 @@ export default function ChannelDisplayComponent(props: ChannelDisplayComponentPr
   const [myUserId, setMyUserId] = useState<string>('');
   const [userName, setUserName] = useState('');
   const [myRole, setMyRole] = useState<string>('');
-  const [room, setRoom] = useState<ChatRoom>({id: '', name: ''});
-  const { createMessageMutation } = useMutationMessage(socket, roomId, false);
   const [text, setText] = useState('');
+  const [roomName, setRoomName] = useState('');
+  const [images, setImages] = useState<Map<string, string>>(new Map());
+  const { createMessageMutation } = useMutationMessage(socket, roomId, false);
   const textfieldElm = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -41,9 +42,15 @@ export default function ChannelDisplayComponent(props: ChannelDisplayComponentPr
   }, [socket]);
 
   useEffect(() => {
-    channels.map((channel: ChatRoom) => {
-      if (channel.id === roomId) {
-        setRoom(channel);
+    channels.map((room: ChatRoom) => {
+      if (room.id === roomId) {
+        setRoomName(room.name);
+        const memberImage: Map<string, string> = new Map();
+        room.members?.map((member: any) => {
+          memberImage.set(member.userId, member.user.image);
+        })
+        if (memberImage)
+        setImages(memberImage);
       }
     })
   }, [channels, roomId])
@@ -101,7 +108,7 @@ export default function ChannelDisplayComponent(props: ChannelDisplayComponentPr
                 mt={1} ml={2}
                 sx={{ color: '#3C444B' }}
               >
-                @{room.name}
+                @{roomName}
               </Typography>
             </Grid>
             <Grid item>
@@ -118,7 +125,7 @@ export default function ChannelDisplayComponent(props: ChannelDisplayComponentPr
         sx={{ display: 'flex', justifyContent: 'center' }}
         height={`calc(85% - ${textfieldElm?.current?.clientHeight}px)`}
       >
-        <ChatlogComponent room={room} socket={socket} userId={myUserId} />
+        <ChatlogComponent roomId={roomId} socket={socket} userId={myUserId} memberImage={images} />
         </Box>
       <Box
         display='flex'
