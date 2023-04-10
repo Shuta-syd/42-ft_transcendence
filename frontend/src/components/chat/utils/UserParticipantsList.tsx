@@ -93,13 +93,13 @@ export default function UserParticipantList(props: UserParticipantListProps) {
             <Box>
               <Grid container sx={{ display: 'flex', alignItems: 'center' }}>
                 <Grid item mr={2}>
-                  <Link to={`/user/${member.userId}`}>
+                  <Link to={`/user/${member.name}`}>
                     <Avatar src={`${member.image}`} />
                   </Link>
                 </Grid>
                 <Grid item>
                   <Typography variant="subtitle1">
-                    <Link to={`/user/${member.userId}`} className={'UserParticipantLink'}>
+                    <Link to={`/user/${member.name}`} className={'UserParticipantLink'}>
                       {member.name}
                     </Link>
                   </Typography>
