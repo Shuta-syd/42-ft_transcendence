@@ -1,5 +1,4 @@
 import { Box, Grid, Typography } from "@mui/material";
-import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { Socket } from "socket.io-client";
 import useMutationMessage from "../../../hooks/chat/useMutationMessage";
@@ -8,6 +7,7 @@ import getUserName from "../../../utils/getUserName";
 import TextFieldComponent from "../../utils/TextFieldComponent";
 import ChatlogComponent from "../utils/ChatlogComponent";
 import ChannelEditDialog from "./ChannelEditDialog";
+import { getMyRole, getUserId } from "../../../utils/chat/ChatAxios";
 
 type ChannelDisplayComponentProps = {
   socket: Socket;
@@ -57,18 +57,8 @@ export default function ChannelDisplayComponent(props: ChannelDisplayComponentPr
 
 
   useEffect(() => {
-    const getUserId = async () => {
-      const { data: myUser } = await axios.get(`http://localhost:8080/user`);
-      setMyUserId(myUser.id);
-    }
-
-    const getMyRole = async () => {
-      const { data: member } = await axios.get(`http://localhost:8080/chat/${roomId}/myMember`);
-      setMyRole(member.role);
-    }
-
-    getUserId();
-    getMyRole();
+    getUserId().then((id: string) => setMyUserId(id));
+    getMyRole(roomId).then((role: string) => { setMyRole(role)})
     getUserName().then((name) => { setUserName(name); });
   }, [roomId])
 
