@@ -87,6 +87,7 @@ export class UserService {
     });
     return ret;
   }
+
   /**
    * @param userId 取得したフレンドリストのuserId
    * @returns userIdのユーザのフレンドリスト
@@ -125,6 +126,7 @@ export class UserService {
 
     return result;
   }
+
   /**
    * @description User tableに対して、imageをsetできるようにする
    * @param userId imageをsetしたいUserのID
@@ -163,6 +165,7 @@ export class UserService {
       },
     });
   }
+
   /**
    * @description Friend 申請のhandler requesterの名前をdatebaseに格納
    * @return setしたrequesteeのデータ
@@ -215,61 +218,67 @@ export class UserService {
     return req.friendReqs;
   }
 
-  async acceptFriendreq(userid: string, friendId: string): Promise<User> {
-    let oldfriendReqs: string[];
-    const useridString = JSON.stringify(userid);
-    const friendString = JSON.stringify(friendId);
-    const tmpuser = JSON.parse(useridString);
-    const tmpfriend = JSON.parse(friendString);
-    this.addFriend(tmpuser, tmpfriend);
-    this.addFriend(tmpfriend, tmpuser);
-    const user = this.prisma.user.findUnique({
+  async acceptFriendreq(
+    userId: string,
+    friendId: string,
+  ): Promise<User | null> {
+    if (userId === friendId) {
+      return null;
+    }
+
+    await this.addFriend(userId, friendId);
+    await this.addFriend(friendId, userId);
+
+    const user = await this.prisma.user.findUnique({
       where: {
-        id: userid,
+        id: userId,
       },
     });
     if (!user) {
       return null;
     }
-    user.then((userDto: User) => {
-      oldfriendReqs = userDto.friendReqs;
-      const filteredArr: string[] = oldfriendReqs.filter(
-        (item: string) => item !== friendId,
-      );
-      return this.prisma.user.update({
-        where: {
-          id: userid,
-        },
-        data: {
-          friendReqs: filteredArr,
-        },
-      });
+
+    // 友達リクエストからfriendIdを削除
+    const filteredFriendReqs = user.friendReqs.filter(
+      (item: string) => item !== friendId,
+    );
+
+    return this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        friendReqs: filteredFriendReqs,
+      },
     });
   }
 
-  async rejectFriendReq(userid: string, friendId: string): Promise<User> {
-    let oldfriendReqs: string[];
-    const user = this.prisma.user.findUnique({
+  async rejectFriendReq(
+    userid: string,
+    friendId: string,
+  ): Promise<User | null> {
+    const user = await this.prisma.user.findUnique({
       where: {
         id: userid,
       },
     });
+
     if (!user) {
       return null;
     }
-    user.then((userDto: User) => {
-      oldfriendReqs = userDto.friendReqs;
-      const filteredArr: string[] = oldfriendReqs.filter(
-        (item: string) => item !== friendId,
-      );
-      return this.prisma.user.update({
-        where: {
-          id: userid,
-        },
-        data: {
-          friendReqs: filteredArr,
-        },
-      });
+
+    // 友達リクエストからfriendIdを削除
+    const filteredFriendReqs = user.friendReqs.filter(
+      (item: string) => item !== friendId,
+    );
+
+    return this.prisma.user.update({
+      where: {
+        id: userid,
+      },
+      data: {
+        friendReqs: filteredFriendReqs,
+      },
     });
   }
 }
