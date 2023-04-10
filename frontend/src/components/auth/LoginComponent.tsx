@@ -25,25 +25,30 @@ function LoginComponent() {
   });
 
   const onSubmit: SubmitHandler<LoginData> = async (data) => {
+    let isLogin: Boolean = false;
     try {
       await axios.post('http://localhost:8080/auth/login', {
         email: data.email,
         password: data.password,
       });
       reset();
-      router('/user');
-      rootSocket.emit('online_status_check');
+      isLogin = true;
     } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
         alert(message);
       }else
       alert('ログインに失敗しました。もう一度ログインしてください');
+    } finally {
+      if (isLogin) {
+        router('/user');
+        rootSocket.emit('online_status_check');
+      }
     }
   }
 
   const handleClick = async () => {
-    rootSocket.emit('online_status_update');
+    rootSocket.emit('online_status_delete');
     await axios.post('http://localhost:8080/auth/logout');
   }
 
