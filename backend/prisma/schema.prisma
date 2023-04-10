@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-arm64-openssl-1.1.x"]
 }
 
@@ -23,9 +23,19 @@ model User {
   memberships        Member[]
   banned             BanUserOnChatRoom[]
   friendReqs         String[]
+  blockingUsers      BlockList[]         @relation("BlockerRelation")
+  blockedUsers       BlockList[]         @relation("BlockedRelation")
 }
 
+model BlockList {
+  id        String @id @default(uuid())
+  blockerId String
+  blocker   User   @relation("BlockerRelation", fields: [blockerId], references: [id])
+  blockedId String
+  blocked   User   @relation("BlockedRelation", fields: [blockedId], references: [id])
 
+  @@unique([blockerId, blockedId])
+}
 
 // TODO: auth.serviceでuserテーブルを操作したくないから、OneTimePasswordテーブルで別操作したい
 // model OneTimePassword {
