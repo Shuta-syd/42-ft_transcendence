@@ -50,7 +50,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const cookie = client.handshake.headers.cookie;
     if (cookie === undefined) throw new WsException('unAuthorized');
     const accessToken = cookie.split('=')[1];
-    if (accessToken === undefined) throw new WsException('unAuthorized');
+    if (accessToken === '') throw new WsException('unAuthorized');
     const { sub: userId } = this.jwtService.verify(accessToken, {
       secret: this.configService.get('JWT_SECRET'),
     });
@@ -71,7 +71,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const cookie = client.handshake.headers.cookie;
     if (cookie === undefined) return;
     const accessToken = cookie.split('=')[1];
-    if (accessToken === undefined) throw new WsException('unAuthorized');
+    if (accessToken === '') throw new WsException('unAuthorized');
     const { sub: userId } = this.jwtService.verify(accessToken, {
       secret: this.configService.get('JWT_SECRET'),
     });
