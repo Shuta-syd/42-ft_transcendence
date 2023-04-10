@@ -5,6 +5,7 @@ import {
   Get,
   HttpStatus,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   Query,
@@ -48,7 +49,7 @@ export class ChatController {
   })
   async sendChat(
     @Req() req: Request,
-    @Param('id') roomId: string,
+    @Param('id', ParseUUIDPipe) roomId: string,
     @Body() dto: SendChatDto,
   ): Promise<Message> {
     return this.chatService.sendChat(req.user.id, roomId, dto);
@@ -88,14 +89,16 @@ export class ChatController {
     description: 'Get chat room by id',
     summary: 'Get chat room by id',
   })
-  async getChatRoomById(@Param('roomId') id: string): Promise<ChatRoom> {
+  async getChatRoomById(
+    @Param('roomId', ParseUUIDPipe) id: string,
+  ): Promise<ChatRoom> {
     return this.chatService.getChatRoomById(id);
   }
 
   @Get('room/:roomId/dm/friend')
   async getFriendNameByDMId(
     @Req() req: Request,
-    @Param('roomId') roomId: string,
+    @Param('roomId', ParseUUIDPipe) roomId: string,
   ): Promise<string> {
     return this.chatService.getFriendNameByDMId(req.user.id, roomId);
   }
@@ -110,7 +113,9 @@ export class ChatController {
     description: 'The chat logs',
     type: SwaggerMessages,
   })
-  async getChatLogByRoomId(@Param('roomId') id: string): Promise<Message[]> {
+  async getChatLogByRoomId(
+    @Param('roomId', ParseUUIDPipe) id: string,
+  ): Promise<Message[]> {
     return this.chatService.getChatLogByRoomId(id);
   }
 
@@ -143,7 +148,7 @@ export class ChatController {
   @Get(':roomId/myMember')
   async getMyMember(
     @Req() req: Request,
-    @Param('roomId') roomId: string,
+    @Param('roomId', ParseUUIDPipe) roomId: string,
   ): Promise<Member> {
     return this.chatService.getMyMember(req.user.id, roomId);
   }
@@ -176,7 +181,7 @@ export class ChatController {
   })
   async updateChannel(
     @Req() req: Request,
-    @Param('roomId') roomId: string,
+    @Param('roomId', ParseUUIDPipe) roomId: string,
     @Body() dto: CreateChatRoom,
   ) {
     return this.chatService.updateChannel(req.user.id, roomId, dto);
