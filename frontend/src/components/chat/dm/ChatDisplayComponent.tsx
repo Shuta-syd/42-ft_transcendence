@@ -6,7 +6,7 @@ import { Socket } from "socket.io-client";
 import useMutationMessage from "../../../hooks/chat/useMutationMessage";
 import TextFieldComponent from "../../utils/TextFieldComponent";
 import ChatlogComponent from "../utils/ChatlogComponent";
-import { getFriendNameFromRoomName, getUserId } from "../../../utils/ChatAxios";
+import { getFriendNameFromRoomName, getUserId } from "../../../utils/chat/ChatAxios";
 
 type ChannelDisplayComponentProps = {
   socket: Socket;

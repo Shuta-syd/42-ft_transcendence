@@ -7,7 +7,7 @@ import '../../../styles/Chat.css'
 import { ChatRoom } from "../../../types/PrismaType";
 import LeaveButton from "../utils/LeaveButton";
 import getUserName from "../../../utils/getUserName";
-import { getFriendNameFromRoomName } from "../../../utils/ChatAxios";
+import { getFriendNameFromRoomName } from "../../../utils/chat/ChatAxios";
 
 
 type ChatFriendsComponentProps = {

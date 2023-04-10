@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import React, {useEffect, useState } from "react";
 import InvitationButton from "../group/InvitationButton";
 import AdminButton from "./AdminButton";
-import { getUserId } from "../../../utils/ChatAxios";
+import { getUserId } from "../../../utils/chat/ChatAxios";
 
 type MemberPayload = {
   id: string;
