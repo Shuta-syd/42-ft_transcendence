@@ -31,10 +31,12 @@ const FriendListButton = () => {
   const ShowFriendList = () => (
     <Box
       sx={{
+        position: 'absolute', // Add this line
+        top: 50, // Adjust this value as needed
         width: '100%',
-        height: '200px', // Set the height of the scrollable box
-        overflowY: 'scroll', // Enable vertical scrolling
-        border: '1px solid #ccc', // Add border around the box (optional)
+        height: '200px',
+        overflowY: 'scroll',
+        border: '5px solid #ccc',
       }}
     >
       <List>
@@ -53,13 +55,14 @@ const FriendListButton = () => {
       item
       xs={5}
       style={{
+        position: 'relative', // Add this line
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: '0px',
       }}
     >
-      <Stack spacing={2} direction="row">
+      <Stack spacing={2} direction="column">
         <Button
           variant="outlined"
           color="primary"
