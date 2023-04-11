@@ -296,30 +296,8 @@ const MyProfile = () => {
           <ShowAchievement matches={matchArr} />
         </Grid>
         <Grid container direction={'row'}>
-          <Grid
-            item
-            xs={5}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginTop: '0px',
-            }}
-          >
-            <MatchListButton />
-          </Grid>
-          <Grid
-            item
-            xs={5}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginTop: '0px',
-            }}
-          >
-            <FriendListButton />
-          </Grid>
+          <MatchListButton />
+          <FriendListButton />
         </Grid>
       </Grid>
     </div>

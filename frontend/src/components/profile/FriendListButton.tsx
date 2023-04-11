@@ -5,7 +5,7 @@ import Stack from '@mui/material/Stack';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import { Avatar } from '@mui/material';
+import { Avatar, Grid } from '@mui/material';
 import { User } from '../../types/PrismaType';
 
 const FriendListButton = () => {
@@ -29,20 +29,27 @@ const FriendListButton = () => {
   };
 
   const ShowFriendList = () => (
-    <p>
-      <List>
-        {friends.map((friend: User) => (
-          <ListItem key={friend.id}>
-            <Avatar src={friend.image} />
-            <ListItemText primary={friend.name} secondary={friend.email} />
-          </ListItem>
-        ))}
-      </List>
-    </p>
+    <List>
+      {friends.map((friend: User) => (
+        <ListItem key={friend.id}>
+          <Avatar src={friend.image} />
+          <ListItemText primary={friend.name} secondary={friend.email} />
+        </ListItem>
+      ))}
+    </List>
   );
 
   return (
-    <>
+    <Grid
+      item
+      xs={5}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: '0px',
+      }}
+    >
       <Stack spacing={2} direction="row">
         <Button
           variant="outlined"
@@ -53,7 +60,7 @@ const FriendListButton = () => {
         </Button>
       </Stack>
       {isButtonClicked && <ShowFriendList />}
-    </>
+    </Grid>
   );
 };
 
