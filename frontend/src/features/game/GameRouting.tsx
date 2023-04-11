@@ -36,6 +36,6 @@ const GameRouting = () => {
         </div>
       );
   }
-};
+}
 
 export default GameRouting;
