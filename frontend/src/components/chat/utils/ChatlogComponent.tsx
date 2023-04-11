@@ -63,7 +63,9 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
   if (Loading) {
     return (
       <>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Box
+          height={'5rem'}
+          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <CircularProgress />
         </Box>
       </>
