@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import List from '@mui/material/List';
@@ -9,23 +8,14 @@ import { Avatar, Box, Grid, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { User } from '../../types/PrismaType';
 
-const FriendListButton = () => {
-  const [friends, setFriends] = useState<User[]>([]);
+type FriendListButtonProps = {
+  friends: User[];
+};
+
+const FriendListButton = ({ friends }: FriendListButtonProps) => {
   const [isButtonClicked, setIsButtonClicked] = useState(false);
 
-  const getFriends = async () => {
-    const { data } = await axios.get<User[]>(
-      `http://localhost:8080/user/friend`,
-    );
-    return data;
-  };
-
   const HandleFriendListButton = () => {
-    const friendsPromise = getFriends();
-    friendsPromise.then((data) => {
-      console.log('data => ', data[0]);
-      setFriends(data);
-    });
     setIsButtonClicked(!isButtonClicked);
   };
 

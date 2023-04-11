@@ -91,7 +91,6 @@ const MyProfile = () => {
       }
       return 'Expert';
     };
-
     return (
       <div
         style={{
@@ -231,6 +230,26 @@ const MyProfile = () => {
     });
   }, []);
 
+  /** ************************* */
+  // [get my friends part]
+  const [friends, setFriends] = useState<User[]>([]);
+  const getFriends = async () => {
+    const { data } = await axios.get<User[]>(
+      `http://localhost:8080/user/friend`,
+    );
+    return data;
+  };
+
+  useEffect(() => {
+    const friendsPromise = getFriends();
+    friendsPromise.then((data) => {
+      console.log('data => ', data[0]);
+      setFriends(data);
+    });
+  }, []);
+
+  /** ************************* */
+
   return (
     <div
       style={{
@@ -294,7 +313,7 @@ const MyProfile = () => {
         </Grid>
         <Grid container direction={'row'}>
           <MatchListButton />
-          <FriendListButton />
+          <FriendListButton friends={friends} />
         </Grid>
       </Grid>
     </div>
