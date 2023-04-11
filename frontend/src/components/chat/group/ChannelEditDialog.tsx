@@ -10,7 +10,8 @@ import FormController from "../../utils/FormController";
 type CreateChannelDto = {
   name: string;
   type: string;
-  password?: string;
+  oldPassword?: string;
+  newPassword?: string;
 }
 
 type ChannelEditDialogProps = {
@@ -31,7 +32,7 @@ export default function ChannelEditDialog(props: ChannelEditDialogProps) {
       const { data } = await axios.get(`http://localhost:8080/chat/room/${roomId}`);
       setValue('name', data.name);
       setValue('type', data.type);
-      setValue('password', data.password);
+      setType(data.type);
     }
 
     getChannel();
@@ -39,12 +40,17 @@ export default function ChannelEditDialog(props: ChannelEditDialogProps) {
 
   const onSubmit: SubmitHandler<CreateChannelDto> = async (data) => {
     try {
-      await axios.patch(`http://localhost:8080/chat/channel/${roomId}`, { type: data.type, name: data.name, password: data.type === 'PROTECT' ? data.password : '' })
+      await axios.patch(`http://localhost:8080/chat/channel/${roomId}`, {
+        type: data.type,
+        name: data.name,
+        oldPassword: data.type === 'PROTECT' ? data.oldPassword : '',
+        newPassword: data.type === 'PROTECT' ? data.newPassword : '',
+      })
       socket.emit('update_channel_info', { id: roomId, name: data.name });
       setSettingOpen(false);
       reset();
     } catch (error) {
-      alert('チャンネルの変更に失敗しました');
+      alert('パスワードが違うもしくは他理由でチャンネルの変更に失敗しました');
     }
   }
 
@@ -88,14 +94,27 @@ export default function ChannelEditDialog(props: ChannelEditDialogProps) {
                 )}
               />
               <FormController
-                name="password"
+                name="oldPassword"
                 control={control}
                 RenderComponent={(field: any) => (
                   <TextField
                     {...field}
                     disabled={type !== 'PROTECT'}
                     fullWidth
-                    label={'password'}
+                    label={'oldPassword'}
+                    variant='standard'
+                  />
+                )}
+              />
+              <FormController
+                name="newPassword"
+                control={control}
+                RenderComponent={(field: any) => (
+                  <TextField
+                    {...field}
+                    disabled={type !== 'PROTECT'}
+                    fullWidth
+                    label={'newPassword'}
                     variant='standard'
                   />
                 )}
