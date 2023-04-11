@@ -11,6 +11,7 @@ import ShowAvatar from '../../components/profile/ShowAvatar';
 import ImageUploadButton from '../../components/profile/ImageUploadButton';
 // import OtherPeopleProfile from "./OtherPeopleProfile";
 import NotificationButton from '../../components/profile/NotificationButton';
+import MatchList from '../../components/profile/MatchList';
 
 const MyProfile = () => {
   const [user, setUser] = useState<User>();
@@ -329,6 +330,32 @@ const MyProfile = () => {
           }}
         >
           <ShowAchievement matches={matchArr} />
+        </Grid>
+        <Grid container direction={'row'}>
+          <Grid
+            item
+            xs={5}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginTop: '0px',
+            }}
+          >
+            <MatchList />
+          </Grid>
+          <Grid
+            item
+            xs={5}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginTop: '0px',
+            }}
+          >
+            World
+          </Grid>
         </Grid>
       </Grid>
     </div>
