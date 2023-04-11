@@ -6,6 +6,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import { Avatar, Box, Grid, Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
 import { User } from '../../types/PrismaType';
 
 const FriendListButton = () => {
@@ -40,7 +41,9 @@ const FriendListButton = () => {
 
       return friends.map((friend: User) => (
         <ListItem key={friend.id}>
-          <Avatar src={friend.image} />
+          <Link to={`/user/${friend.name}`} style={{ textDecoration: 'none' }}>
+            <Avatar src={friend.image} />
+          </Link>
           <ListItemText primary={friend.name} sx={{ marginLeft: '10px' }} />
         </ListItem>
       ));
