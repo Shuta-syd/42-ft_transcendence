@@ -14,7 +14,6 @@ import {
 } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
 import { UserService } from './user.service';
-import { User } from '@prisma/client';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PrismaUser, SwaggerFriends } from 'src/swagger/type';
 import { AuthGuard } from '@nestjs/passport';
