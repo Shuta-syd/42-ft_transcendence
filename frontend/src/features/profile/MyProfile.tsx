@@ -11,7 +11,8 @@ import ShowAvatar from '../../components/profile/ShowAvatar';
 import ImageUploadButton from '../../components/profile/ImageUploadButton';
 // import OtherPeopleProfile from "./OtherPeopleProfile";
 import NotificationButton from '../../components/profile/NotificationButton';
-import MatchList from '../../components/profile/MatchList';
+import MatchListButton from '../../components/profile/MatchList';
+import FriendListButton from '../../components/profile/FriendListButton';
 
 const MyProfile = () => {
   const [user, setUser] = useState<User>();
@@ -342,7 +343,7 @@ const MyProfile = () => {
               marginTop: '0px',
             }}
           >
-            <MatchList />
+            <MatchListButton />
           </Grid>
           <Grid
             item
@@ -354,7 +355,7 @@ const MyProfile = () => {
               marginTop: '0px',
             }}
           >
-            World
+            <FriendListButton />
           </Grid>
         </Grid>
       </Grid>
