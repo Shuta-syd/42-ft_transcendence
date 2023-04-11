@@ -6,21 +6,32 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { User } from '@prisma/client';
+import { UserPublicDto } from './dto/user.dto';
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
+  async getUser(user: User): Promise<UserPublicDto> {
+    return this.convertToUserPublicDto(user);
+  }
+
   /**
    * @param userId 探索したいユーザのID
    * @returns userIdに関連付けられたUserデータ
    */
-  async getUserById(userId: string): Promise<User | null> {
-    return this.prisma.user.findUnique({
+  async getUserById(userId: string): Promise<UserPublicDto | null> {
+    const user: User = await this.prisma.user.findUnique({
       where: {
         id: userId,
       },
     });
+    if (!user) {
+      return null;
+    }
+
+    // UserPublicDtoにuserを代入
+    return this.convertToUserPublicDto(user);
   }
 
   /**
@@ -28,10 +39,7 @@ export class UserService {
    * @param friendId フレンド申請先のフレンドID
    * @returns フレンド申請したUserデータ
    */
-  async addFriend(userId: string, friendId: string): Promise<User> {
-    // const user = await this.getUserById(userId);
-    // const friend = await this.getUserById(friendId);
-
+  async addFriend(userId: string, friendId: string): Promise<UserPublicDto> {
     this.prisma.user.update({
       where: {
         id: friendId,
@@ -57,14 +65,14 @@ export class UserService {
         },
       },
     });
-    return ret;
+    return this.convertToUserPublicDto(await ret);
   }
 
   /**
    * @param userId
    * @param friendId
    */
-  async deleteFriend(userId: string, friendId: string): Promise<User> {
+  async deleteFriend(userId: string, friendId: string): Promise<UserPublicDto> {
     this.prisma.user.update({
       where: {
         id: friendId,
@@ -78,7 +86,7 @@ export class UserService {
       },
     });
 
-    const ret = this.prisma.user.update({
+    const ret = await this.prisma.user.update({
       where: {
         id: userId,
       },
@@ -90,14 +98,14 @@ export class UserService {
         },
       },
     });
-    return ret;
+    return this.convertToUserPublicDto(ret);
   }
 
   /**
    * @param userId 取得したフレンドリストのuserId
    * @returns userIdのユーザのフレンドリスト
    */
-  async getFriend(userId: string): Promise<User[]> {
+  async getFriend(userId: string): Promise<UserPublicDto[]> {
     const friends: User[] = [];
 
     const followings = await this.prisma.user
@@ -116,16 +124,22 @@ export class UserService {
       const friend = followers.find((follower) => follower.id === following.id);
       if (friend !== undefined) friends.push(friend);
     });
-    return friends;
+
+    // User[]をUserPublicDto[]に変換
+    return Promise.all(
+      friends.map((user) => {
+        return this.convertToUserPublicDto(user);
+      }),
+    );
   }
 
   /**
    * @description nameを含むfriendsを検索して返す
    */
-  async searchFriend(userId: string, name: string): Promise<User[]> {
+  async searchFriend(userId: string, name: string): Promise<UserPublicDto[]> {
     const userFriends = await this.getFriend(userId);
 
-    const result: User[] = userFriends.filter((friend) =>
+    const result: UserPublicDto[] = userFriends.filter((friend) =>
       friend.name.includes(name),
     );
 
@@ -161,14 +175,16 @@ export class UserService {
    * @param name
    * @returns nameを含むUser
    */
-  searchFriendByName(name: string): Promise<User> {
-    return this.prisma.user.findFirst({
-      where: {
-        name: {
-          equals: name,
+  async searchFriendByName(name: string): Promise<UserPublicDto> {
+    return this.convertToUserPublicDto(
+      await this.prisma.user.findFirst({
+        where: {
+          name: {
+            equals: name,
+          },
         },
-      },
-    });
+      }),
+    );
   }
 
   /**
@@ -226,7 +242,7 @@ export class UserService {
   async acceptFriendreq(
     userId: string,
     friendId: string,
-  ): Promise<User | null> {
+  ): Promise<UserPublicDto | null> {
     if (userId === friendId) {
       return null;
     }
@@ -248,20 +264,22 @@ export class UserService {
       (item: string) => item !== friendId,
     );
 
-    return this.prisma.user.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        friendReqs: filteredFriendReqs,
-      },
-    });
+    return this.convertToUserPublicDto(
+      await this.prisma.user.update({
+        where: {
+          id: userId,
+        },
+        data: {
+          friendReqs: filteredFriendReqs,
+        },
+      }),
+    );
   }
 
   async rejectFriendReq(
     userid: string,
     friendId: string,
-  ): Promise<User | null> {
+  ): Promise<UserPublicDto | null> {
     const user = await this.prisma.user.findUnique({
       where: {
         id: userid,
@@ -277,14 +295,16 @@ export class UserService {
       (item: string) => item !== friendId,
     );
 
-    return this.prisma.user.update({
-      where: {
-        id: userid,
-      },
-      data: {
-        friendReqs: filteredFriendReqs,
-      },
-    });
+    return this.convertToUserPublicDto(
+      await this.prisma.user.update({
+        where: {
+          id: userid,
+        },
+        data: {
+          friendReqs: filteredFriendReqs,
+        },
+      }),
+    );
   }
 
   /******************
@@ -327,7 +347,10 @@ export class UserService {
    * @param blockedId ブロックされるユーザーのID
    * @returns ブロック関係が作成された後、ブロックしたユーザーのUserインスタンス
    */
-  async blockUser(blockerId: string, blockedId: string): Promise<User> {
+  async blockUser(
+    blockerId: string,
+    blockedId: string,
+  ): Promise<UserPublicDto> {
     // blockerIdとblockedIdが同じであればエラー
     if (blockerId === blockedId) {
       throw new BadRequestException('You cannot block yourself.');
@@ -363,7 +386,10 @@ export class UserService {
    * @param blockedId ブロック解除されるユーザーのID
    * @returns ブロック関係が削除された後、ブロックを解除したユーザーのUserインスタンス
    */
-  async unblockUser(blockerId: string, blockedId: string): Promise<User> {
+  async unblockUser(
+    blockerId: string,
+    blockedId: string,
+  ): Promise<UserPublicDto> {
     // blockerIdとblockedIdが同じであればエラー
     if (blockerId === blockedId) {
       throw new BadRequestException('You cannot block yourself.');
@@ -407,7 +433,7 @@ export class UserService {
    * @param userId ブロックリストを取得したいユーザーのID
    * @returns 指定されたユーザーIDのブロックリストに含まれるユーザーの配列
    */
-  async getBlockList(userId: string): Promise<User[]> {
+  async getBlockList(userId: string): Promise<UserPublicDto[]> {
     // userIdのUserがいるか存在確認
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -424,6 +450,22 @@ export class UserService {
     }
 
     // ブロックリストに含まれるユーザーの配列を返す
-    return user.blockingUsers.map((blocklist) => blocklist.blocked);
+    const userPublicDtoPromises = user.blockingUsers.map((blocklist) =>
+      this.convertToUserPublicDto(blocklist.blocked),
+    );
+
+    return Promise.all(userPublicDtoPromises);
+  }
+
+  async convertToUserPublicDto(user: User): Promise<UserPublicDto> {
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      isTwoFactorEnabled: user.isTwoFactorEnabled,
+      image: user.image,
+      isFtLogin: user.isFtLogin,
+      friendReqs: user.friendReqs,
+    };
   }
 }

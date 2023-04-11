@@ -19,6 +19,7 @@ import {
 } from './dto/chat.dto';
 import { randomBytes, scrypt } from 'crypto';
 import { promisify } from 'util';
+import { UserPublicDto } from 'src/user/dto/user.dto';
 
 const asyncScrypt = promisify(scrypt);
 
@@ -297,14 +298,16 @@ export class ChatService {
   /**
    * @description MemberIdから紐付けられたUserデータを取得
    */
-  async getUserByMemberId(memberId: string): Promise<User> {
-    return this.prisma.member
+  async getUserByMemberId(memberId: string): Promise<UserPublicDto> {
+    const user = await this.prisma.member
       .findUnique({
         where: {
           id: memberId,
         },
       })
       .user();
+
+    return this.userService.convertToUserPublicDto(user);
   }
 
   async updateMemberRole(userId: string, dto: MemberDto) {

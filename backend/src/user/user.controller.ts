@@ -19,7 +19,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PrismaUser, SwaggerFriends } from 'src/swagger/type';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
-import { AcceptFriend, UserDto } from './dto/user.dto';
+import { AcceptFriend, UserPublicDto } from './dto/user.dto';
 
 @ApiTags('user')
 @Controller('user')
@@ -37,8 +37,8 @@ export class UserController {
     description: 'The found the user',
     type: PrismaUser,
   })
-  getUser(@Req() req: Request): User {
-    return req.user;
+  async getUser(@Req() req: Request): Promise<UserPublicDto | null> {
+    return this.getUserById(req.user.id);
   }
 
   @Get('other')
@@ -51,8 +51,10 @@ export class UserController {
     description: 'The found the other user',
     type: PrismaUser,
   })
-  async getUserById(@Query('id') id: string): Promise<User> {
-    return this.userService.getUserById(id);
+  async getUserById(
+    @Query('id', ParseUUIDPipe) userId: string,
+  ): Promise<UserPublicDto | null> {
+    return this.userService.getUserById(userId);
   }
 
   @Patch('friend')
@@ -64,7 +66,7 @@ export class UserController {
   async addFriend(
     @Req() req: Request,
     @Body() data: { friendId: string },
-  ): Promise<User> {
+  ): Promise<UserPublicDto> {
     return this.userService.addFriend(req.user.id, data.friendId);
   }
 
@@ -78,7 +80,7 @@ export class UserController {
     description: "The user's friends",
     type: SwaggerFriends,
   })
-  async getFriend(@Req() req: Request): Promise<User[]> {
+  async getFriend(@Req() req: Request): Promise<UserPublicDto[]> {
     return this.userService.getFriend(req.user.id);
   }
 
@@ -90,7 +92,7 @@ export class UserController {
   async deleteFriend(
     @Req() req: Request,
     @Body() data: { friendId: string },
-  ): Promise<User> {
+  ): Promise<UserPublicDto> {
     await this.userService.deleteFriend(data.friendId, req.user.id);
     return this.userService.deleteFriend(req.user.id, data.friendId);
   }
@@ -124,7 +126,7 @@ export class UserController {
   async SetFriendR(
     @Req() req: Request,
     @Body() friendId: AcceptFriend,
-  ): Promise<User> {
+  ): Promise<UserPublicDto> {
     return this.userService.acceptFriendreq(req.user.id, friendId.friendId);
   }
 
@@ -135,7 +137,7 @@ export class UserController {
   async deleteFriendR(
     @Req() req: Request,
     @Body() friendId: AcceptFriend,
-  ): Promise<User> {
+  ): Promise<UserPublicDto> {
     return this.userService.rejectFriendReq(req.user.id, friendId.friendId);
   }
 
@@ -143,7 +145,7 @@ export class UserController {
   async searchFriend(
     @Req() req: Request,
     @Query('name') name: string,
-  ): Promise<User[]> {
+  ): Promise<UserPublicDto[]> {
     return this.userService.searchFriend(req.user.id, name);
   }
 
@@ -151,7 +153,7 @@ export class UserController {
   async addUserImage(
     @Req() req: Request,
     @Body() data: { image: string },
-  ): Promise<User> {
+  ): Promise<UserPublicDto> {
     return this.userService.addUserImage(req.user.id, data.image);
   }
 
@@ -161,7 +163,9 @@ export class UserController {
   }
 
   @Get('name')
-  async searchFriendByName(@Query('name') name: string): Promise<User> {
+  async searchFriendByName(
+    @Query('name') name: string,
+  ): Promise<UserPublicDto> {
     return this.userService.searchFriendByName(name);
   }
 
@@ -199,7 +203,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'Block successful',
-    type: UserDto,
+    type: UserPublicDto,
   })
   @ApiResponse({
     status: 400,
@@ -218,7 +222,7 @@ export class UserController {
   async blockUser(
     @Req() req: Request,
     @Param('userId', ParseUUIDPipe) userId: string,
-  ): Promise<User> {
+  ): Promise<UserPublicDto> {
     return this.userService.blockUser(req.user.id, userId);
   }
 
@@ -229,7 +233,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: 'Returns the unblocked user',
-    type: UserDto,
+    type: UserPublicDto,
   })
   @ApiResponse({
     status: 400,
@@ -244,7 +248,7 @@ export class UserController {
   async unblockUser(
     @Req() req: Request,
     @Param('userId', ParseUUIDPipe) userId: string,
-  ): Promise<User> {
+  ): Promise<UserPublicDto> {
     return this.userService.unblockUser(req.user.id, userId);
   }
 
@@ -256,14 +260,14 @@ export class UserController {
     status: 200,
     description:
       'Returns an array of users included in the block list for the specified user ID',
-    type: [UserDto],
+    type: [UserPublicDto],
   })
   @ApiResponse({
     status: 404,
     description: 'Specified user ID not found',
   })
   @Get('block')
-  async getBlockList(@Req() req: Request): Promise<User[]> {
+  async getBlockList(@Req() req: Request): Promise<UserPublicDto[]> {
     return this.userService.getBlockList(req.user.id);
   }
 }
