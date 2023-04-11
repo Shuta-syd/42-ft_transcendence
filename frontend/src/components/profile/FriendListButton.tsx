@@ -41,7 +41,7 @@ const FriendListButton = () => {
       return friends.map((friend: User) => (
         <ListItem key={friend.id}>
           <Avatar src={friend.image} />
-          <ListItemText primary={friend.name} secondary={friend.email} />
+          <ListItemText primary={friend.name} sx={{ marginLeft: '10px' }} />
         </ListItem>
       ));
     };
