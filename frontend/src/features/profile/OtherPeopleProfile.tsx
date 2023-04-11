@@ -25,7 +25,7 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => (
         item
         xs={5}
         sx={{
-          fontSize: '4rem',
+          fontSize: '2rem',
           fontWeight: 'bold',
         }}
       >
