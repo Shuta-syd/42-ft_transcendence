@@ -142,7 +142,7 @@ const NotificationButton = () => {
         <NotificationsIcon
           sx={{
             color: 'blue',
-            fontSize: '4rem',
+            fontSize: '3rem',
           }}
           onClick={handleClick}
         />
