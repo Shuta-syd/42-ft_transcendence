@@ -73,8 +73,8 @@ export class ChatService {
   ): Promise<{ room: ChatRoom; isNew: boolean; friend: User }> {
     let alreadyCreated: ChatRoom = undefined;
 
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
+    const friend = await this.prisma.user.findUnique({
+      where: { id: dto.friendId },
       include: {
         memberships: {
           include: {
@@ -88,16 +88,20 @@ export class ChatService {
       },
     });
 
-    user.memberships.forEach((myMember) => {
+    friend.memberships.forEach((myMember) => {
       if (myMember.room.type !== 'DM') return;
-      myMember.room.members.map((member) => {
-        if (member.userId === dto.friendId) alreadyCreated = myMember.room;
-      });
+      if (myMember.room.name.includes(userName)) alreadyCreated = myMember.room;
     });
 
     // すでにDMルームがあった場合はそのルームを返す
-    if (alreadyCreated !== undefined)
+    if (alreadyCreated !== undefined) {
+      await this.addMember(userId, {
+        roomId: alreadyCreated.id,
+        status: 'NORMAL',
+        password: dto.password,
+      });
       return { room: alreadyCreated, isNew: false, friend: undefined };
+    }
 
     const room = await this.prisma.chatRoom.create({
       data: {
@@ -117,12 +121,6 @@ export class ChatService {
       roomId: room.id,
       status: 'NORMAL',
       password: dto.password,
-    });
-
-    const friend = await this.prisma.user.findUnique({
-      where: {
-        id: dto.friendId,
-      },
     });
 
     return { room, isNew: true, friend };
