@@ -5,7 +5,7 @@ import Stack from '@mui/material/Stack';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import { Avatar, Grid } from '@mui/material';
+import { Avatar, Box, Grid } from '@mui/material';
 import { User } from '../../types/PrismaType';
 
 const FriendListButton = () => {
@@ -29,14 +29,23 @@ const FriendListButton = () => {
   };
 
   const ShowFriendList = () => (
-    <List>
-      {friends.map((friend: User) => (
-        <ListItem key={friend.id}>
-          <Avatar src={friend.image} />
-          <ListItemText primary={friend.name} secondary={friend.email} />
-        </ListItem>
-      ))}
-    </List>
+    <Box
+      sx={{
+        width: '100%',
+        height: '200px', // Set the height of the scrollable box
+        overflowY: 'scroll', // Enable vertical scrolling
+        border: '1px solid #ccc', // Add border around the box (optional)
+      }}
+    >
+      <List>
+        {friends.map((friend: User) => (
+          <ListItem key={friend.id}>
+            <Avatar src={friend.image} />
+            <ListItemText primary={friend.name} secondary={friend.email} />
+          </ListItem>
+        ))}
+      </List>
+    </Box>
   );
 
   return (
