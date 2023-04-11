@@ -24,22 +24,6 @@ const MyProfile = () => {
     });
   }, []);
 
-  // const getFriends = async () => {
-  //     const {data} = await axios.get<User[]>(`http://localhost:8080/user/friend`);
-  //     return data;
-  // }
-
-  // const [friends, setFriends] = useState<User[]>([]);
-
-  // const HandleFriendListButton = () => {
-  //     const friendsPromise = getFriends();
-  //     friendsPromise.then((data) => {
-  //         console.log('data => ', data[0]);
-  //         setFriends(data);
-  //     });
-  //     console.log(friends[0]);
-  // };
-
   const [matchArr, setMatches] = useState<Match[]>([]);
   // const [winnerId] = useState<string>('');
   const MatchPromises = useQueryMatches();
@@ -249,27 +233,6 @@ const MyProfile = () => {
       setProfileImage(us?.image);
     });
   }, []);
-
-  // const FriendListButton = () => (
-  //         <div>
-  //             <Button
-  //             variant="outlined"
-  //             color="primary"
-  //             size="large"
-  //             onClick={HandleFriendListButton}
-  //         >
-  //             friend list
-  //         </Button><h3>
-  //             {friends.map((friend: User) => (
-  //                 <div key={friend.id}>
-  //                     [{friend.name}]
-  //                     <FriendStatus friendName={friend.name}/>
-  //                     <OtherPeopleProfile friend={friend} />
-  //                 </div>
-  //             ))}
-  //         </h3>
-  //         </div>
-  //     )
 
   return (
     <div
