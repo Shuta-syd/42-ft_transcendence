@@ -10,20 +10,20 @@ import Channel from "./features/channel/Channel";
 import ChannelComponent from "./components/chat/group/ChannelComponent";
 import ChannelWindowComponent from "./components/chat/group/ChannelWindowComponent";
 import GameMatching from "./features/game/GameMatching";
-import GameRouting from "./features/game/GameRouting";
 import NewNavBar from './components/utils/NewNavbar';
 import PrivateRouter from "./utils/PrivateRouter";
 import ProfileRouting from "./features/profile/ProfileRouting";
-import Profile from "./features/profile/Profile";
 import useSocket from "./hooks/useSocket";
 import { RootWebsocketProvider } from "./contexts/WebsocketContext";
+import MyProfile from "./features/profile/MyProfile";
+import GameRouting from "./features/game/GameRouting"
 
 function App() {
   axios.defaults.withCredentials = true;
   const rootSocket = useSocket('http://localhost:8080/');
 
   return (
-    <RootWebsocketProvider value={rootSocket}>
+      <RootWebsocketProvider value={rootSocket}>
       <Grid container>
         <NewNavBar />
         <Grid item xs>
@@ -64,7 +64,7 @@ function App() {
               path={"/user"}
               element={
               <PrivateRouter>
-                <Profile />
+                <MyProfile />
               </PrivateRouter>
             } />
                 <Route path={"/user/:name"} element={<ProfileRouting />}/>
