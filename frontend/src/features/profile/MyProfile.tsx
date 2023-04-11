@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from 'react';
-// import { Button } from "@mui/material";
 import axios from 'axios';
 import Rating from '@mui/material/Rating';
-// import io from "socket.io-client";
 import Grid from '@mui/material/Grid';
 import { Match, User } from '../../types/PrismaType';
 import { fetchProfileUser } from '../../hooks/profile/useProfileUser';
 import useQueryMatches from '../../hooks/match/useWueryMatch';
 import ShowAvatar from '../../components/profile/ShowAvatar';
 import ImageUploadButton from '../../components/profile/ImageUploadButton';
-// import OtherPeopleProfile from "./OtherPeopleProfile";
 import NotificationButton from '../../components/profile/NotificationButton';
-import MatchListButton from '../../components/profile/MatchList';
+import MatchListButton from '../../components/profile/MatchListButton';
 import FriendListButton from '../../components/profile/FriendListButton';
 
 const MyProfile = () => {

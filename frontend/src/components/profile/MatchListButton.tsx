@@ -7,10 +7,10 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 
 const MatchListButton = () => {
-  const [matchListVisible, setMatchListVisible] = useState(false);
+  const [isButtonClicked, setIsButtonClicked] = useState(false);
 
   const handleMatchListButton = () => {
-    setMatchListVisible(!matchListVisible);
+    setIsButtonClicked(!isButtonClicked);
   };
 
   const dummyMatches = [
@@ -19,7 +19,7 @@ const MatchListButton = () => {
     { id: 3, name: 'Match 3' },
   ];
 
-  const MatchList = () => (
+  const ShowMatchList = () => (
     <List>
       {dummyMatches.map((match) => (
         <ListItem key={match.id}>
@@ -49,7 +49,7 @@ const MatchListButton = () => {
           Match List
         </Button>
       </Stack>
-      {matchListVisible && <MatchList />}
+      {isButtonClicked && <ShowMatchList />}
     </Grid>
   );
 };
