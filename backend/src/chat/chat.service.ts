@@ -6,7 +6,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ChatRoom, Member, Message, User } from '@prisma/client';
+import { BlockList, ChatRoom, Member, Message, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import {
@@ -175,15 +175,27 @@ export class ChatService {
    * @param roomId 取得したいチャットルームのRoomId
    * @returns チャットルームのログ or null
    */
-  async getChatLogByRoomId(roomId: string): Promise<Message[]> {
-    const chatRoom = await this.prisma.chatRoom.findUnique({
-      where: { id: roomId },
-      include: { messages: true },
+  async getChatLogByRoomId(roomId: string, userId: string): Promise<Message[]> {
+    const blocking = await this.prisma.blockList.findMany({
+      where: { blockerId: userId },
     });
 
-    if (!chatRoom) throw new NotFoundException('chat room not found');
+    const blockedUserIds = blocking.map(
+      (blockedUser: BlockList) => blockedUser.blockedId,
+    );
 
-    return chatRoom.messages;
+    const messages = await this.prisma.message.findMany({
+      where: {
+        roomId,
+        NOT: {
+          senderUserId: {
+            in: blockedUserIds,
+          },
+        },
+      },
+    });
+
+    return messages;
   }
 
   /**
