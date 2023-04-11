@@ -3,7 +3,6 @@ import { Grid } from '@mui/material';
 import { User } from '../../types/PrismaType';
 import ShowAvatar from '../../components/profile/ShowAvatar';
 import FriendRequestButton from '../../components/profile/FriendRequestButton';
-import FriendListButton from '../../components/profile/FriendListButton';
 
 interface OtherPeopleProfileProps {
   friend: User | undefined;
@@ -45,17 +44,17 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => (
       >
         <FriendRequestButton user={props.friend} />
       </Grid>
-      <Grid
-        item
-        xs={5}
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <FriendListButton />
-      </Grid>
+      {/* <Grid */}
+      {/*  item */}
+      {/*  xs={5} */}
+      {/*  sx={{* /}
+      {/*    display: 'flex', */}
+      {/*    alignItems: 'center', */}
+      {/*    justifyContent: 'center', */}
+      {/*  }} */}
+      {/* > */}
+      {/*  <FriendListButton /> */}
+      {/* </Grid> */}
     </Grid>
   </div>
 );
