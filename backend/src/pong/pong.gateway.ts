@@ -1,9 +1,16 @@
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
+import { Server } from 'socket.io';
+import { PongService } from './pong.service';
 
+@WebSocketGateway({
+  cors: {
+    origin: ['http://localhost:3000'],
+  },
+  namespace: '/game',
+})
 @WebSocketGateway()
 export class PongGateway {
-  @SubscribeMessage('message')
-  handleMessage(client: any, payload: any): string {
-    return 'Hello world!';
-  }
+  constructor(private readonly pongService: PongService) {}
+  @WebsocketServer()
+  server: Server;
 }
