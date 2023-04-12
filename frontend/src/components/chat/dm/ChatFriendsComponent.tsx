@@ -31,6 +31,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
     const name = await getUserName();
      if (data) {
        setDMRooms([]);
+
       data.map((room: any) => {
         const friendName = getFriendNameFromRoomName(room.name, name);
         const friend = room.members.filter((member: any) => member.user.name !== name);

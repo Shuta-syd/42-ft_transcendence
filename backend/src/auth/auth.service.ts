@@ -108,6 +108,23 @@ export class AuthService {
     return this.generateJwt(user.id, user.name);
   }
 
+  async signup42User(dto: SignUpUserDto): Promise<User> {
+    let newUser: User;
+    do {
+      newUser = await this.prisma.user.create({
+        data: {
+          name: dto.name,
+          password: '',
+          email: dto.email,
+          image: dto.image,
+          isFtLogin: true,
+        },
+      });
+    } while (newUser === undefined || newUser === null);
+
+    return null;
+  }
+
   /**
    * @description Jwt Tokenを生成するための関数
    */
