@@ -14,11 +14,12 @@ import { Response } from 'express';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthDto, SignUpUserDto } from './dto/auth.dto';
 import { Jwt } from './type/auth.type';
-import { randomBytes, scrypt } from 'crypto';
+import { randomBytes, randomUUID, scrypt } from 'crypto';
 import { promisify } from 'util';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom, map } from 'rxjs';
 import { AlreadyInUseException } from './exception/AlreadyInUseException';
+import { createHash } from 'crypto';
 
 const asyncScrypt = promisify(scrypt);
 
@@ -110,19 +111,27 @@ export class AuthService {
 
   async signup42User(dto: SignUpUserDto): Promise<User> {
     let newUser: User;
+
+    const domain = dto.email.split('@')[1];
+
+    const hashedEmail =
+      createHash('sha256').update(dto.email).digest('hex').toString() +
+      `@${domain}`;
+
     do {
+      const uuidName = randomUUID();
       newUser = await this.prisma.user.create({
         data: {
-          name: dto.name,
+          name: uuidName,
           password: '',
-          email: dto.email,
+          email: hashedEmail,
           image: dto.image,
           isFtLogin: true,
         },
       });
     } while (newUser === undefined || newUser === null);
 
-    return null;
+    return newUser;
   }
 
   /**
@@ -150,21 +159,22 @@ export class AuthService {
   }
 
   async validateUser(userDto: SignUpUserDto): Promise<User> {
+    const domain = userDto.email.split('@')[1];
+
+    const hashedEmail =
+      createHash('sha256').update(userDto.email).digest('hex').toString() +
+      `@${domain}`;
+
     const user = await this.prisma.user.findUnique({
       where: {
-        email: userDto.email,
+        email: hashedEmail,
       },
     });
     if (user) {
       return user;
     }
 
-    await this.signupUser({ ...userDto, isFtLogin: true });
-    return this.prisma.user.findUnique({
-      where: {
-        email: userDto.email,
-      },
-    });
+    return this.signup42User(userDto);
   }
 
   /**
