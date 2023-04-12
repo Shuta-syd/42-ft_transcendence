@@ -20,16 +20,12 @@ import { PrismaUser, SwaggerFriends } from 'src/swagger/type';
 import { AuthGuard } from '@nestjs/passport';
 import { Request, Response } from 'express';
 import { AcceptFriend, UserDto } from './dto/user.dto';
-import { AuthService } from 'src/auth/auth.service';
 
 @ApiTags('user')
 @Controller('user')
 @UseGuards(AuthGuard('jwt'))
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @Get('')
   @ApiOperation({

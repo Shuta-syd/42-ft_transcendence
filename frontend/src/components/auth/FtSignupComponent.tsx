@@ -27,7 +27,7 @@ export default function FtSignupComponent() {
 
   const onSubmit: SubmitHandler<FtSignUpData> = async (data: any) => {
     try {
-      await axios.patch('http://localhost:8080/user/update', {
+      await axios.patch('http://localhost:8080/auth/update/42', {
           name: data.username,
           image: data.image,
         })
@@ -71,7 +71,9 @@ export default function FtSignupComponent() {
     } catch (error) {
       alert('プロフィール情報の取得に失敗しました。ブラウザをリフレッシュしてください');
     } finally {
-      setLoading(false);
+      setTimeout(() => {
+        setLoading(false);
+      }, 300);
     }
   }, []);
 
