@@ -94,8 +94,6 @@ export class ChatService {
       });
     });
 
-    console.log(alreadyCreated);
-
     // すでにDMルームがあった場合はそのルームを返す
     if (alreadyCreated !== undefined)
       return { room: alreadyCreated, isNew: false };

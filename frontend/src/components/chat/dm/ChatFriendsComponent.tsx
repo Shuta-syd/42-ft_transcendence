@@ -71,16 +71,13 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
 
 
   useEffect(() => {
+    if (roomID === undefined) return;
+    if (prevRoomId === roomID) return;
     if (prevRoomId)
       socket.emit('leave_chat_room', { id: prevRoomId });
     socket.emit('join_chat_room', { id: roomID });
-    socket.emit('join_chat_room', { id: roomID });
     setPrevRoomId(roomID);
-  }, [roomID, socket])
-
-  const handleClick = (roomId: string) => {
-    socket.emit('join_chat_room', { id: roomId })
-  }
+  }, [roomID, socket, prevRoomId])
 
   if (Loading) {
     return (
@@ -95,7 +92,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
   return (
     <>
       {DMRooms?.map((room, idx) => (
-        <Link to={`/chat/room/${room.id}`} onClick={() => handleClick(room.id)} className={'FriendLink'} key={idx}>
+        <Link to={`/chat/room/${room.id}`} className={'FriendLink'} key={idx}>
           {room.id === roomID ? (
             <Grid
               container height={'7vh'}

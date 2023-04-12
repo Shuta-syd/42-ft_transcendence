@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { Grid } from "@mui/material";
 import axios from "axios";
 import Auth from "./features/auth/Auth";
@@ -13,47 +13,65 @@ import GameMatching from "./features/game/GameMatching";
 import NewNavBar from './components/utils/NewNavbar';
 import PrivateRouter from "./utils/PrivateRouter";
 import ProfileRouting from "./features/profile/ProfileRouting";
+import useSocket from "./hooks/useSocket";
+import { RootWebsocketProvider } from "./contexts/WebsocketContext";
 import MyProfile from "./features/profile/MyProfile";
 import GameRouting from "./features/game/GameRouting"
 
-
 function App() {
   axios.defaults.withCredentials = true;
-  const path = useLocation().pathname;
+  const rootSocket = useSocket('http://localhost:8080/');
 
-  // @ts-ignore
   return (
-    <Grid container>
-      { path !=='/login' && path !== '/signup' ? <NewNavBar /> : <></>}
-      <Grid item xs>
-        <Routes>
-          <Route path="/login" element={<Auth isLogin={true} />} />
-          <Route path="/signup" element={<Auth isLogin={false}/>} />
-          <Route path="/chat" element={
-            <PrivateRouter>
-              <Chat />
-            </PrivateRouter>
-          }>
-            <Route path="room" element={<ChatComponent />}>
-              <Route path=":roomId" element={<ChatWindowComponent />} />
+      <RootWebsocketProvider value={rootSocket}>
+      <Grid container>
+        <NewNavBar />
+        <Grid item xs>
+          <Routes>
+            <Route path="/login" element={<Auth isLogin={true} />} />
+            <Route path="/signup" element={<Auth isLogin={false} />} />
+            <Route
+              path="/chat"
+              element={
+              <PrivateRouter>
+                <Chat />
+              </PrivateRouter>
+            }>
+              <Route path="room" element={<ChatComponent />}>
+                <Route path=":roomId" element={<ChatWindowComponent />} />
+              </Route>
             </Route>
-          </Route>
-          <Route path="/channel" element={
-            <PrivateRouter>
-              <Channel />
-            </PrivateRouter>
-          }>
-            <Route path="room" element={<ChannelComponent />}>
-              <Route path=":roomId" element={<ChannelWindowComponent />} />
+            <Route
+              path="/channel"
+              element={
+                <PrivateRouter>
+                <Channel />
+              </PrivateRouter>
+            }>
+              <Route path="room" element={<ChannelComponent />}>
+                <Route path=":roomId" element={<ChannelWindowComponent />} />
+              </Route>
             </Route>
-          </Route>
-          <Route path="/game" element={<GameMatching />} />
-            <Route path={"/game/:room"} element={<GameRouting />} />
-          <Route path={"/user"} element={<MyProfile />}/>
-            <Route path={"/user/:name"} element={<ProfileRouting />}/>
-        </Routes>
-      </Grid>
-    </Grid>
+            <Route
+              path="/game"
+              element={
+              <PrivateRouter>
+                <GameMatching/>
+              </PrivateRouter>
+            } />
+              <Route path={"/game/:room"} element={<GameRouting />} />
+            <Route
+              path={"/user"}
+              element={
+              <PrivateRouter>
+                <MyProfile />
+              </PrivateRouter>
+            } />
+                <Route path={"/user/:name"} element={<ProfileRouting />}/>
+            </Routes>
+          </Grid>
+        </Grid>
+      </RootWebsocketProvider>
   )
 }
 export default App;

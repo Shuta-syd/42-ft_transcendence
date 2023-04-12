@@ -1,12 +1,14 @@
 import { Box, Button, TextField, Stack, Typography } from "@mui/material";
 import axios from "axios";
-import React from "react";
+import React, { useContext } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
+import { Socket } from "socket.io-client";
 import { yupResolver } from '@hookform/resolvers/yup';
 import FormController from "../utils/FormController";
 import FtLoginButtonComponent from "./FtLoginButtonComponent";
 import LoginValidationSchema from "../../types/auth/LoginValidationSchema";
+import { RootWebsocketContext } from "../../contexts/WebsocketContext";
 
 type LoginData = {
   email: string;
@@ -15,6 +17,7 @@ type LoginData = {
 
 function LoginComponent() {
   const router = useNavigate();
+  const rootSocket: Socket = useContext(RootWebsocketContext);
   const { control, handleSubmit, reset, formState: { errors } } = useForm<LoginData>({
     mode: 'onSubmit',
     defaultValues: { email: '', password: '' },
@@ -22,23 +25,30 @@ function LoginComponent() {
   });
 
   const onSubmit: SubmitHandler<LoginData> = async (data) => {
+    let isLogin: Boolean = false;
     try {
       await axios.post('http://localhost:8080/auth/login', {
         email: data.email,
         password: data.password,
       });
       reset();
-      router('/user');
+      isLogin = true;
     } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
         alert(message);
       }else
       alert('ログインに失敗しました。もう一度ログインしてください');
+    } finally {
+      if (isLogin) {
+        router('/user');
+        rootSocket.emit('online_status_check');
+      }
     }
   }
 
   const handleClick = async () => {
+    rootSocket.emit('online_status_delete');
     await axios.post('http://localhost:8080/auth/logout');
   }
 

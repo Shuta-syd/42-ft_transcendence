@@ -1,12 +1,11 @@
 import React, { useEffect, useState, ChangeEvent} from "react";
 import {Link} from "react-router-dom";
 import { Grid } from "@mui/material";
-import {Game, User} from "../../types/PrismaType";
+import { Game, User } from "../../types/PrismaType";
 import { fetchGameRoomArr } from "../../hooks/game/useGameObserver";
 import {GameObserverReq, useGameUser} from "../../hooks/game/useGameuser";
 
 const GameSelectRoom = () => {
-
     const [tmpNumber, setTmpNumber] = useState<string>('');
     const [number, setNumber] = useState<number>(0);
     const [IsAssigned, setIsAsssigned] = useState<boolean>(false);
