@@ -94,6 +94,6 @@ const ShowAvatar = ({ user, profileImage }: ShowAvatarProps) => (
                     </h2>
             </div>
         </div>
-    );
+);
 
 export default ShowAvatar;

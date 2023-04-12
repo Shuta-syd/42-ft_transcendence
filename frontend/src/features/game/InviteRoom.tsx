@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Grid } from "@mui/material";
+import { Socket } from "socket.io-client";
 import { User, InviteGame } from "../../types/PrismaType";
 import { GameInviteRoomReq, useGameUser } from "../../hooks/game/useGameuser";
-import {GameSocket} from "../../contexts/WebsocketContext";
 
-const InviteRoom = () => {
+const InviteRoom = (props: { socket: Socket }) => {
+    const { socket } = props;
     const [user, setUser] = useState<User>();
     const [roomId, setRoomId] = useState<string | undefined>(undefined);
 
@@ -38,7 +39,7 @@ const InviteRoom = () => {
     }, [user, roomId]);
 
     const handleClick = () => {
-        GameSocket.emit('TerminateGame', user?.name);
+        socket.emit('TerminateGame', user?.name);
     };
 
     return (

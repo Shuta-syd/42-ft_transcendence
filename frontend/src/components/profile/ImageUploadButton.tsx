@@ -32,6 +32,6 @@ const ImageUploadButton = ({ onUpload }: Props) => (
                 <PhotoCamera/>
             </IconButton>
         </div>
-    )
+  )
 
 export default ImageUploadButton;
