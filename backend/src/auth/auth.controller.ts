@@ -99,8 +99,8 @@ export class AuthController {
       path: '/',
     });
 
-    if (req.user.Ftlogined) res.redirect('http://localhost:3000/signup/42');
-    else res.redirect('http://localhost:3000/user');
+    if (req.user.Ftlogined) res.redirect('http://localhost:3000/user');
+    else res.redirect('http://localhost:3000/signup/42');
   }
 
   @UseGuards(AuthGuard('jwt'))

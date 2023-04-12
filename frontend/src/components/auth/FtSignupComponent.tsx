@@ -42,11 +42,6 @@ export default function FtSignupComponent() {
     } catch (error) {
       alert('ユーザ情報更新に失敗しました。ブラウザをリフレッシュしてもう一度お願いします');
       setActiveStep(0);
-    } finally {
-      if (isLogin) {
-        router('/user');
-        rootSocket.emit('online_status_check');
-      }
     }
   }
 
@@ -78,9 +73,11 @@ export default function FtSignupComponent() {
   useEffect(() => {
     try {
       fetchFtProfile();
-    } catch (error) {
-      console.log(error);
-      alert('プロフィール情報の取得に失敗しました。ブラウザをリフレッシュしてください');
+    } catch (error: any) {
+      if (error.response)
+        alert(error.response.data.message);
+      else
+        alert('プロフィール情報の取得に失敗しました。ブラウザをリフレッシュしてください');
     } finally {
       setTimeout(() => {
         setLoading(false);
