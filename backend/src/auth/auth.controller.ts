@@ -88,16 +88,7 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const username = req.user.name;
-    const userId = req.user.id;
-    const jwt = await this.authService.generateJwt(userId, username);
-    res.cookie('access_token', jwt.accessToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      path: '/',
-    });
-    res.redirect('http://localhost:3000/42/signup');
+    res.redirect('http://localhost:3000/signup/42');
   }
 
   @Post('logout')

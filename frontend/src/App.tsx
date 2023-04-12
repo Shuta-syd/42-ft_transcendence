@@ -28,8 +28,9 @@ function App() {
         <NewNavBar />
         <Grid item xs>
           <Routes>
-            <Route path="/login" element={<Auth isLogin={true} />} />
-            <Route path="/signup" element={<Auth isLogin={false} />} />
+            <Route path="/login" element={<Auth type={'login'} />} />
+            <Route path="/signup" element={<Auth type={'signup'} />} />
+            <Route path="/singup/42" element={<Auth type={'signup/42'} />} />
             <Route
               path="/chat"
               element={
