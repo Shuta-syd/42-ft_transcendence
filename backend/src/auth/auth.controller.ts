@@ -98,9 +98,12 @@ export class AuthController {
       sameSite: 'lax',
       path: '/',
     });
-    res.redirect('http://localhost:3000/signup/42');
+
+    if (req.user.Ftlogined) res.redirect('http://localhost:3000/signup/42');
+    else res.redirect('http://localhost:3000/user');
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Patch('update/42')
   async updateFtUser(
     @Req() req: Request,
@@ -116,7 +119,6 @@ export class AuthController {
       sameSite: 'lax',
       path: '/',
     });
-    res.redirect('http://localhost:3000/user');
   }
 
   @Post('logout')

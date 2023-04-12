@@ -1,14 +1,16 @@
 /* eslint-disable no-unused-vars */
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Box,  CircularProgress,  Stack, Typography } from "@mui/material";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { Socket } from "socket.io-client";
+import React, { useContext, useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import UploadImageComponent from "./UploadImageComponent";
 import TwoFactorSettingComponent from "./TwoFactorSettingComponent";
 import SignupStepper from "./SignupStepper";
 import FtUserProfileFormComponent from "./FtUserProfileFormComponent";
+import { RootWebsocketContext } from "../../contexts/WebsocketContext";
 
 type FtSignUpData = {
   username: string;
@@ -16,6 +18,8 @@ type FtSignUpData = {
 }
 
 export default function FtSignupComponent() {
+  const router = useNavigate();
+  const rootSocket: Socket = useContext(RootWebsocketContext);
   const [activeStep, setActiveStep] = useState(0);
   const [Loading, setLoading] = useState(true);
   const [imageURL, setImageURL] = useState('');
@@ -26,6 +30,7 @@ export default function FtSignupComponent() {
   });
 
   const onSubmit: SubmitHandler<FtSignUpData> = async (data: any) => {
+    let isLogin: Boolean = false;
     try {
       await axios.patch('http://localhost:8080/auth/update/42', {
           name: data.username,
@@ -33,10 +38,15 @@ export default function FtSignupComponent() {
         })
       reset();
       setActiveStep(2);
+      isLogin = true;
     } catch (error) {
-      console.log(error)
       alert('ユーザ情報更新に失敗しました。ブラウザをリフレッシュしてもう一度お願いします');
       setActiveStep(0);
+    } finally {
+      if (isLogin) {
+        router('/user');
+        rootSocket.emit('online_status_check');
+      }
     }
   }
 
@@ -69,6 +79,7 @@ export default function FtSignupComponent() {
     try {
       fetchFtProfile();
     } catch (error) {
+      console.log(error);
       alert('プロフィール情報の取得に失敗しました。ブラウザをリフレッシュしてください');
     } finally {
       setTimeout(() => {

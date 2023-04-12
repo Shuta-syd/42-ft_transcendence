@@ -129,6 +129,7 @@ export class AuthService {
           email: hashedEmail,
           image: dto.image,
           isFtLogin: true,
+          Ftlogined: false,
         },
       });
     } while (newUser === undefined || newUser === null);
@@ -176,7 +177,9 @@ export class AuthService {
       return user;
     }
 
-    return this.signup42User(userDto);
+    const newUser = await this.signup42User(userDto);
+
+    return newUser;
   }
 
   async updateFtUser(userId: string, dto: FtUpdateUserDto): Promise<User> {
@@ -184,6 +187,15 @@ export class AuthService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
+
+    const userNameExit = await this.prisma.user.findUnique({
+      where: { name: dto.name },
+    });
+
+    if (userNameExit && userNameExit.id !== userId) {
+      throw new NotAcceptableException('This username is already in use');
+    }
+
     return this.prisma.user.update({
       where: {
         id: userId,
@@ -191,6 +203,7 @@ export class AuthService {
       data: {
         name: dto.name,
         image: dto.image,
+        Ftlogined: true,
       },
     });
   }
