@@ -12,7 +12,7 @@ import { authenticator } from 'otplib';
 import { toFileStream } from 'qrcode';
 import { Response } from 'express';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { AuthDto, SignUpUserDto } from './dto/auth.dto';
+import { AuthDto, FtUpdateUserDto, SignUpUserDto } from './dto/auth.dto';
 import { Jwt } from './type/auth.type';
 import { randomBytes, randomUUID, scrypt } from 'crypto';
 import { promisify } from 'util';
@@ -20,6 +20,7 @@ import { HttpService } from '@nestjs/axios';
 import { lastValueFrom, map } from 'rxjs';
 import { AlreadyInUseException } from './exception/AlreadyInUseException';
 import { createHash } from 'crypto';
+import { UserService } from 'src/user/user.service';
 
 const asyncScrypt = promisify(scrypt);
 
@@ -28,6 +29,7 @@ export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
+    private readonly userService: UserService,
     private readonly config: ConfigService,
     private readonly httpService: HttpService,
   ) {}
@@ -175,6 +177,22 @@ export class AuthService {
     }
 
     return this.signup42User(userDto);
+  }
+
+  async updateFtUser(userId: string, dto: FtUpdateUserDto): Promise<User> {
+    const user = await this.userService.getUserById(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        name: dto.name,
+        image: dto.image,
+      },
+    });
   }
 
   /**

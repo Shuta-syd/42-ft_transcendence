@@ -34,16 +34,6 @@ export class AcceptFriend {
   friendId: string;
 }
 
-export class UpdateUserDto {
-  @ApiProperty()
-  @IsString()
-  name: string;
-  @ApiProperty()
-  @IsString()
-  @IsBase64()
-  image: string;
-}
-
 export class UserDto {
   @ApiProperty()
   @IsUUID()

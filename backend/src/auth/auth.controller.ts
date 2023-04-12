@@ -19,7 +19,13 @@ import { PrismaUser } from 'src/swagger/type';
 import { AuthService } from './auth.service';
 import { Request } from 'express';
 import { FtGuard } from './guards/ft.guard';
-import { AuthDto, Msg, OtpCodeDao, SignUpUserDto } from './dto/auth.dto';
+import {
+  AuthDto,
+  FtUpdateUserDto,
+  Msg,
+  OtpCodeDao,
+  SignUpUserDto,
+} from './dto/auth.dto';
 import { Jwt2FaGuard } from './guards/jwt-2fa.guard';
 import { APP_FILTER } from '@nestjs/core';
 
@@ -93,6 +99,24 @@ export class AuthController {
       path: '/',
     });
     res.redirect('http://localhost:3000/signup/42');
+  }
+
+  @Patch('update/42')
+  async updateFtUser(
+    @Req() req: Request,
+    @Body() dto: FtUpdateUserDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const user = await this.authService.updateFtUser(req.user.id, dto);
+
+    const jwt = await this.authService.generateJwt(user.id, user.name);
+    res.cookie('access_token', jwt.accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
+    res.redirect('http://localhost:3000/user');
   }
 
   @Post('logout')
