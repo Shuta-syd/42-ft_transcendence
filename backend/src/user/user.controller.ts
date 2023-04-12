@@ -10,6 +10,7 @@ import {
   Post,
   Query,
   Req,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { Controller } from '@nestjs/common';
@@ -18,14 +19,18 @@ import { User } from '@prisma/client';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PrismaUser, SwaggerFriends } from 'src/swagger/type';
 import { AuthGuard } from '@nestjs/passport';
-import { Request } from 'express';
-import { AcceptFriend, UserDto } from './dto/user.dto';
+import { Request, Response } from 'express';
+import { AcceptFriend, UpdateUserDto, UserDto } from './dto/user.dto';
+import { AuthService } from 'src/auth/auth.service';
 
 @ApiTags('user')
 @Controller('user')
 @UseGuards(AuthGuard('jwt'))
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Get('')
   @ApiOperation({
@@ -39,6 +44,24 @@ export class UserController {
   })
   getUser(@Req() req: Request): User {
     return req.user;
+  }
+
+  @Patch('update')
+  async UpdateUser(
+    @Req() req: Request,
+    @Body() dto: UpdateUserDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const user = await this.userService.updateUser(req.user.id, dto);
+
+    const jwt = await this.authService.generateJwt(user.id, user.name);
+    res.cookie('access_token', jwt.accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
+    res.redirect('http://localhost:3000/user');
   }
 
   @Get('other')

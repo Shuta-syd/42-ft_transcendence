@@ -5,6 +5,7 @@ import {
   IsBoolean,
   IsArray,
   IsUUID,
+  IsBase64,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -31,6 +32,16 @@ export class FriendReq {
 export class AcceptFriend {
   @ApiProperty()
   friendId: string;
+}
+
+export class UpdateUserDto {
+  @ApiProperty()
+  @IsString()
+  name: string;
+  @ApiProperty()
+  @IsString()
+  @IsBase64()
+  image: string;
 }
 
 export class UserDto {

@@ -3,6 +3,7 @@ import React from "react";
 import AuthTitleComponent from "./AuthTitleComponent";
 import LoginComponent from "./LoginComponent";
 import SignupComponent from "./SignupComponent";
+import FtSignupComponent from "./FtSignupComponent";
 
 export default function AuthComponent(props: { type: string }) {
 
@@ -16,7 +17,7 @@ export default function AuthComponent(props: { type: string }) {
       Component = <SignupComponent />
       break;
     case 'signup/42':
-      Component = <></>;
+      Component = <FtSignupComponent />;
       break;
   }
 

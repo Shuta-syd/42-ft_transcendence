@@ -8,24 +8,10 @@ import { HttpModule } from '@nestjs/axios';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { FtStrategy } from './strategy/ft.strategy';
 import { Jwt2FaStrategy } from './strategy/jwt-2fa.strategy';
-import { UserModule } from 'src/user/user.module';
-import { UserService } from 'src/user/user.service';
 
 @Module({
-  imports: [
-    PrismaModule,
-    ConfigModule,
-    JwtModule.register({}),
-    HttpModule,
-    UserModule,
-  ],
+  imports: [PrismaModule, ConfigModule, JwtModule.register({}), HttpModule],
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    UserService,
-    JwtStrategy,
-    FtStrategy,
-    Jwt2FaStrategy,
-  ],
+  providers: [AuthService, JwtStrategy, FtStrategy, Jwt2FaStrategy],
 })
 export class AuthModule {}

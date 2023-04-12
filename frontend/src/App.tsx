@@ -30,7 +30,7 @@ function App() {
           <Routes>
             <Route path="/login" element={<Auth type={'login'} />} />
             <Route path="/signup" element={<Auth type={'signup'} />} />
-            <Route path="/singup/42" element={<Auth type={'signup/42'} />} />
+            <Route path="/signup/42" element={<Auth type={'signup/42'} />} />
             <Route
               path="/chat"
               element={
