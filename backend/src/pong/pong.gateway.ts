@@ -36,8 +36,8 @@ export class PongGateway {
       const groupId = `group-${Date.now()}`;
       player1.join(groupId);
       player2.join(groupId);
-      this.server.to(player1.id).emit('match_found', { groupId });
-      this.server.to(player2.id).emit('match_found', { groupId });
+      this.server.to(player1.id).emit('match_found', groupId);
+      this.server.to(player2.id).emit('match_found', groupId);
       console.log(`Match found! Group ID: ${groupId}`);
     } else {
       console.log('Waiting for more players...');

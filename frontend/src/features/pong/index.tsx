@@ -27,9 +27,9 @@ const Pong = () => {
             setGroupId(groupIdDto);
         });
 
-        return () => {
-            socket.off('match_found');
-        }
+        // return () => {
+        //     socket.off('match_found');
+        // }
     }, []);
 
     useEffect(() => {
@@ -46,6 +46,7 @@ const Pong = () => {
         ) : (
             <p>Waiting for a match...</p>
         )}
+
     </div>
     );
 }

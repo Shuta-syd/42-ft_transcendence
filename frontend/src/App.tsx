@@ -69,15 +69,11 @@ function App() {
               </PrivateRouter>
             } />
                 <Route path={"/user/:name"} element={<ProfileRouting />}/>
+            <Route
+              path={"/pong"}
+              element={<Pong />}>
+            </Route>
             </Routes>
-          <Route
-              path="/pong"
-              element={
-                <PrivateRouter>
-                  <Pong />
-                </PrivateRouter>
-              }>
-          </Route>
           </Grid>
         </Grid>
       </RootWebsocketProvider>
