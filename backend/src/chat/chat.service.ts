@@ -154,7 +154,8 @@ export class ChatService {
         type: 'DM',
         members: {
           some: {
-            userId: userId,
+            // DMでも時だけの場合にfindされないのなぜ
+            userId,
           },
         },
       },

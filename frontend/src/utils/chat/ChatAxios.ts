@@ -15,11 +15,11 @@ export  const getFriendNameFromRoomName = (room: string, username: string): stri
       friendName = name;
     }
   })
-  return friendName;
+  return friendName !== '' ?  friendName : 'undefined';
 }
 
 /**
-  * @description Get the user id 
+  * @description Get the user id
  */
 export const getUserId = async (): Promise<string> => {
   const { data } = await axios.get(`http://localhost:8080/user`);
