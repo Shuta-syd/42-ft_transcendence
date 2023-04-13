@@ -49,7 +49,7 @@ const ProfileRouting = () => {
     }
     if (loginUser?.name !== name && nonLoginUser?.name === name) {
       /* login userがparamのnameと一致しなかった時にはFriend Profile Componentにuserのpropsを渡して表示する */
-      return <OtherPeopleProfile friend={nonLoginUser} />;
+      return <OtherPeopleProfile other={nonLoginUser} />;
     }
     return <h1>THE NAME PERSON IS NOT EXIST</h1>;
   };

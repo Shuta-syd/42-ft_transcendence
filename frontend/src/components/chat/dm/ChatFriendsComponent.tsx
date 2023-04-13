@@ -7,6 +7,7 @@ import '../../../styles/Chat.css'
 import { ChatRoom } from "../../../types/PrismaType";
 import LeaveButton from "../utils/LeaveButton";
 import getUserName from "../../../utils/getUserName";
+import { getFriendNameFromRoomName } from "../../../utils/chat/ChatAxios";
 
 
 type ChatFriendsComponentProps = {
@@ -25,23 +26,11 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
   const [prevRoomId, setPrevRoomId] = useState<string>();
   const [Loading, setLoading] = useState(true);
 
-  const getFriendNameFromRoomName = (room: string, username: string): string => {
-    let friendName: string = '';
-
-    const names = room.split(',');
-    names.map((name) => {
-      if (name !== username) {
-        friendName = name;
-      }
-    })
-    return friendName;
-  }
-
   const getUserDM = async () => {
     const { data } = await axios.get(`http://localhost:8080/chat/dm`);
     const name = await getUserName();
      if (data) {
-      setDMRooms([]);
+       setDMRooms([]);
       data.map((room: any) => {
         const friendName = getFriendNameFromRoomName(room.name, name);
         const friend = room.members.filter((member: any) => member.user.name !== name);
@@ -49,7 +38,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
         const newDMRoom = {
           id: room.id,
           name: friendName,
-          image: friend[0].user.image,
+          image: friend.length ? friend[0].user.image : '../../../assets/logo.png',
         }
         setDMRooms((prev: any) => [...prev, newDMRoom]);
       })
@@ -109,7 +98,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
               </Grid>
               {isLeave ? (
               <Grid item>
-                <LeaveButton roomId={room.id} setChannels={setDMRooms} channels={DMRooms} />
+                <LeaveButton roomId={room.id} setChannels={setDMRooms} channels={DMRooms} isDM={true}/>
               </Grid>
             ) : (<></>)}
             </Grid>
@@ -129,7 +118,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
               </Grid>
               {isLeave ? (
               <Grid item>
-                <LeaveButton roomId={room.id} setChannels={setDMRooms} channels={DMRooms} />
+                <LeaveButton roomId={room.id} setChannels={setDMRooms} channels={DMRooms} isDM={true}/>
               </Grid>
             ) : (<></>)}
             </Grid>

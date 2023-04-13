@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import React, {useEffect, useState } from "react";
 import InvitationButton from "../group/InvitationButton";
 import AdminButton from "./AdminButton";
+import { getUserId } from "../../../utils/chat/ChatAxios";
 
 type MemberPayload = {
   id: string;
@@ -27,14 +28,7 @@ export default function UserParticipantList(props: UserParticipantListProps) {
   const [Loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getUserId = async () => {
-      const { data } = await axios.get(`http://localhost:8080/user`);
-      if (data){
-        setUserId(data.id);
-      }
-    }
-
-    getUserId();
+    getUserId().then((id: any) => {setUserId(id);});
   }, [roomId]);
 
   useEffect(() => {
@@ -93,13 +87,13 @@ export default function UserParticipantList(props: UserParticipantListProps) {
             <Box>
               <Grid container sx={{ display: 'flex', alignItems: 'center' }}>
                 <Grid item mr={2}>
-                  <Link to={`/user/${member.userId}`}>
+                  <Link to={`/user/${member.name}`}>
                     <Avatar src={`${member.image}`} />
                   </Link>
                 </Grid>
                 <Grid item>
                   <Typography variant="subtitle1">
-                    <Link to={`/user/${member.userId}`} className={'UserParticipantLink'}>
+                    <Link to={`/user/${member.name}`} className={'UserParticipantLink'}>
                       {member.name}
                     </Link>
                   </Typography>
