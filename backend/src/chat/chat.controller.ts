@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ChatRoom, Member, Message } from '@prisma/client';
+import { ChatRoom, Member, Message, User } from '@prisma/client';
 import { Request } from 'express';
 import {
   PrismaChatRoom,
@@ -80,7 +80,7 @@ export class ChatController {
   async createDMRoom(
     @Req() req: Request,
     @Body() dto: CreateChatRoom,
-  ): Promise<{ room: ChatRoom; isNew: boolean }> {
+  ): Promise<{ room: ChatRoom; isNew: boolean; friend: User }> {
     return this.chatService.crateDMRoom(req.user.name, req.user.id, dto);
   }
 
@@ -115,8 +115,9 @@ export class ChatController {
   })
   async getChatLogByRoomId(
     @Param('roomId', ParseUUIDPipe) id: string,
+    @Req() req: Request,
   ): Promise<Message[]> {
-    return this.chatService.getChatLogByRoomId(id);
+    return this.chatService.getChatLogByRoomId(id, req.user.id);
   }
 
   @ApiOperation({

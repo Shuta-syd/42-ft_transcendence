@@ -2,10 +2,10 @@ import { Box, CircularProgress, Grid } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { Socket } from "socket.io-client";
-import axios from "axios";
 import { ChatRoom } from "../../../types/PrismaType";
 import ChannelGroupComponent from "./ChannelGroupComponent";
 import useSocket from "../../../hooks/useSocket";
+import { getChannels } from "../../../utils/chat/ChatAxios";
 
 
 /**
@@ -16,15 +16,10 @@ export default function ChannelComponent() {
   const [channels, setChannels] = useState<ChatRoom[]>([]);
   const [Loading, setLoading] = useState(true);
 
-  const getChannels = async (): Promise<ChatRoom[]> => {
-    const res = await axios.get(`http://localhost:8080/chat/channel`);
-    return res.data;
-  }
-
   useEffect(() => {
     try {
       setLoading(true);
-      getChannels().then((data) => { setChannels(data); })
+      getChannels().then((res: ChatRoom[]) => setChannels(res));
     } catch (error) {
       alert('チャンネル取得に失敗しました。ブラウザをリフレッシュしてください');
     } finally {

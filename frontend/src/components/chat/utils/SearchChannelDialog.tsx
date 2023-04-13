@@ -16,12 +16,12 @@ type SearchChannelType = {
   name: string;
   type: string;
   description?: string;
+  password?: string;
 }
 
 export default function SearchChannelDialog(props: SearchChannelDialogProps) {
   const { isOpen, handleClose, setChannels } = props;
   const [text, setText] = useState<string>('');
-  const [pass, setPass] = useState<string>('');
   const [searchResult, setSearchResult] = useState<SearchChannelType[]>([]);
 
 
@@ -42,9 +42,15 @@ export default function SearchChannelDialog(props: SearchChannelDialogProps) {
     searchChannel();
   }, [text]);
 
-  const handleOnChange = (value: string) => {
-    setText(value);
-  }
+  const handleOnChange = (value: string, roomId: string) => {
+    setSearchResult((prev) =>
+      prev.map((room) =>
+        room.id === roomId ? { ...room, password: value } : room
+      )
+    );
+  };
+
+
 
   const handleOnClick = async (roomId: string, password?: string) => {
     try {
@@ -69,7 +75,7 @@ export default function SearchChannelDialog(props: SearchChannelDialogProps) {
             autoFocus
             value={text}
             variant="outlined"
-            onChange={(e) => { handleOnChange(e.target.value) }}
+            onChange={(e) => { setText(e.target.value) }}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -107,18 +113,18 @@ export default function SearchChannelDialog(props: SearchChannelDialogProps) {
                             <TextField
                               size="small"
                               label={'password'}
-                              value={pass}
-                              onChange={e => { setPass(e.target.value); }}
+                              value={channel.password ?? ""}
+                              onChange={e => { handleOnChange(e.target.value, channel.id); }}
                               />
                             <Button
-                              onClick={async () => { await handleOnClick(channel.id, pass); }}
+                              onClick={async () => { await handleOnClick(channel.id, channel.password); }}
                               >
                               JOIN
                             </Button>
                           </>
                         ) : (
                     <Button
-                      onClick={async (event) => { await handleOnClick(channel.id); }}
+                      onClick={async () => { await handleOnClick(channel.id); }}
                     >
                       JOIN
                     </Button>

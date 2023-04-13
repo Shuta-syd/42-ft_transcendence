@@ -1,5 +1,6 @@
 import {
   Body,
+  Controller,
   Delete,
   Get,
   HttpCode,
@@ -12,7 +13,6 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { Controller } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from '@prisma/client';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -53,6 +53,20 @@ export class UserController {
   })
   async getUserById(@Query('id') id: string): Promise<User> {
     return this.userService.getUserById(id);
+  }
+
+  @Get('other/friend')
+  @ApiOperation({
+    description: 'find friend by other person userId',
+    summary: 'find friend by other person userId',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'The found the other user',
+    type: PrismaUser,
+  })
+  async getFriendById(@Query('id') id: string): Promise<User[]> {
+    return this.userService.getFriend(id);
   }
 
   @Patch('friend')
