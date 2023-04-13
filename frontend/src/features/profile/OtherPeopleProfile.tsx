@@ -90,17 +90,19 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
         <Grid item xs={5}>
           <ShowAvatar user={props.other} profileImage={props.other?.image} />
         </Grid>
-        <Grid
-          item
-          xs={5}
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <FriendRequestButton user={props.other} />
-        </Grid>
+        {!isFriend && (
+          <Grid
+            item
+            xs={5}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <FriendRequestButton user={props.other} />
+          </Grid>
+        )}
         <Grid
           item
           xs={5}
