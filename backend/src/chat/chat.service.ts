@@ -6,7 +6,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ChatRoom, Member, Message, User } from '@prisma/client';
+import { BlockList, ChatRoom, Member, Message, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserService } from 'src/user/user.service';
 import {
@@ -16,6 +16,7 @@ import {
   MemberDto,
   MuteMemberDto,
   SendChatDto,
+  UpdateChatRoom,
 } from './dto/chat.dto';
 import { randomBytes, scrypt } from 'crypto';
 import { promisify } from 'util';
@@ -72,8 +73,8 @@ export class ChatService {
   ): Promise<{ room: ChatRoom; isNew: boolean; friend: User }> {
     let alreadyCreated: ChatRoom = undefined;
 
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
+    const friend = await this.prisma.user.findUnique({
+      where: { id: dto.friendId },
       include: {
         memberships: {
           include: {
@@ -87,16 +88,20 @@ export class ChatService {
       },
     });
 
-    user.memberships.forEach((myMember) => {
+    friend.memberships.forEach((myMember) => {
       if (myMember.room.type !== 'DM') return;
-      myMember.room.members.map((member) => {
-        if (member.userId === dto.friendId) alreadyCreated = myMember.room;
-      });
+      if (myMember.room.name.includes(userName)) alreadyCreated = myMember.room;
     });
 
     // すでにDMルームがあった場合はそのルームを返す
-    if (alreadyCreated !== undefined)
+    if (alreadyCreated !== undefined) {
+      await this.addMember(userId, {
+        roomId: alreadyCreated.id,
+        status: 'NORMAL',
+        password: dto.password,
+      });
       return { room: alreadyCreated, isNew: false, friend: undefined };
+    }
 
     const room = await this.prisma.chatRoom.create({
       data: {
@@ -116,12 +121,6 @@ export class ChatService {
       roomId: room.id,
       status: 'NORMAL',
       password: dto.password,
-    });
-
-    const friend = await this.prisma.user.findUnique({
-      where: {
-        id: dto.friendId,
-      },
     });
 
     return { room, isNew: true, friend };
@@ -155,7 +154,8 @@ export class ChatService {
         type: 'DM',
         members: {
           some: {
-            userId: userId,
+            // DMでも時だけの場合にfindされないのなぜ
+            userId,
           },
         },
       },
@@ -175,15 +175,27 @@ export class ChatService {
    * @param roomId 取得したいチャットルームのRoomId
    * @returns チャットルームのログ or null
    */
-  async getChatLogByRoomId(roomId: string): Promise<Message[]> {
-    const chatRoom = await this.prisma.chatRoom.findUnique({
-      where: { id: roomId },
-      include: { messages: true },
+  async getChatLogByRoomId(roomId: string, userId: string): Promise<Message[]> {
+    const blocking = await this.prisma.blockList.findMany({
+      where: { blockerId: userId },
     });
 
-    if (!chatRoom) throw new NotFoundException('chat room not found');
+    const blockedUserIds = blocking.map(
+      (blockedUser: BlockList) => blockedUser.blockedId,
+    );
 
-    return chatRoom.messages;
+    const messages = await this.prisma.message.findMany({
+      where: {
+        roomId,
+        NOT: {
+          senderUserId: {
+            in: blockedUserIds,
+          },
+        },
+      },
+    });
+
+    return messages;
   }
 
   /**
@@ -250,23 +262,36 @@ export class ChatService {
     return channels;
   }
 
-  async updateChannel(userId: string, roomId: string, dto: CreateChatRoom) {
+  async updateChannel(userId: string, roomId: string, dto: UpdateChatRoom) {
     const executor = await this.getMyMember(userId, roomId);
     if (!executor) throw new NotFoundException('executor is not found');
     if (executor.role !== 'OWNER')
       throw new ForbiddenException('You are not a channel owner');
 
-    let hashedPassword: string = dto.password;
-    if (dto.type === 'PROTECT') {
-      const salt = randomBytes(8).toString('hex');
-      const hash = (await asyncScrypt(dto.password, salt, 32)) as Buffer;
-      hashedPassword = hash.toString() + '.' + salt;
+    const room = await this.prisma.chatRoom.findUnique({
+      where: { id: roomId },
+    });
+
+    let NewHashedPassword: string;
+
+    if (room.type === 'PROTECT') {
+      const [storedHash, salt] = room.password.split('.');
+
+      const hashedPassword = (
+        (await asyncScrypt(dto.oldPassword, salt, 32)) as Buffer
+      ).toString();
+      if (storedHash !== hashedPassword.toString())
+        throw new UnauthorizedException('Password is wrong');
+
+      const newSalt = randomBytes(8).toString('hex');
+      const hash = (await asyncScrypt(dto.newPassword, newSalt, 32)) as Buffer;
+      NewHashedPassword = hash.toString() + '.' + salt;
     }
 
     return this.prisma.chatRoom.update({
       where: { id: roomId },
       data: {
-        password: hashedPassword,
+        password: NewHashedPassword,
         name: dto.name,
         type: dto.type,
       },

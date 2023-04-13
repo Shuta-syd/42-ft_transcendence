@@ -30,7 +30,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
     const { data } = await axios.get(`http://localhost:8080/chat/dm`);
     const name = await getUserName();
      if (data) {
-      setDMRooms([]);
+       setDMRooms([]);
       data.map((room: any) => {
         const friendName = getFriendNameFromRoomName(room.name, name);
         const friend = room.members.filter((member: any) => member.user.name !== name);
@@ -38,7 +38,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
         const newDMRoom = {
           id: room.id,
           name: friendName,
-          image: friend[0].user.image,
+          image: friend.length ? friend[0].user.image : '../../../assets/logo.png',
         }
         setDMRooms((prev: any) => [...prev, newDMRoom]);
       })

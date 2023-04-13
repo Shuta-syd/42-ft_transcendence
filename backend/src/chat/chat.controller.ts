@@ -115,8 +115,9 @@ export class ChatController {
   })
   async getChatLogByRoomId(
     @Param('roomId', ParseUUIDPipe) id: string,
+    @Req() req: Request,
   ): Promise<Message[]> {
-    return this.chatService.getChatLogByRoomId(id);
+    return this.chatService.getChatLogByRoomId(id, req.user.id);
   }
 
   @ApiOperation({
