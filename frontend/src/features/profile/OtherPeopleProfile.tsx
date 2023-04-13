@@ -64,8 +64,6 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
   }, [user]);
 
   /** ************************* */
-
-  console.log(props.other);
   return (
     <div
       style={{
@@ -104,17 +102,19 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
             <FriendRequestButton user={props.other} />
           </Grid>
         )}
-        <Grid
-          item
-          xs={5}
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <UnfriendButton user={props.other} />
-        </Grid>
+        {isFriend && (
+          <Grid
+            item
+            xs={5}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <UnfriendButton user={props.other} />
+          </Grid>
+        )}
         <Grid
           item
           xs={5}
