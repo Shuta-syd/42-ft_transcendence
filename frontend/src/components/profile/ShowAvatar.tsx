@@ -41,6 +41,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   },
 }));
 
+
 const ShowAvatar = ({ user, profileImage }: ShowAvatarProps) => (
   <div
     style={{

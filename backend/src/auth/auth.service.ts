@@ -18,6 +18,7 @@ import { randomBytes, scrypt } from 'crypto';
 import { promisify } from 'util';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom, map } from 'rxjs';
+import { AlreadyInUseException } from './exception/AlreadyInUseException';
 
 const asyncScrypt = promisify(scrypt);
 
@@ -47,8 +48,13 @@ export class AuthService {
       where: { name: dto.name },
     });
 
-    if (userNameExit) {
+    if (userNameExit && dto.isFtLogin !== true) {
       throw new NotAcceptableException('This userName is already in use');
+    } else if (userNameExit && dto.isFtLogin === true) {
+      throw new AlreadyInUseException(
+        '42 username is already in use',
+        dto.name,
+      );
     }
 
     const mb = (await this.calcImageSize(dto.image)) / 1024;
