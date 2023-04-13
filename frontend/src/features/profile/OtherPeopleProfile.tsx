@@ -6,6 +6,7 @@ import ShowAvatar from '../../components/profile/ShowAvatar';
 import FriendRequestButton from '../../components/profile/FriendRequestButton';
 import FriendListButton from '../../components/profile/FriendListButton';
 import { fetchProfileUser } from '../../hooks/profile/useProfileUser';
+import UnfriendButton from '../../components/profile/UnfriendButton';
 
 interface OtherPeopleProfileProps {
   other: User | undefined;
@@ -103,6 +104,17 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
             <FriendRequestButton user={props.other} />
           </Grid>
         )}
+        <Grid
+          item
+          xs={5}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <UnfriendButton user={props.other} />
+        </Grid>
         <Grid
           item
           xs={5}
