@@ -96,6 +96,22 @@ export class UserController {
     return this.userService.getFriend(req.user.id);
   }
 
+  // @Get('friend/relation')
+  // @ApiOperation({
+  //   description: 'check relationship',
+  //   summary: 'check relationship',
+  // })
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   type: SwaggerFriends,
+  // })
+  // async checkRelation(
+  //   @Req() req: Request,
+  //   @Query('friendId') friendId: string,
+  // ): Promise<string> {
+  //   return this.userService.checkRelation(req.user.id, friendId);
+  // }
+
   @Delete('friend')
   @ApiOperation({
     description: 'delete friend',
