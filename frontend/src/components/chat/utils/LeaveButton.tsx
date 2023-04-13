@@ -8,10 +8,11 @@ type LeaveButtonProps = {
   roomId: string;
   setChannels: any; // useState setter
   channels: any; // useState value
+  isDM: Boolean;
 }
 
 export default function LeaveButton(props: LeaveButtonProps) {
-  const { roomId, setChannels, channels } = props;
+  const { roomId, setChannels, channels, isDM } = props;
   const router = useNavigate();
 
   const handleOnClick = async () => {
@@ -19,7 +20,10 @@ export default function LeaveButton(props: LeaveButtonProps) {
       await axios.delete(`http://localhost:8080/chat/channel/member/leave`, { data: { roomId} })
       const newChannels = channels.filter((room: { id: string; }) => room.id !== roomId);
       setChannels(newChannels);
-      router('/channel/room');
+      if (isDM)
+        router('/chat/room');
+      else
+        router('/channel/room');
     } catch (error) {
       alert('チャンネルの離脱に失敗しました');
     }
