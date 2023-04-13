@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import axios from 'axios';
 import { Button } from '@mui/material';
 import { User } from '../../types/PrismaType';
 
@@ -7,26 +8,24 @@ interface UnfriendButtonProps {
 }
 
 const UnfriendButton = (props: UnfriendButtonProps) => {
-  const [isUnfriend, setIsFriendRequest] = useState(false);
-
   const handleClick = () => {
     console.log('Friend Request Button');
-    setIsFriendRequest(!isUnfriend);
 
     /* login user -> other peopleに対してunfriend requestを送信する */
-    // axios
-    //   .post(`http://localhost:8080/user/friendReq`, {
-    //     friendId: props.user?.id,
-    //   })
-    //   .then(
-    //     (res) => {
-    //       console.log('success!', res);
-    //     },
-    //     (err) => {
-    //       console.log('error!', err);
-    //     },
-    //   );
-    // };
+    axios
+      .delete(`http://localhost:8080/user/friend`, {
+        data: {
+          friendId: props.user?.id,
+        },
+      })
+      .then(
+        (res) => {
+          console.log('success!', res);
+        },
+        (err) => {
+          console.log('error!', err);
+        },
+      );
   };
   console.log('UnfriendButton', props.user?.name);
   return (
