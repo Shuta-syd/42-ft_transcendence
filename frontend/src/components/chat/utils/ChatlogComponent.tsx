@@ -28,8 +28,10 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
   const latestChatRef = createRef<HTMLDivElement>();
 
   useEffect(() => {
-    socket.on('chatToClient', (chat: MessagePayload) => {
-      setChatLog(prevChatLog => [...prevChatLog, chat]);
+    socket.on('chatToClient', async (chat: MessagePayload) => {
+      const { data: IsBlock } = await axios.get(`http://localhost:8080/user/block/${chat.senderUserId}`);
+      if (IsBlock === false)
+        setChatLog(prevChatLog => [...prevChatLog, chat]);
     });
   }, [socket])
 
