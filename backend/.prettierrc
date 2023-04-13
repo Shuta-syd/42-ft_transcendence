@@ -1,5 +1,4 @@
 {
   "singleQuote": true,
-  "trailingComma": "all",
-  "traillingComma": "es5"
+  "trailingComma": "all"
 }
