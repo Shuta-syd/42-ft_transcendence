@@ -45,7 +45,7 @@ const Pong = () => {
     useEffect(() => {
         if (countdown === 0 && groupId !== "") {
             socket.emit("join_group", groupId);
-            navigate(`/game/${groupId}`);
+            navigate(`/pong/${groupId}`);
         }
     }, [countdown, groupId, navigate, socket]);
 
