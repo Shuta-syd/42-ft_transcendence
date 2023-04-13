@@ -285,7 +285,7 @@ const MyProfile = () => {
           item
           xs={5}
           sx={{
-            fontSize: '3.4rem',
+            fontSize: '2rem',
             fontWeight: 'bold',
           }}
         >
