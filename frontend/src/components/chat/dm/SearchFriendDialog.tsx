@@ -49,8 +49,9 @@ export default function SearchFriendDialog(props: SearchFriendDialogProps) {
     });
     handleClose();
     router(`${data.room.id}`);
-    if (data.isNew)
-      setDMRooms((prev: any) => [...prev, { name: friendName, id: data.room.id }]);
+    if (data.isNew) {
+      setDMRooms((prev: any) => [...prev, { name: friendName, id: data.room.id, image: data.friend.image}]);
+    }
   }
 
   return (

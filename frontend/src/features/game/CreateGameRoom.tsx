@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
+import { Socket } from "socket.io-client";
 import { Grid } from "@mui/material";
 import { Game, User } from "../../types/PrismaType";
 import { GameRoomReq, useGameUser } from "../../hooks/game/useGameuser";
-import { GameSocket } from "../../contexts/WebsocketContext";
 
-const CreateGameRoom = () => {
+const CreateGameRoom = (props: { socket: Socket }) => {
+    const { socket } = props;
     const [user, setUser] = useState<User>();
     const [game, setGame] = useState<Game>();
     const [roomId, setRoomId] = useState<number | undefined>(undefined); // useStateでroomIdを宣言
@@ -27,7 +28,7 @@ const CreateGameRoom = () => {
     }, [user]);
 
     const handleClick = () => {
-        GameSocket.emit('TerminateGame', user?.name);
+        socket.emit('TerminateGame', user?.name);
     };
 
     const ShowPage = () => {

@@ -7,6 +7,7 @@ import '../../../styles/Chat.css'
 import { ChatRoom } from "../../../types/PrismaType";
 import LeaveButton from "../utils/LeaveButton";
 import getUserName from "../../../utils/getUserName";
+import { getFriendNameFromRoomName } from "../../../utils/chat/ChatAxios";
 
 
 type ChatFriendsComponentProps = {
@@ -24,18 +25,6 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
   const roomID = useLocation().pathname.split('/')[3];
   const [prevRoomId, setPrevRoomId] = useState<string>();
   const [Loading, setLoading] = useState(true);
-
-  const getFriendNameFromRoomName = (room: string, username: string): string => {
-    let friendName: string = '';
-
-    const names = room.split(',');
-    names.map((name) => {
-      if (name !== username) {
-        friendName = name;
-      }
-    })
-    return friendName;
-  }
 
   const getUserDM = async () => {
     const { data } = await axios.get(`http://localhost:8080/chat/dm`);
@@ -71,16 +60,13 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
 
 
   useEffect(() => {
+    if (roomID === undefined) return;
+    if (prevRoomId === roomID) return;
     if (prevRoomId)
       socket.emit('leave_chat_room', { id: prevRoomId });
     socket.emit('join_chat_room', { id: roomID });
-    socket.emit('join_chat_room', { id: roomID });
     setPrevRoomId(roomID);
-  }, [roomID, socket])
-
-  const handleClick = (roomId: string) => {
-    socket.emit('join_chat_room', { id: roomId })
-  }
+  }, [roomID, socket, prevRoomId])
 
   if (Loading) {
     return (
@@ -95,7 +81,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
   return (
     <>
       {DMRooms?.map((room, idx) => (
-        <Link to={`/chat/room/${room.id}`} onClick={() => handleClick(room.id)} className={'FriendLink'} key={idx}>
+        <Link to={`/chat/room/${room.id}`} className={'FriendLink'} key={idx}>
           {room.id === roomID ? (
             <Grid
               container height={'7vh'}
@@ -112,7 +98,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
               </Grid>
               {isLeave ? (
               <Grid item>
-                <LeaveButton roomId={room.id} setChannels={setDMRooms} channels={DMRooms} />
+                <LeaveButton roomId={room.id} setChannels={setDMRooms} channels={DMRooms} isDM={true}/>
               </Grid>
             ) : (<></>)}
             </Grid>
@@ -132,7 +118,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
               </Grid>
               {isLeave ? (
               <Grid item>
-                <LeaveButton roomId={room.id} setChannels={setDMRooms} channels={DMRooms} />
+                <LeaveButton roomId={room.id} setChannels={setDMRooms} channels={DMRooms} isDM={true}/>
               </Grid>
             ) : (<></>)}
             </Grid>

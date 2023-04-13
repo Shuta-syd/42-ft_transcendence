@@ -26,11 +26,11 @@ export class ChatGateway
   private logger: Logger = new Logger('ChatGateway');
 
   handleDisconnect(client: Socket) {
-    this.logger.log(`Client disconnected: ${client.id}`);
+    this.logger.log(`[Chat] Client disconnected: ${client.id}`);
   }
 
   handleConnection(client: Socket, ...args: any[]) {
-    this.logger.log(`Client connected ${client.id}`);
+    this.logger.log(`[Chat] Client connected ${client.id}`);
   }
 
   @SubscribeMessage('send_message_room')
@@ -50,8 +50,7 @@ export class ChatGateway
     @ConnectedSocket() client: Socket,
   ) {
     this.logger.log(
-      'Join Room: ',
-      `client[${client.id}] join ChatRoom ${payload.id}`,
+      `Join Room: client (id: ${client.id}) join ChatRoom (id: ${payload.id}`,
     );
     client.join(payload.id);
   }
@@ -62,8 +61,7 @@ export class ChatGateway
     @ConnectedSocket() client: Socket,
   ) {
     this.logger.log(
-      'Leave Room: ',
-      `client[${client.id}] leave ChatRoom ${payload.id}`,
+      `Join Room: client (id: ${client.id}) leave ChatRoom (id: ${payload.id}`,
     );
     client.leave(payload.id);
   }

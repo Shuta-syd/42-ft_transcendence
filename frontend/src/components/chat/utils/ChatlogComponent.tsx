@@ -1,5 +1,4 @@
 import { Avatar, Box, CircularProgress, Grid, Typography } from "@mui/material";
-import PersonIcon from '@mui/icons-material/Person';
 import axios from "axios";
 import React, { createRef, useEffect, useLayoutEffect, useState } from "react";
 import { Socket } from "socket.io-client";
@@ -19,10 +18,11 @@ type ChatlogComponentProps = {
   userId: string;
   roomId: string;
   socket: Socket;
+  memberImage: Map<string, string>;
 }
 
 export default function ChatlogComponent(props: ChatlogComponentProps) {
-  const { roomId, socket, userId } = props;
+  const { roomId, socket, userId, memberImage } = props;
   const [chatLog, setChatLog] = useState<ChatLog>([]);
   const [Loading, setLoading] = useState(true);
   const latestChatRef = createRef<HTMLDivElement>();
@@ -115,7 +115,13 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
                 </Box>
             </Grid>
             <Grid item>
-              <Avatar><PersonIcon/></Avatar>
+              <Avatar>
+                  <img
+                    src={memberImage.get(chat.senderUserId) as string}
+                    alt="memberImage"
+                    style={{ width: '100%', height: '100%' }}
+                  />
+              </Avatar>
             </Grid>
           </Grid>
         </Box>
@@ -131,7 +137,13 @@ export default function ChatlogComponent(props: ChatlogComponentProps) {
             alignItems={'end'}
           >
             <Grid item>
-              <Avatar><PersonIcon/></Avatar>
+              <Avatar>
+                <img
+                  src={memberImage.get(chat.senderUserId) as string}
+                  alt="memberImage"
+                  style={{ width: '100%', height: '100%' }}
+                />
+              </Avatar>
             </Grid>
             <Grid item xs>
               <Box
