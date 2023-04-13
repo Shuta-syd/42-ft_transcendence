@@ -27,7 +27,7 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
   // [check the relationship between me and other people]
   // friend state 3 pattern
   const [isFriend, setIsFriend] = useState(false);
-  // const [isBlockingUser, setIsBlockingUser] = useState(false);
+  const [isBlockingUser] = useState(false);
   // friendでもblockしているuserでもなければ、どちらでも無いという判断ができる
 
   /** ************************* */
@@ -115,7 +115,9 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
           <FriendListButton friends={friends} />
         </Grid>
       </Grid>
-      <h5>{isFriend ? '友達です' : '友達ではありません'}</h5>
+      {/* {block or friendの状態に関して出す必要があると思ったら後で実装する} */}
+      <h4>{isFriend ? 'friend' : 'not friend'}</h4>
+      <h4>{isBlockingUser ? 'blocking user' : 'not blocking user'}</h4>
     </div>
   );
 };
