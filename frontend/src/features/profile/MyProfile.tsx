@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
-// import { Button } from "@mui/material";
 import axios from 'axios';
 import Rating from '@mui/material/Rating';
-// import io from "socket.io-client";
 import Grid from '@mui/material/Grid';
 import { Match, User } from '../../types/PrismaType';
 import { fetchProfileUser } from '../../hooks/profile/useProfileUser';
 import useQueryMatches from '../../hooks/match/useWueryMatch';
 import ShowAvatar from '../../components/profile/ShowAvatar';
 import ImageUploadButton from '../../components/profile/ImageUploadButton';
-// import OtherPeopleProfile from "./OtherPeopleProfile";
 import NotificationButton from '../../components/profile/NotificationButton';
+import MatchListButton from '../../components/profile/MatchListButton';
+import FriendListButton from '../../components/profile/FriendListButton';
 
 const MyProfile = () => {
   const [user, setUser] = useState<User>();
@@ -21,22 +20,6 @@ const MyProfile = () => {
       setUser(userDto);
     });
   }, []);
-
-  // const getFriends = async () => {
-  //     const {data} = await axios.get<User[]>(`http://localhost:8080/user/friend`);
-  //     return data;
-  // }
-
-  // const [friends, setFriends] = useState<User[]>([]);
-
-  // const HandleFriendListButton = () => {
-  //     const friendsPromise = getFriends();
-  //     friendsPromise.then((data) => {
-  //         console.log('data => ', data[0]);
-  //         setFriends(data);
-  //     });
-  //     console.log(friends[0]);
-  // };
 
   const [matchArr, setMatches] = useState<Match[]>([]);
   // const [winnerId] = useState<string>('');
@@ -108,7 +91,6 @@ const MyProfile = () => {
       }
       return 'Expert';
     };
-
     return (
       <div
         style={{
@@ -248,26 +230,25 @@ const MyProfile = () => {
     });
   }, []);
 
-  // const FriendListButton = () => (
-  //         <div>
-  //             <Button
-  //             variant="outlined"
-  //             color="primary"
-  //             size="large"
-  //             onClick={HandleFriendListButton}
-  //         >
-  //             friend list
-  //         </Button><h3>
-  //             {friends.map((friend: User) => (
-  //                 <div key={friend.id}>
-  //                     [{friend.name}]
-  //                     <FriendStatus friendName={friend.name}/>
-  //                     <OtherPeopleProfile friend={friend} />
-  //                 </div>
-  //             ))}
-  //         </h3>
-  //         </div>
-  //     )
+  /** ************************* */
+      // [get my friends part]
+  const [friends, setFriends] = useState<User[]>([]);
+  const getFriends = async () => {
+    const { data } = await axios.get<User[]>(
+        `http://localhost:8080/user/friend`,
+    );
+    return data;
+  };
+
+  useEffect(() => {
+    const friendsPromise = getFriends();
+    friendsPromise.then((data) => {
+      console.log('data => ', data[0]);
+      setFriends(data);
+    });
+  }, []);
+
+  /** ************************* */
 
   return (
     <div
@@ -329,6 +310,10 @@ const MyProfile = () => {
           }}
         >
           <ShowAchievement matches={matchArr} />
+        </Grid>
+        <Grid container direction={'row'}>
+          <MatchListButton />
+          <FriendListButton friends={friends} />
         </Grid>
       </Grid>
     </div>
