@@ -9,9 +9,7 @@ interface OldInputFriendIdProps {
     handleInputID: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }
 
-const OldInputFriendId = ({ handleDecideIdButton, handleInputID }: OldInputFriendIdProps) => {
-    console.log('OldInputFriendId');
-    return (
+const OldInputFriendId = ({ handleDecideIdButton, handleInputID }: OldInputFriendIdProps) => (
         <div>
             <h2>Find new friends!</h2>
             <TextField
@@ -35,7 +33,6 @@ const OldInputFriendId = ({ handleDecideIdButton, handleInputID }: OldInputFrien
                 ID決定
             </Button>
         </div>
-    );
-};
+);
 
 export default OldInputFriendId;

@@ -1,29 +1,43 @@
-import { Box, Grid } from "@mui/material";
+import { Box, CircularProgress, Grid } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
-import { io, Socket } from "socket.io-client";
+import { Socket } from "socket.io-client";
 import { ChatRoom } from "../../../types/PrismaType";
 import ChannelGroupComponent from "./ChannelGroupComponent";
+import useSocket from "../../../hooks/useSocket";
+import { getChannels } from "../../../utils/chat/ChatAxios";
 
 
 /**
  * @returns Channel画面のコンポーネント
  */
 export default function ChannelComponent() {
-  const socket: Socket = io('http://localhost:8080/chat');
+  const socket: Socket = useSocket('http://localhost:8080/chat');
   const [channels, setChannels] = useState<ChatRoom[]>([]);
+  const [Loading, setLoading] = useState(true);
 
   useEffect(() => {
-    socket.on('connect', () => {
-      console.log(`[Channel] Connect: ${socket.id}`);
-    })
-
-    return () => {
-      console.log(`[Channel] Disconnect: ${socket.id}`);
-      socket.disconnect();
+    try {
+      setLoading(true);
+      getChannels().then((res: ChatRoom[]) => setChannels(res));
+    } catch (error) {
+      alert('チャンネル取得に失敗しました。ブラウザをリフレッシュしてください');
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 300);
     }
-  }, [socket]);
+  }, [])
 
+  if (Loading) {
+    return (
+      <Box height={'100vh'} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Box height={'10vh'} width={'10vw'}>
+          <CircularProgress />
+        </Box>
+      </Box>
+    )
+  }
 
   return (
     <>

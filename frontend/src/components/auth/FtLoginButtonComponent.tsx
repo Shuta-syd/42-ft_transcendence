@@ -1,9 +1,10 @@
-import { Button, styled } from '@mui/material';
-import React from 'react';
+import { LoadingButton } from '@mui/lab';
+import { styled } from '@mui/material';
+import React, { useState } from 'react';
 
 const ftLoginURL = "http://localhost:8080/auth/login/42"
 
-const CustomButton = styled(Button)({
+const CustomButton = styled(LoadingButton)({
   fontSize: 16,
   fontFamily: ['Lato', 'sans-serif'],
   backgroundColor: '#01babc',
@@ -13,12 +14,19 @@ const CustomButton = styled(Button)({
   },
 });
 
+
 function FtLoginButtonComponent() {
+  const [Loading, setLoading] = useState(false);
+
+  const handleOnClick = () => { setLoading(true) }
+
   return (
     <CustomButton
+      loading={Loading}
       variant='contained'
-      href={ftLoginURL}
       sx={{ backgroundColor: '#01babc' }}
+      onClick={handleOnClick}
+      href={ftLoginURL}
     >
       Continue with 42 Login
     </CustomButton>
