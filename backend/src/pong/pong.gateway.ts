@@ -26,6 +26,13 @@ export class PongGateway {
     this.tryMatchPlayers();
   }
 
+  handleDisconnect(client: Socket) {
+    console.log(`Client disconnected: ${client.id}`);
+    const index = this.wainglist.indexOf(client);
+    if (index !== -1) {
+      this.wainglist.splice(index, 1);
+    }
+  }
   handleInit() {
     console.log('init');
   }

@@ -1,54 +1,68 @@
-import React, { useEffect } from 'react';
-import { Socket } from 'socket.io-client';
-import useSocket from '../../hooks/useSocket';
-import { fetchProfileUser } from '../../hooks/profile/useProfileUser';
-import { User } from '../../types/PrismaType';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { Socket } from "socket.io-client";
+import useSocket from "../../hooks/useSocket";
+import { fetchProfileUser } from "../../hooks/profile/useProfileUser";
+import { User } from "../../types/PrismaType";
+
 
 const Pong = () => {
-
     const socket: Socket = useSocket("http://localhost:8080/pong");
-    const [user, setUser] = React.useState<User>();
-    const [groupId, setGroupId] = React.useState<string>('');
+    const [user, setUser] = useState<User>();
+    const [groupId, setGroupId] = useState<string>("");
+    const [countdown, setCountdown] = useState<number>(10);
 
-    // fetch user
-    const UserPromises = fetchProfileUser();
+    const navigate = useNavigate();
+
     useEffect(() => {
-        UserPromises.then((userDto: User) => {
+        fetchProfileUser().then((userDto: User) => {
             setUser(userDto);
         });
     }, []);
 
-    // send match request
     useEffect(() => {
-        socket.emit('match_request');
+        socket.emit("match_request");
 
-        socket.on('match_found', (groupIdDto: string) => {
-            console.log('match found! GroupId = ', groupIdDto);
+        socket.on("match_found", (groupIdDto: string) => {
+            console.log("match found! GroupId = ", groupIdDto);
             setGroupId(groupIdDto);
+            setCountdown(10);
         });
 
-        // return () => {
-        //     socket.off('match_found');
-        // }
+        return () => {
+            socket.off("match_found");
+        };
+    }, [socket]);
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            setCountdown((countsec) => countsec - 1);
+        }, 1000);
+
+        return () => clearInterval(intervalId);
     }, []);
 
     useEffect(() => {
-        if (groupId === '') return;
-        socket.emit('join_group', groupId);
-    }, [groupId]);
-
+        if (countdown === 0 && groupId !== "") {
+            socket.emit("join_group", groupId);
+            navigate(`/game/${groupId}`);
+        }
+    }, [countdown, groupId, navigate, socket]);
 
     return (
-    <div>
-        <h1>{user?.name}</h1>
-        {groupId ? (
-            <p>Match found! Group ID: {groupId}</p>
-        ) : (
+      <div>
+          <h1>{user?.name}</h1>
+          {groupId ? (
+            <div>
+                <p>
+                    Match found! Group ID: {groupId}, Starting in {countdown} seconds...
+                </p>
+            </div>
+          ) : (
             <p>Waiting for a match...</p>
-        )}
-
-    </div>
+          )}
+      </div>
     );
-}
+};
 
 export default Pong;
