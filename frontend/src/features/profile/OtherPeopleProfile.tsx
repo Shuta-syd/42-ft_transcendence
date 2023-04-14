@@ -29,7 +29,7 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
   // [check the relationship between me and other people]
   // friend state 3 pattern
   const [isFriend, setIsFriend] = useState(false);
-  // const [isBlockingUser, setIsBlockingUser] = useState(false);
+  const [isBlockingUser, setIsBlockingUser] = useState(false);
   // friendでもblockしているuserでもなければ、どちらでも無いという判断ができる
 
   /** ************************* */
@@ -62,9 +62,22 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
         setIsFriend(friendFound);
       }
     });
+
+    /** ************************* */
+    // [check the relationship between me and other people]
+    axios
+      .get<boolean>(`http://localhost:8080/user/block/${props.other?.id}`)
+      .then((res) => {
+        console.log('success!', res);
+        setIsBlockingUser(res.data);
+      })
+      .catch((err) => {
+        console.log('error!', err);
+      });
   }, [user]);
 
   /** ************************* */
+
   return (
     <div
       style={{
@@ -116,17 +129,19 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
             <UnfriendButton user={props.other} />
           </Grid>
         )}
-        <Grid
-          item
-          xs={5}
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <BlockButton user={props.other} />
-        </Grid>
+        {!isBlockingUser && (
+          <Grid
+            item
+            xs={5}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <BlockButton user={props.other} />
+          </Grid>
+        )}
         <Grid
           item
           xs={5}
