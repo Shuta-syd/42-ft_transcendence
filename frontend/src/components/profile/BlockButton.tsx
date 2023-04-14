@@ -1,18 +1,24 @@
 import React from 'react';
 import { Button } from '@mui/material';
+import axios from 'axios';
 import { User } from '../../types/PrismaType';
 
 interface BlockButtonProps {
   user: User | undefined;
 }
 
-const handleClick = () => {
-  console.log('Block Button');
-  return <>ok</>;
-};
-
 const BlockButton = (props: BlockButtonProps) => {
-  console.log('BlockButton', props);
+  const handleClick = () => {
+    console.log('BlockButton', props.user?.name);
+    axios
+      .post(`http://localhost:8080/user/block/${props.user?.id}`)
+      .then((res) => {
+        console.log('success!', res);
+      })
+      .catch((err) => {
+        console.log('error!', err);
+      });
+  };
   return (
     <>
       <Button
