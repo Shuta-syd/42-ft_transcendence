@@ -7,6 +7,7 @@ import FriendRequestButton from '../../components/profile/FriendRequestButton';
 import FriendListButton from '../../components/profile/FriendListButton';
 import { fetchProfileUser } from '../../hooks/profile/useProfileUser';
 import UnfriendButton from '../../components/profile/UnfriendButton';
+import BlockButton from '../../components/profile/BlockButton';
 
 interface OtherPeopleProfileProps {
   other: User | undefined;
@@ -28,7 +29,7 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
   // [check the relationship between me and other people]
   // friend state 3 pattern
   const [isFriend, setIsFriend] = useState(false);
-  const [isBlockingUser] = useState(false);
+  // const [isBlockingUser, setIsBlockingUser] = useState(false);
   // friendでもblockしているuserでもなければ、どちらでも無いという判断ができる
 
   /** ************************* */
@@ -124,12 +125,23 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
             justifyContent: 'center',
           }}
         >
+          <BlockButton user={props.other} />
+        </Grid>
+        <Grid
+          item
+          xs={5}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           <FriendListButton friends={friends} />
         </Grid>
       </Grid>
       {/* {block or friendの状態に関して出す必要があると思ったら後で実装する} */}
-      <h4>{isFriend ? 'friend' : 'not friend'}</h4>
-      <h4>{isBlockingUser ? 'blocking user' : 'not blocking user'}</h4>
+      {/* <h4>{isFriend ? 'friend' : 'not friend'}</h4> */}
+      {/* <h4>{isBlockingUser ? 'blocking user' : 'not blocking user'}</h4> */}
     </div>
   );
 };
