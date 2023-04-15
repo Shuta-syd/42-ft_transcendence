@@ -1,5 +1,6 @@
 import {
   Body,
+  Controller,
   Delete,
   Get,
   HttpCode,
@@ -12,7 +13,6 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { Controller } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from '@prisma/client';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -55,6 +55,20 @@ export class UserController {
     return this.userService.getUserById(id);
   }
 
+  @Get('other/friend')
+  @ApiOperation({
+    description: 'find friend by other person userId',
+    summary: 'find friend by other person userId',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'The found the other user',
+    type: PrismaUser,
+  })
+  async getFriendById(@Query('id') id: string): Promise<User[]> {
+    return this.userService.getFriend(id);
+  }
+
   @Patch('friend')
   @ApiOperation({
     description:
@@ -95,9 +109,17 @@ export class UserController {
     return this.userService.deleteFriend(req.user.id, data.friendId);
   }
 
+  /**
+   * friendReq
+   */
   @Post('friendReq')
   @ApiOperation({
     description: 'send a Friend Request',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'The user send a friend request',
+    type: PrismaUser,
   })
   async SetFriendReq(
     @Req() reqBody: Request,
@@ -110,6 +132,11 @@ export class UserController {
   @ApiOperation({
     description: 'check the friend req of the name of user',
   })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'The user get a friend request',
+    type: PrismaUser,
+  })
   async checkFriendReq(@Req() req: Request): Promise<string[] | null> {
     if (req.user.name) {
       return this.userService.getFriendReqs(req.user.id);
@@ -121,6 +148,11 @@ export class UserController {
   @ApiOperation({
     description: 'accept friend request and add friend',
   })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'The user accept a friend request',
+    type: PrismaUser,
+  })
   async SetFriendR(
     @Req() req: Request,
     @Body() friendId: AcceptFriend,
@@ -131,6 +163,11 @@ export class UserController {
   @Delete('friendReq')
   @ApiOperation({
     description: 'delete friend request',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'The user decline a friend request',
+    type: PrismaUser,
   })
   async deleteFriendR(
     @Req() req: Request,
