@@ -104,7 +104,7 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
         <Grid item xs={5}>
           <ShowAvatar user={props.other} profileImage={props.other?.image} />
         </Grid>
-        {!isFriend && (
+        {!isFriend && !isBlockingUser && (
           <Grid
             item
             xs={5}
@@ -117,7 +117,7 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
             <FriendRequestButton user={props.other} />
           </Grid>
         )}
-        {isFriend && (
+        {isFriend && !isBlockingUser && (
           <Grid
             item
             xs={5}
@@ -168,9 +168,6 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
           <FriendListButton friends={friends} />
         </Grid>
       </Grid>
-      {/* {block or friendの状態に関して出す必要があると思ったら後で実装する} */}
-      {/* <h4>{isFriend ? 'friend' : 'not friend'}</h4> */}
-      {/* <h4>{isBlockingUser ? 'blocking user' : 'not blocking user'}</h4> */}
     </div>
   );
 };

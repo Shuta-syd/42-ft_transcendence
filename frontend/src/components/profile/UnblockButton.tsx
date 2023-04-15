@@ -13,9 +13,9 @@ const UnblockButton = (props: UnblockButtonProps) => {
 
     axios
       .delete(`http://localhost:8080/user/block/${props.user?.id}`)
-      .then(() => console.log('success!'))
+      .then(() => console.log('unblock success!'))
       .catch((err) => {
-        console.log('error!', err);
+        console.log('unblock error!', err);
       });
   };
 

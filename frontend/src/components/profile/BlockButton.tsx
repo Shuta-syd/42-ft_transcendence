@@ -13,22 +13,22 @@ const BlockButton = (props: BlockButtonProps) => {
     axios
       .post(`http://localhost:8080/user/block/${props.user?.id}`)
       .then((res) => {
-        console.log('success!', res);
+        console.log('block success!', res);
       })
       .catch((err) => {
-        console.log('error!', err);
+        console.log('block error!', err);
       });
   };
   return (
     <>
-        <Button
-            variant="outlined"
-            size={'large'}
-            color={'error'}
-            onClick={handleClick}
-        >
-            {'Block'}
-        </Button>
+      <Button
+        variant="outlined"
+        size={'large'}
+        color={'error'}
+        onClick={handleClick}
+      >
+        {'Block'}
+      </Button>
     </>
   );
 };
