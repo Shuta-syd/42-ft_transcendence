@@ -8,6 +8,7 @@ import FriendListButton from '../../components/profile/FriendListButton';
 import { fetchProfileUser } from '../../hooks/profile/useProfileUser';
 import UnfriendButton from '../../components/profile/UnfriendButton';
 import BlockButton from '../../components/profile/BlockButton';
+import UnblockButton from '../../components/profile/UnblockButton';
 
 interface OtherPeopleProfileProps {
   other: User | undefined;
@@ -140,6 +141,19 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
             }}
           >
             <BlockButton user={props.other} />
+          </Grid>
+        )}
+        {isBlockingUser && (
+          <Grid
+            item
+            xs={5}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <UnblockButton user={props.other} />
           </Grid>
         )}
         <Grid
