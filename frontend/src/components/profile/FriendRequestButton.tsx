@@ -10,15 +10,6 @@ interface FriendRequestButtonProps {
 
 const FriendRequestButton = (props: FriendRequestButtonProps) => {
   const [isFriendRequest, setIsFriendRequest] = useState(false);
-  // const [loginUser, setLoginUser] = useState<User>();
-
-  // /* 自分が誰なのかという情報 */
-  // useEffect(() => {
-  //     const UserPromises = fetchProfileUser();
-  //     UserPromises.then((userDto: User) => {
-  //         setLoginUser(userDto);
-  //     });
-  // }, []);
 
   const handleClick = () => {
     console.log('Friend Request Button');
@@ -42,7 +33,7 @@ const FriendRequestButton = (props: FriendRequestButtonProps) => {
   return (
     <>
       <Button variant="contained" size={'large'} onClick={handleClick}>
-        {isFriendRequest ? '' : 'Friend Request'}
+        {'Friend Request'}
       </Button>
     </>
   );
