@@ -21,14 +21,14 @@ const BlockButton = (props: BlockButtonProps) => {
   };
   return (
     <>
-      <Button
-        variant="outlined"
-        size={'large'}
-        color={'error'}
-        onClick={handleClick}
-      >
-        {'Block'}
-      </Button>
+        <Button
+            variant="outlined"
+            size={'large'}
+            color={'error'}
+            onClick={handleClick}
+        >
+            {'Block'}
+        </Button>
     </>
   );
 };
