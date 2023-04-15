@@ -13,7 +13,6 @@ import FriendListButton from '../../components/profile/FriendListButton';
 
 const MyProfile = () => {
   const [user, setUser] = useState<User>();
-  // const socket = io("http://localhost:8080");
   const UserPromises = fetchProfileUser();
   useEffect(() => {
     UserPromises.then((userDto: User) => {
@@ -231,11 +230,11 @@ const MyProfile = () => {
   }, []);
 
   /** ************************* */
-      // [get my friends part]
+  // [get my friends part]
   const [friends, setFriends] = useState<User[]>([]);
   const getFriends = async () => {
     const { data } = await axios.get<User[]>(
-        `http://localhost:8080/user/friend`,
+      `http://localhost:8080/user/friend`,
     );
     return data;
   };

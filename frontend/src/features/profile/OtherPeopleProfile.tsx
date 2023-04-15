@@ -5,12 +5,33 @@ import { User } from '../../types/PrismaType';
 import ShowAvatar from '../../components/profile/ShowAvatar';
 import FriendRequestButton from '../../components/profile/FriendRequestButton';
 import FriendListButton from '../../components/profile/FriendListButton';
+import { fetchProfileUser } from '../../hooks/profile/useProfileUser';
+import UnfriendButton from '../../components/profile/UnfriendButton';
 
 interface OtherPeopleProfileProps {
   other: User | undefined;
 }
 
 const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
+  /** ************************* */
+  // [get my information]
+  const [user, setUser] = useState<User>();
+  const UserPromises = fetchProfileUser();
+  useEffect(() => {
+    UserPromises.then((userDto: User) => {
+      setUser(userDto);
+      console.log('myinfo', user?.name);
+    });
+  }, []);
+
+  /** ************************* */
+  // [check the relationship between me and other people]
+  // friend state 3 pattern
+  const [isFriend, setIsFriend] = useState(false);
+  const [isBlockingUser] = useState(false);
+  // friendでもblockしているuserでもなければ、どちらでも無いという判断ができる
+
+  /** ************************* */
   /** ************************* */
   // [get my friends part]
   const [friends, setFriends] = useState<User[]>([]);
@@ -31,12 +52,18 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
     friendsPromise.then((data) => {
       console.log('data => ', data[0]);
       setFriends(data);
+
+      // props.otherがfriendに含まれているかどうかを判断する
+      if (props.other) {
+        const friendFound: boolean = data.some(
+          (friend) => friend.id === user?.id,
+        );
+        setIsFriend(friendFound);
+      }
     });
-  }, []);
+  }, [user]);
 
   /** ************************* */
-
-  console.log(props.other);
   return (
     <div
       style={{
@@ -62,17 +89,32 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
         <Grid item xs={5}>
           <ShowAvatar user={props.other} profileImage={props.other?.image} />
         </Grid>
-        <Grid
-          item
-          xs={5}
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <FriendRequestButton user={props.other} />
-        </Grid>
+        {!isFriend && (
+          <Grid
+            item
+            xs={5}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <FriendRequestButton user={props.other} />
+          </Grid>
+        )}
+        {isFriend && (
+          <Grid
+            item
+            xs={5}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <UnfriendButton user={props.other} />
+          </Grid>
+        )}
         <Grid
           item
           xs={5}
@@ -85,6 +127,9 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
           <FriendListButton friends={friends} />
         </Grid>
       </Grid>
+      {/* {block or friendの状態に関して出す必要があると思ったら後で実装する} */}
+      <h4>{isFriend ? 'friend' : 'not friend'}</h4>
+      <h4>{isBlockingUser ? 'blocking user' : 'not blocking user'}</h4>
     </div>
   );
 };
