@@ -193,6 +193,19 @@ export class UserService {
    * @param userId
    * @param friendId
    */
+  async areFriends(userId: string, friendId: string): Promise<boolean> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: { friends: true },
+    });
+
+    if (!user) {
+      return false;
+    }
+
+    return user.friends.some((friend: User) => friend.id === friendId);
+  }
+
   async handleFriendReq(
     userId: string,
     friendId: string,
@@ -200,20 +213,30 @@ export class UserService {
     if (userId === friendId) {
       return null;
     }
+
     const requestee = await this.prisma.user.findUnique({
       where: {
         id: friendId,
       },
     });
+
     if (!requestee) {
       return null;
     }
+
+    const alreadyFriends = await this.areFriends(userId, friendId);
+    if (alreadyFriends) {
+      return null;
+    }
+
     const reqesters = requestee.friendReqs.filter(
       (item: string) => item !== userId,
     );
+
     if (userId !== null) {
       reqesters.push(userId);
     }
+
     const updatedUser = this.prisma.user.update({
       where: {
         id: friendId,
@@ -222,7 +245,8 @@ export class UserService {
         friendReqs: reqesters,
       },
     });
-    updatedUser.then((user: User) => {
+
+    return updatedUser.then((user: User) => {
       return user.friendReqs;
     });
   }
