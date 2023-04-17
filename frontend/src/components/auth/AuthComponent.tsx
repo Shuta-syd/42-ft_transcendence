@@ -3,8 +3,23 @@ import React from "react";
 import AuthTitleComponent from "./AuthTitleComponent";
 import LoginComponent from "./LoginComponent";
 import SignupComponent from "./SignupComponent";
+import FtSignupComponent from "./FtSignupComponent";
 
-export default function AuthComponent(props: { isLogin: boolean }) {
+export default function AuthComponent(props: { type: string }) {
+
+  let Component;
+
+  switch (props.type) {
+    case 'login':
+      Component = <LoginComponent />
+      break;
+    case 'signup':
+      Component = <SignupComponent />
+      break;
+    case 'signup/42':
+      Component = <FtSignupComponent />;
+      break;
+  }
 
   return (
     <Box
@@ -12,7 +27,7 @@ export default function AuthComponent(props: { isLogin: boolean }) {
     >
       <Box width={'40rem'}>
         <AuthTitleComponent />
-        {props.isLogin ? (<LoginComponent />) : (<SignupComponent />)}
+        { Component }
       </Box>
     </Box>
     )

@@ -22,10 +22,10 @@ import { UserService } from 'src/user/user.service';
   controllers: [AuthController],
   providers: [
     AuthService,
-    UserService,
     JwtStrategy,
     FtStrategy,
     Jwt2FaStrategy,
+    UserService,
   ],
 })
 export class AuthModule {}
