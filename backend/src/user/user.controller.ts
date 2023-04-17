@@ -18,7 +18,7 @@ import { User } from '@prisma/client';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PrismaUser, SwaggerFriends } from 'src/swagger/type';
 import { AuthGuard } from '@nestjs/passport';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 import { AcceptFriend, UserDto } from './dto/user.dto';
 
 @ApiTags('user')
