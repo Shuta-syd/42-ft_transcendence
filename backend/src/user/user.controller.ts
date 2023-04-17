@@ -66,7 +66,7 @@ export class UserController {
     description: 'The found the other user',
     type: PrismaUser,
   })
-  async getFriendById(@Query('id') id: string): Promise<User[]> {
+  async getFriendById(@Query('id') id: string): Promise<UserPublicDto[]> {
     return this.userService.getFriend(id);
   }
 
