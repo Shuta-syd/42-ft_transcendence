@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ChatModule } from './chat/chat.module';
@@ -11,6 +11,7 @@ import { GameModule } from './game/game.module';
 import { AppGateway } from './app.gateway';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { UTF8Middleware } from './midlleware/utf-8.middleware';
 
 @Module({
   imports: [
@@ -26,4 +27,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   controllers: [AppController],
   providers: [AppService, PrismaService, AppGateway, ConfigService, JwtService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(UTF8Middleware).forRoutes('*');
+  }
+}
