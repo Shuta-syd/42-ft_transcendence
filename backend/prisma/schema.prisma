@@ -109,6 +109,7 @@ enum BanType {
   LOCAL
 }
 
+//このDBは現状使っていない。
 model Game {
   id      Int    @id @default(autoincrement())
   player1 String @unique
