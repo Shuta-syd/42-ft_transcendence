@@ -5,6 +5,7 @@ import {
   IsBoolean,
   IsArray,
   IsUUID,
+  IsBase64,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
