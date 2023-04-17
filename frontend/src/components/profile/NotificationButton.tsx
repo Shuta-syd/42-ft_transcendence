@@ -46,19 +46,17 @@ const NotificationButton = () => {
     });
   }, [friendIds]);
 
-  // [memo]
-  // accept or declineをしたuserに関してはfriendReqから削除するAPIが必要になる
-
   const handleAccept = (acceptPersonId: string) => {
     console.log('accept', acceptPersonId);
-    // @patch http://localhost:8080/user/friendReqでacceptできる
-    // bodyはfriend idのみ
     const res = axios.patch<User>('http://localhost:8080/user/friendReq', {
       friendId: acceptPersonId,
     });
     res
       .then((response) => {
         console.log(response);
+        // Remove the accepted friend from the friends array
+        setFriends((prev) => prev.filter((f) => f.id !== acceptPersonId));
+        setNbNotification((prev) => prev - 1);
       })
       .catch((err) => {
         console.log(err);
@@ -67,14 +65,15 @@ const NotificationButton = () => {
 
   const handleDecline = (declinePersonId: string) => {
     console.log('decline', declinePersonId);
-    // @delete http://localhost:8080/user/friendReqでacceptできる
-    // bodyはfriend idのみ
     const res = axios.delete<User>('http://localhost:8080/user/friendReq', {
       data: { friendId: declinePersonId },
     });
     res
       .then((response) => {
         console.log(response);
+        // Remove the declined friend from the friends array
+        setFriends((prev) => prev.filter((f) => f.id !== declinePersonId));
+        setNbNotification((prev) => prev - 1);
       })
       .catch((err) => {
         console.log(err);
@@ -143,7 +142,7 @@ const NotificationButton = () => {
         <NotificationsIcon
           sx={{
             color: 'blue',
-            fontSize: '4rem',
+            fontSize: '3rem',
           }}
           onClick={handleClick}
         />
