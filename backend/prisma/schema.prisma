@@ -117,11 +117,12 @@ model Game {
 }
 
 model Pong {
-  id      String @unique
+  id      String @id @default(uuid())
   player1 String @unique
   player2 String @unique
 }
 
+//このDBは現状使っていない。
 model InviteGame {
   id      String @id @default(uuid())
   player1 String @unique
