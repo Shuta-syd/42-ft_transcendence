@@ -25,6 +25,8 @@ model User {
   friendReqs         String[]
   blockingUsers      BlockList[]         @relation("BlockerRelation")
   blockedUsers       BlockList[]         @relation("BlockedRelation")
+  p1Pongs            Pong[] @relation("player1")
+  p2Pongs            Pong[] @relation("player2")
 }
 
 model BlockList {
@@ -116,13 +118,13 @@ model Game {
   player2 String @unique
 }
 
-model Pong {
-  id      String @id @default(uuid())
-  playerName1 String @unique
-  Player1 User @relation(fields: [playerName1], references: [name])
-  playerName2 String @unique
-  Player2 User @relation(fields: [playerName2], references: [name])
-}
+ model Pong {
+   id           String @id @default(uuid())
+   playerName1  String @unique
+   Player1 User @relation(name: "player1", fields: [playerName1], references: [name])
+   playerName2  String @unique
+   Player2 User @relation(name: "player2", fields: [playerName2], references: [name])
+ }
 
 //このDBは現状使っていない。
 model InviteGame {
