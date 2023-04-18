@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Controller, useForm } from 'react-hook-form';
-import { Box, TextField } from '@mui/material';
+import { Box, TextField, Typography } from '@mui/material';
 import { fetchProfileUser } from '../../hooks/profile/useProfileUser';
 import { User } from '../../types/PrismaType';
 
@@ -18,12 +18,11 @@ const EditEmail = () => {
   } = useForm<FormData>();
 
   const [loginUser, setLoginUser] = useState<User>({} as User);
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const onSubmit = (data: FormData) => {
     console.log('Submitted:', data);
-    /**
-     * axiosでuserのemailを更新する
-     */
+
     axios
       .post<User>(`http://localhost:8080/user/add/email`, {
         email: data.email,
@@ -32,14 +31,15 @@ const EditEmail = () => {
         console.log(res);
         console.log(res.data);
         setLoginUser(res.data);
+        setErrorMessage(''); // 成功した場合、エラーメッセージをクリアする
+      })
+      .catch((err) => {
+        console.log(err);
+        setErrorMessage('This email has already been used.');
       });
 
     reset({ email: '' });
   };
-
-  /**
-   * 自分の情報を取得する
-   */
 
   useEffect(() => {
     const UserPromises = fetchProfileUser();
@@ -53,7 +53,7 @@ const EditEmail = () => {
       component="form"
       onSubmit={handleSubmit(onSubmit)}
       sx={{
-        width: '60%', // Adjust the width percentage to your desired size
+        width: '30%',
         margin: 'auto',
         display: 'flex',
         flexDirection: 'column',
@@ -82,11 +82,16 @@ const EditEmail = () => {
             label={loginUser.email}
             type="email"
             placeholder="Please input new email"
-            error={!!errors.email}
+            error={!!errors.email || !!errorMessage}
             helperText={errors.email?.message}
           />
         )}
       />
+      {errorMessage && (
+        <Typography variant="body2" color="error" sx={{ marginTop: '8px' }}>
+          {errorMessage}
+        </Typography>
+      )}
     </Box>
   );
 };

@@ -306,6 +306,7 @@ const MyProfile = () => {
             alignItems: 'center',
             justifyContent: 'center',
             color: '#3C444B',
+            marginTop: '-100px',
           }}
         >
           <EditEmail />
