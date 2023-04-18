@@ -79,9 +79,9 @@ const EditEmail = () => {
             required
             fullWidth
             {...field}
-            label={loginUser.email}
+            label="Edit Email"
             type="email"
-            placeholder="Please input new email"
+            placeholder={loginUser.email}
             error={!!errors.email || !!errorMessage}
             helperText={errors.email?.message}
           />
