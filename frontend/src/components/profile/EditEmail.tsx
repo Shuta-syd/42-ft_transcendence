@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { Controller, useForm } from 'react-hook-form';
 import { Box, TextField } from '@mui/material';
 import { fetchProfileUser } from '../../hooks/profile/useProfileUser';
@@ -23,6 +24,15 @@ const EditEmail = () => {
     /**
      * axiosでuserのemailを更新する
      */
+    axios
+      .post<User>(`http://localhost:8080/user/add/email`, {
+        email: data.email,
+      })
+      .then((res) => {
+        console.log(res);
+        console.log(res.data);
+        setLoginUser(res.data);
+      });
 
     reset({ email: '' });
   };
