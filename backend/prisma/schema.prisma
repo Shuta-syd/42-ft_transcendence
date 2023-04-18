@@ -119,11 +119,7 @@ model Game {
 model Pong {
   id      String @id @default(uuid())
   player1 String @unique
-  PongUser1 User @relation(fields: [player1], references: [id])
   player2 String @unique
-  PongUser2 User @relation(fields: [player2], references: [id])
-
-
 }
 
 //このDBは現状使っていない。
