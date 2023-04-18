@@ -17,6 +17,7 @@ import useSocket from "./hooks/useSocket";
 import { RootWebsocketProvider } from "./contexts/WebsocketContext";
 import MyProfile from "./features/profile/MyProfile";
 import GameRouting from "./features/game/GameRouting"
+import Pong from "./features/pong";
 
 function App() {
   axios.defaults.withCredentials = true;
@@ -69,6 +70,10 @@ function App() {
               </PrivateRouter>
             } />
                 <Route path={"/user/:name"} element={<ProfileRouting />}/>
+            <Route
+              path={"/pong"}
+              element={<Pong />}>
+            </Route>
             </Routes>
           </Grid>
         </Grid>
