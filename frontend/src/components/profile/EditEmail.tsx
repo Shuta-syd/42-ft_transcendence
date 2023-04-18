@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { TextField } from '@mui/material';
+import { Box, TextField } from '@mui/material';
+import { fetchProfileUser } from '../../hooks/profile/useProfileUser';
+import { User } from '../../types/PrismaType';
 
 type FormData = {
   email: string;
@@ -11,18 +13,46 @@ const EditEmail = () => {
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<FormData>();
+
+  const [loginUser, setLoginUser] = useState<User>({} as User);
 
   const onSubmit = (data: FormData) => {
     console.log('Submitted:', data);
+    reset({ email: '' });
   };
 
+  /**
+   * 自分の情報を取得する
+   */
+
+  useEffect(() => {
+    const UserPromises = fetchProfileUser();
+    UserPromises.then((userDto: User) => {
+      setLoginUser(userDto);
+    });
+  }, []);
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <Box
+      component="form"
+      onSubmit={handleSubmit(onSubmit)}
+      sx={{
+        width: '60%', // Adjust the width percentage to your desired size
+        margin: 'auto',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: '5px',
+        padding: '20px',
+      }}
+    >
       <Controller
-        name="email"
+        name={`email`}
         control={control}
-        defaultValue=""
+        defaultValue={loginUser.email || ''}
         rules={{
           required: 'Email address is required',
           pattern: {
@@ -35,7 +65,7 @@ const EditEmail = () => {
             required
             fullWidth
             {...field}
-            label="email"
+            label={loginUser.email}
             type="email"
             placeholder="Please input new email"
             error={!!errors.email}
@@ -43,7 +73,7 @@ const EditEmail = () => {
           />
         )}
       />
-    </form>
+    </Box>
   );
 };
 

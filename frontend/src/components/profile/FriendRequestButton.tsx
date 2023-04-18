@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '@mui/material';
 import axios from 'axios';
-// import fetchProfileUser from "../../hooks/profile/useProfileUser"
 import { User } from '../../types/PrismaType';
 
 interface FriendRequestButtonProps {
