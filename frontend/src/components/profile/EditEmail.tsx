@@ -20,6 +20,10 @@ const EditEmail = () => {
 
   const onSubmit = (data: FormData) => {
     console.log('Submitted:', data);
+    /**
+     * axiosでuserのemailを更新する
+     */
+
     reset({ email: '' });
   };
 
