@@ -5,6 +5,7 @@ import {
   IsBoolean,
   IsArray,
   IsUUID,
+  IsBase64,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -50,6 +51,34 @@ export class UserDto {
   @ApiProperty()
   @IsBoolean()
   isTwoFactorEnabled: boolean;
+  @ApiProperty()
+  @IsString()
+  image: string;
+  @ApiProperty()
+  @IsBoolean()
+  isFtLogin: boolean;
+  @ApiProperty()
+  @IsArray()
+  @IsUUID(4, { each: true })
+  friendReqs: string[];
+}
+// UserPublicDto
+export class UserPublicDto {
+  @ApiProperty()
+  @IsUUID()
+  id: string;
+  @ApiProperty()
+  @IsEmail()
+  email: string;
+  @ApiProperty()
+  @IsString()
+  name: string;
+  @ApiProperty()
+  @IsBoolean()
+  isTwoFactorEnabled: boolean;
+  @ApiProperty()
+  @IsBoolean()
+  Ftlogined: boolean;
   @ApiProperty()
   @IsString()
   image: string;

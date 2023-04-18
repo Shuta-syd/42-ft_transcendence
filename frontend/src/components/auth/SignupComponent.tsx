@@ -56,6 +56,7 @@ function SignupComponent() {
     reader.readAsDataURL(file);
     setImageURL(URL.createObjectURL(file));
   };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Box
