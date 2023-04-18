@@ -5,6 +5,7 @@ import {
   IsBoolean,
   IsArray,
   IsUUID,
+  IsBase64,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -75,6 +76,9 @@ export class UserPublicDto {
   @ApiProperty()
   @IsBoolean()
   isTwoFactorEnabled: boolean;
+  @ApiProperty()
+  @IsBoolean()
+  Ftlogined: boolean;
   @ApiProperty()
   @IsString()
   image: string;

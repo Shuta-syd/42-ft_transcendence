@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
-import { User } from '@prisma/client';
 import { Profile, Strategy } from 'passport-42';
 import { AuthService } from '../auth.service';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class FtStrategy extends PassportStrategy(Strategy, '42') {

@@ -489,6 +489,7 @@ export class UserService {
       isTwoFactorEnabled: user.isTwoFactorEnabled,
       image: user.image,
       isFtLogin: user.isFtLogin,
+      Ftlogined: user.Ftlogined,
       friendReqs: user.friendReqs,
     };
   }
