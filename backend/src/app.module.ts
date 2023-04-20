@@ -11,6 +11,7 @@ import { GameModule } from './game/game.module';
 import { AppGateway } from './app.gateway';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { PongModule } from './pong/pong.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     GameModule,
     JwtModule,
     ConfigModule,
+    PongModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService, AppGateway, ConfigService, JwtService],
