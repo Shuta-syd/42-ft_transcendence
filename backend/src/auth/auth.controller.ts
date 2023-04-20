@@ -14,7 +14,6 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { User } from '@prisma/client';
 import { Response } from 'express';
 import { PrismaUser } from 'src/swagger/type';
 import { UserService } from 'src/user/user.service';
@@ -67,12 +66,14 @@ export class AuthController {
   })
   async login(@Body() dto: AuthDto, @Res({ passthrough: true }) res: Response) {
     const jwt = await this.authService.login(dto);
+
     res.cookie('access_token', jwt.accessToken, {
       httpOnly: true,
       secure: false,
       sameSite: 'lax',
       path: '/',
     });
+
     return;
   }
 
@@ -107,7 +108,7 @@ export class AuthController {
     summary: 'logout user',
   })
   async logout(@Res({ passthrough: true }) res: Response): Promise<Msg> {
-    res.cookie('access_token', '', {
+    res.clearCookie('access_token', {
       httpOnly: true,
       secure: false,
       sameSite: 'lax',

@@ -46,19 +46,21 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('online_status_check')
-  onlineStatusCheck(@ConnectedSocket() client: Socket) {
+  async onlineStatusCheck(@ConnectedSocket() client: Socket) {
     const cookie = client.handshake.headers.cookie;
     if (cookie === undefined) throw new WsException('unAuthorized');
     const accessToken = cookie.split('=')[1];
     if (accessToken === '') throw new WsException('unAuthorized');
-    const { sub: userId } = this.jwtService.verify(accessToken, {
+    console.log(accessToken);
+    const { sub: userId } = await this.jwtService.verify(accessToken, {
       secret: this.configService.get('JWT_SECRET'),
     });
-    const user = this.prismaService.user.findUnique({
+    const user = await this.prismaService.user.findUnique({
       where: {
         id: userId,
       },
     });
+    console.log(user.name);
     if (user === null) throw new WsException('unAuthorized');
     client.data.userId = userId;
     this.userIdToStatus.set(userId, Status.ONLINE);
@@ -67,21 +69,21 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('online_status_delete')
-  onlineStatusDelete(@ConnectedSocket() client: Socket) {
+  async onlineStatusDelete(@ConnectedSocket() client: Socket) {
     const cookie = client.handshake.headers.cookie;
     if (cookie === undefined) return;
     const accessToken = cookie.split('=')[1];
     if (accessToken === '') throw new WsException('unAuthorized');
-    const { sub: userId } = this.jwtService.verify(accessToken, {
+    const { sub: userId } = await this.jwtService.verify(accessToken, {
       secret: this.configService.get('JWT_SECRET'),
     });
-    const user = this.prismaService.user.findUnique({
+    const user = await this.prismaService.user.findUnique({
       where: {
         id: userId,
       },
     });
     if (user === null) throw new WsException('unAuthorized');
-    this.userIdToStatus.delete(userId);
+    await this.userIdToStatus.delete(userId);
     console.log(this.userIdToStatus);
   }
 
