@@ -37,12 +37,32 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.userIdToStatus = new Map<string, Status>();
   }
 
-  handleConnection(client: any, ...args: any[]) {
+  async handleConnection(client: any, ...args: any[]) {
     this.logger.log(`[App] Client connected ${client.id}`);
+    const cookie = client.handshake.headers.cookie;
+    if (cookie === undefined) return;
+    const accessToken = cookie.split('=')[1];
+    if (accessToken === '') return;
+    const { sub: userId } = await this.jwtService.verify(accessToken, {
+      secret: this.configService.get('JWT_SECRET'),
+    });
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+    if (user === null) return;
+    client.data.userId = userId;
+    this.userIdToStatus.set(userId, Status.ONLINE);
+    this.logger.log(`[App] ${userId} is online (socket id: ${client.id}))`);
+    console.log(this.userIdToStatus);
   }
 
   handleDisconnect(client: any) {
     this.logger.log(`[App] Client disconnected: ${client.id}`);
+    const userId = client.data.userId;
+    if (userId === undefined) return;
+    this.userIdToStatus.delete(userId);
   }
 
   @SubscribeMessage('online_status_check')
