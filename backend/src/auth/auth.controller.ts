@@ -108,7 +108,7 @@ export class AuthController {
     summary: 'logout user',
   })
   async logout(@Res({ passthrough: true }) res: Response): Promise<Msg> {
-    res.clearCookie('access_token', {
+    res.cookie('access_token', '', {
       httpOnly: true,
       secure: false,
       sameSite: 'lax',
