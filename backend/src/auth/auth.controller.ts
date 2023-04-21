@@ -27,7 +27,6 @@ import {
   SignUpUserDto,
 } from './dto/auth.dto';
 import { Jwt2FaGuard } from './guards/jwt-2fa.guard';
-import { APP_FILTER } from '@nestjs/core';
 
 @ApiTags('auth')
 @Controller('auth')
