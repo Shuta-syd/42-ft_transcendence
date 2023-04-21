@@ -37,8 +37,9 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.userIdToStatus = new Map<string, Status>();
   }
 
-  async handleConnection(client: any, ...args: any[]) {
+  async handleConnection(client: Socket, ...args: any[]) {
     this.logger.log(`[App] Client connected ${client.id}`);
+    console.log('connect');
     const cookie = client.handshake.headers.cookie;
     if (cookie === undefined) return;
     const accessToken = cookie.split('=')[1];
@@ -67,11 +68,13 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @SubscribeMessage('online_status_check')
   async onlineStatusCheck(@ConnectedSocket() client: Socket) {
-    const cookie = client.handshake.headers.cookie;
+    console.log('==================online_status_check==================');
+    const cookie = client.handshake.headers.cookie; //接続タイミングのcookieが保持されるためうまくオンラインステータスの設定ができていない
+    console.log('cookie', cookie);
     if (cookie === undefined) throw new WsException('unAuthorized');
     const accessToken = cookie.split('=')[1];
+    console.log('accessToken: ', accessToken);
     if (accessToken === '') throw new WsException('unAuthorized');
-    console.log(accessToken);
     const { sub: userId } = await this.jwtService.verify(accessToken, {
       secret: this.configService.get('JWT_SECRET'),
     });
@@ -86,13 +89,17 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.userIdToStatus.set(userId, Status.ONLINE);
     this.logger.log(`[App] ${userId} is online (socket id: ${client.id}))`);
     console.log(this.userIdToStatus);
+    console.log('================================================');
   }
 
   @SubscribeMessage('online_status_delete')
   async onlineStatusDelete(@ConnectedSocket() client: Socket) {
+    console.log('==================online_status_delete==================');
     const cookie = client.handshake.headers.cookie;
+    console.log('cookie', cookie);
     if (cookie === undefined) return;
     const accessToken = cookie.split('=')[1];
+    console.log('accessToken: ', accessToken);
     if (accessToken === '') throw new WsException('unAuthorized');
     const { sub: userId } = await this.jwtService.verify(accessToken, {
       secret: this.configService.get('JWT_SECRET'),
@@ -105,6 +112,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (user === null) throw new WsException('unAuthorized');
     await this.userIdToStatus.delete(userId);
     console.log(this.userIdToStatus);
+    console.log('================================================');
   }
 
   @SubscribeMessage('in_game_status_check')
