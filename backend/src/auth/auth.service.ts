@@ -69,8 +69,14 @@ export class AuthService {
 
     const salt = randomBytes(8).toString('hex');
     if (dto.isFtLogin !== true) {
-      const hash = (await asyncScrypt(dto.password, salt, 32)) as Buffer;
-      hashedPassword = hash.toString() + '.' + salt;
+      let isUtf8 = false;
+      do {
+        const hash = (await asyncScrypt(dto.password, salt, 32)) as Buffer;
+        hashedPassword = hash.toString() + '.' + salt;
+        isUtf8 = /^[\u0020-\uD7FF\u0009\u000A\u000D\uE000-\uFFFD]*$/.test(
+          hashedPassword,
+        );
+      } while (!isUtf8);
     }
     const newUser = await this.prisma.user.create({
       data: {
