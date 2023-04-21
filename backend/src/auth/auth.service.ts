@@ -69,14 +69,8 @@ export class AuthService {
 
     const salt = randomBytes(8).toString('hex');
     if (dto.isFtLogin !== true) {
-      let isUtf8 = false;
-      do {
-        const hash = (await asyncScrypt(dto.password, salt, 32)) as Buffer;
-        hashedPassword = hash.toString() + '.' + salt;
-        isUtf8 = /^[\u0020-\uD7FF\u0009\u000A\u000D\uE000-\uFFFD]*$/.test(
-          hashedPassword,
-        );
-      } while (!isUtf8);
+      const hash = (await asyncScrypt(dto.password, salt, 32)) as Buffer;
+      hashedPassword = hash.toString('base64') + '.' + salt;
     }
     const newUser = await this.prisma.user.create({
       data: {
@@ -112,7 +106,7 @@ export class AuthService {
       32,
     )) as Buffer;
 
-    if (!user.isFtLogin && storedHash !== hashedPassword.toString())
+    if (!user.isFtLogin && storedHash !== hashedPassword.toString('base64'))
       throw new NotAcceptableException('password is wrong');
     return this.generateJwt(user.id, user.name);
   }
