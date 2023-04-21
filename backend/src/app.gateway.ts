@@ -8,10 +8,11 @@ import {
   OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
+  WebSocketServer,
   WsException,
 } from '@nestjs/websockets';
 import { User } from '@prisma/client';
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { PrismaService } from './prisma/prisma.service';
 
 enum Status {
@@ -25,6 +26,8 @@ enum Status {
   },
 })
 export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  @WebSocketServer()
+  private server: Server;
   private readonly logger: Logger;
   private userIdToStatus: Map<string, Status>;
 
@@ -74,16 +77,10 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const { sub: userId } = await this.jwtService.verify(accessToken, {
       secret: this.configService.get('JWT_SECRET'),
     });
-    const user = await this.prismaService.user.findUnique({
-      where: {
-        id: userId,
-      },
+    const status = this.userIdToStatus.get(userId);
+    this.server.to(client.id).emit('my_online_status', {
+      status,
     });
-    console.log(user.name);
-    if (user === null) throw new WsException('unAuthorized');
-    client.data.userId = userId;
-    this.userIdToStatus.set(userId, Status.ONLINE);
-    this.logger.log(`[App] ${userId} is online (socket id: ${client.id}))`);
   }
 
   @SubscribeMessage('online_status_delete')
