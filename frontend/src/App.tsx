@@ -17,6 +17,7 @@ import useSocket from "./hooks/useSocket";
 import { RootWebsocketProvider } from "./contexts/WebsocketContext";
 import MyProfile from "./features/profile/MyProfile";
 import GameRouting from "./features/game/GameRouting"
+import Pong from "./features/pong";
 
 function App() {
   axios.defaults.withCredentials = true;
@@ -28,8 +29,9 @@ function App() {
         <NewNavBar />
         <Grid item xs>
           <Routes>
-            <Route path="/login" element={<Auth isLogin={true} />} />
-            <Route path="/signup" element={<Auth isLogin={false} />} />
+            <Route path="/login" element={<Auth type={'login'} />} />
+            <Route path="/signup" element={<Auth type={'signup'} />} />
+            <Route path="/signup/42" element={<Auth type={'signup/42'} />} />
             <Route
               path="/chat"
               element={
@@ -68,6 +70,10 @@ function App() {
               </PrivateRouter>
             } />
                 <Route path={"/user/:name"} element={<ProfileRouting />}/>
+            <Route
+              path={"/pong"}
+              element={<Pong />}>
+            </Route>
             </Routes>
           </Grid>
         </Grid>

@@ -1,7 +1,9 @@
 import {
+  IsBase64,
   IsEmail,
   IsNotEmpty,
   IsNumberString,
+  IsString,
   Matches,
   MinLength,
 } from 'class-validator';
@@ -30,4 +32,12 @@ export class SignUpUserDto {
   password?: string;
   image?: string;
   isFtLogin?: boolean;
+}
+
+export class FtUpdateUserDto {
+  @IsString()
+  name: string;
+  @IsString()
+  @IsBase64()
+  image: string;
 }
