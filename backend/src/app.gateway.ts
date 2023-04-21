@@ -16,6 +16,7 @@ import { Server, Socket } from 'socket.io';
 import { PrismaService } from './prisma/prisma.service';
 
 enum Status {
+  OFFLINE = 0,
   ONLINE = 1,
   INGAME = 2,
 }
@@ -68,9 +69,12 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.userIdToStatus.delete(userId);
   }
 
-  @SubscribeMessage('online_status_check')
-  async onlineStatusCheck(@ConnectedSocket() client: Socket) {
-    const cookie = client.handshake.headers.cookie; //接続タイミングのcookieが保持されるためうまくオンラインステータスの設定ができていない
+  /**
+   * @description ユーザのオンラインステータスを取得する
+   */
+  @SubscribeMessage('user_online_status_check')
+  async userOnlineStatusCheck(@ConnectedSocket() client: Socket) {
+    const cookie = client.handshake.headers.cookie;
     if (cookie === undefined) throw new WsException('unAuthorized');
     const accessToken = cookie.split('=')[1];
     if (accessToken === '') throw new WsException('unAuthorized');
@@ -78,11 +82,48 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       secret: this.configService.get('JWT_SECRET'),
     });
     const status = this.userIdToStatus.get(userId);
-    this.server.to(client.id).emit('my_online_status', {
+    this.server.to(client.id).emit('user_online_status', {
       status,
     });
   }
 
+  /**
+   * @description ユーザのフレンドのオンラインステータスを取得する
+   */
+  @SubscribeMessage('friend_online_status_check')
+  async friendOnlineStatusCheck(@ConnectedSocket() client: Socket) {
+    const cookie = client.handshake.headers.cookie;
+    if (cookie === undefined) throw new WsException('unAuthorized');
+    const accessToken = cookie.split('=')[1];
+    if (accessToken === '') throw new WsException('unAuthorized');
+    const { sub: userId } = await this.jwtService.verify(accessToken, {
+      secret: this.configService.get('JWT_SECRET'),
+    });
+
+    const friends = await this.prismaService.user
+      .findUnique({
+        where: {
+          id: userId,
+        },
+      })
+      .friends();
+
+    const friendIdToStatus = new Map<string, Status>();
+
+    friends.map((friend: User) => {
+      let status = this.userIdToStatus.get(friend.id);
+      status = status !== undefined ? status : Status.OFFLINE;
+      friendIdToStatus.set(friend.id, status);
+    });
+
+    this.server.to(client.id).emit('friend_online_status', {
+      friendIdToStatus,
+    });
+  }
+
+  /**
+   * @description ユーザのオンラインステータスを削除する
+   */
   @SubscribeMessage('online_status_delete')
   async onlineStatusDelete(@ConnectedSocket() client: Socket) {
     const cookie = client.handshake.headers.cookie;
