@@ -130,7 +130,7 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
             <UnfriendButton user={props.other} />
           </Grid>
         )}
-        {!isBlockingUser && (
+        {!isBlockingUser && !isFriend && (
           <Grid
             item
             xs={5}

@@ -19,7 +19,7 @@ async function bootstrap() {
   app.enableCors({
     credentials: true,
     origin: ['http://localhost:3000'], //許可したいfrontsideのURL
-    methods: ['POST', 'PATCH'],
+    // methods: ['POST', 'PATCH'],
   });
   app.use(cookieParser());
   app.use(bodyParser.json({ limit: '20mb' })); // jsonをパースする際のlimitを設定
@@ -28,4 +28,5 @@ async function bootstrap() {
   const prismaService = app.get(PrismaService);
   await prismaService.enableShutdownHooks(app); // prismaをnestjsを終了する前に正常終了するための処理
 }
+
 bootstrap();
