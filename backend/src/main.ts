@@ -27,4 +27,5 @@ async function bootstrap() {
   const prismaService = app.get(PrismaService);
   await prismaService.enableShutdownHooks(app); // prismaをnestjsを終了する前に正常終了するための処理
 }
+
 bootstrap();
