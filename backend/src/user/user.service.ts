@@ -502,4 +502,29 @@ export class UserService {
       friendReqs: user.friendReqs,
     };
   }
+
+  async addUserEmail(id: any, email: string) {
+    // emailがすでに存在するか確認
+    const isExistingEmail = await this.prisma.user.findUnique({
+      where: { email: email },
+    });
+    if (isExistingEmail) {
+      throw new ConflictException('The email already exists.');
+    }
+
+    // userと一致するidを持つuserを検索
+    const user = await this.prisma.user.findUnique({
+      where: { id: id },
+    });
+    // userが存在しない場合はエラーを返す
+    if (!user) {
+      throw new NotFoundException(`User with ID "${id}" not found.`);
+    }
+    // userのemailを更新
+    await this.prisma.user.update({
+      where: { id: id },
+      data: { email: email },
+    });
+    return user;
+  }
 }
