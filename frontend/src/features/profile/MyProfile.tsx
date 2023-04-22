@@ -10,6 +10,7 @@ import ImageUploadButton from '../../components/profile/ImageUploadButton';
 import NotificationButton from '../../components/profile/NotificationButton';
 import MatchListButton from '../../components/profile/MatchListButton';
 import FriendListButton from '../../components/profile/FriendListButton';
+import EditEmail from '../../components/profile/EditEmail';
 
 const MyProfile = () => {
   const [user, setUser] = useState<User>();
@@ -296,6 +297,19 @@ const MyProfile = () => {
           }}
         >
           <ImageUploadButton onUpload={uploadImage} />
+        </Grid>
+        <Grid
+          item
+          xs={5}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#3C444B',
+            marginTop: '-100px',
+          }}
+        >
+          <EditEmail />
         </Grid>
         <Grid
           item

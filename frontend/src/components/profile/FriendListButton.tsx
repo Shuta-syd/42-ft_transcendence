@@ -23,7 +23,7 @@ const FriendListButton = ({ friends }: FriendListButtonProps) => {
       if (friends.length === 0) {
         return (
           <Typography variant="h5" fontWeight="bold" color="grey">
-            You currently have no friends...
+            No friends...
           </Typography>
         );
       }

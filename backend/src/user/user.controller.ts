@@ -193,6 +193,11 @@ export class UserController {
     return this.userService.addUserImage(req.user.id, data.image);
   }
 
+  @Post('add/email')
+  async addUserEmail(@Req() req: Request, @Body() data: { email: string }) {
+    return this.userService.addUserEmail(req.user.id, data.email);
+  }
+
   @Get('image')
   async getUserImage(@Req() req: Request): Promise<string> {
     return this.userService.getUserImage(req.user.id);
