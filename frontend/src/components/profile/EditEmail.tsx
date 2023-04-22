@@ -39,6 +39,7 @@ const EditEmail = () => {
             });
 
         reset({ email: '' });
+        window.location.reload();
     };
 
     useEffect(() => {
