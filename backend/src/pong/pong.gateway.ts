@@ -26,6 +26,13 @@ export class PongGateway {
     this.tryMatchPlayers();
   }
 
+  handleDisconnect(client: Socket) {
+    console.log(`Client disconnected: ${client.id}`);
+    const index = this.wainglist.indexOf(client);
+    if (index !== -1) {
+      this.wainglist.splice(index, 1);
+    }
+  }
   handleInit() {
     console.log('init');
   }
@@ -38,6 +45,7 @@ export class PongGateway {
       player2.join(groupId);
       this.server.to(player1.id).emit('match_found', groupId);
       this.server.to(player2.id).emit('match_found', groupId);
+      this.pongService.createGame(player1.id, player2.id, groupId);
       console.log(`Match found! Group ID: ${groupId}`);
     } else {
       console.log('Waiting for more players...');
