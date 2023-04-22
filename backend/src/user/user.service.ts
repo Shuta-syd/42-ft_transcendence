@@ -210,7 +210,12 @@ export class UserService {
     userId: string,
     friendId: string,
   ): Promise<string[] | null> {
-    if (userId === friendId) {
+    if (userId == friendId) {
+      return null;
+    }
+
+    const res = await this.getBlockList(friendId);
+    if (res.some((item) => item.id === userId)) {
       return null;
     }
 
@@ -268,6 +273,10 @@ export class UserService {
     friendId: string,
   ): Promise<UserPublicDto | null> {
     if (userId === friendId) {
+      return null;
+    }
+    const res = await this.getBlockList(friendId);
+    if (res.some((item) => item.id === userId)) {
       return null;
     }
 
