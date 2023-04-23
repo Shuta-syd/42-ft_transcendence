@@ -30,30 +30,6 @@ const MyProfile = () => {
     });
   }, []);
 
-  // function ShowResult(props: { p1: string, p2: string }) {
-  //     // console.log('winnerId', winnerId);
-  //     if (winnerId === '1') {
-  //         return (
-  //             <h2>
-  //                 <div>
-  //                     Winner
-  //                     &nbsp;=&gt;
-  //                     {props.p1}!!!
-  //                 </div>
-  //             </h2>
-  //         );
-  //     }
-  //     return (
-  //         <h2>
-  //             <div>
-  //                 Winner
-  //                 &nbsp;=&gt;
-  //                 {props.p2}!!!
-  //             </div>
-  //         </h2>
-  //     );
-  // }
-
   interface MatchListProps {
     matches: Match[];
   }
@@ -111,81 +87,6 @@ const MyProfile = () => {
       </div>
     );
   }
-
-  // function MatchList({ matches }: MatchListProps) {
-  //     const [selectedPlayer, setSelectedPlayer] = useState(user?.name);
-  //     const [filteredMatches, setFilteredMatches] = useState<Match[]>([]);
-  //
-  //     useEffect(() => {
-  //         ユーザー情報を取得する非同期処理
-  // const getUserInfo = async () => {
-  //     const userDto = await fetchProfileUser();
-  //     if (userDto) {
-  //         setSelectedPlayer(userDto.name);
-  //     }
-  // };
-  // getUserInfo();
-  // }, []);
-
-  // useEffect(() => {
-  //     選択されたプレーヤー名が空の場合は全ての試合を表示する
-  //     player1もしくはplayer2に選択されたプレーヤー名を含む試合をフィルタリングする
-  // const filtered = matches.filter((match) => match.player1 === selectedPlayer || match.player2 === selectedPlayer);
-  // setFilteredMatches(filtered);
-  // }, []);
-
-  // return (
-  //     <div
-  //         style={{
-  //             color: '#3C444B'
-  //         }}
-  //     >
-  //         {/* フィルタリングされた試合のみ表示 */}
-  //         <h3>[⇩ Previous Record]</h3>
-  //         {filteredMatches.map((match) => (
-  //             <div key={match.id}>
-  //                 <h3>
-  //                     [{match.id}] {match.player1} vs {match.player2}
-  //                 </h3>
-  //                 <div>
-  //                     <ShowResult p1={match.player1} p2={match.player2}/>
-  //                 </div>
-  //             </div>
-  //         ))}
-  //     </div>
-  // );
-  // }
-
-  // interface FriendProps {
-  //     friendName: string;
-  // }
-
-  // function FriendStatus({friendName}: FriendProps) {
-  //     const [isOnline, setIsOnline] = useState(null);
-  //
-  //     useEffect(() => {
-  //         WebSocketを使用して、友達のオンライン/オフライン状態を取得する
-  // socket.emit("getFriendStatus", friendName);
-  //
-  // サーバーからの応答を受信する
-  // socket.on("friendStatus", (status) => {
-  //     setIsOnline(status);
-  // });
-  //
-  // コンポーネントのアンマウント時にWebSocket接続を解除する
-  // return () => {
-  //     socket.off("friendStatus");
-  // };
-  // }, [friendName]);
-  //
-  // if (isOnline === null) {
-  //     return <span>Loading...</span>;
-  // }
-  // return (
-  //     <span>{isOnline ? " => 🤩" : " => 🫥"}</span>
-  // );
-  // }
-  //
 
   const uploadImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
