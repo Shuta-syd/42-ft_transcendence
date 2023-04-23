@@ -8,13 +8,15 @@ import {
   OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
+  WebSocketServer,
   WsException,
 } from '@nestjs/websockets';
 import { User } from '@prisma/client';
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { PrismaService } from './prisma/prisma.service';
 
 enum Status {
+  OFFLINE = 0,
   ONLINE = 1,
   INGAME = 2,
 }
@@ -25,6 +27,8 @@ enum Status {
   },
 })
 export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  @WebSocketServer()
+  private server: Server;
   private readonly logger: Logger;
   private userIdToStatus: Map<string, Status>;
 
@@ -37,52 +41,105 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.userIdToStatus = new Map<string, Status>();
   }
 
-  handleConnection(client: any, ...args: any[]) {
+  async handleConnection(client: Socket, ...args: any[]) {
     this.logger.log(`[App] Client connected ${client.id}`);
-  }
-
-  handleDisconnect(client: any) {
-    this.logger.log(`[App] Client disconnected: ${client.id}`);
-  }
-
-  @SubscribeMessage('online_status_check')
-  onlineStatusCheck(@ConnectedSocket() client: Socket) {
     const cookie = client.handshake.headers.cookie;
-    if (cookie === undefined) throw new WsException('unAuthorized');
+    if (cookie === undefined) return;
     const accessToken = cookie.split('=')[1];
-    if (accessToken === '') throw new WsException('unAuthorized');
-    const { sub: userId } = this.jwtService.verify(accessToken, {
+    if (accessToken === '') return;
+    const { sub: userId } = await this.jwtService.verify(accessToken, {
       secret: this.configService.get('JWT_SECRET'),
     });
-    const user = this.prismaService.user.findUnique({
+    const user = await this.prismaService.user.findUnique({
       where: {
         id: userId,
       },
     });
-    if (user === null) throw new WsException('unAuthorized');
+    if (user === null) return;
     client.data.userId = userId;
     this.userIdToStatus.set(userId, Status.ONLINE);
     this.logger.log(`[App] ${userId} is online (socket id: ${client.id}))`);
     console.log(this.userIdToStatus);
   }
 
+  handleDisconnect(client: any) {
+    this.logger.log(`[App] Client disconnected: ${client.id}`);
+    const userId = client.data.userId;
+    if (userId === undefined) return;
+    this.userIdToStatus.delete(userId);
+  }
+
+  /**
+   * @description ユーザのオンラインステータスを取得する
+   */
+  @SubscribeMessage('user_online_status_check')
+  async userOnlineStatusCheck(@ConnectedSocket() client: Socket) {
+    const cookie = client.handshake.headers.cookie;
+    if (cookie === undefined) throw new WsException('unAuthorized');
+    const accessToken = cookie.split('=')[1];
+    if (accessToken === '') throw new WsException('unAuthorized');
+    const { sub: userId } = await this.jwtService.verify(accessToken, {
+      secret: this.configService.get('JWT_SECRET'),
+    });
+    const status = this.userIdToStatus.get(userId);
+    this.server.to(client.id).emit('user_online_status', {
+      status,
+    });
+  }
+
+  /**
+   * @description ユーザのフレンドのオンラインステータスを取得する
+   */
+  @SubscribeMessage('friend_online_status_check')
+  async friendOnlineStatusCheck(@ConnectedSocket() client: Socket) {
+    const cookie = client.handshake.headers.cookie;
+    if (cookie === undefined) throw new WsException('unAuthorized');
+    const accessToken = cookie.split('=')[1];
+    if (accessToken === '') throw new WsException('unAuthorized');
+    const { sub: userId } = await this.jwtService.verify(accessToken, {
+      secret: this.configService.get('JWT_SECRET'),
+    });
+
+    const friends = await this.prismaService.user
+      .findUnique({
+        where: {
+          id: userId,
+        },
+      })
+      .friends();
+
+    const friendIdToStatus = new Map<string, Status>();
+
+    friends.map((friend: User) => {
+      let status = this.userIdToStatus.get(friend.id);
+      status = status !== undefined ? status : Status.OFFLINE;
+      friendIdToStatus.set(friend.id, status);
+    });
+
+    this.server.to(client.id).emit('friend_online_status', {
+      friendIdToStatus,
+    });
+  }
+
+  /**
+   * @description ユーザのオンラインステータスを削除する
+   */
   @SubscribeMessage('online_status_delete')
-  onlineStatusDelete(@ConnectedSocket() client: Socket) {
+  async onlineStatusDelete(@ConnectedSocket() client: Socket) {
     const cookie = client.handshake.headers.cookie;
     if (cookie === undefined) return;
     const accessToken = cookie.split('=')[1];
     if (accessToken === '') throw new WsException('unAuthorized');
-    const { sub: userId } = this.jwtService.verify(accessToken, {
+    const { sub: userId } = await this.jwtService.verify(accessToken, {
       secret: this.configService.get('JWT_SECRET'),
     });
-    const user = this.prismaService.user.findUnique({
+    const user = await this.prismaService.user.findUnique({
       where: {
         id: userId,
       },
     });
     if (user === null) throw new WsException('unAuthorized');
-    this.userIdToStatus.delete(userId);
-    console.log(this.userIdToStatus);
+    await this.userIdToStatus.delete(userId);
   }
 
   @SubscribeMessage('in_game_status_check')

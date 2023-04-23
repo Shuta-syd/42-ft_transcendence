@@ -27,12 +27,14 @@ function LoginComponent() {
   const onSubmit: SubmitHandler<LoginData> = async (data) => {
     let isLogin: Boolean = false;
     try {
+      rootSocket.disconnect();
       await axios.post('http://localhost:8080/auth/login', {
         email: data.email,
         password: data.password,
       });
       reset();
       isLogin = true;
+      rootSocket.connect();
     } catch (error: any) {
       if (error.response) {
         const { message } = error.response.data;
@@ -42,7 +44,6 @@ function LoginComponent() {
     } finally {
       if (isLogin) {
         router('/user');
-        rootSocket.emit('online_status_check');
       }
     }
   }

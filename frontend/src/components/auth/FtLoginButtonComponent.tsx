@@ -1,6 +1,8 @@
 import { LoadingButton } from '@mui/lab';
 import { styled } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
+import { Socket } from 'socket.io-client';
+import { RootWebsocketContext } from '../../contexts/WebsocketContext';
 
 const ftLoginURL = "http://localhost:8080/auth/login/42"
 
@@ -17,8 +19,18 @@ const CustomButton = styled(LoadingButton)({
 
 function FtLoginButtonComponent() {
   const [Loading, setLoading] = useState(false);
+  const rootSocket: Socket = useContext(RootWebsocketContext);
 
   const handleOnClick = () => { setLoading(true) }
+
+  useEffect(() => {
+
+    if (Loading) {
+      rootSocket.connect();
+    } else {
+      rootSocket.disconnect();
+    }
+  }, [Loading])
 
   return (
     <CustomButton

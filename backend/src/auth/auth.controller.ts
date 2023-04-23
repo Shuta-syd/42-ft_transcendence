@@ -27,7 +27,6 @@ import {
   SignUpUserDto,
 } from './dto/auth.dto';
 import { Jwt2FaGuard } from './guards/jwt-2fa.guard';
-import { APP_FILTER } from '@nestjs/core';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -68,12 +67,14 @@ export class AuthController {
   })
   async login(@Body() dto: AuthDto, @Res({ passthrough: true }) res: Response) {
     const jwt = await this.authService.login(dto);
+
     res.cookie('access_token', jwt.accessToken, {
       httpOnly: true,
       secure: false,
       sameSite: 'lax',
       path: '/',
     });
+
     return;
   }
 
