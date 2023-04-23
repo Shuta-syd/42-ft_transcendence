@@ -12,7 +12,6 @@ import { AppGateway } from './app.gateway';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UTF8Middleware } from './midlleware/utf-8.middleware';
-import { PongModule } from './pong/pong.module';
 
 @Module({
   imports: [
@@ -24,7 +23,6 @@ import { PongModule } from './pong/pong.module';
     GameModule,
     JwtModule,
     ConfigModule,
-    PongModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService, AppGateway, ConfigService, JwtService],

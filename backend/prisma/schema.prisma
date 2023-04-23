@@ -33,7 +33,6 @@ model BlockList {
   blocker   User   @relation("BlockerRelation", fields: [blockerId], references: [id])
   blockedId String
   blocked   User   @relation("BlockedRelation", fields: [blockedId], references: [id])
-
   @@unique([blockerId, blockedId])
 }
 
@@ -107,4 +106,16 @@ enum RoomType {
 enum BanType {
   CHANNE
   LOCAL
+}
+
+model Game {
+  id      Int    @id @default(autoincrement())
+  player1 String @unique
+  player2 String @unique
+}
+
+model InviteGame {
+  id      String @id @default(uuid())
+  player1 String @unique
+  player2 String @unique
 }

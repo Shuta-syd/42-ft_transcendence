@@ -19,7 +19,6 @@ const GamePlayer2 = (props: { socket: Socket }) => {
     const RADIUS = 25;
 
     /* Paddle macro */
-
     const PADDLEWIDTH = 20;
     const PADDLEWHEIGHT = 200;
 
