@@ -1,4 +1,5 @@
-import React from 'react';
+/* eslint-disable no-unused-vars */
+import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { Avatar } from '@mui/material';
 import Badge from '@mui/material/Badge';
@@ -9,25 +10,14 @@ interface ShowAvatarProps {
   profileImage: string | undefined;
 }
 
-const StyledBadge = styled(Badge)(({ theme }) => ({
+const CustomBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
-    backgroundColor: '#44b700',
-    color: '#44b700',
+    backgroundColor: 'gray',
+    color: 'gray',
     boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
     width: '15%',
     height: '15%',
     borderRadius: '50%',
-    '&::after': {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: '100%',
-      borderRadius: '50%',
-      animation: 'ripple 1.2s infinite ease-in-out',
-      border: '1px solid currentColor',
-      content: '""',
-    },
   },
   '@keyframes ripple': {
     '0%': {
@@ -41,20 +31,30 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
   },
 }));
 
+function ShowAvatar({ user, profileImage }: ShowAvatarProps) {
+  const [userStatus, setUserStatus] = useState('ONLINE');
 
-const ShowAvatar = ({ user, profileImage }: ShowAvatarProps) => (
-  <div
+  useEffect(() => {
+
+  }, []);
+
+
+  return (
+    <div
     style={{
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
     }}
   >
-    <StyledBadge
+    <CustomBadge
       sx={{
         width: 200, // Update width here
         height: 200, // Update height here
         marginRight: 2,
+        "& .MuiBadge-badge": {
+          backgroundColor: 'blue', // バッジのドットの色を青色に変更する例
+        }
       }}
       overlap="circular"
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -71,7 +71,7 @@ const ShowAvatar = ({ user, profileImage }: ShowAvatarProps) => (
           marginRight: 2,
         }}
       />
-    </StyledBadge>
+    </CustomBadge>
     <div>
       <h1
         style={{
@@ -96,6 +96,7 @@ const ShowAvatar = ({ user, profileImage }: ShowAvatarProps) => (
       </h2>
     </div>
   </div>
-);
+  )
+}
 
 export default ShowAvatar;

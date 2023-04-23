@@ -91,32 +91,20 @@ const MyProfile = () => {
   const uploadImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const { files } = event.target;
     if (files?.[0]) {
-      const blobFiles = URL.createObjectURL(files[0]);
+      URL.createObjectURL(files[0]);
       const file = files[0];
       let base64: string;
-      console.log('THIS ONE: </>', blobFiles);
       const reader = new FileReader();
       reader.readAsDataURL(file);
 
       reader.onload = async () => {
         base64 = reader.result as string;
-        console.log('base64: ', base64);
 
         try {
-          const response = await axios.post(
-            'http://localhost:8080/user/add/image',
-            { image: base64 },
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
-              },
-            },
-          );
-          console.log('THIS ONE: ', response);
+          await axios.post('http://localhost:8080/user/add/image',{ image: base64 });
           setProfileImage(base64);
         } catch (error) {
           console.error(error);
-          console.log('This file is too large!!!!');
         }
       };
     }
@@ -143,7 +131,6 @@ const MyProfile = () => {
   useEffect(() => {
     const friendsPromise = getFriends();
     friendsPromise.then((data) => {
-      console.log('data => ', data[0]);
       setFriends(data);
     });
   }, []);
