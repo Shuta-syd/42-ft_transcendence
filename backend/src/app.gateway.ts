@@ -42,7 +42,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   async handleConnection(client: Socket, ...args: any[]) {
-    this.logger.log(`[App] Client connected ${client.id}`);
+    this.logger.log(`[App] Cliaent connected ${client.id}`);
     const cookie = client.handshake.headers.cookie;
     if (cookie === undefined) return;
     const accessToken = cookie.split('=')[1];

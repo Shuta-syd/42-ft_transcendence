@@ -1,9 +1,10 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { Avatar } from '@mui/material';
 import Badge from '@mui/material/Badge';
 import { User } from '../../types/PrismaType';
+import { RootWebsocketContext } from '../../contexts/WebsocketContext';
 
 interface ShowAvatarProps {
   user?: User;
@@ -12,8 +13,6 @@ interface ShowAvatarProps {
 
 const CustomBadge = styled(Badge)(({ theme }) => ({
   '& .MuiBadge-badge': {
-    backgroundColor: 'gray',
-    color: 'gray',
     boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
     width: '15%',
     height: '15%',
@@ -32,11 +31,27 @@ const CustomBadge = styled(Badge)(({ theme }) => ({
 }));
 
 function ShowAvatar({ user, profileImage }: ShowAvatarProps) {
-  const [userStatus, setUserStatus] = useState('ONLINE');
+  const [userStatus, setUserStatus] = useState(0);
+  const rootSocket = useContext(RootWebsocketContext);
 
   useEffect(() => {
+    rootSocket.on('user_online_status', ({ status }) => {
+      setUserStatus(status);
+    });
 
-  }, []);
+    rootSocket.emit('user_online_status_check');
+  }, [rootSocket]);
+
+  const getStatusColor = (status: number) => {
+    switch(status) {
+      case 1:
+        return 'green';
+      case 2:
+        return 'blue';
+      default:
+        return 'gray';
+    }
+  };
 
 
   return (
@@ -53,7 +68,7 @@ function ShowAvatar({ user, profileImage }: ShowAvatarProps) {
         height: 200, // Update height here
         marginRight: 2,
         "& .MuiBadge-badge": {
-          backgroundColor: 'blue', // バッジのドットの色を青色に変更する例
+          backgroundColor: getStatusColor(userStatus),
         }
       }}
       overlap="circular"
