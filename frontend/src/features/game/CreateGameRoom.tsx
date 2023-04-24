@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Socket } from 'socket.io-client';
-import { Grid } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { Game, User } from '../../types/PrismaType';
 import { GameRoomReq, useGameUser } from '../../hooks/game/useGameuser';
 
@@ -9,7 +9,7 @@ const CreateGameRoom = (props: { socket: Socket }) => {
   const { socket } = props;
   const [user, setUser] = useState<User>();
   const [game, setGame] = useState<Game>();
-  const [roomId, setRoomId] = useState<number | undefined>(undefined); // useStateでroomIdを宣言
+  const [roomId, setRoomId] = useState<number | undefined>(undefined);
 
   const gamePromisesRef = useRef<Promise<Game>>();
   const UserPromises = useGameUser();
@@ -23,7 +23,7 @@ const CreateGameRoom = (props: { socket: Socket }) => {
   useEffect(() => {
     gamePromisesRef.current?.then((Gamedto: Game) => {
       setGame(Gamedto);
-      setRoomId(Gamedto?.id); // roomIdを更新する
+      setRoomId(Gamedto?.id);
     });
   }, [user]);
 
@@ -60,49 +60,34 @@ const CreateGameRoom = (props: { socket: Socket }) => {
   };
 
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         backgroundColor: '#EDF0F4',
         minHeight: '100vh',
-        backgroundSize: 'cover',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
       }}
     >
-      <h2>
-        <h1>[Random Match Room]</h1>
-      </h2>
-      <Grid
-        container
-        justifyContent="center"
-        marginTop="-5%"
-        alignItems="center"
-        style={{ minHeight: '100vh' }}
-        fontSize="h4.fontSize"
-        direction="column"
-      >
-        <Grid mr={10} spacing={50}>
-          <h3>
-            <ShowPositions />
-            <h1>Your Room 👉 {ShowPage()} !!!</h1>
-          </h3>
-        </Grid>
-        <Grid mr={10} spacing={10}>
-          <button
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '80px',
-              width: '100px',
-              fontSize: '20px',
-              color: 'green',
-            }}
-            onClick={handleClick}
-          >
-            Exit Room
-          </button>
-        </Grid>
-      </Grid>
-    </div>
+      <Typography variant="h3" gutterBottom>
+        CreateGameRoom.tsx
+      </Typography>
+      <Box>
+        <ShowPositions />
+        <Typography variant="h4">Your Room 👉 {ShowPage()} !!!</Typography>
+      </Box>
+      <Box mt={2}>
+        <Button
+          variant="contained"
+          color="secondary"
+          size="large"
+          onClick={handleClick}
+        >
+          Exit Room
+        </Button>
+      </Box>
+    </Box>
   );
 };
 
