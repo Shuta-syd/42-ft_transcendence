@@ -9,6 +9,7 @@ const InviteRoom = (props: { socket: Socket }) => {
   const { socket } = props;
   const [user, setUser] = useState<User>();
   const [roomId, setRoomId] = useState<string | undefined>(undefined);
+  const [copySuccess, setCopySuccess] = useState(false); // Add this line
 
   const gamePromisesRef = useRef<Promise<InviteGame>>();
   const userPromise = useGameUser();
@@ -26,11 +27,10 @@ const InviteRoom = (props: { socket: Socket }) => {
     });
   }, [user]);
 
-  // const [text, setText] = useState("");
-
   function handleCopy() {
     if (roomId) {
       navigator.clipboard.writeText(roomId);
+      setCopySuccess(true); // Add this line
     }
   }
 
@@ -50,7 +50,7 @@ const InviteRoom = (props: { socket: Socket }) => {
         backgroundSize: 'cover',
       }}
     >
-      <h1>[Host Room!!]</h1>
+      <h1>[Host Room]</h1>
       <Grid
         container
         justifyContent="center"
@@ -60,8 +60,6 @@ const InviteRoom = (props: { socket: Socket }) => {
         fontSize="h4.fontSize"
         direction="column"
       >
-        <h2>You are {user?.name}!!!</h2>
-        <h2>Invite Id is {roomId}!!!</h2>
         <p></p>
         <button
           style={{
@@ -72,6 +70,7 @@ const InviteRoom = (props: { socket: Socket }) => {
         >
           Copy ID👍
         </button>
+        {copySuccess && <p>Copy success</p>} {/* Add this line */}
         <p></p>
         <div>
           <h1>
