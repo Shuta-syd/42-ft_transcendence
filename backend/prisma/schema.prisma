@@ -33,7 +33,6 @@ model BlockList {
   blocker   User   @relation("BlockerRelation", fields: [blockerId], references: [id])
   blockedId String
   blocked   User   @relation("BlockedRelation", fields: [blockedId], references: [id])
-
   @@unique([blockerId, blockedId])
 }
 
@@ -105,7 +104,7 @@ enum RoomType {
 }
 
 enum BanType {
-  CHANNEL
+  CHANNE
   LOCAL
 }
 
