@@ -1,12 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Socket } from 'socket.io-client';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { Game, User } from '../../types/PrismaType';
 import { GameRoomReq, useGameUser } from '../../hooks/game/useGameuser';
 
-const CreateGameRoom = (props: { socket: Socket }) => {
-  const { socket } = props;
+const CreateGameRoom = () => {
   const [user, setUser] = useState<User>();
   const [game, setGame] = useState<Game>();
   const [roomId, setRoomId] = useState<number | undefined>(undefined);
@@ -27,8 +25,29 @@ const CreateGameRoom = (props: { socket: Socket }) => {
     });
   }, [user]);
 
-  const handleClick = () => {
-    socket.emit('TerminateGame', user?.name);
+  function showPlayer2() {
+    const compare: string = 'player2_';
+    if (game?.player2.substring(0, 8) === compare.substring(0, 8)) {
+      return <Typography variant="h4">Player2: Loading</Typography>;
+    }
+    return <Typography variant="h4">Player2: {game?.player2}</Typography>;
+  }
+
+  const ShowPositions = () => {
+    if (user?.name) {
+      return (
+        <Box>
+          <Typography variant="h4">You are in room {roomId}</Typography>
+          <Typography variant="h4">Player1: {game?.player1}</Typography>
+          {showPlayer2()}
+        </Box>
+      );
+    }
+    return (
+      <Typography variant="h5">
+        Your session is expired. Please login again...
+      </Typography>
+    );
   };
 
   const ShowPage = () => {
@@ -36,27 +55,6 @@ const CreateGameRoom = (props: { socket: Socket }) => {
       return <Link to={'/game/player2'}>Player2</Link>;
     }
     return <Link to={'/game/player1'}>Player1</Link>;
-  };
-
-  function showPlayer2() {
-    const compare: string = 'player2_';
-    if (game?.player2.substring(0, 8) === compare.substring(0, 8)) {
-      return <h2>Player2: Loading</h2>;
-    }
-    return <h2>Player2: {game?.player2}!!!</h2>;
-  }
-
-  const ShowPositions = () => {
-    if (user?.name) {
-      return (
-        <div>
-          <h2>You are in {roomId}!!!</h2>
-          <h2>Player1 is {game?.player1}!!!</h2>
-          {showPlayer2()}
-        </div>
-      );
-    }
-    return <div>Your session is expired. Please login again...</div>;
   };
 
   return (
@@ -70,22 +68,9 @@ const CreateGameRoom = (props: { socket: Socket }) => {
         alignItems: 'center',
       }}
     >
-      <Typography variant="h3" gutterBottom>
-        CreateGameRoom.tsx
-      </Typography>
       <Box>
         <ShowPositions />
         <Typography variant="h4">Your Room 👉 {ShowPage()} !!!</Typography>
-      </Box>
-      <Box mt={2}>
-        <Button
-          variant="contained"
-          color="secondary"
-          size="large"
-          onClick={handleClick}
-        >
-          Exit Room
-        </Button>
       </Box>
     </Box>
   );
