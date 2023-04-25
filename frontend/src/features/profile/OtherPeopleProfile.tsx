@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Grid } from '@mui/material';
 import axios from 'axios';
 import { User } from '../../types/PrismaType';
-import ShowAvatar from '../../components/profile/ShowAvatar';
 import FriendRequestButton from '../../components/profile/FriendRequestButton';
 import { fetchProfileUser } from '../../hooks/profile/useProfileUser';
 import UnfriendButton from '../../components/profile/UnfriendButton';
 import BlockButton from '../../components/profile/BlockButton';
 import UnblockButton from '../../components/profile/UnblockButton';
+import OtherUserAvatar from '../../components/profile/OtherUserAvatar';
 
 interface OtherPeopleProfileProps {
   other: User | undefined;
@@ -99,7 +99,7 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
           [{props.other?.name} Profile]
         </Grid>
         <Grid item xs={5}>
-          <ShowAvatar user={props.other} profileImage={props.other?.image} />
+          <OtherUserAvatar user={props.other} profileImage={props.other?.image} />
         </Grid>
         {!isFriend && !isBlockingUser && (
           <Grid
