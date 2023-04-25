@@ -155,4 +155,11 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.userIdToStatus.set(user.id, Status.INGAME);
     this.logger.log(`[App] ${user.id} is in game`);
   }
+
+  @SubscribeMessage('in_game_status_delete')
+  @UseGuards(AuthGuard('jwt'))
+  inGameStatusDelte(@ConnectedSocket() client: Socket, user: User) {
+    this.userIdToStatus.set(user.id, Status.ONLINE);
+    this.logger.log(`[App] ${user.id} is out game`);
+  }
 }
