@@ -36,8 +36,9 @@ function OtherUserAvatar({ user, profileImage }: ShowAvatarProps) {
   const rootSocket = useContext(RootWebsocketContext);
 
   useEffect(() => {
-    rootSocket.on('friend_online_status', ({ OnlineFriend }) => {
+    rootSocket.on('friend_online_status', ({ OnlineFriend, InGameFriend }) => {
       setOnlineFriend(OnlineFriend);
+      setInGame(InGameFriend);
     });
 
     rootSocket.emit('friend_online_status_check');
