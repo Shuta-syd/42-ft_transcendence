@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useContext, useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
@@ -13,7 +14,8 @@ type FriendListButtonProps = {
 };
 
 const FriendListButton = ({ friends }: FriendListButtonProps) => {
-  const [friendsStatus, setFriendsStatus] = useState(new Map<string, number>());
+  const [onlineFriend, setOnlineFriend] = useState<string[]>([]);
+  const [inGame, setInGame] = useState<string[]>([]);
   const rootSocket = useContext(RootWebsocketContext);
   const [isButtonClicked, setIsButtonClicked] = useState(false);
 
@@ -22,15 +24,20 @@ const FriendListButton = ({ friends }: FriendListButtonProps) => {
   };
 
   useEffect(() => {
-    rootSocket.on('friend_online_status', ({ status }) => {
-      setFriendsStatus(status);
+    rootSocket.on('friend_online_status', ({ OnlineFriend }) => {
+      setOnlineFriend(OnlineFriend);
     });
 
     rootSocket.emit('friend_online_status_check');
   }, [rootSocket]);
 
-  const getStatus = (status: number | undefined) => {
-    switch(status) {
+  const getStatus = (online: string[], game: string[], id: string) => {
+
+    let status = online.includes(id) ? 1 : 0;
+    if (status === 0 && game !== undefined) {
+      status = game.includes(id) ? 2 : 0;
+    }
+    switch (status) {
       case 1:
         return 'Online';
       case 2:
@@ -62,7 +69,7 @@ const FriendListButton = ({ friends }: FriendListButtonProps) => {
         >
           <Avatar src={friend.image} />
           <ListItemText primary={friend.name} sx={{ marginLeft: '10px' }} />
-          <ListItemText primary={getStatus(friendsStatus?.get(friend.id))} sx={{ marginLeft: '10px' }} />
+          <ListItemText primary={getStatus(onlineFriend, inGame, friend.id)} sx={{ marginLeft: '10px' }} />
         </ListItem>
       ));
     };

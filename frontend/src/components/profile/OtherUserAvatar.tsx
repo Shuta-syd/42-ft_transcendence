@@ -31,19 +31,24 @@ const CustomBadge = styled(Badge)(({ theme }) => ({
 }));
 
 function OtherUserAvatar({ user, profileImage }: ShowAvatarProps) {
-  const [userStatus, setUserStatus] = useState(new Map<string, number>());
+  const [onlineFriend, setOnlineFriend] = useState<string[]>([]);
+  const [inGame, setInGame] = useState<string[]>([]);
   const rootSocket = useContext(RootWebsocketContext);
 
   useEffect(() => {
-    rootSocket.on('friend_online_status', ({ status }) => {
-      setUserStatus(status);
+    rootSocket.on('friend_online_status', ({ OnlineFriend }) => {
+      setOnlineFriend(OnlineFriend);
     });
 
     rootSocket.emit('friend_online_status_check');
   }, [rootSocket]);
 
-  const getStatusColor = (status: number | undefined) => {
-    switch(status) {
+  const getStatusColor = (online: string[], game: string[], id: string) => {
+    let status = online.includes(id) ? 1 : 0;
+    if (status === 0 && game !== undefined) {
+      status = game.includes(id) ? 2 : 0;
+    }
+    switch (status) {
       case 1:
         return 'green';
       case 2:
@@ -68,7 +73,7 @@ function OtherUserAvatar({ user, profileImage }: ShowAvatarProps) {
         height: 200, // Update height here
         marginRight: 2,
         "& .MuiBadge-badge": {
-          backgroundColor: getStatusColor(userStatus?.get(user?.id || '')),
+          backgroundColor: getStatusColor(onlineFriend, inGame, user !== undefined ? user.id : ''),
         }
       }}
       overlap="circular"

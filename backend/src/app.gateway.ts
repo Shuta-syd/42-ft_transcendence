@@ -112,16 +112,16 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       })
       .friends();
 
-    const friendIdToStatus = new Map<string, Status>();
+    const OnlineFriend = [];
 
-    friends.map((friend: User) => {
+    friends.forEach(async (friend: User) => {
       let status = this.userIdToStatus.get(friend.id);
       status = status !== undefined ? status : Status.OFFLINE;
-      friendIdToStatus.set(friend.id, status);
+      if (status === Status.ONLINE) OnlineFriend.push(friend.id);
     });
 
     this.server.to(client.id).emit('friend_online_status', {
-      friendIdToStatus,
+      OnlineFriend,
     });
   }
 
