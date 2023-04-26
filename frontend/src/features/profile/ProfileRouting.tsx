@@ -33,14 +33,9 @@ const ProfileRouting = () => {
       setNonLoginUser(data);
     };
     if (name) {
-      console.log('name', name);
       fetchNonLoginUser(name);
     }
   }, []);
-
-  useEffect(() => {
-    console.log('nonLoginUser', nonLoginUser);
-  }, [nonLoginUser]);
 
   const renderProfileStatus = () => {
     /* login userがparamのnameと一致した時にはProfile Componentを表示する */

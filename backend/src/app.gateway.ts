@@ -42,7 +42,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   async handleConnection(client: Socket, ...args: any[]) {
-    this.logger.log(`[App] Client connected ${client.id}`);
+    this.logger.log(`[App] Cliaent connected ${client.id}`);
     const cookie = client.handshake.headers.cookie;
     if (cookie === undefined) return;
     const accessToken = cookie.split('=')[1];
@@ -112,16 +112,19 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       })
       .friends();
 
-    const friendIdToStatus = new Map<string, Status>();
+    const OnlineFriend = [];
+    const InGameFriend = [];
 
-    friends.map((friend: User) => {
+    friends.forEach(async (friend: User) => {
       let status = this.userIdToStatus.get(friend.id);
       status = status !== undefined ? status : Status.OFFLINE;
-      friendIdToStatus.set(friend.id, status);
+      if (status === Status.ONLINE) OnlineFriend.push(friend.id);
+      if (status === Status.INGAME) InGameFriend.push(friend.id);
     });
 
     this.server.to(client.id).emit('friend_online_status', {
-      friendIdToStatus,
+      OnlineFriend,
+      InGameFriend,
     });
   }
 
@@ -151,5 +154,12 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   inGameStatusCheck(@ConnectedSocket() client: Socket, user: User) {
     this.userIdToStatus.set(user.id, Status.INGAME);
     this.logger.log(`[App] ${user.id} is in game`);
+  }
+
+  @SubscribeMessage('in_game_status_delete')
+  @UseGuards(AuthGuard('jwt'))
+  inGameStatusDelte(@ConnectedSocket() client: Socket, user: User) {
+    this.userIdToStatus.set(user.id, Status.ONLINE);
+    this.logger.log(`[App] ${user.id} is out game`);
   }
 }

@@ -30,20 +30,26 @@ const CustomBadge = styled(Badge)(({ theme }) => ({
   },
 }));
 
-function ShowAvatar({ user, profileImage }: ShowAvatarProps) {
-  const [userStatus, setUserStatus] = useState(0);
+function OtherUserAvatar({ user, profileImage }: ShowAvatarProps) {
+  const [onlineFriend, setOnlineFriend] = useState<string[]>([]);
+  const [inGame, setInGame] = useState<string[]>([]);
   const rootSocket = useContext(RootWebsocketContext);
 
   useEffect(() => {
-    rootSocket.on('user_online_status', ({ status }) => {
-      setUserStatus(status);
+    rootSocket.on('friend_online_status', ({ OnlineFriend, InGameFriend }) => {
+      setOnlineFriend(OnlineFriend);
+      setInGame(InGameFriend);
     });
 
-    rootSocket.emit('user_online_status_check');
+    rootSocket.emit('friend_online_status_check');
   }, [rootSocket]);
 
-  const getStatusColor = (status: number) => {
-    switch(status) {
+  const getStatusColor = (online: string[], game: string[], id: string) => {
+    let status = online.includes(id) ? 1 : 0;
+    if (status === 0 && game !== undefined) {
+      status = game.includes(id) ? 2 : 0;
+    }
+    switch (status) {
       case 1:
         return 'green';
       case 2:
@@ -68,7 +74,7 @@ function ShowAvatar({ user, profileImage }: ShowAvatarProps) {
         height: 200, // Update height here
         marginRight: 2,
         "& .MuiBadge-badge": {
-          backgroundColor: getStatusColor(userStatus),
+          backgroundColor: getStatusColor(onlineFriend, inGame, user !== undefined ? user.id : ''),
         }
       }}
       overlap="circular"
@@ -114,4 +120,4 @@ function ShowAvatar({ user, profileImage }: ShowAvatarProps) {
   )
 }
 
-export default ShowAvatar;
+export default OtherUserAvatar;

@@ -1,8 +1,9 @@
 /* eslint-disable no-unused-vars */
 import { Box, Stack, Typography } from "@mui/material";
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { Socket } from "socket.io-client";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Link } from "react-router-dom";
 import SignupStepper from "./SignupStepper";
@@ -10,6 +11,7 @@ import UploadImageComponent from "./UploadImageComponent";
 import SignupValidationSchema from "../../types/auth/SignupValidationSchema";
 import UserProfileFormComponent from "./UserProfileFormComponent";
 import TwoFactorSettingComponent from "./TwoFactorSettingComponent";
+import { RootWebsocketContext } from "../../contexts/WebsocketContext";
 
 type SignupData = {
   username: string;
@@ -19,6 +21,7 @@ type SignupData = {
 
 
 function SignupComponent() {
+  const rootSocket: Socket = useContext(RootWebsocketContext);
   const [activeStep, setActiveStep] = useState(0);
   const [image, setImage] = useState('');
   const [imageURL, setImageURL] = useState('');
@@ -30,6 +33,7 @@ function SignupComponent() {
 
   const onSubmit: SubmitHandler<SignupData> = async (data) => {
     try {
+      rootSocket.disconnect();
       await axios.post('http://localhost:8080/auth/signup', {
           name: data.username,
           email: data.email,
@@ -38,6 +42,7 @@ function SignupComponent() {
         })
       reset();
       setActiveStep(2);
+      rootSocket.connect();
     } catch (error: any) {
       alert(error.response.data.message);
       setActiveStep(0);
