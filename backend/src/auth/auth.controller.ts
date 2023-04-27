@@ -231,6 +231,15 @@ export class AuthController {
     return this.authService.validateOtp(req.user, otpcode);
   }
 
+  @Post('otp/is')
+  async getUserOtpStatus(
+    @Body() dto: AuthDto,
+    @Req() req: Request,
+  ): Promise<boolean> {
+    console.log(dto.email);
+    return this.authService.getUserOtpStatus(dto.email);
+  }
+
   @Get('otp/test')
   @HttpCode(200)
   @UseGuards(Jwt2FaGuard)

@@ -95,8 +95,8 @@ export class AuthService {
         email: dto.email,
       },
     });
-    if (user.isFtLogin) new BadRequestException('Please login with 42');
     if (!user) throw new NotFoundException("user couldn't be found");
+    if (user.isFtLogin) new BadRequestException('Please login with 42');
 
     const [storedHash, salt] = user.password.split('.');
 
@@ -314,5 +314,14 @@ export class AuthService {
   async calcImageSize(base64: string): Promise<number> {
     const decoded = Buffer.from(base64, 'base64');
     return decoded.length / 1024;
+  }
+
+  async getUserOtpStatus(email: string): Promise<boolean> {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+    return user !== null ? user.isTwoFactorEnabled : false;
   }
 }
