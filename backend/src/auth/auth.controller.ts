@@ -55,6 +55,12 @@ export class AuthController {
       sameSite: 'lax',
       path: '/',
     });
+    res.cookie('refresh_token', jwt.refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
     return;
   }
 
@@ -74,7 +80,12 @@ export class AuthController {
       sameSite: 'lax',
       path: '/',
     });
-
+    res.cookie('refresh_token', jwt.refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
     return;
   }
 
@@ -124,12 +135,24 @@ export class AuthController {
 
   @Post('logout')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({
     description: 'logout user',
     summary: 'logout user',
   })
-  async logout(@Res({ passthrough: true }) res: Response): Promise<Msg> {
+  async logout(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<Msg> {
+    console.log(`user: ${JSON.stringify(req.user, null, 2)}`);
+    await this.authService.logout(req.user.id);
     res.cookie('access_token', '', {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
+    res.cookie('refresh_token', '', {
       httpOnly: true,
       secure: false,
       sameSite: 'lax',
@@ -140,10 +163,39 @@ export class AuthController {
     };
   }
 
+  @Get('refresh')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard('jwt-refresh'))
+  @ApiOperation({
+    description: 'Refresh the access token using the refresh token',
+    summary: 'Refresh access token',
+  })
+  async refreshToken(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const refreshToken = req.cookies['refresh_token'];
+    const jwt = await this.authService.refreshAccessToken(
+      req.user.id,
+      refreshToken,
+    );
+    res.cookie('access_token', jwt.accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
+    res.cookie('refresh_token', jwt.refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
+  }
+
   /**
    * Two Factor Authentication
    */
-
   @Post('otp')
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(201)

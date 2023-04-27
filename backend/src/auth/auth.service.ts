@@ -19,6 +19,7 @@ import { promisify } from 'util';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom, map } from 'rxjs';
 import { AlreadyInUseException } from './exception/AlreadyInUseException';
+import { TokenExpiredError } from 'jsonwebtoken';
 import { createHash } from 'crypto';
 import { UserService } from 'src/user/user.service';
 
@@ -82,7 +83,9 @@ export class AuthService {
       },
     });
 
-    return this.generateJwt(newUser.id, newUser.name);
+    const tokens = await this.generateJwt(newUser.id, newUser.name);
+
+    return tokens;
   }
 
   /**
@@ -109,6 +112,20 @@ export class AuthService {
     if (!user.isFtLogin && storedHash !== hashedPassword.toString('base64'))
       throw new NotAcceptableException('password is wrong');
     return this.generateJwt(user.id, user.name);
+  }
+
+  /**
+   * @description ログアウトするための関数
+   */
+  async logout(userId: string): Promise<void> {
+    await this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        hashedRefreshToken: null,
+      },
+    });
   }
 
   async signup42User(dto: SignUpUserDto): Promise<User> {
@@ -151,13 +168,35 @@ export class AuthService {
       isTwoFactorActive,
     };
     const secret = this.config.get('JWT_SECRET');
-    const token = await this.jwt.signAsync(payload, {
-      expiresIn: '30m',
+    const accessToken = await this.jwt.signAsync(payload, {
+      expiresIn: '10s',
       secret: secret,
     });
 
+    const refreshSecret = this.config.get('JWT_REFRESH_SECRET');
+    const refreshToken = await this.jwt.signAsync(payload, {
+      expiresIn: '7d',
+      secret: refreshSecret,
+    });
+
+    // リフレッシュトークンをハッシュ化
+    const salt = randomBytes(8).toString('hex');
+    const hash = (await asyncScrypt(refreshToken, salt, 32)) as Buffer;
+    const hashedRefreshToken = hash.toString('base64') + '.' + salt;
+
+    // ハッシュ化したリフレッシュトークンをDBに保存
+    await this.prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        hashedRefreshToken,
+      },
+    });
+
     return {
-      accessToken: token,
+      accessToken,
+      refreshToken,
     };
   }
 
@@ -208,9 +247,77 @@ export class AuthService {
     });
   }
 
+  /**************************
+   *****  Refresh token *****
+   **************************/
+
   /**
-   * Two Factor Authentication
+   * @description 提供されたリフレッシュトークンを検証し、新しいアクセストークンを生成します。
+   * @param userId アクセストークンを生成する必要があるユーザーID
+   * @param refreshToken 検証する必要があるリフレッシュトークン
+   * @returns 提供されたリフレッシュトークンが有効である場合は新しいアクセストークン、そうでない場合はエラーをスロー
    */
+  async refreshAccessToken(userId: string, refreshToken: string): Promise<Jwt> {
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token not found');
+    }
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+    if (!user) throw new Error("user couldn't be found");
+
+    // データベースに保存されているリフレッシュトークンと一致するか判定
+    const isValidRefreshToken = await this.verifyRefreshToken(
+      user,
+      refreshToken,
+    );
+    if (!isValidRefreshToken) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    // リフレッシュトークンをデコード
+    const decoded = await this.decodeRefreshToken(refreshToken);
+    if (!decoded) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    return this.generateJwt(decoded.sub, decoded.name);
+  }
+
+  private async verifyRefreshToken(
+    user: User,
+    refreshToken: string,
+  ): Promise<boolean> {
+    // データベースに保存されているハッシュかされたリフレッシュトークンを取得
+    const [storedHashedRefreshToken, salt] = user.hashedRefreshToken.split('.');
+
+    // リフレッシュトークンが一致するか判定
+    const hashedRefreshToken = (await asyncScrypt(
+      refreshToken,
+      salt,
+      32,
+    )) as Buffer;
+    return storedHashedRefreshToken === hashedRefreshToken.toString('base64');
+  }
+
+  private async decodeRefreshToken(refreshToken: string) {
+    try {
+      return this.jwt.verify(refreshToken, {
+        secret: this.config.get(`JWT_REFRESH_SECRET`),
+      });
+    } catch (err) {
+      if (err instanceof TokenExpiredError) {
+        throw new UnauthorizedException('Refresh token expired');
+      }
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+  }
+
+  /*****************************
+   * Two Factor Authentication *
+   *****************************/
 
   /**
    * @description 二要素認証するためのシークレットを作成する
