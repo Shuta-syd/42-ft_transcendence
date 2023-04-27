@@ -144,7 +144,6 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ): Promise<Msg> {
-    console.log(`user: ${JSON.stringify(req.user, null, 2)}`);
     await this.authService.logout(req.user.id);
     res.cookie('access_token', '', {
       httpOnly: true,
