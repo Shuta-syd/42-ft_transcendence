@@ -51,12 +51,21 @@ type TerminateGame = {
   },
   namespace: '/game',
 })
+
+
+export type SocketClient = {
+  name: string;
+  socketId: string;
+}
+
 export class GameGateway {
   constructor(private readonly gameService: GameService) {}
   @WebSocketServer()
   server: Server;
   private logger: Logger = new Logger('GameGateway');
   private rooms = {};
+  private SocketClients: SocketClient[]= {};
+
 
   //クライアント側から「chatToServer」という名前のメッセージ（？）をリッスン（好きに命名できる）
   @SubscribeMessage('chatToServer')
@@ -121,6 +130,8 @@ export class GameGateway {
     this.rooms[roomId].push(socket.id);
     // ルームの参加者リストをルームの全員に送信します
     this.server.to(roomId).emit(roomId, this.rooms[roomId]);
+    //すでにnameが存在している場合にはその内容を苦心する仕様を追加する必要あり。
+    this.SocketClients.push({name: payload, socketId: socket.id});
   }
 
   // ユーザーがルームから離脱するためのイベントを定義します
