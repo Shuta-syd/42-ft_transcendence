@@ -2,13 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Grid } from '@mui/material';
 import axios from 'axios';
 import { User } from '../../types/PrismaType';
-import ShowAvatar from '../../components/profile/ShowAvatar';
 import FriendRequestButton from '../../components/profile/FriendRequestButton';
-import FriendListButton from '../../components/profile/FriendListButton';
 import { fetchProfileUser } from '../../hooks/profile/useProfileUser';
 import UnfriendButton from '../../components/profile/UnfriendButton';
 import BlockButton from '../../components/profile/BlockButton';
 import UnblockButton from '../../components/profile/UnblockButton';
+import OtherUserAvatar from '../../components/profile/OtherUserAvatar';
 
 interface OtherPeopleProfileProps {
   other: User | undefined;
@@ -22,7 +21,6 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
   useEffect(() => {
     UserPromises.then((userDto: User) => {
       setUser(userDto);
-      console.log('myinfo', user?.name);
     });
   }, []);
 
@@ -36,6 +34,7 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
   /** ************************* */
   /** ************************* */
   // [get my friends part]
+  // eslint-disable-next-line no-unused-vars
   const [friends, setFriends] = useState<User[]>([]);
   const getFriends = async () => {
     const { data } = await axios.get<User[]>(
@@ -52,7 +51,6 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
   useEffect(() => {
     const friendsPromise = getFriends();
     friendsPromise.then((data) => {
-      console.log('data => ', data[0]);
       setFriends(data);
 
       // props.otherがfriendに含まれているかどうかを判断する
@@ -64,16 +62,15 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
       }
     });
 
+
     /** ************************* */
     // [check the relationship between me and other people]
     axios
       .get<boolean>(`http://localhost:8080/user/block/${props.other?.id}`)
       .then((res) => {
-        console.log('success!', res);
         setIsBlockingUser(res.data);
       })
       .catch((err) => {
-        console.log('error!', err);
       });
   }, [user]);
 
@@ -102,7 +99,7 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
           [{props.other?.name} Profile]
         </Grid>
         <Grid item xs={5}>
-          <ShowAvatar user={props.other} profileImage={props.other?.image} />
+          <OtherUserAvatar user={props.other} profileImage={props.other?.image} />
         </Grid>
         {!isFriend && !isBlockingUser && (
           <Grid
@@ -165,7 +162,6 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
             justifyContent: 'center',
           }}
         >
-          <FriendListButton friends={friends} />
         </Grid>
       </Grid>
     </div>

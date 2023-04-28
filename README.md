@@ -34,4 +34,7 @@ Our stack choice us based on subject requirements and personnal preferences.
 * [React.js](https://reactjs.org/) using Typescript and SCSS
 * [PostgreSQL](https://www.postgresql.org/)
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+## Contributors
+Chat Login: [shogura](https://github.com/Shuta-syd), [jnakahod](https://github.com/public-jun)  
+Game: [Max](https://github.com/kny-i), [Haru](https://github.com/Jack-in-42Tokyo)  
+Profile: [Haru](https://github.com/Jack-in-42Tokyo)
