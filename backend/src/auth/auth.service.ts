@@ -12,7 +12,12 @@ import { authenticator } from 'otplib';
 import { toFileStream } from 'qrcode';
 import { Response } from 'express';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { AuthDto, FtUpdateUserDto, SignUpUserDto } from './dto/auth.dto';
+import {
+  AuthDto,
+  FtUpdateUserDto,
+  OtpLoginDto,
+  SignUpUserDto,
+} from './dto/auth.dto';
 import { Jwt } from './type/auth.type';
 import { randomBytes, randomUUID, scrypt } from 'crypto';
 import { promisify } from 'util';
@@ -323,5 +328,42 @@ export class AuthService {
       },
     });
     return user !== null ? user.isTwoFactorEnabled : false;
+  }
+
+  async LoginOtp(dto: AuthDto, otpCode: string): Promise<Jwt> {
+    const { email, password } = dto;
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+    if (!user) throw new NotFoundException("user couldn't be found");
+    if (user.isFtLogin) new BadRequestException('Please login with 42');
+
+    const [storedHash, salt] = user.password.split('.');
+
+    const hashedPassword = (await asyncScrypt(password, salt, 32)) as Buffer;
+
+    if (!user.isFtLogin && storedHash !== hashedPassword.toString('base64'))
+      throw new NotAcceptableException('password is wrong');
+
+    if (!user.isTwoFactorEnabled) {
+      throw new BadRequestException('Two-Factor-Auth OFF.');
+    }
+
+    if (!user.twoFactorSecret || user.twoFactorSecret === '') {
+      throw new BadRequestException('OneTimePassword is inactivate.');
+    }
+
+    const isCodeValid = authenticator.verify({
+      token: otpCode,
+      secret: user.twoFactorSecret,
+    });
+
+    if (!isCodeValid) {
+      throw new UnauthorizedException('Wrong authentication code');
+    }
+
+    return this.generateJwt(user.id, user.name, true);
   }
 }

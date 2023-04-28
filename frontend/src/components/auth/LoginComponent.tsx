@@ -22,7 +22,7 @@ function LoginComponent() {
   const [activeStep, setActiveStep] = useState(0);
   const [Loading, setLoading] = useState(true);
   const rootSocket: Socket = useContext(RootWebsocketContext);
-  const { control, handleSubmit, reset, formState: { errors } } = useForm<LoginData>({
+  const { control, handleSubmit, reset, getValues ,formState: { errors } } = useForm<LoginData>({
     mode: 'onSubmit',
     defaultValues: { email: '', password: '' },
     resolver: yupResolver(LoginValidationSchema),
@@ -66,14 +66,22 @@ function LoginComponent() {
   }
 
   const onConfirmButton = async () => { // この処理の後にonSubmitを叩きたい
+    let isLogin: Boolean = false;
     try {
-      await axios.post('http://localhost:8080/auth/otp/validation', { otpCode });
+      await axios.post('http://localhost:8080/auth/otp/login', { otpcode: otpCode, email: getValues('email'), password: getValues('password')});
       setOtpValid(true);
+      setLoading(false);
+      rootSocket.disconnect();
+      isLogin = true;
+      rootSocket.connect();
     } catch (error) {
       alert('ワンタイムパスワードが間違っています');
     } finally {
       setTimeout(() => {
-        setLoading(false);
+        setLoading(true);
+        if (isLogin) {
+          router('/user');
+        }
       }, 300);
     }
   }
