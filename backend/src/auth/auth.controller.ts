@@ -228,6 +228,7 @@ export class AuthController {
     description: 'ワンタイムパスワード成功',
   })
   async validateOtp(@Req() req: Request, @Body() { otpcode }: OtpCodeDto) {
+    console.log(otpcode);
     return this.authService.validateOtp(req.user, otpcode);
   }
 
@@ -255,8 +256,14 @@ export class AuthController {
   }
 
   @Post('otp/is')
-  async getUserOtpStatus(@Body() dto: AuthDto): Promise<boolean> {
+  async postUserOtpStatus(@Body() dto: AuthDto): Promise<boolean> {
     return this.authService.getUserOtpStatus(dto.email);
+  }
+
+  @Get('otp/is')
+  @UseGuards(AuthGuard('jwt'))
+  async getUserOtpStatus(@Req() req: Request): Promise<boolean> {
+    return this.authService.getUserOtpStatus(req.user.email);
   }
 
   @Get('otp/test')
