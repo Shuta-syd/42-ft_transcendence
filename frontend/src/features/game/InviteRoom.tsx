@@ -64,7 +64,7 @@ const InviteRoom = (props: { socket: Socket }) => {
         <button
           style={{
             borderRadius: '100px',
-            fontSize: '4rem',
+            fontSize: '2rem',
           }}
           onClick={handleCopy}
         >
@@ -73,21 +73,21 @@ const InviteRoom = (props: { socket: Socket }) => {
         {copySuccess && <p>Copy success</p>} {/* Add this line */}
         <p></p>
         <div>
-          <h1>
+          <h5>
             Your Room 👉
             <Link style={{}} to={'/game/player1'}>
               lets go!!
             </Link>
             <p></p>
-          </h1>
+          </h5>
         </div>
         <button
           style={{
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            height: '80px',
-            width: '100px',
+            height: '50px',
+            width: '50px',
             fontSize: '20px',
             color: 'green',
           }}
