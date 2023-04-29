@@ -4,8 +4,7 @@ import { Link } from 'react-router-dom';
 import { Box, Typography } from '@mui/material';
 import { Game, User } from '../../types/PrismaType';
 
-const CreateGameRoom = () => {
-  const [user, setUser] = useState<User>();
+const CreateGameRoom = ({ user }: { user: User }) => {
   const [game, setGame] = useState<Game>();
   const [roomId, setRoomId] = useState<number>();
   const [Loading, setLoading] = useState<boolean>(true);
@@ -13,12 +12,10 @@ const CreateGameRoom = () => {
   useEffect(() => {
     const createRoom = async () => {
       try {
-        const { data: userData } = await axios.get<User>(`http://localhost:8080/user`);
-        setUser(userData);
         const { data:GameRoom } = await axios.post<Game>(
           `http://localhost:8080/game/newplayer`,
           {
-            playerName: userData.name,
+            playerName: user.name,
           },
         )
         setGame(GameRoom);
