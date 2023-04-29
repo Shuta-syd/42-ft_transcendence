@@ -1,29 +1,39 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { Box, Typography } from '@mui/material';
 import { Game, User } from '../../types/PrismaType';
-import { GameRoomReq, useGameUser } from '../../hooks/game/useGameuser';
 
 const CreateGameRoom = () => {
   const [user, setUser] = useState<User>();
   const [game, setGame] = useState<Game>();
-  const [roomId, setRoomId] = useState<number | undefined>(undefined);
+  const [roomId, setRoomId] = useState<number>();
+  const [Loading, setLoading] = useState<boolean>(true);
 
-  const gamePromisesRef = useRef<Promise<Game>>();
-  const UserPromises = useGameUser();
   useEffect(() => {
-    UserPromises.then((userDto: User) => {
-      setUser(userDto);
-      gamePromisesRef.current = GameRoomReq(userDto?.name);
-    });
+    const createRoom = async () => {
+      try {
+        const { data: userData } = await axios.get<User>(`http://localhost:8080/user`);
+        setUser(userData);
+        const { data:GameRoom } = await axios.post<Game>(
+          `http://localhost:8080/game/newplayer`,
+          {
+            playerName: userData.name,
+          },
+        )
+        setGame(GameRoom);
+        setRoomId(GameRoom?.id);
+      } catch (error) {
+        alert('エラーが発生しました。リロードしてください');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    createRoom();
   }, []);
 
-  useEffect(() => {
-    gamePromisesRef.current?.then((Gamedto: Game) => {
-      setGame(Gamedto);
-      setRoomId(Gamedto?.id);
-    });
-  }, [user]);
+  if (Loading) return <></>;
 
   function showPlayer2() {
     const compare: string = 'player2_';

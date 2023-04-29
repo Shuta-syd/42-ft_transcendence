@@ -222,17 +222,6 @@ const GamePlayer2 = (props: { socket: Socket }) => {
     window.requestAnimationFrame(draw);
   }, [user]);
 
-  useEffect(() => {
-    socket.on('connect', () => {
-      // console.log('接続ID : ', socket.id)
-    });
-
-    return () => {
-      // console.log('切断')
-      socket.disconnect();
-    };
-  }, []);
-
   useEffect(() => {}, [rightPaddle.y]);
 
   type PaddleAndRoom = {

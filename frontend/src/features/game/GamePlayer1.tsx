@@ -301,17 +301,6 @@ const GamePlayer1 = (props: { socket: Socket }) => {
     window.addEventListener('keydown', handleKeyDown);
   }, [user]);
 
-  useEffect(() => {
-    socket.on('connect', () => {
-      console.log('接続ID : ', socket.id);
-    });
-
-    return () => {
-      console.log('切断');
-      socket.disconnect();
-    };
-  }, []);
-
   useEffect(() => {}, [rightPaddle.y]);
 
   type PaddleAndRoom = {
@@ -324,7 +313,6 @@ const GamePlayer1 = (props: { socket: Socket }) => {
   });
 
   socket.on('Pong', (name: string, socketid: string) => {
-    // console.log('recieve pong ', name, socketid);
     isRecievePong = true;
     p2name = name;
   });
