@@ -23,6 +23,22 @@ function App() {
   axios.defaults.withCredentials = true;
   const rootSocket = useSocket('http://localhost:8080/');
 
+  const refreshClient = axios.create();
+
+  axios.interceptors.response.use(
+    (response) => response,
+    async (error:any) => {
+
+      if (error.response.status === 401) {
+        const res = refreshClient.get('http://localhost:8080/auth/refresh').catch((err) => {
+          window.location.href = 'http://localhost:3000/login';
+        })
+        return res
+      }
+      return Promise.reject(error);
+    }
+  )
+
   return (
       <RootWebsocketProvider value={rootSocket}>
       <Grid container>
@@ -83,4 +99,5 @@ function App() {
       </RootWebsocketProvider>
   )
 }
+
 export default App;

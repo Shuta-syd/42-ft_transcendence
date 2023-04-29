@@ -10,6 +10,7 @@ import { FtStrategy } from './strategy/ft.strategy';
 import { Jwt2FaStrategy } from './strategy/jwt-2fa.strategy';
 import { UserModule } from 'src/user/user.module';
 import { UserService } from 'src/user/user.service';
+import { JwtRefreshStrategy } from './strategy/jwt-refresh.strategy';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { UserService } from 'src/user/user.service';
     JwtStrategy,
     FtStrategy,
     Jwt2FaStrategy,
+    JwtRefreshStrategy,
     UserService,
   ],
 })

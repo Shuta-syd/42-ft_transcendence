@@ -11,6 +11,7 @@ import NotificationButton from '../../components/profile/NotificationButton';
 import MatchListButton from '../../components/profile/MatchListButton';
 import FriendListButton from '../../components/profile/FriendListButton';
 import EditEmail from '../../components/profile/EditEmail';
+import TwoFactorButton from '../../components/profile/TwoFactorButton';
 
 const MyProfile = () => {
   const [user, setUser] = useState<User>();
@@ -198,6 +199,7 @@ const MyProfile = () => {
           }}
         >
           <EditEmail />
+          <TwoFactorButton/>
         </Grid>
         <Grid
           item
