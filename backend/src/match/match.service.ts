@@ -17,16 +17,6 @@ export class MatchService {
     });
   }
 
-  /* 特定のMatchのresultに対してのgetterもいずれ用意する */
-  // async getMatch(matchId: string): Promise<Match | null> {
-  //   return this.prisma.match
-  //       .findUnique({
-  //     where: {
-  //       id: parseInt(matchId),
-  //     },
-  //   });
-  // }
-
   async getAllMatches(): Promise<Match[] | null> {
     return await this.prisma.match.findMany({});
   }

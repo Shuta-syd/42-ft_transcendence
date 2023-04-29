@@ -27,9 +27,13 @@ const MyProfile = () => {
   const MatchPromises = useQueryMatches();
   useEffect(() => {
     MatchPromises.then((matches: Match[]) => {
+      console.log(
+        'matchArr',
+        matchArr.map((match) => match.id),
+      );
       setMatches(matches);
       // setWinnerId(matches[matches.length - 1].winner_id);
-    });
+    }).then(() => {});
   }, []);
 
   interface MatchListProps {
@@ -103,7 +107,9 @@ const MyProfile = () => {
         base64 = reader.result as string;
 
         try {
-          await axios.post('http://localhost:8080/user/add/image',{ image: base64 });
+          await axios.post('http://localhost:8080/user/add/image', {
+            image: base64,
+          });
           setProfileImage(base64);
         } catch (error) {
           console.error(error);
@@ -136,8 +142,6 @@ const MyProfile = () => {
       setFriends(data);
     });
   }, []);
-
-  /** ************************* */
 
   return (
     <div
@@ -199,7 +203,7 @@ const MyProfile = () => {
           }}
         >
           <EditEmail />
-          <TwoFactorButton/>
+          <TwoFactorButton />
         </Grid>
         <Grid
           item
@@ -215,7 +219,7 @@ const MyProfile = () => {
           <ShowAchievement matches={matchArr} />
         </Grid>
         <Grid container direction={'row'}>
-          <MatchListButton />
+          <MatchListButton matches={matchArr} />
           <FriendListButton friends={friends} />
         </Grid>
       </Grid>
