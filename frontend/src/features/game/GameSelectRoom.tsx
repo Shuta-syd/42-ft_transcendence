@@ -55,7 +55,7 @@ const GameSelectRoom = () => {
       }}
     >
       <h2>
-        <h1>[Room List]</h1>
+        <h4>[Room List]</h4>
       </h2>
       <Grid
         container
@@ -68,9 +68,9 @@ const GameSelectRoom = () => {
         <h1>
           {GameRoomArr.map((game) => (
             <div key={game.id}>
-              <h2>
+              <h4>
                 [{game.id}] {game.player1} vs {game.player2}
-              </h2>
+              </h4>
             </div>
           ))}
           <div>
@@ -78,7 +78,7 @@ const GameSelectRoom = () => {
               type="text"
               style={{
                 borderRadius: '100px',
-                fontSize: '3rem',
+                fontSize: '2rem',
               }}
               value={tmpNumber}
               onChange={handleInputChange}
@@ -87,7 +87,7 @@ const GameSelectRoom = () => {
               onClick={handleButtonClick}
               style={{
                 borderRadius: '100px',
-                fontSize: '3rem',
+                fontSize: '2rem',
               }}
             >
               enter

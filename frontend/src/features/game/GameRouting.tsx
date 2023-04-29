@@ -24,7 +24,7 @@ const GameRouting = () => {
     case 'select_room':
       return <GameSelectRoom />;
     case 'game_room':
-      return <CreateGameRoom socket={socket} />;
+      return <CreateGameRoom />;
     case 'invite_room':
       return <InviteRoom socket={socket} />;
     case 'join_invited_room':
