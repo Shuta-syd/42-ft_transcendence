@@ -16,9 +16,16 @@ export class AuthDto {
   @IsNotEmpty()
   password: string;
 }
-export class OtpCodeDao {
-  @IsNumberString()
+export class OtpCodeDto {
   otpcode: string;
+}
+
+export class OtpLoginDto {
+  otpcode: string;
+  @IsEmail()
+  email: string;
+  @IsNotEmpty()
+  password: string;
 }
 
 export class SignUpUserDto {

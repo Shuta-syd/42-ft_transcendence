@@ -18,7 +18,6 @@ export default function TwoFactorDialog(props: TwoFactorDialogProps) {
   const [otpcode, setOtpcode] = useState('');
   const [loading, setLoading] = useState(true);
   const [loadingConfirm, setLoadingConfirm] = useState(false);
-  const [isAuth, setIsAuth] = useState(false);
 
   const get2faQRCode = async () => {
     try {
@@ -50,18 +49,14 @@ export default function TwoFactorDialog(props: TwoFactorDialogProps) {
       setLoadingConfirm(true);
       await axios.patch('http://localhost:8080/auth/otp/on');
       await axios.post('http://localhost:8080/auth/otp/validation', { otpcode });
-      setIsAuth(true);
     } catch (error) {
       alert('ワンタイムパスワードが間違っています');
     } finally {
       setTimeout(() => {
         setLoadingConfirm(false);
+        window.location.href = 'http://localhost:3000/user';
       }, 500);
     }
-  }
-
-  if (isAuth) {
-    return <Navigate to={"/user"} replace />;
   }
 
   return (
