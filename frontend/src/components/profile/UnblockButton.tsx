@@ -16,6 +16,12 @@ const UnblockButton = (props: UnblockButtonProps) => {
       .then(() => console.log('unblock success!'))
       .catch((err) => {
         console.log('unblock error!', err);
+      })
+      .catch((error) => {
+        console.error(error);
+        alert(
+          `アンブロック中にエラーが発生しました: ${(error as Error).message}`,
+        );
       });
   };
 

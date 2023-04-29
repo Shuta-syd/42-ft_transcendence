@@ -22,15 +22,24 @@ const ProfileRouting = () => {
   /* nonLogin userの情報 */
   useEffect(() => {
     const fetchNonLoginUser = async (nm: string | undefined) => {
-      const { data } = await axios.get<User>(
-        `http://localhost:8080/user/name`,
-        {
-          params: {
-            name: nm,
+      try {
+        const { data } = await axios.get<User>(
+          `http://localhost:8080/user/name`,
+          {
+            params: {
+              name: nm,
+            },
           },
-        },
-      );
-      setNonLoginUser(data);
+        );
+        setNonLoginUser(data);
+      } catch (error) {
+        console.error(error);
+        alert(
+          `ユーザー情報の取得中にエラーが発生しました: ${
+            (error as Error).message
+          }`,
+        );
+      }
     };
     if (name) {
       fetchNonLoginUser(name);

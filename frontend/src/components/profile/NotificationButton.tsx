@@ -22,27 +22,42 @@ const NotificationButton = () => {
 
   useEffect(() => {
     /* requestしてきたpeopleをfetch */
-    const reqPeople = axios.get<string[]>(
-      `http://localhost:8080/user/friendReq`,
-    );
-    reqPeople.then((res) => {
-      setFriendIds(res.data);
-      setNbNotification(res.data.length);
-    });
+    axios
+      .get<string[]>(`http://localhost:8080/user/friendReq`)
+      .then((res) => {
+        setFriendIds(res.data);
+        setNbNotification(res.data.length);
+      })
+      .catch((error) => {
+        console.error(error);
+        alert(
+          `フレンドリクエストの取得中にエラーが発生しました: ${
+            (error as Error).message
+          }`,
+        );
+      });
   }, []);
 
   useEffect(() => {
     // friendIdsに応じたidからuserを取得して、friendsに格納していく
     friendIds.forEach((id) => {
-      const friend = axios.get<User>(`http://localhost:8080/user/other`, {
-        params: {
-          id,
-        },
-      });
-      console.log(friend);
-      friend.then((res) => {
-        setFriends((prev) => [...prev, res.data]);
-      });
+      axios
+        .get<User>(`http://localhost:8080/user/other`, {
+          params: {
+            id,
+          },
+        })
+        .then((res) => {
+          setFriends((prev) => [...prev, res.data]);
+        })
+        .catch((error) => {
+          console.error(error);
+          alert(
+            `ユーザー情報の取得中にエラーが発生しました: ${
+              (error as Error).message
+            }`,
+          );
+        });
     });
   }, [friendIds]);
 

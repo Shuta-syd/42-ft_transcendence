@@ -26,7 +26,15 @@ const FriendRequestButton = (props: FriendRequestButtonProps) => {
         (err) => {
           console.log('error!', err);
         },
-      );
+      )
+      .catch((error) => {
+        console.error(error);
+        alert(
+          `フレンドリクエストの送信中にエラーが発生しました: ${
+            (error as Error).message
+          }`,
+        );
+      });
   };
 
   return (

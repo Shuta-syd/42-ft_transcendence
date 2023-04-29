@@ -82,7 +82,14 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
       .then((res) => {
         setIsBlockingUser(res.data);
       })
-      .catch((err) => {});
+      .catch((error) => {
+        console.error(error);
+        alert(
+          `ブロック状態の確認中にエラーが発生しました: ${
+            (error as Error).message
+          }`,
+        );
+      });
   }, [user]);
 
   /** ************************* */
