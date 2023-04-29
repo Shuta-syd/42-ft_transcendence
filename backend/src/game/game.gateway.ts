@@ -15,6 +15,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { MatchService } from 'src/match/match.service';
+import axios from 'axios';
 
 type ChatRecieved = {
   uname: string;
@@ -104,7 +105,7 @@ export class GameGateway {
     if (roomId === undefined) {
       roomId = NameToInviteRoomIdDic[payload.name];
     }
-    this.server.to(roomId).emit('in_game_status_check', payload, client.id);
+    this.server.to(roomId).emit('GameToClient', payload, client.id);
   }
   @SubscribeMessage('BallPosToServer')
   ReceiveBallPosInfo(
@@ -231,6 +232,9 @@ export class GameGateway {
       },
     });
     if (!user) return;
+    await axios.post('http://localhost:8080/game/status/off', { userId });
+
+    if (user == null) return;
 
     const isExitPlayer1 = await this.prismaService.game.findFirst({
       where: {
@@ -238,7 +242,10 @@ export class GameGateway {
       },
     });
     try {
-      if (isExitPlayer1.player2 !== null) {
+      if (
+        !isExitPlayer1.player2.includes('player2') &&
+        isExitPlayer1.player1 === user.name
+      ) {
         await this.matchService.createMatch({
           player1: user.name,
           player2: isExitPlayer1.player2,
@@ -259,7 +266,7 @@ export class GameGateway {
       },
     });
     try {
-      if (isExitPlayer1.player2 !== null) {
+      if (isExitPlayer1.player1 !== null) {
         await this.matchService.createMatch({
           player1: isExitPlayer2.player1,
           player2: user.name,

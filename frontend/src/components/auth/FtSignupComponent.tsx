@@ -11,6 +11,7 @@ import TwoFactorSettingComponent from "./TwoFactorSettingComponent";
 import SignupStepper from "./SignupStepper";
 import FtUserProfileFormComponent from "./FtUserProfileFormComponent";
 import { RootWebsocketContext } from "../../contexts/WebsocketContext";
+import FtSignupValidationSchema from "../../types/auth/FtSignupValidationSchema";
 
 type FtSignUpData = {
   username: string;
@@ -18,7 +19,6 @@ type FtSignUpData = {
 }
 
 export default function FtSignupComponent() {
-  const router = useNavigate();
   const rootSocket: Socket = useContext(RootWebsocketContext);
   const [activeStep, setActiveStep] = useState(0);
   const [Loading, setLoading] = useState(true);
@@ -26,12 +26,14 @@ export default function FtSignupComponent() {
   const [email, setEmail] = useState('');
   const { control, handleSubmit, reset, setValue ,formState: { errors, isValid } } = useForm<FtSignUpData>({
     mode: 'all',
-    defaultValues: { username: '', image: ''},
+    defaultValues: { username: '', image: '' },
+    resolver: yupResolver(FtSignupValidationSchema)
   });
 
   const onSubmit: SubmitHandler<FtSignUpData> = async (data: any) => {
     let isLogin: Boolean = false;
     try {
+      rootSocket.disconnect();
       await axios.patch('http://localhost:8080/auth/update/42', {
           name: data.username,
           image: data.image,
@@ -39,6 +41,7 @@ export default function FtSignupComponent() {
       reset();
       setActiveStep(2);
       isLogin = true;
+      rootSocket.connect();
     } catch (error) {
       alert('ユーザ情報更新に失敗しました。ブラウザをリフレッシュしてもう一度お願いします');
       setActiveStep(0);

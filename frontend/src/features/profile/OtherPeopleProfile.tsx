@@ -8,7 +8,6 @@ import UnfriendButton from '../../components/profile/UnfriendButton';
 import BlockButton from '../../components/profile/BlockButton';
 import UnblockButton from '../../components/profile/UnblockButton';
 import OtherUserAvatar from '../../components/profile/OtherUserAvatar';
-import FriendListButton from '../../components/profile/FriendListButton';
 import useQueryMatches from '../../hooks/match/useWueryMatch';
 import MatchListButton from '../../components/profile/MatchListButton';
 
@@ -48,6 +47,7 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
 
   /** ************************* */
   // [get my friends part]
+  // eslint-disable-next-line no-unused-vars
   const [friends, setFriends] = useState<User[]>([]);
   const getFriends = async () => {
     const { data } = await axios.get<User[]>(
@@ -205,7 +205,6 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
             justifyContent: 'center',
           }}
         >
-          <FriendListButton friends={friends} />
         </Grid>
       </Grid>
     </div>

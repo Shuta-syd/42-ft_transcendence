@@ -265,7 +265,6 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
   }
 
   useEffect(() => {
-    console.log('test');
     socket.emit('JoinRoom', user.name);
     socket.emit('Ping', user.name);
     rootSocket.emit('in_game_status_check');
@@ -314,6 +313,10 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
 
   socket.on('GameToClient', (leftPaddley: PaddleAndRoom, socketid: string) => {
     if (socket.id !== socketid) leftPaddle.y = leftPaddley.paddleHeight;
+  });
+
+  socket.on('GameOut', () => {
+    rootSocket.emit('in_game_status_delete');
   });
 
   socket.on('Pong', (name: string, socketid: string) => {

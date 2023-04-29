@@ -113,7 +113,9 @@ export class AuthController {
     });
 
     if (req.user.Ftlogined && !req.user.isTwoFactorEnabled)
-      res.redirect('http://localhost:3000/user'); // 2faオンの時は下
+      res.redirect('http://localhost:3000/user');
+    else if (req.user.Ftlogined && req.user.isTwoFactorEnabled)
+      res.redirect('http://localhost:3000/login/42');
     else res.redirect('http://localhost:3000/signup/42');
   }
 
