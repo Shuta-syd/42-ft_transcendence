@@ -9,6 +9,7 @@ const InviteRoom = (props: { socket: Socket }) => {
   const { socket } = props;
   const [user, setUser] = useState<User>();
   const [roomId, setRoomId] = useState<string | undefined>(undefined);
+  const [copySuccess, setCopySuccess] = useState(false); // Add this line
 
   const gamePromisesRef = useRef<Promise<InviteGame>>();
   const userPromise = useGameUser();
@@ -26,11 +27,10 @@ const InviteRoom = (props: { socket: Socket }) => {
     });
   }, [user]);
 
-  // const [text, setText] = useState("");
-
   function handleCopy() {
     if (roomId) {
       navigator.clipboard.writeText(roomId);
+      setCopySuccess(true); // Add this line
     }
   }
 
@@ -50,7 +50,7 @@ const InviteRoom = (props: { socket: Socket }) => {
         backgroundSize: 'cover',
       }}
     >
-      <h1>[Host Room!!]</h1>
+      <h1>[Host Room]</h1>
       <Grid
         container
         justifyContent="center"
@@ -60,35 +60,34 @@ const InviteRoom = (props: { socket: Socket }) => {
         fontSize="h4.fontSize"
         direction="column"
       >
-        <h2>You are {user?.name}!!!</h2>
-        <h2>Invite Id is {roomId}!!!</h2>
         <p></p>
         <button
           style={{
             borderRadius: '100px',
-            fontSize: '4rem',
+            fontSize: '2rem',
           }}
           onClick={handleCopy}
         >
           Copy ID👍
         </button>
+        {copySuccess && <p>Copy success</p>} {/* Add this line */}
         <p></p>
         <div>
-          <h1>
+          <h5>
             Your Room 👉
             <Link style={{}} to={'/game/player1'}>
               lets go!!
             </Link>
             <p></p>
-          </h1>
+          </h5>
         </div>
         <button
           style={{
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            height: '80px',
-            width: '100px',
+            height: '50px',
+            width: '50px',
             fontSize: '20px',
             color: 'green',
           }}
