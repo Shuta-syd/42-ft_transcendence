@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Grid } from '@mui/material';
 import axios from 'axios';
-import { User } from '../../types/PrismaType';
+import { Match, User } from '../../types/PrismaType';
 import FriendRequestButton from '../../components/profile/FriendRequestButton';
 import { fetchProfileUser } from '../../hooks/profile/useProfileUser';
 import UnfriendButton from '../../components/profile/UnfriendButton';
 import BlockButton from '../../components/profile/BlockButton';
 import UnblockButton from '../../components/profile/UnblockButton';
 import OtherUserAvatar from '../../components/profile/OtherUserAvatar';
+import FriendListButton from '../../components/profile/FriendListButton';
+import useQueryMatches from '../../hooks/match/useWueryMatch';
+import MatchListButton from '../../components/profile/MatchListButton';
 
 interface OtherPeopleProfileProps {
   other: User | undefined;
@@ -24,17 +27,27 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
     });
   }, []);
 
+  const [matchArr, setMatches] = useState<Match[]>([]);
+  const MatchPromises = useQueryMatches();
+  useEffect(() => {
+    MatchPromises.then((matches: Match[]) => {
+      const myMatches = matches.filter(
+        (match) =>
+          match.player1 === props.other?.name ||
+          match.player2 === props.other?.name,
+      );
+      setMatches(myMatches);
+    }).then(() => {});
+  }, [user]);
+
   /** ************************* */
   // [check the relationship between me and other people]
   // friend state 3 pattern
   const [isFriend, setIsFriend] = useState(false);
   const [isBlockingUser, setIsBlockingUser] = useState(false);
-  // friendでもblockしているuserでもなければ、どちらでも無いという判断ができる
 
   /** ************************* */
-  /** ************************* */
   // [get my friends part]
-  // eslint-disable-next-line no-unused-vars
   const [friends, setFriends] = useState<User[]>([]);
   const getFriends = async () => {
     const { data } = await axios.get<User[]>(
@@ -62,7 +75,6 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
       }
     });
 
-
     /** ************************* */
     // [check the relationship between me and other people]
     axios
@@ -70,8 +82,7 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
       .then((res) => {
         setIsBlockingUser(res.data);
       })
-      .catch((err) => {
-      });
+      .catch((err) => {});
   }, [user]);
 
   /** ************************* */
@@ -99,7 +110,10 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
           [{props.other?.name} Profile]
         </Grid>
         <Grid item xs={5}>
-          <OtherUserAvatar user={props.other} profileImage={props.other?.image} />
+          <OtherUserAvatar
+            user={props.other}
+            profileImage={props.other?.image}
+          />
         </Grid>
         {!isFriend && !isBlockingUser && (
           <Grid
@@ -161,7 +175,30 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
             alignItems: 'center',
             justifyContent: 'center',
           }}
+        ></Grid>
+      </Grid>
+      <Grid container direction="row">
+        <Grid
+          item
+          xs={6}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
         >
+          <MatchListButton matches={matchArr} />
+        </Grid>
+        <Grid
+          item
+          xs={6}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <FriendListButton friends={friends} />
         </Grid>
       </Grid>
     </div>
