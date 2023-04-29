@@ -172,6 +172,12 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
       secret: this.configService.get('JWT_SECRET'),
     });
     this.userIdToStatus.set(userId, Status.ONLINE);
-    this.logger.log(`[App] ${userId} is in game`);
+    this.logger.log(`[App] ${userId} is out game`);
+  }
+
+  @SubscribeMessage('in_gaem_status_off')
+  async inGameStatusOff(userId: string) {
+    this.userIdToStatus.set(userId, Status.ONLINE);
+    this.logger.log(`[App] ${userId} is out game`);
   }
 }

@@ -15,6 +15,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { MatchService } from 'src/match/match.service';
+import axios from 'axios';
 
 type ChatRecieved = {
   uname: string;
@@ -231,6 +232,7 @@ export class GameGateway {
       },
     });
     if (!user) return;
+    await axios.post('http://localhost:8080/game/status/off', { userId });
 
     if (user == null) return;
 
@@ -241,7 +243,7 @@ export class GameGateway {
     });
     try {
       if (
-        isExitPlayer1.player2 !== 'player2' &&
+        !isExitPlayer1.player2.includes('player2') &&
         isExitPlayer1.player1 === user.name
       ) {
         await this.matchService.createMatch({

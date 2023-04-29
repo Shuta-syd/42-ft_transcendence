@@ -315,6 +315,10 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
     if (socket.id !== socketid) leftPaddle.y = leftPaddley.paddleHeight;
   });
 
+  socket.on('GameOut', () => {
+    rootSocket.emit('in_game_status_delete');
+  });
+
   socket.on('Pong', (name: string, socketid: string) => {
     isRecievePong = true;
     p2name = name;

@@ -37,7 +37,7 @@ export class GameService {
       const game = this.prisma.game.create({
         data: {
           player1: playerName,
-          player2: 'player2',
+          player2: 'player2_' + player2Count.toString(),
         },
       });
       player2Count++;

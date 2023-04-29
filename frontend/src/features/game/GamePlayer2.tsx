@@ -256,6 +256,10 @@ const GamePlayer2 = (props: { socket: Socket, user: User }) => {
     rightScore = Score.player2;
   });
 
+  socket.on('GameOut', () => {
+    rootSocket.emit('in_game_status_delete');
+  });
+
   return (
     <div
       style={{
