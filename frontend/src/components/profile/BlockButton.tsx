@@ -17,6 +17,10 @@ const BlockButton = (props: BlockButtonProps) => {
       })
       .catch((err) => {
         console.log('block error!', err);
+      })
+      .catch((error) => {
+        console.error(error);
+        alert(`ブロック中にエラーが発生しました: ${(error as Error).message}`);
       });
   };
   return (
