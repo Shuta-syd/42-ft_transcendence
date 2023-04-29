@@ -15,7 +15,7 @@ export const NameToInviteRoomIdDic: NameToInviteRoomIdDic = {};
 
 @Injectable()
 export class GameService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
   async handleAssignPlayerReq(playerName: string): Promise<Game> {
     const isPlayer2Unique = await this.prisma.game.findFirst({
       where: {
