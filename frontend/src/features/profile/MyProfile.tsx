@@ -108,8 +108,15 @@ const MyProfile = () => {
             image: base64,
           });
           setProfileImage(base64);
+          return undefined;
         } catch (error) {
           console.error(error);
+          alert(
+            `画像のアップロード中にエラーが発生しました: ${
+              (error as Error).message
+            }`,
+          );
+          return undefined;
         }
       };
     }
@@ -127,16 +134,26 @@ const MyProfile = () => {
   // [get my friends part]
   const [friends, setFriends] = useState<User[]>([]);
   const getFriends = async () => {
-    const { data } = await axios.get<User[]>(
-      `http://localhost:8080/user/friend`,
-    );
-    return data;
+    try {
+      const { data } = await axios.get<User[]>(
+        `http://localhost:8080/user/friend`,
+      );
+      return data;
+    } catch (error) {
+      console.error(error);
+      alert(
+        `フレンドの取得中にエラーが発生しました: ${(error as Error).message}`,
+      );
+      return undefined;
+    }
   };
 
   useEffect(() => {
     const friendsPromise = getFriends();
     friendsPromise.then((data) => {
-      setFriends(data);
+      if (data) {
+        setFriends(data);
+      }
     });
   }, []);
 
