@@ -18,6 +18,7 @@ import { RootWebsocketProvider } from "./contexts/WebsocketContext";
 import MyProfile from "./features/profile/MyProfile";
 import GameRouting from "./features/game/GameRouting"
 import Page404 from "./utils/Page404";
+import FtTwoFactorLogin from "./components/auth/FtTwoFactorLogin";
 
 function App() {
   axios.defaults.withCredentials = true;
@@ -48,7 +49,7 @@ function App() {
             <Route path="/login" element={<Auth type={'login'} />} />
             <Route path="/signup" element={<Auth type={'signup'} />} />
             <Route path="/signup/42" element={<Auth type={'signup/42'} />} />
-            {/* <Route path="/login/42" element={<Auth type={'signup/42'} />} /> */}
+            <Route path="/login/42" element={<FtTwoFactorLogin />} />
             <Route
               path="/chat"
               element={
