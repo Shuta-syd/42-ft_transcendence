@@ -25,16 +25,20 @@ const MyProfile = () => {
   const [matchArr, setMatches] = useState<Match[]>([]);
   // const [winnerId] = useState<string>('');
   const MatchPromises = useQueryMatches();
+  // useEffect(() => {
+  //   MatchPromises.then((matches: Match[]) => {
+  //     setMatches(matches);
+  // setWinnerId(matches[matches.length - 1].winner_id);
+  // }).then(() => {});
+  // }, []);
   useEffect(() => {
     MatchPromises.then((matches: Match[]) => {
-      console.log(
-        'matchArr',
-        matchArr.map((match) => match.id),
+      const myMatches = matches.filter(
+        (match) => match.player1 === user?.name || match.player2 === user?.name,
       );
-      setMatches(matches);
-      // setWinnerId(matches[matches.length - 1].winner_id);
+      setMatches(myMatches);
     }).then(() => {});
-  }, []);
+  }, [user]);
 
   interface MatchListProps {
     matches: Match[];
