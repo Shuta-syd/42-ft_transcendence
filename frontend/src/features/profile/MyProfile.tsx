@@ -23,14 +23,7 @@ const MyProfile = () => {
   }, []);
 
   const [matchArr, setMatches] = useState<Match[]>([]);
-  // const [winnerId] = useState<string>('');
   const MatchPromises = useQueryMatches();
-  // useEffect(() => {
-  //   MatchPromises.then((matches: Match[]) => {
-  //     setMatches(matches);
-  // setWinnerId(matches[matches.length - 1].winner_id);
-  // }).then(() => {});
-  // }, []);
   useEffect(() => {
     MatchPromises.then((matches: Match[]) => {
       const myMatches = matches.filter(
