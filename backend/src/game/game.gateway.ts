@@ -230,6 +230,7 @@ export class GameGateway {
         id: userId,
       },
     });
+    if (!user) return;
 
     const isExitPlayer1 = await this.prismaService.game.findFirst({
       where: {
