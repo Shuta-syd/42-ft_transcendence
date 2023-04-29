@@ -15,6 +15,7 @@ model User {
   password           String
   twoFactorSecret    String?
   isTwoFactorEnabled Boolean             @default(false)
+  hashedRefreshToken String?
   image              String
   isFtLogin          Boolean             @default(false)
   Ftlogined         Boolean?
