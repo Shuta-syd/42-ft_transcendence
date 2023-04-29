@@ -32,7 +32,9 @@ const OtherPeopleProfile = (props: OtherPeopleProfileProps) => {
   useEffect(() => {
     MatchPromises.then((matches: Match[]) => {
       const myMatches = matches.filter(
-        (match) => match.player1 === user?.name || match.player2 === user?.name,
+        (match) =>
+          match.player1 === props.other?.name ||
+          match.player2 === props.other?.name,
       );
       setMatches(myMatches);
     }).then(() => {});
