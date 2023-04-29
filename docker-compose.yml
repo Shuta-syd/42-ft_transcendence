@@ -4,10 +4,10 @@ services:
   frontend:
     container_name: frontend
     build:
-      context: ./docker
-      dockerfile: frontend.Dockerfile
-    volumes:
-      - ./frontend:/frontend
+      context: ./
+      dockerfile: ./docker/frontend.Dockerfile
+      # volumes:
+      # - ./frontend:/frontend
     ports:
       - 3000:3000
 
