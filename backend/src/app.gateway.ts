@@ -80,7 +80,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async userOnlineStatusCheck(@ConnectedSocket() client: Socket) {
     const cookie = client.handshake.headers.cookie;
     if (cookie === undefined) throw new WsException('unAuthorized');
-    const accessToken = cookie.split('=')[1];
+    const accessToken = cookie.split('=')[1].split(';')[0];
     if (accessToken === '') throw new WsException('unAuthorized');
     const { sub: userId } = await this.jwtService.verify(accessToken, {
       secret: this.configService.get('JWT_SECRET'),
@@ -98,7 +98,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async friendOnlineStatusCheck(@ConnectedSocket() client: Socket) {
     const cookie = client.handshake.headers.cookie;
     if (cookie === undefined) throw new WsException('unAuthorized');
-    const accessToken = cookie.split('=')[1];
+    const accessToken = cookie.split('=')[1].split(';')[0];
     if (accessToken === '') throw new WsException('unAuthorized');
     const { sub: userId } = await this.jwtService.verify(accessToken, {
       secret: this.configService.get('JWT_SECRET'),
@@ -135,7 +135,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   async onlineStatusDelete(@ConnectedSocket() client: Socket) {
     const cookie = client.handshake.headers.cookie;
     if (cookie === undefined) return;
-    const accessToken = cookie.split('=')[1];
+    const accessToken = cookie.split('=')[1].split(';')[0];
     if (accessToken === '') throw new WsException('unAuthorized');
     const { sub: userId } = await this.jwtService.verify(accessToken, {
       secret: this.configService.get('JWT_SECRET'),

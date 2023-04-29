@@ -61,7 +61,7 @@ const JoinInvitedRoom = (props: { socket: Socket }) => {
       }}
     >
       <div>
-        <h1>[Guest Room!!]</h1>
+        <h1>[Guest Room]</h1>
         <Grid
           container
           justifyContent="center"
@@ -74,7 +74,7 @@ const JoinInvitedRoom = (props: { socket: Socket }) => {
           <Grid item mr={11} spacing={13}>
             <h2
               style={{
-                fontSize: '4rem',
+                fontSize: '2rem',
               }}
             >
               Please enter your Invite ID😄
@@ -87,7 +87,7 @@ const JoinInvitedRoom = (props: { socket: Socket }) => {
               type="text"
               style={{
                 borderRadius: '100px',
-                fontSize: '4rem',
+                fontSize: '2rem',
               }}
               value={tmpNumber}
               onChange={handleInputChange}
@@ -96,7 +96,7 @@ const JoinInvitedRoom = (props: { socket: Socket }) => {
               onClick={handleButtonClick}
               style={{
                 borderRadius: '100px',
-                fontSize: '4rem',
+                fontSize: '2rem',
               }}
             >
               enter
@@ -152,8 +152,8 @@ const JoinInvitedRoom = (props: { socket: Socket }) => {
                   display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  height: '80px',
-                  width: '100px',
+                  height: '50px',
+                  width: '50px',
                   fontSize: '20px',
                   color: 'green',
                 }}
