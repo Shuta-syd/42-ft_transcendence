@@ -6,6 +6,15 @@ $(NAME):
 	@printf "ft_transcendence Project Started!!!\n"
 	docker compose up -d
 
+run:
+	docker-compose up --build -d
+
+debug:
+	docker-compose up --build
+
+up:
+	docker-compose up -d
+
 clean:
 	docker compose down
 
