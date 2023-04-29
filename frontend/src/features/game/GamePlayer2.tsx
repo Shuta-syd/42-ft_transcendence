@@ -200,7 +200,7 @@ const GamePlayer2 = (props: { socket: Socket, user: User }) => {
   useEffect(() => {
     socket.emit('JoinRoom', user.name);
     rootSocket.emit('in_game_status_check');
-  }, [])
+  }, [rootSocket])
 
   useEffect(() => {
     const handleKeyUp = (): void => {

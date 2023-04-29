@@ -104,7 +104,7 @@ export class GameGateway {
     if (roomId === undefined) {
       roomId = NameToInviteRoomIdDic[payload.name];
     }
-    this.server.to(roomId).emit('in_game_status_check', payload, client.id);
+    this.server.to(roomId).emit('GameToClient', payload, client.id);
   }
   @SubscribeMessage('BallPosToServer')
   ReceiveBallPosInfo(

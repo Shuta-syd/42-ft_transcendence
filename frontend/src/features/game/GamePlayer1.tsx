@@ -265,7 +265,6 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
   }
 
   useEffect(() => {
-    console.log('test');
     socket.emit('JoinRoom', user.name);
     socket.emit('Ping', user.name);
     rootSocket.emit('in_game_status_check');
