@@ -45,6 +45,13 @@ type TerminateGame = {
   roomId: string;
 };
 
+export type SocketClient = {
+  name: string;
+  socketId: string;
+};
+
+let SocketClients: SocketClient[] = [];
+
 @WebSocketGateway({
   cors: {
     origin: ['http://localhost:3000'],
@@ -121,6 +128,8 @@ export class GameGateway {
     this.rooms[roomId].push(socket.id);
     // ルームの参加者リストをルームの全員に送信します
     this.server.to(roomId).emit(roomId, this.rooms[roomId]);
+    //すでにnameが存在している場合にはその内容を苦心する仕様を追加する必要あり。
+    SocketClients.push({ name: payload, socketId: socket.id });
   }
 
   // ユーザーがルームから離脱するためのイベントを定義します
@@ -191,6 +200,7 @@ export class GameGateway {
       return;
     }
     this.gameService.terminateGame(dto);
+    delete SocketClients[SocketClients.findIndex((e) => e.name === name)];
   }
 
   // 接続が切断されたときの処理
@@ -201,6 +211,23 @@ export class GameGateway {
       this.rooms[room] = this.rooms[room].filter((id) => id !== socket.id);
       // ルームの参加者リストをルームの全員に送信します
       this.server.to(room).emit('update room', this.rooms[room]);
+      if (
+        socket.id ===
+        SocketClients.find((client) => client.socketId === socket.id)?.socketId
+      ) {
+        //このuserを負けにする処理
+        console.log('負けにする処理');
+        console.log(
+          'client name: ' +
+            SocketClients.find((client) => client.socketId === socket.id)?.name,
+        );
+        console.log('client id: ', socket.id);
+
+        //
+        SocketClients = SocketClients.filter(
+          (client) => client.socketId !== socket.id,
+        );
+      }
     });
   }
 
