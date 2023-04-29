@@ -231,6 +231,8 @@ export class GameGateway {
       },
     });
 
+    if (user == null) return;
+
     const isExitPlayer1 = await this.prismaService.game.findFirst({
       where: {
         player1: user.name,
