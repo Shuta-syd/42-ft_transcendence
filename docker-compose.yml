@@ -14,10 +14,10 @@ services:
   backend:
     container_name: backend
     build:
-      context: ./docker
-      dockerfile: backend.Dockerfile
-    volumes:
-      - ./backend:/backend
+      context: ./
+      dockerfile: ./docker/backend.Dockerfile
+      # volumes:
+      # - ./backend:/backend
     env_file:
       - ./backend/.env
     depends_on:
