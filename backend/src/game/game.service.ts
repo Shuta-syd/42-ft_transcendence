@@ -2,7 +2,6 @@ import { Injectable, ParseIntPipe } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Game, Match, InviteGame } from '@prisma/client';
 import { assignGuestDto, assignObserverDto, Terminate } from './dto/game.dto';
-import { addAbortSignal } from 'stream';
 
 let playerId = 0;
 let tmpGame: Game;
@@ -17,12 +16,7 @@ export const NameToInviteRoomIdDic: NameToInviteRoomIdDic = {};
 @Injectable()
 export class GameService {
   constructor(private prisma: PrismaService) {}
-  async handleAssignPlayerReq(
-    assignPlayerReqDto: string,
-  ): Promise<Game | null> {
-    const jsonString = JSON.stringify(assignPlayerReqDto);
-    const tmp = JSON.parse(jsonString);
-    const playerName = tmp.playerName;
+  async handleAssignPlayerReq(playerName: string): Promise<Game> {
     const isPlayer2Unique = await this.prisma.game.findFirst({
       where: {
         player2: playerName,
@@ -51,10 +45,6 @@ export class GameService {
       tmpGame = await game;
       game.then((Gamedto: Game) => {
         NameToRoomIdDic[playerName.toString()] = Gamedto.id.toString();
-        console.log(playerName.toString());
-        console.log(Gamedto.id.toString());
-        console.log(Gamedto.id.toString());
-        console.log(NameToRoomIdDic[playerName]);
       });
       return game;
     } else {
@@ -76,10 +66,6 @@ export class GameService {
       });
       game.then((Gamedto: Game) => {
         NameToRoomIdDic[playerName.toString()] = Gamedto.id.toString();
-        console.log(playerName.toString());
-        console.log(Gamedto.id.toString());
-        console.log(Gamedto.id.toString());
-        console.log(NameToRoomIdDic[playerName]);
       });
       return game;
     }

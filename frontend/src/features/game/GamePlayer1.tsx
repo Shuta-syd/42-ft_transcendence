@@ -1,12 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import { Button, Grid } from '@mui/material';
 import axios from 'axios';
 import { Socket } from 'socket.io-client';
 import { User } from '../../types/PrismaType';
-import { useGameUser } from '../../hooks/game/useGameuser';
+import { RootWebsocketContext } from '../../contexts/WebsocketContext';
 
-const GamePlayer1 = (props: { socket: Socket }) => {
-  const { socket } = props;
+const GamePlayer1 = (props: { socket: Socket, user: User }) => {
+  const { socket, user } = props;
+  const rootSocket: Socket = useContext(RootWebsocketContext);
 
   // global variables
   let context: CanvasRenderingContext2D | null;
@@ -222,7 +223,9 @@ const GamePlayer1 = (props: { socket: Socket }) => {
       };
       axios
         .post('http://localhost:8080/match', matchData)
-        .catch((error) => console.log(error));
+        .catch(
+          (error) => alert('エラーが起きました。ページをリロードしてください。')
+        );
       context.fillStyle = 'blue';
       context.font = "bold 50px 'ＭＳ 明朝'";
       context.fillText('You Lose!', 360, 300);
@@ -231,7 +234,9 @@ const GamePlayer1 = (props: { socket: Socket }) => {
       socket.emit('TerminateGame', user.name);
       if (window.location.pathname === '/game/player1') {
         setTimeout(() => {
+          rootSocket.emit('in_game_status_delete');
           window.location.href = '/game';
+          // onlineに戻るイベントを送る
         }, 3 * 1000);
       }
     } else {
@@ -242,7 +247,7 @@ const GamePlayer1 = (props: { socket: Socket }) => {
       };
       axios
         .post('http://localhost:8080/match', matchData)
-        .catch((error) => console.log(error));
+        .catch((error) => alert('エラーが起きました。ページをリロードしてください。'));
       context.fillStyle = 'red';
       context.font = "bold 50px 'ＭＳ 明朝'";
       context.fillText('You Win!', 360, 300);
@@ -251,20 +256,19 @@ const GamePlayer1 = (props: { socket: Socket }) => {
       socket.emit('TerminateGame', user.name);
       if (window.location.pathname === '/game/player1') {
         setTimeout(() => {
+          rootSocket.emit('in_game_status_delete');
           window.location.href = '/game';
+          // onlineに戻るイベントを送る
         }, 3 * 1000);
       }
     }
   }
 
-  const [user, setUser] = useState<User>();
-  const UserPromises = useGameUser();
   useEffect(() => {
-    UserPromises.then((userDto: User) => {
-      setUser(userDto);
-      socket.emit('JoinRoom', userDto?.name);
-      socket.emit('Ping', userDto?.name);
-    });
+    console.log('test');
+    socket.emit('JoinRoom', user.name);
+    socket.emit('Ping', user.name);
+    rootSocket.emit('in_game_status_check');
   }, []);
 
   function pageReload() {
@@ -272,8 +276,8 @@ const GamePlayer1 = (props: { socket: Socket }) => {
   }
 
   const sendPing = setInterval(() => {
-    if (user?.name) {
-      socket.emit('Ping', user?.name);
+    if (user.name) {
+      socket.emit('Ping', user.name);
     }
   }, 1000);
 
@@ -301,17 +305,6 @@ const GamePlayer1 = (props: { socket: Socket }) => {
     window.addEventListener('keydown', handleKeyDown);
   }, [user]);
 
-  useEffect(() => {
-    socket.on('connect', () => {
-      console.log('接続ID : ', socket.id);
-    });
-
-    return () => {
-      console.log('切断');
-      socket.disconnect();
-    };
-  }, []);
-
   useEffect(() => {}, [rightPaddle.y]);
 
   type PaddleAndRoom = {
@@ -324,7 +317,6 @@ const GamePlayer1 = (props: { socket: Socket }) => {
   });
 
   socket.on('Pong', (name: string, socketid: string) => {
-    // console.log('recieve pong ', name, socketid);
     isRecievePong = true;
     p2name = name;
   });
