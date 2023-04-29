@@ -17,12 +17,7 @@ export const NameToInviteRoomIdDic: NameToInviteRoomIdDic = {};
 @Injectable()
 export class GameService {
   constructor(private prisma: PrismaService) {}
-  async handleAssignPlayerReq(
-    assignPlayerReqDto: string,
-  ): Promise<Game | null> {
-    const jsonString = JSON.stringify(assignPlayerReqDto);
-    const tmp = JSON.parse(jsonString);
-    const playerName = tmp.playerName;
+  async handleAssignPlayerReq(playerName: string): Promise<Game> {
     const isPlayer2Unique = await this.prisma.game.findFirst({
       where: {
         player2: playerName,
@@ -51,10 +46,6 @@ export class GameService {
       tmpGame = await game;
       game.then((Gamedto: Game) => {
         NameToRoomIdDic[playerName.toString()] = Gamedto.id.toString();
-        console.log(playerName.toString());
-        console.log(Gamedto.id.toString());
-        console.log(Gamedto.id.toString());
-        console.log(NameToRoomIdDic[playerName]);
       });
       return game;
     } else {
@@ -76,10 +67,6 @@ export class GameService {
       });
       game.then((Gamedto: Game) => {
         NameToRoomIdDic[playerName.toString()] = Gamedto.id.toString();
-        console.log(playerName.toString());
-        console.log(Gamedto.id.toString());
-        console.log(Gamedto.id.toString());
-        console.log(NameToRoomIdDic[playerName]);
       });
       return game;
     }

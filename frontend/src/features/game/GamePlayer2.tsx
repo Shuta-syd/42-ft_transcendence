@@ -238,7 +238,6 @@ const GamePlayer2 = (props: { socket: Socket }) => {
   });
 
   socket.on('Ping', (name: string, SocketId: string) => {
-    console.log(name, SocketId, 'Ping');
     socket.emit('Pong', user?.name);
   });
 

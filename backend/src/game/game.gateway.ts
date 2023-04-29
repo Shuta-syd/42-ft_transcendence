@@ -206,21 +206,21 @@ export class GameGateway {
   // 接続が切断されたときの処理
   handleDisconnect(socket: Socket) {
     this.logger.log(`[Game] Client disconnected: ${socket.id}`);
-    // ルームからユーザーを削除します // エラー
-    Object.keys(this.rooms).forEach((room) => {
-      this.rooms[room] = this.rooms[room].filter((id) => id !== socket.id);
-      // ルームの参加者リストをルームの全員に送信します
-      this.server.to(room).emit('update room', this.rooms[room]);
-      if (
-        socket.id ===
-        SocketClients.find((client) => client.socketId === socket.id)?.socketId
-      ) {
-        //このuserを負けにする処理
-        SocketClients = SocketClients.filter(
-          (client) => client.socketId !== socket.id,
-        );
-      }
-    });
+    // // ルームからユーザーを削除します // エラー
+    // Object.keys(this.rooms).forEach((room) => {
+    //   this.rooms[room] = this.rooms[room].filter((id) => id !== socket.id);
+    //   // ルームの参加者リストをルームの全員に送信します
+    //   this.server.to(room).emit('update room', this.rooms[room]);
+    //   if (
+    //     socket.id ===
+    //     SocketClients.find((client) => client.socketId === socket.id)?.socketId
+    //   ) {
+    //     //このuserを負けにする処理
+    //     SocketClients = SocketClients.filter(
+    //       (client) => client.socketId !== socket.id,
+    //     );
+    //   }
+    // });
   }
 
   afterInit(server: Server) {
