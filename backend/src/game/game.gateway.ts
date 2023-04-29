@@ -261,7 +261,7 @@ export class GameGateway {
       },
     });
     try {
-      if (isExitPlayer1.player2 !== null) {
+      if (isExitPlayer1.player1 !== null) {
         await this.matchService.createMatch({
           player1: isExitPlayer2.player1,
           player2: user.name,
