@@ -52,9 +52,9 @@ const FriendListButton = ({ friends }: FriendListButtonProps) => {
     const renderFriends = () => {
       if (friends.length === 0) {
         return (
-          <Typography variant="h5" fontWeight="bold" color="grey">
-            No friends...
-          </Typography>
+            <Typography variant="h5" fontWeight="bold" color="grey">
+              No friends...
+            </Typography>
         );
       }
 
