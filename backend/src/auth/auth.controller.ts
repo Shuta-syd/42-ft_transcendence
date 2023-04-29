@@ -104,13 +104,21 @@ export class AuthController {
   ) {
     const username = req.user.name;
     const userId = req.user.id;
-    const jwt = await this.authService.generateJwt(userId, username);
-    res.cookie('access_token', jwt.accessToken, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'lax',
-      path: '/',
-    });
+    if (!req.user.isTwoFactorEnabled) {
+      const jwt = await this.authService.generateJwt(userId, username);
+      res.cookie('access_token', jwt.accessToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax',
+        path: '/',
+      });
+      res.cookie('refresh_token', jwt.refreshToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax',
+        path: '/',
+      });
+    }
 
     if (req.user.Ftlogined && !req.user.isTwoFactorEnabled)
       res.redirect('http://localhost:3000/user');
@@ -130,6 +138,12 @@ export class AuthController {
 
     const jwt = await this.authService.generateJwt(user.id, user.name);
     res.cookie('access_token', jwt.accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
+    res.cookie('refresh_token', jwt.refreshToken, {
       httpOnly: true,
       secure: false,
       sameSite: 'lax',
@@ -238,6 +252,12 @@ export class AuthController {
       sameSite: 'lax',
       path: '/',
     });
+    res.cookie('refresh_token', jwt.refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
 
     return { message: 'One-Time-Password ON' };
   }
@@ -261,6 +281,12 @@ export class AuthController {
     const jwt = await this.authService.turnOffOtp(req.user);
 
     res.cookie('access_token', jwt.accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
+    res.cookie('refresh_token', jwt.refreshToken, {
       httpOnly: true,
       secure: false,
       sameSite: 'lax',
@@ -302,6 +328,12 @@ export class AuthController {
   ) {
     const jwt = await this.authService.LoginOtp(dto, dto.otpcode);
     res.cookie('access_token', jwt.accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
+    res.cookie('refresh_token', jwt.refreshToken, {
       httpOnly: true,
       secure: false,
       sameSite: 'lax',
