@@ -23,14 +23,15 @@ const MyProfile = () => {
   }, []);
 
   const [matchArr, setMatches] = useState<Match[]>([]);
-  // const [winnerId] = useState<string>('');
   const MatchPromises = useQueryMatches();
   useEffect(() => {
     MatchPromises.then((matches: Match[]) => {
-      setMatches(matches);
-      // setWinnerId(matches[matches.length - 1].winner_id);
-    });
-  }, []);
+      const myMatches = matches.filter(
+        (match) => match.player1 === user?.name || match.player2 === user?.name,
+      );
+      setMatches(myMatches);
+    }).then(() => {});
+  }, [user]);
 
   interface MatchListProps {
     matches: Match[];
@@ -103,7 +104,9 @@ const MyProfile = () => {
         base64 = reader.result as string;
 
         try {
-          await axios.post('http://localhost:8080/user/add/image',{ image: base64 });
+          await axios.post('http://localhost:8080/user/add/image', {
+            image: base64,
+          });
           setProfileImage(base64);
         } catch (error) {
           console.error(error);
@@ -136,8 +139,6 @@ const MyProfile = () => {
       setFriends(data);
     });
   }, []);
-
-  /** ************************* */
 
   return (
     <div
@@ -199,7 +200,7 @@ const MyProfile = () => {
           }}
         >
           <EditEmail />
-          <TwoFactorButton/>
+          <TwoFactorButton />
         </Grid>
         <Grid
           item
@@ -215,7 +216,7 @@ const MyProfile = () => {
           <ShowAchievement matches={matchArr} />
         </Grid>
         <Grid container direction={'row'}>
-          <MatchListButton />
+          <MatchListButton matches={matchArr} />
           <FriendListButton friends={friends} />
         </Grid>
       </Grid>
