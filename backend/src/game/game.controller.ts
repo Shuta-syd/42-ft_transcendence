@@ -15,8 +15,8 @@ import { assignGuestDto, assignObserverDto } from './dto/game.dto';
 export class GameController {
   constructor(private readonly gameService: GameService) {}
   @Post('newplayer')
-  async setplayer(@Body() dto: { name: string }): Promise<Game> {
-    return this.gameService.handleAssignPlayerReq(dto.name);
+  async setplayer(@Body() dto: { playerName: string }): Promise<Game> {
+    return this.gameService.handleAssignPlayerReq(dto.playerName);
   }
 
   @Get('ongoing')

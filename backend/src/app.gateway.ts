@@ -49,7 +49,7 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (accessToken === '') return;
     try {
       const { sub: userId } = await this.jwtService.verify(accessToken, {
-        secret: this.configService.get('JWT_SECRET'), // refresh tokenの場合はここで別のsecretを使う必要ある？
+        secret: this.configService.get('JWT_SECRET'),
       });
       const user = await this.prismaService.user.findUnique({
         where: {
