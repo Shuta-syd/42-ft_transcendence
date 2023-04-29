@@ -86,6 +86,7 @@ model BanUserOnChatRoom {
 
 model Match {
   id        Int    @id @default(autoincrement())
+  createAt  DateTime  @default(now())
   player1   String
   player2   String
   winner_id Int

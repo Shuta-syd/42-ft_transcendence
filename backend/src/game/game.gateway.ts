@@ -230,6 +230,7 @@ export class GameGateway {
         id: userId,
       },
     });
+    if (!user) return;
 
     if (user == null) return;
 
