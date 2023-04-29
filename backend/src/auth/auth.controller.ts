@@ -23,7 +23,8 @@ import {
   AuthDto,
   FtUpdateUserDto,
   Msg,
-  OtpCodeDao,
+  OtpCodeDto,
+  OtpLoginDto,
   SignUpUserDto,
 } from './dto/auth.dto';
 import { Jwt2FaGuard } from './guards/jwt-2fa.guard';
@@ -270,16 +271,50 @@ export class AuthController {
   @HttpCode(200)
   @UseGuards(AuthGuard('jwt'))
   @ApiOperation({
-    description:
-      'ワンタイムパスワードをバリデーション, 2回目以降のログインに利用する',
+    description: 'ワンタイムパスワードをバリデーション',
     summary: 'ワンタイムパスワードをバリデーション',
   })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'ワンタイムパスワード成功',
   })
-  async validateOtp(@Req() req: Request, @Body() { otpcode }: OtpCodeDao) {
+  async validateOtp(@Req() req: Request, @Body() { otpcode }: OtpCodeDto) {
+    console.log(otpcode);
     return this.authService.validateOtp(req.user, otpcode);
+  }
+
+  @Post('otp/login')
+  @HttpCode(200)
+  @ApiOperation({
+    description: 'ワンタイムパスワードをバリデーション(2回目以降)',
+    summary: 'ワンタイムパスワードをバリデーション(2回目以降)',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'ワンタイムパスワード成功',
+  })
+  async LoginOtp(
+    @Body() dto: OtpLoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const jwt = await this.authService.LoginOtp(dto, dto.otpcode);
+    res.cookie('access_token', jwt.accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
+  }
+
+  @Post('otp/is')
+  async postUserOtpStatus(@Body() dto: AuthDto): Promise<boolean> {
+    return this.authService.getUserOtpStatus(dto.email);
+  }
+
+  @Get('otp/is')
+  @UseGuards(AuthGuard('jwt'))
+  async getUserOtpStatus(@Req() req: Request): Promise<boolean> {
+    return this.authService.getUserOtpStatus(req.user.email);
   }
 
   @Get('otp/test')
