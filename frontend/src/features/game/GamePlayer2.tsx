@@ -1,11 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import { Button, Grid } from '@mui/material';
 import { Socket } from 'socket.io-client';
 import { User } from '../../types/PrismaType';
-import { useGameUser } from '../../hooks/game/useGameuser';
+import { RootWebsocketContext } from '../../contexts/WebsocketContext';
 
-const GamePlayer2 = (props: { socket: Socket }) => {
-  const { socket } = props;
+const GamePlayer2 = (props: { socket: Socket, user: User }) => {
+  const { socket, user } = props;
+  const rootSocket: Socket = useContext(RootWebsocketContext);
+
   // global variables
   let context: CanvasRenderingContext2D | null;
   let keycode = '';
@@ -176,6 +178,7 @@ const GamePlayer2 = (props: { socket: Socket }) => {
       context.fillText('5秒後にgameページに戻ります.', 100, 600);
       if (window.location.pathname === '/game/player2') {
         setTimeout(() => {
+          rootSocket.emit('in_game_status_delete');
           window.location.href = '/game';
         }, 3 * 1000);
       }
@@ -187,20 +190,17 @@ const GamePlayer2 = (props: { socket: Socket }) => {
       context.fillText('5秒後にgameページに戻ります.', 100, 600);
       if (window.location.pathname === '/game/player2') {
         setTimeout(() => {
+          rootSocket.emit('in_game_status_delete');
           window.location.href = '/game';
         }, 3 * 1000);
       }
     }
   }
 
-  const [user, setUser] = useState<User>();
-  const UserPromises = useGameUser();
   useEffect(() => {
-    UserPromises.then((userDto: User) => {
-      setUser(userDto);
-      socket.emit('JoinRoom', userDto.name);
-    });
-  }, []);
+    socket.emit('JoinRoom', user.name);
+    rootSocket.emit('in_game_status_check');
+  }, [])
 
   useEffect(() => {
     const handleKeyUp = (): void => {
@@ -222,17 +222,6 @@ const GamePlayer2 = (props: { socket: Socket }) => {
     window.requestAnimationFrame(draw);
   }, [user]);
 
-  useEffect(() => {
-    socket.on('connect', () => {
-      // console.log('接続ID : ', socket.id)
-    });
-
-    return () => {
-      // console.log('切断')
-      socket.disconnect();
-    };
-  }, []);
-
   useEffect(() => {}, [rightPaddle.y]);
 
   type PaddleAndRoom = {
@@ -249,7 +238,6 @@ const GamePlayer2 = (props: { socket: Socket }) => {
   });
 
   socket.on('Ping', (name: string, SocketId: string) => {
-    console.log(name, SocketId, 'Ping');
     socket.emit('Pong', user?.name);
   });
 

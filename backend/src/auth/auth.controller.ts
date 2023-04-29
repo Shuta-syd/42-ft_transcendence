@@ -112,7 +112,8 @@ export class AuthController {
       path: '/',
     });
 
-    if (req.user.Ftlogined) res.redirect('http://localhost:3000/user');
+    if (req.user.Ftlogined && !req.user.isTwoFactorEnabled)
+      res.redirect('http://localhost:3000/user'); // 2faオンの時は下
     else res.redirect('http://localhost:3000/signup/42');
   }
 

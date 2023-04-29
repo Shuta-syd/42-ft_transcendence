@@ -41,7 +41,6 @@ const JoinInvitedRoom = (props: { socket: Socket }) => {
           setIsAsssigned(true);
           setIsUncorrect(false);
         } else {
-          // console.log("hoge")
           setIsUncorrect(true);
         }
       });

@@ -4,12 +4,17 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
+  WsException,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { NameToInviteRoomIdDic, NameToRoomIdDic } from './game.service';
 import { GameService } from './game.service';
 import { Terminate } from './dto/game.dto';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { MatchService } from 'src/match/match.service';
 
 type ChatRecieved = {
   uname: string;
@@ -50,7 +55,7 @@ export type SocketClient = {
   socketId: string;
 };
 
-let SocketClients: SocketClient[] = [];
+const SocketClients: SocketClient[] = [];
 
 @WebSocketGateway({
   cors: {
@@ -59,7 +64,13 @@ let SocketClients: SocketClient[] = [];
   namespace: '/game',
 })
 export class GameGateway {
-  constructor(private readonly gameService: GameService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly matchService: MatchService,
+    private readonly configService: ConfigService,
+    private readonly prismaService: PrismaService,
+    private readonly gameService: GameService,
+  ) {}
   @WebSocketServer()
   server: Server;
   private logger: Logger = new Logger('GameGateway');
@@ -93,7 +104,7 @@ export class GameGateway {
     if (roomId === undefined) {
       roomId = NameToInviteRoomIdDic[payload.name];
     }
-    this.server.to(roomId).emit('GameToClient', payload, client.id);
+    this.server.to(roomId).emit('in_game_status_check', payload, client.id);
   }
   @SubscribeMessage('BallPosToServer')
   ReceiveBallPosInfo(
@@ -185,10 +196,10 @@ export class GameGateway {
   }
 
   @SubscribeMessage('TerminateGame')
-  terminateGame(
+  async terminateGame(
     @MessageBody() name: string,
     @ConnectedSocket() client: Socket,
-  ): void {
+  ) {
     const dto = { isInviteGame: false, player: '' };
     if (NameToInviteRoomIdDic[name]) {
       dto.isInviteGame = true;
@@ -199,36 +210,67 @@ export class GameGateway {
     } else {
       return;
     }
-    this.gameService.terminateGame(dto);
-    delete SocketClients[SocketClients.findIndex((e) => e.name === name)];
+    await this.gameService.terminateGame(dto);
+    await delete SocketClients[SocketClients.findIndex((e) => e.name === name)];
   }
 
   // 接続が切断されたときの処理
-  handleDisconnect(socket: Socket) {
-    this.logger.log(`[Game] Client disconnected: ${socket.id}`);
-    // ルームからユーザーを削除します
-    Object.keys(this.rooms).forEach((room) => {
-      this.rooms[room] = this.rooms[room].filter((id) => id !== socket.id);
-      // ルームの参加者リストをルームの全員に送信します
-      this.server.to(room).emit('update room', this.rooms[room]);
-      if (
-        socket.id ===
-        SocketClients.find((client) => client.socketId === socket.id)?.socketId
-      ) {
-        //このuserを負けにする処理
-        console.log('負けにする処理');
-        console.log(
-          'client name: ' +
-            SocketClients.find((client) => client.socketId === socket.id)?.name,
-        );
-        console.log('client id: ', socket.id);
-
-        //
-        SocketClients = SocketClients.filter(
-          (client) => client.socketId !== socket.id,
-        );
-      }
+  async handleDisconnect(client: Socket) {
+    this.logger.log(`[Game] Client disconnected: ${client.id}`);
+    const cookie = client.handshake.headers.cookie;
+    if (cookie === undefined) throw new WsException('unAuthorized');
+    const accessToken = cookie.split('=')[1].split(';')[0];
+    if (accessToken === '') throw new WsException('unAuthorized');
+    const { sub: userId } = await this.jwtService.verify(accessToken, {
+      secret: this.configService.get('JWT_SECRET'),
     });
+
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    const isExitPlayer1 = await this.prismaService.game.findFirst({
+      where: {
+        player1: user.name,
+      },
+    });
+    try {
+      if (isExitPlayer1.player2 !== null) {
+        await this.matchService.createMatch({
+          player1: user.name,
+          player2: isExitPlayer1.player2,
+          winner_id: '2',
+        });
+        await this.prismaService.game.delete({
+          where: {
+            id: isExitPlayer1.id,
+          },
+        });
+        return;
+      }
+    } catch {}
+
+    const isExitPlayer2 = await this.prismaService.game.findFirst({
+      where: {
+        player2: user.name,
+      },
+    });
+    try {
+      if (isExitPlayer1.player2 !== null) {
+        await this.matchService.createMatch({
+          player1: isExitPlayer2.player1,
+          player2: user.name,
+          winner_id: '1',
+        });
+        await this.prismaService.game.delete({
+          where: {
+            id: isExitPlayer2.id,
+          },
+        });
+      }
+    } catch {}
   }
 
   afterInit(server: Server) {
