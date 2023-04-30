@@ -59,9 +59,9 @@ const EditEmail = (props: IsFtloginProps) => {
 
   return (
     <Box
-    component="form"
-    onSubmit={handleSubmit(onSubmit)}
-    sx={{
+      component="form"
+      onSubmit={handleSubmit(onSubmit)}
+      sx={{
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
