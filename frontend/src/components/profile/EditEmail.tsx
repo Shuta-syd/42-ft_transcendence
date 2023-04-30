@@ -9,7 +9,11 @@ type FormData = {
   email: string;
 };
 
-const EditEmail = () => {
+type IsFtloginProps = {
+  isFtlogin: boolean | undefined;
+};
+
+const EditEmail = (props: IsFtloginProps) => {
   const {
     control,
     handleSubmit,
@@ -55,69 +59,74 @@ const EditEmail = () => {
 
   return (
     <Box
-      component="form"
-      onSubmit={handleSubmit(onSubmit)}
-      sx={{
+    component="form"
+    onSubmit={handleSubmit(onSubmit)}
+    sx={{
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
         width: '50%',
         margin: '0px',
       }}
-    >
-      <Box
-        sx={{
-          width: '60%',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          borderRadius: '5px',
-          padding: '0px',
-        }}
       >
-        <Controller
-          name={`email`}
-          control={control}
-          defaultValue={loginUser.email || ''}
-          rules={{
-            required: 'Email address is required',
-            pattern: {
-              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-              message: 'Please enter a valid email address format.',
-            },
+      {!props.isFtlogin &&
+        <Box
+          sx={{
+            width: '60%',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            borderRadius: '5px',
+            padding: '0px',
           }}
-          render={({ field }) => (
-            <TextField
-              required
-              fullWidth
-              {...field}
-              label="Edit Email"
-              type="email"
-              placeholder={loginUser.email}
-              error={!!errors.email || !!errorMessage}
-              helperText={errors.email?.message}
-            />
+        >
+          <Controller
+            name={`email`}
+            control={control}
+            defaultValue={loginUser.email || ''}
+            rules={{
+              required: 'Email address is required',
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
+                message: 'Please enter a valid email address format.',
+              },
+            }}
+            render={({ field }) => (
+              <TextField
+                required
+                fullWidth
+                {...field}
+                disabled={props.isFtlogin}
+                label="Edit Email"
+                type="email"
+                placeholder={loginUser.email}
+                error={!!errors.email || !!errorMessage}
+                helperText={errors.email?.message}
+              />
+            )}
+          />
+          {errorMessage && (
+            <Typography variant="body2" color="error" sx={{ marginTop: '8px' }}>
+              {errorMessage}
+            </Typography>
           )}
-        />
-        {errorMessage && (
-          <Typography variant="body2" color="error" sx={{ marginTop: '8px' }}>
-            {errorMessage}
-          </Typography>
-        )}
-      </Box>
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"
-        sx={{
-          marginLeft: '0px',
-          height: '100%',
-          minHeight: 'inherit',
-        }}
-      >
-        Enter
-      </Button>
+        </Box>
+      }
+      {!props.isFtlogin &&
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          sx={{
+            marginLeft: '0px',
+            height: '100%',
+            minHeight: 'inherit',
+          }}
+        >
+          Enter
+        </Button>
+      }
     </Box>
   );
 };

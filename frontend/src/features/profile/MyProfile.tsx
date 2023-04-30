@@ -216,7 +216,7 @@ const MyProfile = () => {
             marginTop: '-100px',
           }}
         >
-          <EditEmail />
+          <EditEmail isFtlogin={user?.isFtLogin} />
           <TwoFactorButton />
         </Grid>
         <Grid
