@@ -12,6 +12,7 @@ import SignupValidationSchema from "../../types/auth/SignupValidationSchema";
 import UserProfileFormComponent from "./UserProfileFormComponent";
 import TwoFactorSettingComponent from "./TwoFactorSettingComponent";
 import { RootWebsocketContext } from "../../contexts/WebsocketContext";
+import defaultAvatarBase64 from "../../assets/default-avatar-base64";
 
 type SignupData = {
   username: string;
@@ -23,8 +24,8 @@ type SignupData = {
 function SignupComponent() {
   const rootSocket: Socket = useContext(RootWebsocketContext);
   const [activeStep, setActiveStep] = useState(0);
-  const [image, setImage] = useState('');
-  const [imageURL, setImageURL] = useState('');
+  const [image, setImage] = useState(defaultAvatarBase64);
+  const [imageURL, setImageURL] = useState(defaultAvatarBase64);
   const { control, handleSubmit, reset, formState: { errors, isValid } } = useForm<SignupData>({
     mode: 'all',
     defaultValues: { username: '', email: '', password: '' },
