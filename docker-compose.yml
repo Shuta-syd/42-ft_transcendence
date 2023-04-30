@@ -21,7 +21,8 @@ services:
     env_file:
       - ./backend/.env
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     ports:
       - 8080:8080
       - 5555:5555
@@ -39,6 +40,17 @@ services:
       - back-tier
     volumes:
       - db-vol:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}",
+          "||",
+          "exit 1"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 100
 
 networks:
   back-tier:
