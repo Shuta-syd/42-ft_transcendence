@@ -251,6 +251,11 @@ const GamePlayer2 = (props: { socket: Socket, user: User }) => {
     window.location.reload();
   }
 
+  socket.on('ExitGame', () => {
+    alert('異常終了しました。/gameに戻ります。');
+    window.location.href = '/game';
+  });
+
   socket.on('ScoreToClient', (Score: Score, SocketId: string) => {
     leftScore = Score.player1;
     rightScore = Score.player2;
