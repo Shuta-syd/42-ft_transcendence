@@ -233,6 +233,8 @@ export class GameGateway {
     });
     if (!user) return;
     await axios.post('http://localhost:8080/game/status/off', { userId });
+    const roomId = NameToRoomIdDic[user.name];
+    this.server.to(roomId).emit('ExitGame');
 
     if (user == null) return;
 
