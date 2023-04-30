@@ -12,6 +12,7 @@ import SignupStepper from "./SignupStepper";
 import FtUserProfileFormComponent from "./FtUserProfileFormComponent";
 import { RootWebsocketContext } from "../../contexts/WebsocketContext";
 import FtSignupValidationSchema from "../../types/auth/FtSignupValidationSchema";
+import defaultAvatarBase64 from "../../assets/default-avatar-base64";
 
 type FtSignUpData = {
   username: string;
@@ -22,11 +23,11 @@ export default function FtSignupComponent() {
   const rootSocket: Socket = useContext(RootWebsocketContext);
   const [activeStep, setActiveStep] = useState(0);
   const [Loading, setLoading] = useState(true);
-  const [imageURL, setImageURL] = useState('');
+  const [imageURL, setImageURL] = useState(defaultAvatarBase64);
   const [email, setEmail] = useState('');
   const { control, handleSubmit, reset, setValue ,formState: { errors, isValid } } = useForm<FtSignUpData>({
     mode: 'all',
-    defaultValues: { username: '', image: '' },
+    defaultValues: { username: '', image: defaultAvatarBase64 },
     resolver: yupResolver(FtSignupValidationSchema)
   });
 
