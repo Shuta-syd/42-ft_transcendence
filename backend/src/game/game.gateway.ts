@@ -233,6 +233,8 @@ export class GameGateway {
     });
     if (!user) return;
     await axios.post('http://localhost:8080/game/status/off', { userId });
+    const roomId = NameToRoomIdDic[user.name];
+    this.server.to(roomId).emit('ExitGame');
 
     if (user == null) return;
 
@@ -257,6 +259,15 @@ export class GameGateway {
           },
         });
         return;
+      } else if (
+        isExitPlayer1.player2.includes('player2') &&
+        isExitPlayer1.player1 === user.name
+      ) {
+        await this.prismaService.game.delete({
+          where: {
+            id: isExitPlayer1.id,
+          },
+        });
       }
     } catch {}
 
@@ -272,6 +283,12 @@ export class GameGateway {
           player2: user.name,
           winner_id: '1',
         });
+        await this.prismaService.game.delete({
+          where: {
+            id: isExitPlayer2.id,
+          },
+        });
+      } else {
         await this.prismaService.game.delete({
           where: {
             id: isExitPlayer2.id,

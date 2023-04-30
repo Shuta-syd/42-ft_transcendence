@@ -311,6 +311,10 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
     name: string;
   };
 
+  socket.on('ExitGame', () => {
+    window.location.href = '/game';
+  });
+
   socket.on('GameToClient', (leftPaddley: PaddleAndRoom, socketid: string) => {
     if (socket.id !== socketid) leftPaddle.y = leftPaddley.paddleHeight;
   });
