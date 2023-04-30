@@ -259,6 +259,15 @@ export class GameGateway {
           },
         });
         return;
+      } else if (
+        isExitPlayer1.player2.includes('player2') &&
+        isExitPlayer1.player1 === user.name
+      ) {
+        await this.prismaService.game.delete({
+          where: {
+            id: isExitPlayer1.id,
+          },
+        });
       }
     } catch {}
 
@@ -274,6 +283,12 @@ export class GameGateway {
           player2: user.name,
           winner_id: '1',
         });
+        await this.prismaService.game.delete({
+          where: {
+            id: isExitPlayer2.id,
+          },
+        });
+      } else {
         await this.prismaService.game.delete({
           where: {
             id: isExitPlayer2.id,
