@@ -8,5 +8,3 @@ assets/study/
 node_modules/
 .node-version
 .env
-/migrations/*
-!/migrations/migration_lock.toml

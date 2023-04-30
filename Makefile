@@ -16,7 +16,7 @@ build:
 	docker-compose build
 
 nocache:
-	docker-compose build --nocache
+	docker-compose build --no-cache
 
 up:
 	docker-compose up
