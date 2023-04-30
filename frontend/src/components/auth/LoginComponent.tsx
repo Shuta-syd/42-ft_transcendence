@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Box, Button, InputAdornment, TextField, Typography } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -27,6 +27,10 @@ function LoginComponent() {
     defaultValues: { email: '', password: '' },
     resolver: yupResolver(LoginValidationSchema),
   });
+
+  useEffect(() => {
+    rootSocket.connect();
+  }, [rootSocket])
 
   const onSubmit: SubmitHandler<LoginData> = async (data) => {
     let isLogin: Boolean = false;
