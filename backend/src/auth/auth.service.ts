@@ -27,6 +27,7 @@ import { AlreadyInUseException } from './exception/AlreadyInUseException';
 import { TokenExpiredError } from 'jsonwebtoken';
 import { createHash } from 'crypto';
 import { UserService } from 'src/user/user.service';
+import { validate } from 'class-validator';
 
 const asyncScrypt = promisify(scrypt);
 
@@ -393,6 +394,17 @@ export class AuthService {
     });
 
     return this.generateJwt(user.id, user.name, false);
+  }
+
+  async ftValidateOtp(userId: string, otpCode: string) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+    if (!user) throw new Error("user couldn't be found");
+
+    await this.validateOtp(user, otpCode);
   }
 
   async validateOtp(user: User, otpCode: string) {
