@@ -37,7 +37,7 @@ export default function AdminButton(props: AdminButtonProps) {
 
   const handleMute = async (memberId: string, isMute: boolean) => {
     try {
-      await axios.patch(`http://localhost:8080/chat/channel/member/mute`, { roomId, memberId, status: !isMute });
+      await axios.patch(`http://localhost:8080/chat/channel/member/mute`, { roomId, memberId, isMute: !isMute });
       setMembers((prev: any[]) => prev.map((val: { id: string; }) => {
         if (val.id === memberId)
           return { ...val, isMute: !isMute };
@@ -50,7 +50,7 @@ export default function AdminButton(props: AdminButtonProps) {
 
   const handleGiveAdmin = async (memberId: string) => {
     try {
-      await axios.patch(`http://localhost:8080/chat/channel/role`, { roomId, memberId });
+      await axios.post(`http://localhost:8080/chat/channel/role`, { roomId, memberId });
       setMembers((prev: any[]) => prev.map((val: { id: string; role: string; }) => {
         if (val.id === memberId) {
           return val.role === 'ADMIN' ? { ...val, role: 'NORMAL' } : { ...val, role: 'ADMIN' };
@@ -58,6 +58,7 @@ export default function AdminButton(props: AdminButtonProps) {
         return val;
       }))
     } catch (error) {
+      console.log(error);
       alert('権限がないもしくはすでにオーナーです');
     }
   }

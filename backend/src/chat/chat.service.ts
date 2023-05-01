@@ -44,6 +44,7 @@ export class ChatService {
       const salt = randomBytes(8).toString('hex');
       const hash = (await asyncScrypt(dto.password, salt, 32)) as Buffer;
       hashedPassword = hash.toString('base64') + '.' + salt;
+      console.log(hashedPassword);
     }
     const room = this.prisma.chatRoom
       .create({
@@ -454,8 +455,10 @@ export class ChatService {
 
     await this.prisma.member.update({
       where: { id: memberId },
-      data: { isMute: isMute === true ? true : false },
+      data: { isMute },
     });
+
+    console.log('return');
   }
 
   /**
