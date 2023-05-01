@@ -118,15 +118,15 @@ const GamePlayer2 = (props: { socket: Socket }) => {
 
     /* check collision */
     if (
-      ball.x - ball.radius <= leftPaddle.x + PADDLEWIDTH &&
-      ball.y <= leftPaddle.y + PADDLEWHEIGHT &&
-      ball.y >= leftPaddle.y
+        ball.x - ball.radius <= leftPaddle.x + PADDLEWIDTH &&
+        ball.y <= leftPaddle.y + PADDLEWHEIGHT &&
+        ball.y >= leftPaddle.y
     ) {
       ball.vx = -ball.vx;
     } else if (
-      ball.x + ball.radius >= rightPaddle.x &&
-      ball.y <= rightPaddle.y + PADDLEWHEIGHT &&
-      ball.y >= rightPaddle.y
+        ball.x + ball.radius >= rightPaddle.x &&
+        ball.y <= rightPaddle.y + PADDLEWHEIGHT &&
+        ball.y >= rightPaddle.y
     ) {
       ball.vx = -ball.vx;
     } else if (FIELDHEIGHT + FIELDY < ball.y || ball.y < FIELDY) {
@@ -152,7 +152,8 @@ const GamePlayer2 = (props: { socket: Socket }) => {
     context.fillText(rightScore.toString(), 360, 50);
     context.fillText('-', 440, 50);
     context.fillText(leftScore.toString(), 500, 50);
-    context.fillText(game.player2, 660, 50);
+    const player2Text = game.player2 ? game.player2 : "Let's wait for player2!";
+    context.fillText(player2Text, 660, 50);
     window.requestAnimationFrame(draw);
 
     if (rightScore === lastScore) {
@@ -230,18 +231,18 @@ const GamePlayer2 = (props: { socket: Socket }) => {
   });
 
   return (
-    <div
-      style={{
-        backgroundColor: '#EDF0F4',
-        minHeight: '100vh',
-      }}
-    >
-      <h1>[PONG GAME]</h1>
-      <Grid container>
-        <h1>[Observer]</h1>
-        <canvas ref={canvasRef} height={HEIGHT} width={WIDTH} />
-      </Grid>
-    </div>
+      <div
+          style={{
+            backgroundColor: '#EDF0F4',
+            minHeight: '100vh',
+          }}
+      >
+        <h1>[PONG GAME]</h1>
+        <Grid container>
+          <h1>[Observer]</h1>
+          <canvas ref={canvasRef} height={HEIGHT} width={WIDTH} />
+        </Grid>
+      </div>
   );
 };
 
