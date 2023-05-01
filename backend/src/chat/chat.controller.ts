@@ -236,7 +236,7 @@ export class ChatController {
     return this.chatService.leaveChatRoom(req.user.id, dto);
   }
 
-  @Patch('channel/role')
+  @Post('channel/role')
   async updateMemberRole(@Req() req: Request, @Body() dto: MemberDto) {
     return this.chatService.updateMemberRole(req.user.id, dto);
   }
