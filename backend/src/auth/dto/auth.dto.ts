@@ -20,6 +20,12 @@ export class OtpCodeDto {
   otpcode: string;
 }
 
+export class FtOtpCodeDto {
+  otpcode: string;
+  userid: string;
+  username: string;
+}
+
 export class OtpLoginDto {
   otpcode: string;
   @IsEmail()
