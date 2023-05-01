@@ -1,4 +1,5 @@
 #!/bin/bash
 
-npx prisma migrate deploy
-npm run start:prod
+npm install .
+npm run build
+npm run start:dev
