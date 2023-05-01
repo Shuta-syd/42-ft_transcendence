@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useRef } from 'react';
 import { Button, Grid } from '@mui/material';
 import { Socket } from 'socket.io-client';
+import { useNavigate } from 'react-router-dom';
 import { User } from '../../types/PrismaType';
 import { RootWebsocketContext } from '../../contexts/WebsocketContext';
 
@@ -111,6 +112,8 @@ const GamePlayer2 = (props: { socket: Socket, user: User }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const lastScore = 5;
 
+  const history = useNavigate();
+
   function draw() {
     if (!user?.name) return;
     context?.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
@@ -162,6 +165,15 @@ const GamePlayer2 = (props: { socket: Socket, user: User }) => {
     if (canvas == null || context == null) {
       return;
     }
+    const handleInGameStatusDelete = () => {
+      rootSocket.emit("in_game_status_delete");
+
+      // onlineに戻るイベントを送る
+
+      setTimeout(() => {
+        history("/game");
+      }, 3 * 1000);
+    };
 
     context.fillStyle = 'black';
     context.font = "bold 50px 'ＭＳ 明朝'";
@@ -177,10 +189,7 @@ const GamePlayer2 = (props: { socket: Socket, user: User }) => {
       context.fillStyle = 'black';
       context.fillText('5秒後にgameページに戻ります.', 100, 600);
       if (window.location.pathname === '/game/player2') {
-        setTimeout(() => {
-          rootSocket.emit('in_game_status_delete');
-          window.location.href = '/game';
-        }, 3 * 1000);
+        handleInGameStatusDelete();
       }
     } else {
       context.fillStyle = 'red';
@@ -189,10 +198,7 @@ const GamePlayer2 = (props: { socket: Socket, user: User }) => {
       context.fillStyle = 'black';
       context.fillText('5秒後にgameページに戻ります.', 100, 600);
       if (window.location.pathname === '/game/player2') {
-        setTimeout(() => {
-          rootSocket.emit('in_game_status_delete');
-          window.location.href = '/game';
-        }, 3 * 1000);
+        handleInGameStatusDelete();
       }
     }
   }
