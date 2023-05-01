@@ -8,6 +8,7 @@ import {
   Post,
   Req,
   Res,
+  UnauthorizedException,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -21,6 +22,7 @@ import { Request } from 'express';
 import { FtGuard } from './guards/ft.guard';
 import {
   AuthDto,
+  FtOtpCodeDto,
   FtUpdateUserDto,
   Msg,
   OtpCodeDto,
@@ -123,7 +125,9 @@ export class AuthController {
     if (req.user.Ftlogined && !req.user.isTwoFactorEnabled)
       res.redirect('http://localhost:3000/user');
     else if (req.user.Ftlogined && req.user.isTwoFactorEnabled)
-      res.redirect('http://localhost:3000/login/42');
+      res.redirect(
+        `http://localhost:3000/login/42?userid=${userId}&username=${username}`,
+      );
     else res.redirect('http://localhost:3000/signup/42');
   }
 
@@ -310,6 +314,38 @@ export class AuthController {
   async validateOtp(@Req() req: Request, @Body() { otpcode }: OtpCodeDto) {
     console.log(otpcode);
     return this.authService.validateOtp(req.user, otpcode);
+  }
+
+  @Post('otp/42validation')
+  @HttpCode(200)
+  @ApiOperation({
+    description: '42ログイン専用ワンタイムパスワードをバリデーション',
+    summary: '42ログイン専用ワンタイムパスワードをバリデーション',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'ワンタイムパスワード成功',
+  })
+  async validate42Otp(
+    @Req() req: Request,
+    @Body() { otpcode, userid, username }: FtOtpCodeDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    await this.authService.ftValidateOtp(userid, otpcode);
+    const jwt = await this.authService.generateJwt(userid, username);
+    res.cookie('access_token', jwt.accessToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
+    res.cookie('refresh_token', jwt.refreshToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
+    return;
   }
 
   @Post('otp/login')
