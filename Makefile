@@ -12,14 +12,8 @@ run:
 debug:
 	docker-compose up --build
 
-build:
-	docker-compose build
-
-nocache:
-	docker-compose build --no-cache
-
 up:
-	docker-compose up
+	docker-compose up -d
 
 clean:
 	docker compose down
