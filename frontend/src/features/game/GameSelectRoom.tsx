@@ -67,11 +67,11 @@ const GameSelectRoom = () => {
       >
         <h1>
           {GameRoomArr.map((game) => (
-            <div key={game.id}>
-              <h4>
-                [{game.id}] {game.player1} vs {game.player2}
-              </h4>
-            </div>
+              <div key={game.id}>
+                <h4>
+                  [{game.id}] {game.player1} vs {game.player2 ? game.player2 : "Loading"}
+                </h4>
+              </div>
           ))}
           <div>
             <input
