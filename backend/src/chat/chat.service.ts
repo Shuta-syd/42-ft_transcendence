@@ -43,7 +43,7 @@ export class ChatService {
     if (dto.type === 'PROTECT') {
       const salt = randomBytes(8).toString('hex');
       const hash = (await asyncScrypt(dto.password, salt, 32)) as Buffer;
-      hashedPassword = hash.toString() + '.' + salt;
+      hashedPassword = hash.toString('base64') + '.' + salt;
     }
     const room = this.prisma.chatRoom
       .create({
@@ -280,13 +280,13 @@ export class ChatService {
 
       const hashedPassword = (
         (await asyncScrypt(dto.oldPassword, salt, 32)) as Buffer
-      ).toString();
-      if (storedHash !== hashedPassword.toString())
+      ).toString('base64');
+      if (storedHash !== hashedPassword)
         throw new UnauthorizedException('Password is wrong');
 
       const newSalt = randomBytes(8).toString('hex');
       const hash = (await asyncScrypt(dto.newPassword, newSalt, 32)) as Buffer;
-      NewHashedPassword = hash.toString() + '.' + salt;
+      NewHashedPassword = hash.toString('base64') + '.' + salt;
     }
 
     return this.prisma.chatRoom.update({
@@ -394,8 +394,8 @@ export class ChatService {
 
       const hashedPassword = (
         (await asyncScrypt(dto.password, salt, 32)) as Buffer
-      ).toString();
-      if (storedHash !== hashedPassword.toString())
+      ).toString('base64');
+      if (storedHash !== hashedPassword)
         throw new UnauthorizedException('Password is wrong');
     }
 
