@@ -1,7 +1,7 @@
 import { LoadingButton } from "@mui/lab";
 import { Box, InputAdornment, TextField, Typography } from "@mui/material";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Socket } from "socket.io-client";
 import React, { useContext, useState } from "react";
 import { RootWebsocketContext } from "../../contexts/WebsocketContext";
@@ -11,11 +11,15 @@ export default function FtTwoFactorLogin() {
   const rootSocket: Socket = useContext(RootWebsocketContext);
   const [Loading, setLoading] = useState(true);
   const [otpCode, setOtpCode] = useState('');
+  const [searchParams] = useSearchParams();
+  const userId = searchParams.get('userid');
+  const username = searchParams.get('username');
 
   const onConfirmButton = async () => { // この処理の後にonSubmitを叩きたい
     let isLogin: Boolean = false;
     try {
-      await axios.post('http://localhost:8080/auth/otp/validation', { otpcode: otpCode });
+      await axios.post('http://localhost:8080/auth/otp/42validation', { otpcode: otpCode, userid: userId, username });
+      console.log('42validation success');
       setLoading(false);
       rootSocket.disconnect();
       isLogin = true;
