@@ -82,13 +82,17 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (cookie === undefined) throw new WsException('unAuthorized');
     const accessToken = cookie.split('=')[1].split(';')[0];
     if (accessToken === '') throw new WsException('unAuthorized');
-    const { sub: userId } = await this.jwtService.verify(accessToken, {
-      secret: this.configService.get('JWT_SECRET'),
-    });
-    const status = this.userIdToStatus.get(userId);
-    this.server.to(client.id).emit('user_online_status', {
-      status,
-    });
+    try {
+      const { sub: userId } = await this.jwtService.verify(accessToken, {
+        secret: this.configService.get('JWT_SECRET'),
+      });
+      const status = this.userIdToStatus.get(userId);
+      this.server.to(client.id).emit('user_online_status', {
+        status,
+      });
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 
   /**
@@ -100,32 +104,36 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (cookie === undefined) throw new WsException('unAuthorized');
     const accessToken = cookie.split('=')[1].split(';')[0];
     if (accessToken === '') throw new WsException('unAuthorized');
-    const { sub: userId } = await this.jwtService.verify(accessToken, {
-      secret: this.configService.get('JWT_SECRET'),
-    });
+    try {
+      const { sub: userId } = await this.jwtService.verify(accessToken, {
+        secret: this.configService.get('JWT_SECRET'),
+      });
 
-    const friends = await this.prismaService.user
-      .findUnique({
-        where: {
-          id: userId,
-        },
-      })
-      .friends();
+      const friends = await this.prismaService.user
+        .findUnique({
+          where: {
+            id: userId,
+          },
+        })
+        .friends();
 
-    const OnlineFriend = [];
-    const InGameFriend = [];
+      const OnlineFriend = [];
+      const InGameFriend = [];
 
-    friends.forEach(async (friend: User) => {
-      let status = this.userIdToStatus.get(friend.id);
-      status = status !== undefined ? status : Status.OFFLINE;
-      if (status === Status.ONLINE) OnlineFriend.push(friend.id);
-      if (status === Status.INGAME) InGameFriend.push(friend.id);
-    });
+      friends.forEach(async (friend: User) => {
+        let status = this.userIdToStatus.get(friend.id);
+        status = status !== undefined ? status : Status.OFFLINE;
+        if (status === Status.ONLINE) OnlineFriend.push(friend.id);
+        if (status === Status.INGAME) InGameFriend.push(friend.id);
+      });
 
-    this.server.to(client.id).emit('friend_online_status', {
-      OnlineFriend,
-      InGameFriend,
-    });
+      this.server.to(client.id).emit('friend_online_status', {
+        OnlineFriend,
+        InGameFriend,
+      });
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 
   /**
@@ -137,16 +145,20 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (cookie === undefined) return;
     const accessToken = cookie.split('=')[1].split(';')[0];
     if (accessToken === '') throw new WsException('unAuthorized');
-    const { sub: userId } = await this.jwtService.verify(accessToken, {
-      secret: this.configService.get('JWT_SECRET'),
-    });
-    const user = await this.prismaService.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
-    if (user === null) throw new WsException('unAuthorized');
-    await this.userIdToStatus.delete(userId);
+    try {
+      const { sub: userId } = await this.jwtService.verify(accessToken, {
+        secret: this.configService.get('JWT_SECRET'),
+      });
+      const user = await this.prismaService.user.findUnique({
+        where: {
+          id: userId,
+        },
+      });
+      if (user === null) throw new WsException('unAuthorized');
+      await this.userIdToStatus.delete(userId);
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 
   @SubscribeMessage('in_game_status_check')
@@ -155,11 +167,15 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (cookie === undefined) throw new WsException('unAuthorized');
     const accessToken = cookie.split('=')[1].split(';')[0];
     if (accessToken === '') throw new WsException('unAuthorized');
-    const { sub: userId } = await this.jwtService.verify(accessToken, {
-      secret: this.configService.get('JWT_SECRET'),
-    });
-    this.userIdToStatus.set(userId, Status.INGAME);
-    this.logger.log(`[App] ${userId} is in game`);
+    try {
+      const { sub: userId } = await this.jwtService.verify(accessToken, {
+        secret: this.configService.get('JWT_SECRET'),
+      });
+      this.userIdToStatus.set(userId, Status.INGAME);
+      this.logger.log(`[App] ${userId} is in game`);
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 
   @SubscribeMessage('in_game_status_delete')
@@ -168,11 +184,15 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     if (cookie === undefined) throw new WsException('unAuthorized');
     const accessToken = cookie.split('=')[1].split(';')[0];
     if (accessToken === '') throw new WsException('unAuthorized');
-    const { sub: userId } = await this.jwtService.verify(accessToken, {
-      secret: this.configService.get('JWT_SECRET'),
-    });
-    this.userIdToStatus.set(userId, Status.ONLINE);
-    this.logger.log(`[App] ${userId} is out game`);
+    try {
+      const { sub: userId } = await this.jwtService.verify(accessToken, {
+        secret: this.configService.get('JWT_SECRET'),
+      });
+      this.userIdToStatus.set(userId, Status.ONLINE);
+      this.logger.log(`[App] ${userId} is out game`);
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 
   @SubscribeMessage('in_gaem_status_off')
