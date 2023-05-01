@@ -2,6 +2,7 @@ import { Injectable, ParseIntPipe } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { Game, Match, InviteGame } from '@prisma/client';
 import { assignGuestDto, assignObserverDto, Terminate } from './dto/game.dto';
+import { v4 as uuidv4 } from 'uuid';
 
 let playerId = 0;
 let tmpGame: Game;
@@ -37,7 +38,7 @@ export class GameService {
       const game = this.prisma.game.create({
         data: {
           player1: playerName,
-          player2: 'player2_' + player2Count.toString(),
+          player2: 'player2_' + uuidv4.toString(),
         },
       });
       player2Count++;
@@ -116,7 +117,7 @@ export class GameService {
     const game = this.prisma.inviteGame.create({
       data: {
         player1: playerName,
-        player2: 'player2_' + player2Count.toString(),
+        player2: 'player2_' + uuidv4.toString(),
       },
     });
     player2Count++;
