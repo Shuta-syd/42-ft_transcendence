@@ -58,7 +58,7 @@ export default function ChannelListComponent(props: ChannelListComponentProps) {
             </Grid>
             {isLeave ? (
               <Grid item>
-                <LeaveButton roomId={room.id} setChannels={setChannels} channels={channels} isDM={false}/>
+                <LeaveButton socket={socket} roomId={room.id} setChannels={setChannels} channels={channels} isDM={false}/>
               </Grid>
             ) : (<></>)}
           </Grid>
@@ -82,7 +82,7 @@ export default function ChannelListComponent(props: ChannelListComponentProps) {
           </Grid>
           {isLeave ? (
               <Grid item>
-              <LeaveButton roomId={room.id} setChannels={setChannels} channels={channels} isDM={false}/>
+              <LeaveButton socket={socket} roomId={room.id} setChannels={setChannels} channels={channels} isDM={false}/>
               </Grid>
             ) : (<></>)}
         </Grid>
