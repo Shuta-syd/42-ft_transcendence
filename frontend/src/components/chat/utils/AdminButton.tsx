@@ -58,7 +58,6 @@ export default function AdminButton(props: AdminButtonProps) {
         return val;
       }))
     } catch (error) {
-      console.log(error);
       alert('権限がないもしくはすでにオーナーです');
     }
   }
