@@ -411,7 +411,7 @@ export class AuthService {
       secret: user.twoFactorSecret,
     });
     if (!isCodeValid) {
-      throw new UnauthorizedException('Wrong authentication code');
+      throw new NotAcceptableException('Wrong authentication code');
     }
   }
 
@@ -468,7 +468,7 @@ export class AuthService {
     });
 
     if (!isCodeValid) {
-      throw new UnauthorizedException('Wrong authentication code');
+      throw new NotAcceptableException('Wrong authentication code');
     }
 
     return this.generateJwt(user.id, user.name, true);

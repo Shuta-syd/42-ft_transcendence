@@ -45,20 +45,23 @@ export default function TwoFactorDialog(props: TwoFactorDialogProps) {
   }
 
   const onConfirmButton = async () => {
+    let valid: boolean = false;
     try {
       setLoadingConfirm(true);
       await axios.patch('http://localhost:8080/auth/otp/on');
       await axios.post('http://localhost:8080/auth/otp/validation', { otpcode });
+      valid = true;
     } catch (error) {
       alert('ワンタイムパスワードが間違っています');
     } finally {
       setTimeout(() => {
         setLoadingConfirm(false);
-        window.location.href = 'http://localhost:3000/user';
+        if (valid)
+          window.location.href = 'http://localhost:3000/user';
       }, 500);
     }
   }
-
+  
   return (
     <>
       <Dialog open={isOpen} fullWidth>
