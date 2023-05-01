@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef } from 'react';
 import { Button, Grid } from '@mui/material';
 import axios from 'axios';
 import { Socket } from 'socket.io-client';
+import { useNavigate } from 'react-router-dom';
 import { User } from '../../types/PrismaType';
 import { RootWebsocketContext } from '../../contexts/WebsocketContext';
 
@@ -113,6 +114,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
   };
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const history = useNavigate();
 
   const lastScore = 5;
   let p2name: string;
@@ -124,20 +126,20 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
 
     /* check collision */
     if (
-      ball.x - ball.radius <= leftPaddle.x + PADDLEWIDTH &&
-      ball.y <= leftPaddle.y + PADDLEWHEIGHT &&
-      ball.y >= leftPaddle.y
+        ball.x - ball.radius <= leftPaddle.x + PADDLEWIDTH &&
+        ball.y <= leftPaddle.y + PADDLEWHEIGHT &&
+        ball.y >= leftPaddle.y
     ) {
       ball.vx = -ball.vx;
     } else if (
-      ball.x + ball.radius >= rightPaddle.x &&
-      ball.y <= rightPaddle.y + PADDLEWHEIGHT &&
-      ball.y >= rightPaddle.y
+        ball.x + ball.radius >= rightPaddle.x &&
+        ball.y <= rightPaddle.y + PADDLEWHEIGHT &&
+        ball.y >= rightPaddle.y
     ) {
       ball.vx = -ball.vx;
     } else if (
-      FIELDHEIGHT + FIELDY < ball.y + ball.radius ||
-      ball.y - ball.radius < FIELDY
+        FIELDHEIGHT + FIELDY < ball.y + ball.radius ||
+        ball.y - ball.radius < FIELDY
     ) {
       ball.vy = -ball.vy;
     } else if (ball.x < FIELDX) {
@@ -209,6 +211,16 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
     context.fillText('-', 440, 50);
     context.fillText(rightScore.toString(), 500, 50);
 
+    const handleInGameStatusDelete = () => {
+      rootSocket.emit("in_game_status_delete");
+
+      // onlineに戻るイベントを送る
+
+      setTimeout(() => {
+        history("/game");
+      }, 3 * 1000);
+    };
+
     if (leftScore < lastScore && rightScore < lastScore) {
       window.requestAnimationFrame(draw);
     } else if (leftScore === lastScore) {
@@ -222,10 +234,10 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
         winner_id: 2,
       };
       axios
-        .post('http://localhost:8080/match', matchData)
-        .catch(
-          (error) => alert('エラーが起きました。ページをリロードしてください。')
-        );
+          .post('http://localhost:8080/match', matchData)
+          .catch(
+              (error) => alert('エラーが起きました。ページをリロードしてください。')
+          );
       context.fillStyle = 'blue';
       context.font = "bold 50px 'ＭＳ 明朝'";
       context.fillText('You Lose!', 360, 300);
@@ -233,11 +245,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
       context.fillText('5秒後にgameページに戻ります.', 100, 600);
       socket.emit('TerminateGame', user.name);
       if (window.location.pathname === '/game/player1') {
-        setTimeout(() => {
-          rootSocket.emit('in_game_status_delete');
-          window.location.href = '/game';
-          // onlineに戻るイベントを送る
-        }, 3 * 1000);
+        handleInGameStatusDelete();
       }
     } else {
       const matchData = {
@@ -246,8 +254,8 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
         winner_id: 1,
       };
       axios
-        .post('http://localhost:8080/match', matchData)
-        .catch((error) => alert('エラーが起きました。ページをリロードしてください。'));
+          .post('http://localhost:8080/match', matchData)
+          .catch((error) => alert('エラーが起きました。ページをリロードしてください。'));
       context.fillStyle = 'red';
       context.font = "bold 50px 'ＭＳ 明朝'";
       context.fillText('You Win!', 360, 300);
@@ -255,11 +263,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
       context.fillText('5秒後にgameページに戻ります.', 100, 600);
       socket.emit('TerminateGame', user.name);
       if (window.location.pathname === '/game/player1') {
-        setTimeout(() => {
-          rootSocket.emit('in_game_status_delete');
-          window.location.href = '/game';
-          // onlineに戻るイベントを送る
-        }, 3 * 1000);
+        handleInGameStatusDelete();
       }
     }
   }
@@ -336,53 +340,54 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
   };
 
   const LevelButton = () => (
-    <div>
-      <Button
-        variant={'contained'}
-        size={'large'}
-        color={'success'}
-        onClick={(e) => {
-          BallSpeedUp();
-        }}
-      >
-        LEVEL UP
-      </Button>
-      <Button
-        variant={'contained'}
-        size={'large'}
-        color={'error'}
-        onClick={(e) => {
-          BallSpeedDown();
-        }}
-      >
-        LEVEL DOWN
-      </Button>
-    </div>
+      <div>
+        <Button
+            variant={'contained'}
+            size={'large'}
+            color={'success'}
+            onClick={(e) => {
+              BallSpeedUp();
+            }}
+        >
+          LEVEL UP
+        </Button>
+        <Button
+            variant={'contained'}
+            size={'large'}
+            color={'error'}
+            onClick={(e) => {
+              BallSpeedDown();
+            }}
+        >
+          LEVEL DOWN
+        </Button>
+      </div>
   );
 
   return (
-    <div
-      style={{
-        backgroundColor: '#EDF0F4',
-        minHeight: '100vh',
-      }}
-    >
-      <h1>[PONG GAME]</h1>
-      <Grid container>
-        <h1>Player1: {user?.name}</h1>
-        <Button
-          variant="outlined"
-          color="primary"
-          size="medium"
-          onClick={pageReload}
-        >
-          🦺RECONNECT🦺
-        </Button>
-        <canvas ref={canvasRef} height={HEIGHT} width={WIDTH} />
-        <LevelButton />
-      </Grid>
-    </div>
+      <div
+          style={{
+            backgroundColor: '#EDF0F4',
+            minHeight: '100vh',
+          }}
+      >
+        <h1>[PONG GAME]</h1>
+        <Grid container>
+          <h1>Player1: {user?.name}</h1>
+          <Button
+              variant="outlined"
+              color="primary"
+              size="medium"
+              onClick={pageReload}
+          >
+            🦺RECONNECT🦺
+          </Button>
+          <canvas ref={canvasRef} height={HEIGHT} width={WIDTH} />
+          <LevelButton />
+        </Grid>
+      </div>
   );
 };
 
 export default GamePlayer1;
+
