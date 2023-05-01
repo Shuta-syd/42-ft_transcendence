@@ -28,7 +28,7 @@ function useMutationMessage(socket: Socket, roomId: string, isDM: boolean) {
           queryClient.setQueryData([`chatRoom${String(roomId)}`], [...previousData, res]);
       },
       onError: (err: any) => {
-        alert('メッセージを正しく送信できませんでした。');
+        alert('メッセージを正しく送信できませんでした\nミュートされている可能性があります。');
         if (isDM)
           router('/chat/room');
         else
