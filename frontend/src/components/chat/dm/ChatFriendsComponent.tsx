@@ -99,7 +99,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
               </Grid>
               {isLeave ? (
               <Grid item>
-                <LeaveButton roomId={room.id} setChannels={setDMRooms} channels={DMRooms} isDM={true}/>
+                  <LeaveButton socket={socket} roomId={room.id} setChannels={setDMRooms} channels={DMRooms} isDM={true}/>
               </Grid>
             ) : (<></>)}
             </Grid>
@@ -119,7 +119,7 @@ export default function ChatFriendsComponent(props: ChatFriendsComponentProps) {
               </Grid>
               {isLeave ? (
               <Grid item>
-                <LeaveButton roomId={room.id} setChannels={setDMRooms} channels={DMRooms} isDM={true}/>
+                <LeaveButton socket={socket} roomId={room.id} setChannels={setDMRooms} channels={DMRooms} isDM={true}/>
               </Grid>
             ) : (<></>)}
             </Grid>
