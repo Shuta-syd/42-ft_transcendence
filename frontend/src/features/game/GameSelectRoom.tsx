@@ -46,6 +46,19 @@ const GameSelectRoom = () => {
     });
   }, [GameRoomPromises]);
 
+  function getPlayer2DisplayText(player2: string) {
+    if (!player2) {
+      return "Loading";
+    }
+
+    if (player2.startsWith("player2_")) {
+      return "waiting for player2";
+    }
+
+    return player2;
+  }
+
+
   return (
     <div
       style={{
@@ -69,7 +82,7 @@ const GameSelectRoom = () => {
           {GameRoomArr.map((game) => (
               <div key={game.id}>
                 <h4>
-                  [{game.id}] {game.player1} vs {game.player2 ? game.player2 : "Loading"}
+                  [{game.id}] {game.player1} vs {getPlayer2DisplayText(game.player2)}
                 </h4>
               </div>
           ))}
