@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { GameServiceReWrite } from './game-rewrite.service';
+import { GameReWriteService } from './game-rewrite.service';
 import { DeleteGameDto } from './game-rewrite.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -29,7 +29,7 @@ export class GameReWriteGateway
     private readonly matchService: MatchService,
     private readonly configService: ConfigService,
     private readonly prismaService: PrismaService,
-    private readonly gameService: GameServiceReWrite,
+    private readonly gameService: GameReWriteService,
   ) {}
 
   @WebSocketServer()

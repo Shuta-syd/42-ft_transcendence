@@ -7,7 +7,7 @@ import { DeleteGameDto } from './game-rewrite.dto';
 
 
 @Injectable()
-export class GameServiceReWrite {
+export class GameReWriteService {
   private readonly userNameToRandomGameRoomId = new Map<string, string>();
   private readonly userNameToInviteGameRoomId = new Map<string, string>();
   constructor(private readonly prisma: PrismaService) {}
