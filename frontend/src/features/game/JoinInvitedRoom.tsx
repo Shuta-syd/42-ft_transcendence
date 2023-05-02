@@ -72,16 +72,18 @@ const JoinInvitedRoom = (props: { socket: Socket }) => {
           fontSize="h5.fontSize"
           direction="column"
         >
-          <Grid item mr={11} spacing={13}>
-            <h2
-              style={{
-                fontSize: '2rem',
-              }}
-            >
-              Please enter your Invite ID😄
-            </h2>
-            <br />
-          </Grid>
+          {isButtonVisible && (
+            <Grid item mr={11} spacing={13}>
+              <h2
+                style={{
+                  fontSize: '2rem',
+                }}
+              >
+                Please enter your Invite ID😄
+              </h2>
+              <br />
+            </Grid>
+          )}
           {isButtonVisible && (
             <Grid mr={13} spacing={10}>
               <input
