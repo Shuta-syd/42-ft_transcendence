@@ -29,13 +29,14 @@ export class GameReWriteService {
     if (prismaPlayer2) {
     // ある場合は JoinRandomGameAsPlayer2
       const game = this.JoinInviteGameAsPlayer2(playerName);
+      return game;
     } else {
     // ない場合はcreateRandomGameRoom()
       const game = this.createRandomGameRoom(playerName);
+      return game;
     }
 
     // 上記で参加もしくは作成したGameを返り値として返す
-    return game | null;
   }
 
 
@@ -69,9 +70,9 @@ export class GameReWriteService {
     } );
 
     // userNameToRandomGameRoomIdに登録
-    this.userNameToRandomGameRoomId.set(player1Name, game.id);
+    this.userNameToRandomGameRoomId.set(player1Name, game.id.toString());
     // 作成したランダムゲームを返す
-    return game | null;
+    return game;
   }
 
     /**
@@ -103,7 +104,7 @@ export class GameReWriteService {
      * ここの部分は違和感を感じる
      * グローバル変数で怪しい。ここをどうにか変更するのが良さそう
      */
-    // NameToInviteRoomIdDic[inviterName] = newGameRoom.id;
+    this.userNameToInviteGameRoomId.set(inviterName, newGameRoom.id.toString());
     return newGameRoom;
   }
 
@@ -113,16 +114,32 @@ export class GameReWriteService {
    */
   async JoinRandomGameAsPlayer2(playerName: string): Promise<Game> {
     // prisma.findFirstでplayer2プロパティに'player2'の文字列が入ったレコード1つ取り出す
+    const prismaPlayer2 = await this.prisma.game.findFirst({
+        where: {
+            player2: 'player2_',
+        }
+    } );
+
     // 'player2'の文字列がある場合はまだplayer2が参加していないから空いていることを示す
 
+    const id = prismaPlayer2.id
+
     // 取得したレコードのdata: player2を引数の変数に変更する prisma.game.update使用
-    // where: idで検索
+    const game = await this.prisma.game.update({
+        where: {
+            id: id,
+        },
+        data: {
+            player2: playerName,
+        }
+    } );
     // ここでの返り値を変数に入れる (1)
 
     // userNameToRandomGameRoomIdに登録;
+    this.userNameToRandomGameRoomId.set(playerName, game.id.toString());
 
     // (1)を返す
-    return null;
+    return game;
   }
 
   /**
@@ -131,6 +148,8 @@ export class GameReWriteService {
    */
   async JoinInviteGameAsPlayer2(playerName: string): Promise<Game> {
     // prisma.findUniqueでdto.roomIdの部屋を探す。ない場合は例外をスロー(NotFoundException)
+
+
     // player2に既に'player2'を含む文字列以外があった場合は例外スロー(ForbiddenException)
     // ↑すでに参加されているため
     // 'player2'の文字列がある場合はまだplayer2が参加していないから空いていることを示す。そのため、正常に次の処理に移行
