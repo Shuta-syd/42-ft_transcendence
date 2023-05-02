@@ -38,7 +38,7 @@ export class GameService {
       const game = this.prisma.game.create({
         data: {
           player1: playerName,
-          player2: 'player2_' + uuidv4.toString(),
+          player2: 'player2_' + uuidv4().toString(),
         },
       });
       player2Count++;
@@ -114,10 +114,11 @@ export class GameService {
     if (isPlayer1Unique) {
       return isPlayer1Unique;
     }
+    console.log(playerName, 'inviteGame');
     const game = this.prisma.inviteGame.create({
       data: {
         player1: playerName,
-        player2: 'player2_' + uuidv4.toString(),
+        player2: 'player2_' + uuidv4().toString(),
       },
     });
     player2Count++;
