@@ -20,14 +20,22 @@ export class GameReWriteService {
    */
   async createOrJoinRandomGameAsPlayer(playerName: string): Promise<Game> {
     // prisma.findFirstでplayer2プロパティに'player2'の文字列が入ったレコード1つ取り出す
+    const prismaPlayer2 = await this.prisma.game.findFirst({
+        where: {
+            player2: 'player2',
+        }
+    });
     // 'player2'の文字列がある場合はまだplayer2が参加していないから空いていることを示す
-
-    // ない場合はcreateRandomGameRoom();
-
+    if (prismaPlayer2) {
     // ある場合は JoinRandomGameAsPlayer2
+      const game = this.JoinInviteGameAsPlayer2(playerName);
+    } else {
+    // ない場合はcreateRandomGameRoom()
+      const game = this.createRandomGameRoom(playerName);
+    }
 
     // 上記で参加もしくは作成したGameを返り値として返す
-    return null;
+    return game | null;
   }
 
 
@@ -41,17 +49,29 @@ export class GameReWriteService {
    */
   async createRandomGameRoom(player1Name: string): Promise<Game> {
     // すでにassignされているランダムゲームがあるかをprisma.findUniqueで検索
+    const prismaGame =  await this.prisma.game.findUnique({
+        where: {
+            player1: player1Name,
+        }
+    } );
     // ある場合はその値を返す
+    if (prismaGame)
+      return prismaGame;
     // awaitして同期処理に変更 thenは使用しない
-
     // 作成済みのゲームがない場合は新たに作成する
     // player1は引数の変数、player2は’player2_’+ uuidv4()
     // awaitして同期処理に変更 thenは使用しない
+    const game = await this.prisma.game.create({
+        data: {
+            player1: player1Name,
+            player2: 'player2_' + uuidv4(),
+        }
+    } );
 
     // userNameToRandomGameRoomIdに登録
-
+    this.userNameToRandomGameRoomId.set(player1Name, game.id);
     // 作成したランダムゲームを返す
-    return null;
+    return game | null;
   }
 
     /**
