@@ -19,7 +19,7 @@ import { Logger } from '@nestjs/common';
   cors: {
     origin: ['http://localhost:3000'],
   },
-  namespace: '/chat',
+  namespace: '/game',
 })
 export class GameReWriteGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
@@ -39,6 +39,9 @@ export class GameReWriteGateway
   async handleConnection(client: Socket) { return; }
 
   async handleDisconnect(client: Socket) { return; }
+
+
+
 
   afterInit(server: Server) {
     this.logger.log('Init');

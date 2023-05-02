@@ -77,25 +77,6 @@ export class GameGateway {
   private logger: Logger = new Logger('GameGateway');
   private rooms = {};
 
-  //クライアント側から「chatToServer」という名前のメッセージ（？）をリッスン（好きに命名できる）
-  @SubscribeMessage('chatToServer')
-  chatting(
-    @MessageBody() payload: ChatRecieved,
-    @ConnectedSocket() client: Socket,
-  ): void {
-    //@MessageBody受信したデータ
-    //@ConnectedSocket→ユーザーのID（websocketで自動で割り当てられる）や、その他接続に関する情報など
-    // this.logger.log(payload);
-    // this.logger.log('chat受信');
-    //emit()とすると、指定した名前をリッスンしているクライアントに情報をプッシュできる
-    let roomId: string = NameToRoomIdDic[payload.name];
-    if (roomId === undefined) {
-      roomId = NameToInviteRoomIdDic[payload.name];
-    }
-    this.server
-      .to(roomId)
-      .emit('chatToClient', { ...payload, socketId: client.id });
-  }
   @SubscribeMessage('GameToServer')
   ReceiveGameInfo(
     @MessageBody() payload: PaddleAndRoom,
