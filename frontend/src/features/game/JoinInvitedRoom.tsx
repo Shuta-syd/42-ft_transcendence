@@ -8,6 +8,7 @@ import GameInvitedGuestReq from '../../hooks/game/useInvitedRoom';
 
 const JoinInvitedRoom = (props: { socket: Socket }) => {
   const { socket } = props;
+  const [isButtonVisible, setIsButtonVisible] = useState<boolean>(true);
   const [tmpNumber, setTmpNumber] = useState<string>('');
   const [roomId, setRoomid] = useState<string>('');
   const [IsAssigned, setIsAsssigned] = useState<boolean>(false);
@@ -40,6 +41,7 @@ const JoinInvitedRoom = (props: { socket: Socket }) => {
           setgame(game);
           setIsAsssigned(true);
           setIsUncorrect(false);
+          setIsButtonVisible(false);
         } else {
           setIsUncorrect(true);
         }
@@ -80,27 +82,28 @@ const JoinInvitedRoom = (props: { socket: Socket }) => {
             </h2>
             <br />
           </Grid>
-          <p></p>
-          <Grid mr={13} spacing={10}>
-            <input
-              type="text"
-              style={{
-                borderRadius: '100px',
-                fontSize: '2rem',
-              }}
-              value={tmpNumber}
-              onChange={handleInputChange}
-            />
-            <button
-              onClick={handleButtonClick}
-              style={{
-                borderRadius: '100px',
-                fontSize: '2rem',
-              }}
-            >
-              enter
-            </button>
-          </Grid>
+          {isButtonVisible && (
+            <Grid mr={13} spacing={10}>
+              <input
+                type="text"
+                style={{
+                  borderRadius: '100px',
+                  fontSize: '2rem',
+                }}
+                value={tmpNumber}
+                onChange={handleInputChange}
+              />
+              <button
+                onClick={handleButtonClick}
+                style={{
+                  borderRadius: '100px',
+                  fontSize: '2rem',
+                }}
+              >
+                enter
+              </button>
+            </Grid>
+          )}
           {IsAssigned && (
             <h2
               style={{
