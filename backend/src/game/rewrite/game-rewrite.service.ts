@@ -1,9 +1,9 @@
 /* eslint-disable prettier/prettier */
 import { Injectable, ParseIntPipe } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { Game, Match, InviteGame } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
-import { DeleteGameDto } from './dto/game-rewrite.dto';
+import { DeleteGameDto } from './game-rewrite.dto';
 
 
 @Injectable()
@@ -11,6 +11,25 @@ export class GameServiceReWrite {
   private readonly userNameToRandomGameRoomId = new Map<string, string>();
   private readonly userNameToInviteGameRoomId = new Map<string, string>();
   constructor(private readonly prisma: PrismaService) {}
+
+  /**
+   * @description
+   * player1側に回ってゲームを作成するかplayer2として参加するかの判断をする関数
+   * ランダムゲームに限る
+   * 返り値はGame
+   */
+  async createOrJoinRandomGameAsPlayer(playerName: string): Promise<Game> {
+    // prisma.findFirstでplayer2プロパティに'player2'の文字列が入ったレコード1つ取り出す
+    // 'player2'の文字列がある場合はまだplayer2が参加していないから空いていることを示す
+
+    // ない場合はcreateRandomGameRoom();
+
+    // ある場合は JoinRandomGameAsPlayer2
+
+    // 上記で参加もしくは作成したGameを返り値として返す
+    return null;
+  }
+
 
   /**
    * @description
@@ -142,5 +161,9 @@ export class GameServiceReWrite {
     // userNameToInviteGameRoomIdからも削除 player1 player2両方とも
   }
 
+  getUserNameToRandomGameRoomId() { return this.userNameToRandomGameRoomId; }
 
+  getUserNameToInviteGameRoomId() { return this.userNameToInviteGameRoomId; }
+
+  // Observerは省略してる
 }
