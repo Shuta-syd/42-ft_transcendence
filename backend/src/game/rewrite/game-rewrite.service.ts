@@ -29,13 +29,14 @@ export class GameReWriteService {
     if (prismaPlayer2) {
     // ある場合は JoinRandomGameAsPlayer2
       const game = this.JoinInviteGameAsPlayer2(playerName);
+      return game;
     } else {
     // ない場合はcreateRandomGameRoom()
       const game = this.createRandomGameRoom(playerName);
+      return game;
     }
 
     // 上記で参加もしくは作成したGameを返り値として返す
-    return game | null;
   }
 
 
@@ -69,9 +70,9 @@ export class GameReWriteService {
     } );
 
     // userNameToRandomGameRoomIdに登録
-    this.userNameToRandomGameRoomId.set(player1Name, game.id);
+    this.userNameToRandomGameRoomId.set(player1Name, game.id.toString());
     // 作成したランダムゲームを返す
-    return game | null;
+    return game;
   }
 
     /**
