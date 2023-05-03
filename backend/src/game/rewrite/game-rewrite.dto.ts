@@ -1,4 +1,4 @@
 export class DeleteGameDto {
     playerName: string;
-    roomId: number;
+    roomId: string;
 }

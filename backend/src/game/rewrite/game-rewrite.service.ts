@@ -176,7 +176,7 @@ export class GameReWriteService {
         // ない場合は例外投げる（NotFoundException）
         let game = await this.prisma.game.findUnique({
             where: {
-                id: dto.roomId,
+                id: parseInt(dto.roomId),
             }
         });
         if (!game)
@@ -189,7 +189,7 @@ export class GameReWriteService {
         // 正常の場合はprisma.game.deleteで削除
         await this.prisma.game.delete({
             where: {
-                id: dto.roomId,
+                id: parseInt(dto.roomId),
             }
         });
         // userNameToRandomGameRoomIdからも削除 player1 player2両方とも
