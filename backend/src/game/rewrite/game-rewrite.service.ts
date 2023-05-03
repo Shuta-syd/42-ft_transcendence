@@ -30,7 +30,7 @@ export class GameReWriteService {
         // 'player2'の文字列がある場合はまだplayer2が参加していないから空いていることを示す
         if (prismaPlayer2) {
             // ある場合は JoinRandomGameAsPlayer2
-            const game = this.JoinInviteGameAsPlayer2(playerName);
+            const game = this.JoinRandomGameAsPlayer2(playerName);
             return game;
         } else {
             // ない場合はcreateRandomGameRoom()
@@ -168,7 +168,7 @@ export class GameReWriteService {
         // 取得したレコードのdata: player2を引数の変数に変更する prisma.game.update使用
         // where: idで検索
         // ここでの返り値を変数に入れる (1)
-        const gmme = await this.prisma.inviteGame.update({
+        const game = await this.prisma.inviteGame.update({
             where: {
                 id: roomId,
             },
@@ -179,9 +179,9 @@ export class GameReWriteService {
 
 
         // userNameToInviteGameRoomIdに登録;
-        this.userNameToInviteGameRoomId.set(playerName, gmme.id.toString());
+        this.userNameToInviteGameRoomId.set(playerName, game.id.toString());
         // (1)を返す
-        return null;
+        return game;
     }
 
 
@@ -193,7 +193,7 @@ export class GameReWriteService {
     async DeleteRandomGameRoom(dto: DeleteGameDto) {
         // dto.roomIdのデータレコードが存在しているかをprisma.findUniqueで検索
         // ない場合は例外投げる（NotFoundException）
-        let game = await this.prisma.game.findUnique({
+        const game = await this.prisma.game.findUnique({
             where: {
                 id: parseInt(dto.roomId),
             }
