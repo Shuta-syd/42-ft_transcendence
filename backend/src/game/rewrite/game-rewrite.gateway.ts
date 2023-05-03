@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { GameReWriteService } from './game-rewrite.service';
-import { BallPosDto, DeleteGameDto, PaddleDto, ScoreDto } from './game-rewrite.dto';
+import { BallPosDto, PaddleDto, ScoreDto } from './game-rewrite.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -14,9 +14,11 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
+  WsException,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
+import axios from 'axios';
 
 @WebSocketGateway({
   cors: {
@@ -30,7 +32,7 @@ export class GameReWriteGateway
     private readonly jwtService: JwtService,
     private readonly matchService: MatchService,
     private readonly configService: ConfigService,
-    private readonly prismaService: PrismaService,
+    private readonly prisma: PrismaService,
     private readonly gameService: GameReWriteService,
   ) { }
 
@@ -38,9 +40,93 @@ export class GameReWriteGateway
   server: Server;
   private logger: Logger = new Logger('GameReWriteGateway');
 
-  async handleConnection(client: Socket) { return; }
+  async handleConnection(client: Socket) { this.logger.log(`[Game] Client connected: ${client.id}`); }
 
-  async handleDisconnect(client: Socket) { return; }
+  async handleDisconnect(client: Socket) {
+    let userID = '';
+    this.logger.log(`[Game] Client disconnected: ${client.id}`);
+
+    const cookie = client.handshake.headers.cookie;
+    if (cookie === undefined) throw new WsException('unAuthorized');
+    const accessToken = cookie.split('=')[1].split(';')[0];
+    if (accessToken === '') throw new WsException('unAuthorized');
+    try {
+      const { sub: userId } = await this.jwtService.verify(accessToken, {
+        secret: this.configService.get('JWT_SECRET'),
+      });
+      userID = userId;
+    } catch (error) {
+      return;
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userID,
+      },
+    });
+    if (!user) return;
+
+    await axios.post('http://localhost:8080/game/status/off', { userId: userID });
+
+    let isInviteGame = false;
+    const UserNameToRandomGameRoomId = this.gameService.getUserNameToRandomGameRoomId();
+    const UserNameToInviteGameRoomId = this.gameService.getUserNameToInviteGameRoomId();
+    let roomId = UserNameToRandomGameRoomId[user.name];
+
+    if (roomId === undefined) {
+      roomId = UserNameToInviteGameRoomId[user.name];
+      isInviteGame = true;
+    }
+    if (roomId === undefined) return; // 例外?
+
+    this.server.to(roomId).emit('ExitGame');
+
+    let gameRoom = null;
+    if (!isInviteGame) {
+      gameRoom = await this.prisma.game.findUnique({
+        where: {
+          id: roomId,
+        }
+      });
+    } else {
+      gameRoom = await this.prisma.inviteGame.findUnique({
+        where: {
+          id: roomId,
+        }
+      });
+    }
+
+    if (gameRoom === null) return;
+
+    if (gameRoom.player1 === user.name && !gameRoom.player2.includes('player2')) {
+      await this.matchService.createMatch({
+        player1: user.name,
+        player2: gameRoom.player2,
+        winner_id: '2',
+      });
+    }
+    else if (gameRoom.player2 === user.name) {
+      await this.matchService.createMatch({
+        player1: gameRoom.player1,
+        player2: user.name,
+        winner_id: '1',
+      });
+    }
+
+    if (!isInviteGame) {
+      await this.prisma.game.delete({
+        where: {
+          id: roomId,
+        }
+      })
+    } else {
+      await this.prisma.inviteGame.delete({
+        where: {
+          id: roomId,
+        }
+      })
+    }
+  }
 
   /**
    * @description paddle情報を受け取り他プレイヤーに送るに用いられるイベント
@@ -78,7 +164,7 @@ export class GameReWriteGateway
       roomId = UserNameToInviteGameRoomId[payload.playerName];
     if (roomId === undefined) return; // 例外?
 
-    this.server.to(roomId).emit('GameToClient', payload, client.id);
+    this.server.to(roomId).emit('BallPosToClient', payload, client.id);
   }
 
   /**
