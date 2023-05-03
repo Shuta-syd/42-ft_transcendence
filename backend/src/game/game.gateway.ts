@@ -218,7 +218,6 @@ export class GameGateway {
     await delete SocketClients[SocketClients.findIndex((e) => e.name === name)];
   }
 
-
   // 接続が切断されたときの処理
   async handleDisconnect(client: Socket) {
     this.logger.log(`[Game] Client disconnected: ${client.id}`);

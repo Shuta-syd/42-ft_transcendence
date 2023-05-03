@@ -49,10 +49,7 @@ function GameObserverReq(observer: ObserverDto | undefined) {
 function GameInviteRoomReq(playerName: string | undefined) {
   const getInviteGameObject = async () => {
     const { data } = await axios.post<InviteGame>(
-      `http://localhost:8080/game/create_invite_room`,
-      {
-        playerName,
-      },
+      `http://localhost:8080/game-rewrite/invite-game`,
     );
     return data;
   };

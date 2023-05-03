@@ -1,26 +1,18 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent,  useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Grid } from '@mui/material';
 import { Socket } from 'socket.io-client';
 import { InviteGame, User } from '../../types/PrismaType';
-import { useGameUser } from '../../hooks/game/useGameuser';
 import GameInvitedGuestReq from '../../hooks/game/useInvitedRoom';
 
-const JoinInvitedRoom = (props: { socket: Socket }) => {
-  const { socket } = props;
+const JoinInvitedRoom = (props: { socket: Socket, user: User }) => {
+  const { socket, user } = props;
   const [isButtonVisible, setIsButtonVisible] = useState<boolean>(true);
   const [tmpNumber, setTmpNumber] = useState<string>('');
   const [roomId, setRoomid] = useState<string>('');
   const [IsAssigned, setIsAsssigned] = useState<boolean>(false);
   const [IsUncorrect, setIsUncorrect] = useState<boolean>(false);
   const [Game, setgame] = useState<InviteGame>();
-  const [user, setUser] = useState<User>();
-  const UserPromises = useGameUser();
-  useEffect(() => {
-    UserPromises.then((userDto: User) => {
-      setUser(userDto);
-    });
-  }, []);
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setTmpNumber(event.target.value);
@@ -50,7 +42,7 @@ const JoinInvitedRoom = (props: { socket: Socket }) => {
   };
 
   const handleClick = () => {
-    socket.emit('TerminateGame', user?.name);
+    socket.emit('TerminateGame', { name: user.name });
   };
 
   return (

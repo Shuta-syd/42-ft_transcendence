@@ -43,13 +43,13 @@ const GameRouting = () => {
     case 'observer':
       return <GameObserver socket={socket} />;
     case 'select_room':
-      return <GameSelectRoom />;
+      return <GameSelectRoom user={user} />;
     case 'game_room':
       return <CreateGameRoom user={user} />;
     case 'invite_room':
-      return <InviteRoom socket={socket} />;
+      return <InviteRoom socket={socket} user={user}/>;
     case 'join_invited_room':
-      return <JoinInvitedRoom socket={socket} />;
+      return <JoinInvitedRoom socket={socket} user={user} />;
     default:
       return (
         <div>
