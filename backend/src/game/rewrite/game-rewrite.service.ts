@@ -109,7 +109,7 @@ export class GameReWriteService {
    * @description
    * player2としてInvite Gameに参加する（InviteGameデータベースを上書きする）
    */
-  async JoinInviteGameAsPlayer2(playerName: string): Promise<Game> {
+  async JoinInviteGameAsPlayer2(playerName: string): Promise<InviteGame> {
     // prisma.findUniqueでdto.roomIdの部屋を探す。ない場合は例外をスロー(NotFoundException)
     // player2に既に'player2'を含む文字列以外があった場合は例外スロー(ForbiddenException)
     // ↑すでに参加されているため

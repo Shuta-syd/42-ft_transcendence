@@ -5,10 +5,11 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { MatchService } from 'src/match/match.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { GameReWriteController } from './game-rewrite.controller';
 
 @Module({
   imports: [MatchModule],
-  // controllers: [GameReWriteController],
+  controllers: [GameReWriteController],
   providers: [
     GameReWriteService,
     PrismaService,
