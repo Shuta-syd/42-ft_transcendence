@@ -30,7 +30,7 @@ export class GameReWriteService {
         // 'player2'の文字列がある場合はまだplayer2が参加していないから空いていることを示す
         if (prismaPlayer2) {
             // ある場合は JoinRandomGameAsPlayer2
-            const game = this.JoinInviteGameAsPlayer2(playerName);
+            const game = this.JoinRandomGameAsPlayer2(playerName);
             return game;
         } else {
             // ない場合はcreateRandomGameRoom()
