@@ -7,7 +7,7 @@ import {
 import { PrismaService } from '../../prisma/prisma.service';
 import { Game, InviteGame } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
-import { DeleteGameDto } from './game-rewrite.dto';
+import { DeleteGameDto, InviteGameDto } from './game-rewrite.dto';
 
 @Injectable()
 export class GameReWriteService {
@@ -24,15 +24,16 @@ export class GameReWriteService {
    */
   async createOrJoinRandomGameAsPlayer(playerName: string): Promise<Game> {
     // prisma.findFirstでplayer2プロパティに'player2'の文字列が入ったレコード1つ取り出す
-    const prismaPlayer2 = await this.prisma.game.findFirst({
+    const player2NotAssginedGame = await this.prisma.game.findFirst({
       where: {
         player2: {
           contains: 'player2_',
         },
       },
     });
+
     // 'player2'の文字列がある場合はまだplayer2が参加していないから空いていることを示す
-    if (prismaPlayer2) {
+    if (player2NotAssginedGame) {
       // ある場合は JoinRandomGameAsPlayer2
       const game = this.JoinRandomGameAsPlayer2(playerName);
       return game;
@@ -133,10 +134,10 @@ export class GameReWriteService {
     });
     // player2NotsAssginedGameがない場合はエラーを返す
     if (!player2NotAssginedGame) {
-      throw new NotFoundException('There is no available game')
+      throw new NotFoundException('There is no available game');
     }
 
-    // player1が自分の名前だったら、例外を投げる
+    // player1が自分の名前だったら、そのゲームを返す
     if (player2NotAssginedGame.player1 === playerName) {
       return player2NotAssginedGame;
     }
@@ -166,39 +167,53 @@ export class GameReWriteService {
    * @description
    * player2としてInvite Gameに参加する（InviteGameデータベースを上書きする）
    */
-  async JoinInviteGameAsPlayer2(playerName: string): Promise<InviteGame> {
-    // prisma.findUniqueでdto.roomIdの部屋を探す。ない場合は例外をスロー(NotFoundException)
-    const roomId = this.userNameToInviteGameRoomId.get(playerName);
-    if (!roomId) throw new NotFoundException('部屋が見つかりませんでした。');
+  async JoinInviteGameAsPlayer2(dto: InviteGameDto): Promise<InviteGame> {
+    const invitedPlayerName = dto.invitedPlayerName;
+    const roomId = dto.roomId;
 
     // player2に既に'player2'を含む文字列以外があった場合は例外スロー(ForbiddenException)
-    const prismaPlayer2 = await this.prisma.inviteGame.findUnique({
+    const invitedGame = await this.prisma.inviteGame.findUnique({
       where: {
         id: roomId,
       },
     });
+    // Gameが存在しなかったらエラーを返す
+    if (!invitedGame) {
+      throw new NotFoundException('There is no available game');
+    }
+    // 既に参加していたら、そのゲームを返す
+    if (
+      invitedGame.player1 === invitedPlayerName ||
+      invitedGame.player2 === invitedPlayerName
+    ) {
+      return invitedGame;
+    }
+
     // 'player2'の文字列がある場合はまだplayer2が参加していないから空いていることを示す。そのため、正常に次の処理に移行
-    if (prismaPlayer2.player2.slice(0, 8) === 'player2_') {
-      throw new ForbiddenException('すでに参加されています。');
+    if (invitedGame.player2.slice(0, 8) !== 'player2_') {
+      throw new ForbiddenException('This room is already full');
     }
     // ↑すでに参加されているため
 
     // 取得したレコードのdata: player2を引数の変数に変更する prisma.game.update使用
     // where: idで検索
     // ここでの返り値を変数に入れる (1)
-    const gmme = await this.prisma.inviteGame.update({
+    const matchedGame = await this.prisma.inviteGame.update({
       where: {
         id: roomId,
       },
       data: {
-        player2: playerName,
+        player2: invitedPlayerName,
       },
     });
 
     // userNameToInviteGameRoomIdに登録;
-    this.userNameToInviteGameRoomId.set(playerName, gmme.id.toString());
+    this.userNameToInviteGameRoomId.set(
+      invitedPlayerName,
+      matchedGame.id.toString(),
+    );
     // (1)を返す
-    return null;
+    return matchedGame;
   }
 
   /**
@@ -206,29 +221,33 @@ export class GameReWriteService {
    * playerNameが属しているRandomGameRoom(database: Game)を削除する
    * 旧terminateGame()を分解している（分解しているのは簡略化のため）
    */
-  async DeleteRandomGameRoom(dto: DeleteGameDto) {
+  async DeleteRandomGameRoom({
+    playerName,
+    roomId,
+  }: DeleteGameDto): Promise<Game> {
     // dto.roomIdのデータレコードが存在しているかをprisma.findUniqueで検索
     // ない場合は例外投げる（NotFoundException）
     const game = await this.prisma.game.findUnique({
       where: {
-        id: parseInt(dto.roomId),
+        id: parseInt(roomId),
       },
     });
-    if (!game) throw new NotFoundException();
+    if (!game) throw new NotFoundException('There is no available game');
     // dto.playerName === データレコード.player1もしくはplayer2の条件分岐
     // 上記がどちらとも当てはまらない場合は例外（ForbiddenException）
-    if (dto.playerName !== game.player1 && dto.playerName !== game.player2)
-      throw new ForbiddenException();
+    if (playerName !== game.player1 && playerName !== game.player2)
+      throw new ForbiddenException('You are not a player of this game');
 
     // 正常の場合はprisma.game.deleteで削除
-    await this.prisma.game.delete({
+    const deletedGame = await this.prisma.game.delete({
       where: {
-        id: parseInt(dto.roomId),
+        id: parseInt(roomId),
       },
     });
     // userNameToRandomGameRoomIdからも削除 player1 player2両方とも
     this.userNameToRandomGameRoomId.delete(game.player1);
     this.userNameToRandomGameRoomId.delete(game.player2);
+    return deletedGame;
   }
 
   /**
@@ -236,37 +255,39 @@ export class GameReWriteService {
    * playerNameが属しているInviteGameRoom(database: InviteGame)を削除する
    * 旧terminateGame()を分解している。（分解しているのは簡略化のため）
    */
-  async DeleteInviteGameRoom(dto: DeleteGameDto) {
+  async DeleteInviteGameRoom({
+    playerName,
+    roomId,
+  }: DeleteGameDto): Promise<InviteGame> {
     // dto.roomIdのデータレコードが存在しているかをprisma.findUniqueで検索
     const game = await this.prisma.inviteGame.findUnique({
       where: {
-        id: dto.roomId,
+        id: roomId,
       },
     });
     // ない場合は例外投げる（NotFoundException）
-    if (!game) throw new NotFoundException('部屋が見つかりませんでした。');
+    if (!game) throw new NotFoundException('The invite game was not found.');
 
     // dto.playerName === データレコード.player1もしくはplayer2の条件分岐
-    if (dto.playerName !== game.player1) {
+    if (playerName !== game.player1 && playerName !== game.player2) {
       // 上記がどちらとも当てはまらない場合は例外（ForbiddenException）
-      if (dto.playerName !== game.player2) {
-        throw new ForbiddenException(
-          'あなたはこの部屋の作成者ではありません。',
-        );
-      }
+      throw new ForbiddenException(
+        'Your not room owner or player of this game.',
+      );
     }
     // 上記がどちらとも当てはまらない場合は例外（ForbiddenException）
 
     // 正常の場合はprisma.game.deleteで削除
-    await this.prisma.inviteGame.delete({
+    const deleteGame = await this.prisma.inviteGame.delete({
       where: {
-        id: dto.roomId,
+        id: roomId,
       },
     });
 
     // userNameToInviteGameRoomIdからも削除 player1 player2両方とも
     this.userNameToInviteGameRoomId.delete(game.player1);
     this.userNameToInviteGameRoomId.delete(game.player2);
+    return deleteGame;
   }
 
   getUserNameToRandomGameRoomId() {
