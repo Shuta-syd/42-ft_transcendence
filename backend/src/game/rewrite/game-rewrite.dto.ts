@@ -1,4 +1,4 @@
 export class DeleteGameDto {
-  playerName: string;
-  roomId: boolean;
+    playerName: string;
+    roomId: number;
 }

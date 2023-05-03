@@ -1,208 +1,226 @@
 /* eslint-disable prettier/prettier */
-import { Injectable, ParseIntPipe } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { Game, Match, InviteGame } from '@prisma/client';
-import { v4 as uuidv4 } from 'uuid';
-import { DeleteGameDto } from './game-rewrite.dto';
+import {ForbiddenException, Injectable, NotFoundException} from '@nestjs/common';
+import {PrismaService} from '../../prisma/prisma.service';
+import {Game, InviteGame} from '@prisma/client';
+import {v4 as uuidv4} from 'uuid';
+import {DeleteGameDto} from './game-rewrite.dto';
 
 
 @Injectable()
 export class GameReWriteService {
-  private readonly userNameToRandomGameRoomId = new Map<string, string>();
-  private readonly userNameToInviteGameRoomId = new Map<string, string>();
-  constructor(private readonly prisma: PrismaService) {}
+    private readonly userNameToRandomGameRoomId = new Map<string, string>();
+    private readonly userNameToInviteGameRoomId = new Map<string, string>();
 
-  /**
-   * @description
-   * player1側に回ってゲームを作成するかplayer2として参加するかの判断をする関数
-   * ランダムゲームに限る
-   * 返り値はGame
-   */
-  async createOrJoinRandomGameAsPlayer(playerName: string): Promise<Game> {
-    // prisma.findFirstでplayer2プロパティに'player2'の文字列が入ったレコード1つ取り出す
-    const prismaPlayer2 = await this.prisma.game.findFirst({
-        where: {
-            player2: 'player2',
-        }
-    });
-    // 'player2'の文字列がある場合はまだplayer2が参加していないから空いていることを示す
-    if (prismaPlayer2) {
-    // ある場合は JoinRandomGameAsPlayer2
-      const game = this.JoinInviteGameAsPlayer2(playerName);
-      return game;
-    } else {
-    // ない場合はcreateRandomGameRoom()
-      const game = this.createRandomGameRoom(playerName);
-      return game;
+    constructor(private readonly prisma: PrismaService) {
     }
 
-    // 上記で参加もしくは作成したGameを返り値として返す
-  }
-
-
-  /**
-   * @description
-   * player1をassignしてランダムゲームのデータベースを作成して返す
-   * すでにassignされているゲームがデータベースにある場合はそれを返す
-   *
-   * ※ここではplayer2へのassignはしない。その役割はJoinRandomGameAsPlayer2()
-   * ランダムゲームとはGameデータベースを指す
-   */
-  async createRandomGameRoom(player1Name: string): Promise<Game> {
-    // すでにassignされているランダムゲームがあるかをprisma.findUniqueで検索
-    const prismaGame =  await this.prisma.game.findUnique({
-        where: {
-            player1: player1Name,
-        }
-    } );
-    // ある場合はその値を返す
-    if (prismaGame)
-      return prismaGame;
-    // awaitして同期処理に変更 thenは使用しない
-    // 作成済みのゲームがない場合は新たに作成する
-    // player1は引数の変数、player2は’player2_’+ uuidv4()
-    // awaitして同期処理に変更 thenは使用しない
-    const game = await this.prisma.game.create({
-        data: {
-            player1: player1Name,
-            player2: 'player2_' + uuidv4(),
-        }
-    } );
-
-    // userNameToRandomGameRoomIdに登録
-    this.userNameToRandomGameRoomId.set(player1Name, game.id.toString());
-    // 作成したランダムゲームを返す
-    return game;
-  }
-
     /**
-   * @description
-   * inviter(招待する側)をassignしてInviteGameのデータベースを作成して返す
-   * すでに作成されているゲームがデータベースにある場合はそれを返す
-   */
-  async createInviteGameRoom(inviterName: string): Promise<InviteGame> {
-
-    // 既に招待済みのデータベースがあるかをprisma.findUniqueで確認
-    const isExit = await this.prisma.inviteGame.findUnique({
-      where: {
-        player1: inviterName,
-      }
-    });
-    if (isExit) return isExit;
-
-    /**
-     * inviterをplayer1として新たなinviteGameデータをprismaで作成
+     * @description
+     * player1側に回ってゲームを作成するかplayer2として参加するかの判断をする関数
+     * ランダムゲームに限る
+     * 返り値はGame
      */
-    const newGameRoom = await this.prisma.inviteGame.create({
-      data: {
-        player1: inviterName,
-        player2: 'player2_' + uuidv4(),
-      }
-    })
+    async createOrJoinRandomGameAsPlayer(playerName: string): Promise<Game> {
+        // prisma.findFirstでplayer2プロパティに'player2'の文字列が入ったレコード1つ取り出す
+        const prismaPlayer2 = await this.prisma.game.findFirst({
+            where: {
+                player2: 'player2',
+            }
+        });
+        // 'player2'の文字列がある場合はまだplayer2が参加していないから空いていることを示す
+        if (prismaPlayer2) {
+            // ある場合は JoinRandomGameAsPlayer2
+            const game = this.JoinInviteGameAsPlayer2(playerName);
+            return game;
+        } else {
+            // ない場合はcreateRandomGameRoom()
+            const game = this.createRandomGameRoom(playerName);
+            return game;
+        }
+
+        // 上記で参加もしくは作成したGameを返り値として返す
+    }
+
 
     /**
-     * ここの部分は違和感を感じる
-     * グローバル変数で怪しい。ここをどうにか変更するのが良さそう
+     * @description
+     * player1をassignしてランダムゲームのデータベースを作成して返す
+     * すでにassignされているゲームがデータベースにある場合はそれを返す
+     *
+     * ※ここではplayer2へのassignはしない。その役割はJoinRandomGameAsPlayer2()
+     * ランダムゲームとはGameデータベースを指す
      */
-    this.userNameToInviteGameRoomId.set(inviterName, newGameRoom.id.toString());
-    return newGameRoom;
-  }
+    async createRandomGameRoom(player1Name: string): Promise<Game> {
+        // すでにassignされているランダムゲームがあるかをprisma.findUniqueで検索
+        const prismaGame = await this.prisma.game.findUnique({
+            where: {
+                player1: player1Name,
+            }
+        });
+        // ある場合はその値を返す
+        if (prismaGame)
+            return prismaGame;
+        // awaitして同期処理に変更 thenは使用しない
+        // 作成済みのゲームがない場合は新たに作成する
+        // player1は引数の変数、player2は’player2_’+ uuidv4()
+        // awaitして同期処理に変更 thenは使用しない
+        const game = await this.prisma.game.create({
+            data: {
+                player1: player1Name,
+                player2: 'player2_' + uuidv4(),
+            }
+        });
 
-  /**
-   * @description
-   * player2としてRandom Gameに参加する（Gameデータベースを上書きする）
-   */
-  async JoinRandomGameAsPlayer2(playerName: string): Promise<Game> {
-    // prisma.findFirstでplayer2プロパティに'player2'の文字列が入ったレコード1つ取り出す
-    const prismaPlayer2 = await this.prisma.game.findFirst({
-        where: {
-            player2: 'player2_',
-        }
-    } );
+        // userNameToRandomGameRoomIdに登録
+        this.userNameToRandomGameRoomId.set(player1Name, game.id.toString());
+        // 作成したランダムゲームを返す
+        return game;
+    }
 
-    // 'player2'の文字列がある場合はまだplayer2が参加していないから空いていることを示す
+    /**
+     * @description
+     * inviter(招待する側)をassignしてInviteGameのデータベースを作成して返す
+     * すでに作成されているゲームがデータベースにある場合はそれを返す
+     */
+    async createInviteGameRoom(inviterName: string): Promise<InviteGame> {
 
-    const id = prismaPlayer2.id
+        // 既に招待済みのデータベースがあるかをprisma.findUniqueで確認
+        const isExit = await this.prisma.inviteGame.findUnique({
+            where: {
+                player1: inviterName,
+            }
+        });
+        if (isExit) return isExit;
 
-    // 取得したレコードのdata: player2を引数の変数に変更する prisma.game.update使用
-    const game = await this.prisma.game.update({
-        where: {
-            id: id,
-        },
-        data: {
-            player2: playerName,
-        }
-    } );
-    // ここでの返り値を変数に入れる (1)
+        /**
+         * inviterをplayer1として新たなinviteGameデータをprismaで作成
+         */
+        const newGameRoom = await this.prisma.inviteGame.create({
+            data: {
+                player1: inviterName,
+                player2: 'player2_' + uuidv4(),
+            }
+        })
 
-    // userNameToRandomGameRoomIdに登録;
-    this.userNameToRandomGameRoomId.set(playerName, game.id.toString());
+        /**
+         * ここの部分は違和感を感じる
+         * グローバル変数で怪しい。ここをどうにか変更するのが良さそう
+         */
+        this.userNameToInviteGameRoomId.set(inviterName, newGameRoom.id.toString());
+        return newGameRoom;
+    }
 
-    // (1)を返す
-    return game;
-  }
+    /**
+     * @description
+     * player2としてRandom Gameに参加する（Gameデータベースを上書きする）
+     */
+    async JoinRandomGameAsPlayer2(playerName: string): Promise<Game> {
+        // prisma.findFirstでplayer2プロパティに'player2'の文字列が入ったレコード1つ取り出す
+        const prismaPlayer2 = await this.prisma.game.findFirst({
+            where: {
+                player2: 'player2_',
+            }
+        });
 
-  /**
-   * @description
-   * player2としてInvite Gameに参加する（InviteGameデータベースを上書きする）
-   */
-  async JoinInviteGameAsPlayer2(playerName: string): Promise<Game> {
-    // prisma.findUniqueでdto.roomIdの部屋を探す。ない場合は例外をスロー(NotFoundException)
+        // 'player2'の文字列がある場合はまだplayer2が参加していないから空いていることを示す
+
+        const id = prismaPlayer2.id
+
+        // 取得したレコードのdata: player2を引数の変数に変更する prisma.game.update使用
+        const game = await this.prisma.game.update({
+            where: {
+                id: id,
+            },
+            data: {
+                player2: playerName,
+            }
+        });
+        // ここでの返り値を変数に入れる (1)
+
+        // userNameToRandomGameRoomIdに登録;
+        this.userNameToRandomGameRoomId.set(playerName, game.id.toString());
+
+        // (1)を返す
+        return game;
+    }
+
+    /**
+     * @description
+     * player2としてInvite Gameに参加する（InviteGameデータベースを上書きする）
+     */
+    async JoinInviteGameAsPlayer2(playerName: string): Promise<Game> {
+        // prisma.findUniqueでdto.roomIdの部屋を探す。ない場合は例外をスロー(NotFoundException)
+
+        // player2に既に'player2'を含む文字列以外があった場合は例外スロー(ForbiddenException)
+        // ↑すでに参加されているため
+        // 'player2'の文字列がある場合はまだplayer2が参加していないから空いていることを示す。そのため、正常に次の処理に移行
+
+        // 取得したレコードのdata: player2を引数の変数に変更する prisma.game.update使用
+        // where: idで検索
+        // ここでの返り値を変数に入れる (1)
+
+        // userNameToInviteGameRoomIdに登録;
+
+        // (1)を返す
+        return null;
+    }
 
 
-    // player2に既に'player2'を含む文字列以外があった場合は例外スロー(ForbiddenException)
-    // ↑すでに参加されているため
-    // 'player2'の文字列がある場合はまだplayer2が参加していないから空いていることを示す。そのため、正常に次の処理に移行
-
-    // 取得したレコードのdata: player2を引数の変数に変更する prisma.game.update使用
-    // where: idで検索
-    // ここでの返り値を変数に入れる (1)
-
-   // userNameToInviteGameRoomIdに登録;
-
-    // (1)を返す
-    return null;
-  }
-
-
-  /**
-   * @description
-   * playerNameが属しているRandomGameRoom(database: Game)を削除する
-   * 旧terminateGame()を分解している（分解しているのは簡略化のため）
-   */
-  async DeleteRandomGameRoom(dto: DeleteGameDto) {
-    // dto.roomIdのデータレコードが存在しているかをprisma.findUniqueで検索
-    // ない場合は例外投げる（NotFoundException）
-
-    // dto.playerName === データレコード.player1もしくはplayer2の条件分岐
-    // 上記がどちらとも当てはまらない場合は例外（ForbiddenException）
-
-    // 正常の場合はprisma.game.deleteで削除
-
-    // userNameToRandomGameRoomIdからも削除 player1 player2両方とも
-
-  }
-
-  /**
-   * @description
-   * playerNameが属しているInviteGameRoom(database: InviteGame)を削除する
-   * 旧terminateGame()を分解している。（分解しているのは簡略化のため）
-   */
-  async DeleteInviteGameRoom(dto: DeleteGameDto) {
+    /**
+     * @description
+     * playerNameが属しているRandomGameRoom(database: Game)を削除する
+     * 旧terminateGame()を分解している（分解しているのは簡略化のため）
+     */
+    async DeleteRandomGameRoom(dto: DeleteGameDto) {
         // dto.roomIdのデータレコードが存在しているかをprisma.findUniqueで検索
-    // ない場合は例外投げる（NotFoundException）
+        // ない場合は例外投げる（NotFoundException）
+        let game = await this.prisma.game.findUnique({
+            where: {
+                id: dto.roomId,
+            }
+        });
+        if (!game)
+            throw new NotFoundException();
+        // dto.playerName === データレコード.player1もしくはplayer2の条件分岐
+        // 上記がどちらとも当てはまらない場合は例外（ForbiddenException）
+        if (dto.playerName !== game.player1 && dto.playerName !== game.player2)
+            throw new ForbiddenException();
 
-    // dto.playerName === データレコード.player1もしくはplayer2の条件分岐
-    // 上記がどちらとも当てはまらない場合は例外（ForbiddenException）
+        // 正常の場合はprisma.game.deleteで削除
+        await this.prisma.game.delete({
+            where: {
+                id: dto.roomId,
+            }
+        });
+        // userNameToRandomGameRoomIdからも削除 player1 player2両方とも
+        this.userNameToRandomGameRoomId.delete(game.player1);
+        this.userNameToRandomGameRoomId.delete(game.player2);
+    }
 
-    // 正常の場合はprisma.game.deleteで削除
+    /**
+     * @description
+     * playerNameが属しているInviteGameRoom(database: InviteGame)を削除する
+     * 旧terminateGame()を分解している。（分解しているのは簡略化のため）
+     */
+    async DeleteInviteGameRoom(dto: DeleteGameDto) {
+        // dto.roomIdのデータレコードが存在しているかをprisma.findUniqueで検索
+        // ない場合は例外投げる（NotFoundException）
 
-    // userNameToInviteGameRoomIdからも削除 player1 player2両方とも
-  }
+        // dto.playerName === データレコード.player1もしくはplayer2の条件分岐
+        // 上記がどちらとも当てはまらない場合は例外（ForbiddenException）
 
-  getUserNameToRandomGameRoomId() { return this.userNameToRandomGameRoomId; }
+        // 正常の場合はprisma.game.deleteで削除
 
-  getUserNameToInviteGameRoomId() { return this.userNameToInviteGameRoomId; }
+        // userNameToInviteGameRoomIdからも削除 player1 player2両方とも
+    }
 
-  // Observerは省略してる
+    getUserNameToRandomGameRoomId() {
+        return this.userNameToRandomGameRoomId;
+    }
+
+    getUserNameToInviteGameRoomId() {
+        return this.userNameToInviteGameRoomId;
+    }
+
+    // Observerは省略してる
 }
