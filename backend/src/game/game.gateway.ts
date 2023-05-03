@@ -17,19 +17,14 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { MatchService } from 'src/match/match.service';
 import axios from 'axios';
 
-type ChatRecieved = {
-  uname: string;
-  time: string;
-  text: string;
-  name: string;
-};
-
+// ここでボールの型を定義
 type BallPos = {
   x: number;
   y: number;
   name: string;
 };
 
+// paddle info
 type PaddleAndRoom = {
   paddleHeight: number;
   name: string;
@@ -39,18 +34,21 @@ type RoomId = {
   name: string;
 };
 
+//scoer info
 type Score = {
   player1: number;
   player2: number;
   name: string;
 };
 
+// game終了時に用いる型のinfo
 type TerminateGame = {
   player1: string;
   isInviteGame: boolean;
   roomId: string;
 };
 
+//disconnect時に用いる型のinfo
 export type SocketClient = {
   name: string;
   socketId: string;
@@ -75,31 +73,41 @@ export class GameGateway {
   @WebSocketServer()
   server: Server;
   private logger: Logger = new Logger('GameGateway');
+  // roomごとにsocketの情報を管理する
   private rooms = {};
 
+  //game の情報paddle情報の管理に用いられるイベント
   @SubscribeMessage('GameToServer')
   ReceiveGameInfo(
     @MessageBody() payload: PaddleAndRoom,
     @ConnectedSocket() client: Socket,
   ): void {
+    //room IDを取得
     let roomId: string = NameToRoomIdDic[payload.name];
     if (roomId === undefined) {
       roomId = NameToInviteRoomIdDic[payload.name];
     }
+    //もう一方のクライアントに対してpaddle情報を送信
     this.server.to(roomId).emit('GameToClient', payload, client.id);
   }
+
+  // ballの情報を管理するイベント
   @SubscribeMessage('BallPosToServer')
   ReceiveBallPosInfo(
     @MessageBody() payload: BallPos,
     @ConnectedSocket() client: Socket,
   ): void {
+    //room IDを取得
     let roomId: string = NameToRoomIdDic[payload.name];
     if (roomId === undefined) {
       roomId = NameToInviteRoomIdDic[payload.name];
     }
+    // もう一方のクライアントに対してball情報を送信
     this.server.to(roomId).emit('BallPosToClient', payload, client.id);
   }
+
   // ユーザーがルームに参加するたnめのイベントを定義します
+  // roomの登録を行おう
   @SubscribeMessage('JoinRoom')
   handleJoinRoom(
     @MessageBody() payload: string,
@@ -113,6 +121,10 @@ export class GameGateway {
       roomId = NameToInviteRoomIdDic[payload];
     }
     socket.join(roomId);
+
+    /**
+     * ここの処理の意味がわからない
+     */
     // ルームが存在しない場合は、新しいルームを作成します
     if (!this.rooms[roomId]) {
       this.rooms[roomId] = [];
@@ -125,7 +137,7 @@ export class GameGateway {
     SocketClients.push({ name: payload, socketId: socket.id });
   }
 
-  // ユーザーがルームから離脱するためのイベントを定義します
+  // ユーザーがルームから離脱するためのイベントを定義
   @SubscribeMessage('LeaveRoom')
   handleLeaveRoom(
     @ConnectedSocket() socket: any,
@@ -141,6 +153,7 @@ export class GameGateway {
     }
   }
 
+  // ユーザーがルームから入室しているのかを確かめるためのイベントを定義
   @SubscribeMessage('Ping')
   handlePing(
     @MessageBody() name: string,
@@ -153,6 +166,8 @@ export class GameGateway {
     this.server.to(roomId).emit('Ping', name, client.id);
   }
 
+  //pong に対する応答のためのイベント
+  //現在は使ってない
   @SubscribeMessage('Pong')
   handlePong(
     @MessageBody() name: string,
@@ -165,18 +180,23 @@ export class GameGateway {
     this.server.to(roomId).emit('Pong', name, client.id);
   }
 
+  //スコアの情報を管理するイベント
+  //player1から送られてきた情報をplayer2に対して送る
   @SubscribeMessage('ScoreToServer')
   handleGameScore(
     @MessageBody() payload: Score,
     @ConnectedSocket() client: Socket,
   ): void {
+    //room IDを取得
     let roomId: string = NameToRoomIdDic[payload.name];
     if (roomId === undefined) {
       roomId = NameToInviteRoomIdDic[payload.name];
     }
+    // もう一方のクライアントに対してscore情報を送信
     this.server.to(roomId).emit('ScoreToClient', payload, client.id);
   }
 
+  //ゲームの終了を管理するイベント
   @SubscribeMessage('TerminateGame')
   async terminateGame(
     @MessageBody() name: string,
@@ -192,9 +212,12 @@ export class GameGateway {
     } else {
       return;
     }
+    //terminateGameを実行
     await this.gameService.terminateGame(dto);
+    //socketを削除
     await delete SocketClients[SocketClients.findIndex((e) => e.name === name)];
   }
+
 
   // 接続が切断されたときの処理
   async handleDisconnect(client: Socket) {
