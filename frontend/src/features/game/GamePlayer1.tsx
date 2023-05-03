@@ -110,7 +110,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
   type BallPos = {
     x: number;
     y: number;
-    name: string | undefined;
+    playerName: string;
   };
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -119,6 +119,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
   const lastScore = 5;
   let p2name: string;
 
+  //---------------------------------------------------------------------------------
   function draw() {
     if (!user?.name) return;
     context?.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
@@ -164,7 +165,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
 
     const paddleAndRoom = {
       paddleHeight: rightPaddle.y,
-      name: user?.name.toString(),
+      playerName: user.name,
     };
     socket.emit('GameToServer', paddleAndRoom);
     keycode = '';
@@ -178,7 +179,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
     const BallPos: BallPos = {
       x: ball.x,
       y: ball.y,
-      name: user?.name.toString(),
+      playerName: user?.name.toString(),
     };
 
     const vectorMiddleTo1X = BallPos.x - MIDDLEX;
@@ -196,12 +197,12 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
     type Scoredto = {
       player1: number;
       player2: number;
-      name: string;
+      playerName: string;
     };
     const score: Scoredto = {
       player1: rightScore,
       player2: leftScore,
-      name: user.name,
+      playerName: user.name,
     };
     socket.emit('ScoreToServer', score);
 
@@ -214,12 +215,11 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
     const handleInGameStatusDelete = () => {
       rootSocket.emit("in_game_status_delete");
 
-      // onlineに戻るイベントを送る
-
       setTimeout(() => {
         history("/game");
       }, 3 * 1000);
     };
+  //---------------------------------------------------------------------
 
     if (leftScore < lastScore && rightScore < lastScore) {
       window.requestAnimationFrame(draw);
@@ -243,7 +243,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
       context.fillText('You Lose!', 360, 300);
       context.fillStyle = 'black';
       context.fillText('5秒後にgameページに戻ります.', 100, 600);
-      socket.emit('TerminateGame', user.name);
+      socket.emit('TerminateGame', { name: user.name });
       if (window.location.pathname === '/game/player1') {
         handleInGameStatusDelete();
       }
@@ -261,7 +261,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
       context.fillText('You Win!', 360, 300);
       context.fillStyle = 'black';
       context.fillText('5秒後にgameページに戻ります.', 100, 600);
-      socket.emit('TerminateGame', user.name);
+      socket.emit('TerminateGame', { name: user.name });
       if (window.location.pathname === '/game/player1') {
         handleInGameStatusDelete();
       }
@@ -269,8 +269,8 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
   }
 
   useEffect(() => {
-    socket.emit('JoinRoom', user.name);
-    socket.emit('Ping', user.name);
+    socket.emit('JoinRoom', { name: user.name });
+    socket.emit('Ping', { name: user.name });
     rootSocket.emit('in_game_status_check');
   }, []);
 
@@ -280,7 +280,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
 
   const sendPing = setInterval(() => {
     if (user.name) {
-      socket.emit('Ping', user.name);
+      socket.emit('Ping', { name: user.name });
     }
   }, 1000);
 
@@ -312,7 +312,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
 
   type PaddleAndRoom = {
     paddleHeight: number;
-    name: string;
+    playerName: string;
   };
 
   socket.on('ExitGame', () => {
@@ -323,13 +323,9 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
     if (socket.id !== socketid) leftPaddle.y = leftPaddley.paddleHeight;
   });
 
-  socket.on('GameOut', () => {
-    rootSocket.emit('in_game_status_delete');
-  });
-
-  socket.on('Pong', (name: string, socketid: string) => {
+  socket.on('Pong', (dto: { name: string}, socketid: string) => {
     isRecievePong = true;
-    p2name = name;
+    p2name = dto.name;
   });
 
   const BallSpeedUp = () => {
@@ -390,4 +386,3 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
 };
 
 export default GamePlayer1;
-

@@ -3,29 +3,24 @@ import { Link } from 'react-router-dom';
 import { Grid } from '@mui/material';
 import { Socket } from 'socket.io-client';
 import { InviteGame, User } from '../../types/PrismaType';
-import { GameInviteRoomReq, useGameUser } from '../../hooks/game/useGameuser';
+import { GameInviteRoomReq } from '../../hooks/game/useGameuser';
 
-const InviteRoom = (props: { socket: Socket }) => {
-  const { socket } = props;
-  const [user, setUser] = useState<User>();
+const InviteRoom = (props: { socket: Socket, user: User }) => {
+  const { socket, user } = props;
   const [roomId, setRoomId] = useState<string | undefined>(undefined);
   const [copySuccess, setCopySuccess] = useState(false); // Add this line
 
   const gamePromisesRef = useRef<Promise<InviteGame>>();
-  const userPromise = useGameUser();
 
   useEffect(() => {
-    userPromise.then((userDto: User) => {
-      setUser(userDto);
-      gamePromisesRef.current = GameInviteRoomReq(userDto?.name);
-    });
+      gamePromisesRef.current = GameInviteRoomReq(user.name);
   }, []);
 
   useEffect(() => {
-    gamePromisesRef.current?.then((Gamedto: InviteGame) => {
-      setRoomId(Gamedto?.id);
+    gamePromisesRef.current?.then((dto: InviteGame) => {
+      setRoomId(dto.id);
     });
-  }, [user]);
+  }, [user, gamePromisesRef]);
 
   function handleCopy() {
     if (roomId) {
@@ -39,7 +34,7 @@ const InviteRoom = (props: { socket: Socket }) => {
   }, [user, roomId]);
 
   const handleClick = () => {
-    socket.emit('TerminateGame', user?.name);
+    socket.emit('TerminateGame', {name: user.name});
   };
 
   return (
@@ -75,7 +70,7 @@ const InviteRoom = (props: { socket: Socket }) => {
         <div>
           <h5>
             Your Room 👉
-            <Link style={{}} to={'/game/player1'}>
+            <Link style={{}} to={'/game-rewrite/player1'}>
               lets go!!
             </Link>
             <p></p>

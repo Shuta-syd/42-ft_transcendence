@@ -24,16 +24,15 @@ export class GameReWriteService {
    */
   async createOrJoinRandomGameAsPlayer(playerName: string): Promise<Game> {
     // prisma.findFirstでplayer2プロパティに'player2'の文字列が入ったレコード1つ取り出す
-    const player2NotAssginedGame = await this.prisma.game.findFirst({
+    const prismaPlayer2 = await this.prisma.game.findFirst({
       where: {
         player2: {
           contains: 'player2_',
         },
       },
     });
-
     // 'player2'の文字列がある場合はまだplayer2が参加していないから空いていることを示す
-    if (player2NotAssginedGame) {
+    if (prismaPlayer2) {
       // ある場合は JoinRandomGameAsPlayer2
       const game = this.JoinRandomGameAsPlayer2(playerName);
       return game;
@@ -133,9 +132,9 @@ export class GameReWriteService {
       },
     });
 
-    // player1が自分の名前だったら、そのゲームを返す
+    // player1が自分の名前だったら、例外を投げる
     if (player2NotAssginedGame.player1 === playerName) {
-      return player2NotAssginedGame
+      throw new NotFoundException('player1とplayer2が同じです');
     }
 
     // 'player2'の文字列がある場合はまだplayer2が参加していないから空いていることを示す

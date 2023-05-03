@@ -6,17 +6,18 @@ import { MatchService } from 'src/match/match.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { GameReWriteController } from './game-rewrite.controller';
+import { GameReWriteGateway } from './game-rewrite.gateway';
 
 @Module({
   imports: [MatchModule],
   controllers: [GameReWriteController],
   providers: [
+    GameReWriteGateway,
     GameReWriteService,
     PrismaService,
     MatchService,
     JwtService,
     ConfigService,
   ],
-  exports: [],
 })
 export class GameReWriteModule {}

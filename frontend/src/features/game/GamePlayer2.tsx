@@ -106,7 +106,7 @@ const GamePlayer2 = (props: { socket: Socket, user: User }) => {
   type BallPos = {
     x: number;
     y: number;
-    name: string | undefined;
+    playerName: string;
   };
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -154,7 +154,7 @@ const GamePlayer2 = (props: { socket: Socket, user: User }) => {
     keycode = '';
     const paddleAndRoom = {
       paddleHeight: rightPaddle.y,
-      name: user?.name.toString(),
+      playerName: user.name,
     };
     socket.emit('GameToServer', paddleAndRoom);
 
@@ -188,7 +188,7 @@ const GamePlayer2 = (props: { socket: Socket, user: User }) => {
       context.fillText('You Lose!', 360, 300);
       context.fillStyle = 'black';
       context.fillText('5秒後にgameページに戻ります.', 100, 600);
-      if (window.location.pathname === '/game/player2') {
+      if (window.location.pathname === '/game-rewrite/player2') {
         handleInGameStatusDelete();
       }
     } else {
@@ -197,14 +197,14 @@ const GamePlayer2 = (props: { socket: Socket, user: User }) => {
       context.fillText('You Win!', 360, 300);
       context.fillStyle = 'black';
       context.fillText('5秒後にgameページに戻ります.', 100, 600);
-      if (window.location.pathname === '/game/player2') {
+      if (window.location.pathname === '/game-rewrite/player2') {
         handleInGameStatusDelete();
       }
     }
   }
 
   useEffect(() => {
-    socket.emit('JoinRoom', user.name);
+    socket.emit('JoinRoom', { name: user.name });
     rootSocket.emit('in_game_status_check');
   }, [rootSocket])
 
@@ -232,7 +232,7 @@ const GamePlayer2 = (props: { socket: Socket, user: User }) => {
 
   type PaddleAndRoom = {
     paddleHeight: number;
-    name: string;
+    playerName: string;
   };
 
   socket.on('GameToClient', (leftPaddley: PaddleAndRoom, socketid: string) => {
@@ -243,14 +243,14 @@ const GamePlayer2 = (props: { socket: Socket, user: User }) => {
     ball.y = BallPos.y;
   });
 
-  socket.on('Ping', (name: string, SocketId: string) => {
-    socket.emit('Pong', user?.name);
+  socket.on('Ping', (dto: {name: string}, SocketId: string) => {
+    socket.emit('Pong', { name: user.name });
   });
 
   type Score = {
     player1: number;
     player2: number;
-    name: string;
+    playName: string;
   };
 
   function pageReload() {
@@ -259,7 +259,7 @@ const GamePlayer2 = (props: { socket: Socket, user: User }) => {
 
   socket.on('ExitGame', () => {
     alert('異常終了しました。/gameに戻ります。');
-    window.location.href = '/game';
+    window.location.href = '/game-rewrite';
   });
 
   socket.on('ScoreToClient', (Score: Score, SocketId: string) => {
