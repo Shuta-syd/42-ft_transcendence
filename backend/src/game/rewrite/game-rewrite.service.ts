@@ -213,7 +213,7 @@ export class GameReWriteService {
       // dto.roomIdのデータレコードが存在しているかをprisma.findUniqueで検索
       const game = await this.prisma.inviteGame.findUnique({
         where: {
-            id: dto.roomId.toString(),
+            id: dto.roomId,
         }
       } );
     // ない場合は例外投げる（NotFoundException）
@@ -231,7 +231,7 @@ export class GameReWriteService {
     // 正常の場合はprisma.game.deleteで削除
         await this.prisma.inviteGame.delete({
             where: {
-                id: dto.roomId.toString(),
+                id: dto.roomId,
             }
         } );
 
