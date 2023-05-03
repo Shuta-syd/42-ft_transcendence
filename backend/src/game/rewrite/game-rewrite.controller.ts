@@ -58,6 +58,10 @@ export class GameReWriteController {
     status: 200,
     description: 'Successfully joined a random game as player 2.',
   })
+  @ApiResponse({
+    status: 404,
+    description: 'There is no random game room available.',
+  })
   async joinRandomeGameAsPlayer2(@Req() req: Request): Promise<Game> {
     return this.gameService.JoinRandomGameAsPlayer2(req.user.name);
   }

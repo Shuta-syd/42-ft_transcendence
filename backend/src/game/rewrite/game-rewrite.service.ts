@@ -131,10 +131,14 @@ export class GameReWriteService {
         },
       },
     });
+    // player2NotsAssginedGameがない場合はエラーを返す
+    if (!player2NotAssginedGame) {
+      throw new NotFoundException('There is no available game')
+    }
 
     // player1が自分の名前だったら、例外を投げる
     if (player2NotAssginedGame.player1 === playerName) {
-      throw new NotFoundException('player1とplayer2が同じです');
+      return player2NotAssginedGame;
     }
 
     // 'player2'の文字列がある場合はまだplayer2が参加していないから空いていることを示す
