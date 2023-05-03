@@ -106,7 +106,7 @@ const GamePlayer2 = (props: { socket: Socket, user: User }) => {
   type BallPos = {
     x: number;
     y: number;
-    name: string | undefined;
+    playerName: string;
   };
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -154,7 +154,7 @@ const GamePlayer2 = (props: { socket: Socket, user: User }) => {
     keycode = '';
     const paddleAndRoom = {
       paddleHeight: rightPaddle.y,
-      name: user?.name.toString(),
+      playerName: user.name,
     };
     socket.emit('GameToServer', paddleAndRoom);
 
@@ -204,7 +204,7 @@ const GamePlayer2 = (props: { socket: Socket, user: User }) => {
   }
 
   useEffect(() => {
-    socket.emit('JoinRoom', user.name);
+    socket.emit('JoinRoom', { name: user.name });
     rootSocket.emit('in_game_status_check');
   }, [rootSocket])
 
@@ -232,7 +232,7 @@ const GamePlayer2 = (props: { socket: Socket, user: User }) => {
 
   type PaddleAndRoom = {
     paddleHeight: number;
-    name: string;
+    playerName: string;
   };
 
   socket.on('GameToClient', (leftPaddley: PaddleAndRoom, socketid: string) => {
@@ -250,7 +250,7 @@ const GamePlayer2 = (props: { socket: Socket, user: User }) => {
   type Score = {
     player1: number;
     player2: number;
-    name: string;
+    playName: string;
   };
 
   function pageReload() {

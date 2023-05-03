@@ -24,7 +24,7 @@ import axios from 'axios';
   cors: {
     origin: ['http://localhost:3000'],
   },
-  namespace: '/game',
+  namespace: '/game-rewrite',
 })
 export class GameReWriteGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
