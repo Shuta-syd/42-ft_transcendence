@@ -42,18 +42,18 @@ export default function NewNavBar() {
         >
           <Box
             className={'NavbarButtonParent'}
-            borderRight={path.includes('/game') ? 4 : 0}
+            borderRight={path.includes('/game-rewrite') ? 4 : 0}
             borderColor={'#1f9f88'}
           >
             <Box
               borderRadius={4}
-              className={ path.includes('/game') ? 'NavbarActive' : ''}
+              className={ path.includes('/game-rewrite') ? 'NavbarActive' : ''}
             >
-              <Link to={'/game'}>
+              <Link to={'/game-rewrite'}>
                 <IconButton>
                   <VideogameAssetOutlinedIcon
                     fontSize="large"
-                    className={ path.includes('/game') ? 'NavbarButtonActive' : 'NavbarButton'}
+                    className={ path.includes('/game-rewrite') ? 'NavbarButtonActive' : 'NavbarButton'}
                     />
                 </IconButton>
               </Link>

@@ -22,13 +22,16 @@ export class GameReWriteService {
      */
     async createOrJoinRandomGameAsPlayer(playerName: string): Promise<Game> {
         // prisma.findFirstでplayer2プロパティに'player2'の文字列が入ったレコード1つ取り出す
-        const prismaPlayer2 = await this.prisma.game.findFirst({
-            where: {
-                player2: 'player2',
+        const games = await this.prisma.game.findMany({
+          where: {
+            player2: {
+              contains: 'player2'
             }
+          }
         });
+      console.log(games);
         // 'player2'の文字列がある場合はまだplayer2が参加していないから空いていることを示す
-        if (prismaPlayer2) {
+        if (games.length > 0) {
             // ある場合は JoinRandomGameAsPlayer2
             const game = this.JoinRandomGameAsPlayer2(playerName);
             return game;
@@ -117,9 +120,11 @@ export class GameReWriteService {
     async JoinRandomGameAsPlayer2(playerName: string): Promise<Game> {
         // prisma.findFirstでplayer2プロパティに'player2'の文字列が入ったレコード1つ取り出す
         const prismaPlayer2 = await this.prisma.game.findFirst({
-            where: {
-                player2: 'player2_',
+          where: {
+            player2: {
+              contains: 'player2_'
             }
+          }
         });
 
         // 'player2'の文字列がある場合はまだplayer2が参加していないから空いていることを示す
@@ -138,7 +143,7 @@ export class GameReWriteService {
         // ここでの返り値を変数に入れる (1)
 
         // userNameToRandomGameRoomIdに登録;
-        this.userNameToRandomGameRoomId.set(playerName, game.id.toString());
+      this.userNameToRandomGameRoomId.set(playerName, game.id.toString());
 
         // (1)を返す
         return game;

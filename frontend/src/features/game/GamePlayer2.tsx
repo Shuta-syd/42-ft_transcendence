@@ -188,7 +188,7 @@ const GamePlayer2 = (props: { socket: Socket, user: User }) => {
       context.fillText('You Lose!', 360, 300);
       context.fillStyle = 'black';
       context.fillText('5秒後にgameページに戻ります.', 100, 600);
-      if (window.location.pathname === '/game/player2') {
+      if (window.location.pathname === '/game-rewrite/player2') {
         handleInGameStatusDelete();
       }
     } else {
@@ -197,7 +197,7 @@ const GamePlayer2 = (props: { socket: Socket, user: User }) => {
       context.fillText('You Win!', 360, 300);
       context.fillStyle = 'black';
       context.fillText('5秒後にgameページに戻ります.', 100, 600);
-      if (window.location.pathname === '/game/player2') {
+      if (window.location.pathname === '/game-rewrite/player2') {
         handleInGameStatusDelete();
       }
     }
@@ -243,8 +243,8 @@ const GamePlayer2 = (props: { socket: Socket, user: User }) => {
     ball.y = BallPos.y;
   });
 
-  socket.on('Ping', (name: string, SocketId: string) => {
-    socket.emit('Pong', user?.name);
+  socket.on('Ping', (dto: {name: string}, SocketId: string) => {
+    socket.emit('Pong', { name: user.name });
   });
 
   type Score = {
@@ -259,7 +259,7 @@ const GamePlayer2 = (props: { socket: Socket, user: User }) => {
 
   socket.on('ExitGame', () => {
     alert('異常終了しました。/gameに戻ります。');
-    window.location.href = '/game';
+    window.location.href = '/game-rewrite';
   });
 
   socket.on('ScoreToClient', (Score: Score, SocketId: string) => {

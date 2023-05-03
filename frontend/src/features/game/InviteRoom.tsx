@@ -70,7 +70,7 @@ const InviteRoom = (props: { socket: Socket, user: User }) => {
         <div>
           <h5>
             Your Room 👉
-            <Link style={{}} to={'/game/player1'}>
+            <Link style={{}} to={'/game-rewrite/player1'}>
               lets go!!
             </Link>
             <p></p>

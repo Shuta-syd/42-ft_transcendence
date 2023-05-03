@@ -124,7 +124,7 @@ const JoinInvitedRoom = (props: { socket: Socket, user: User }) => {
                 borderRadius: '100px',
                 fontSize: '4rem',
               }}
-              to={'/game/player2'}
+              to={'/game-rewrite/player2'}
             >
               lets go!
             </Link>

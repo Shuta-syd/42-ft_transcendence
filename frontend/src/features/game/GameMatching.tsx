@@ -100,13 +100,13 @@ const GameMatching = () => {
     let url = '';
 
     if (type === 'Random Match') {
-      url = '/game/game_room/';
+      url = '/game-rewrite/game_room/';
     } else if (type === 'Invite a Player') {
-      url = '/game/invite_room/';
+      url = '/game-rewrite/invite_room/';
     } else if (type === 'Join With Invite ID') {
       url = 'join_invited_room';
     } else if (type === 'Observer') {
-      url = '/game/select_room';
+      url = '/game-rewrite/select_room';
     }
     navigate(url);
   };

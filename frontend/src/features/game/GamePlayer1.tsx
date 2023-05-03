@@ -323,9 +323,9 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
     if (socket.id !== socketid) leftPaddle.y = leftPaddley.paddleHeight;
   });
 
-  socket.on('Pong', (name: string, socketid: string) => {
+  socket.on('Pong', (dto: { name: string}, socketid: string) => {
     isRecievePong = true;
-    p2name = name;
+    p2name = dto.name;
   });
 
   const BallSpeedUp = () => {

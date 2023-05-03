@@ -16,7 +16,7 @@ const GameRouting = () => {
   const { room } = useParams<{ room: string }>();
   const [user, setUser] = useState<User>();
   const [Loading, setLoading] = useState<boolean>(true);
-  const socket: Socket = useSocket('http://localhost:8080');
+  const socket: Socket = useSocket('http://localhost:8080/game-rewrite');
 
   useEffect(() => {
     const getUser = async () => {
