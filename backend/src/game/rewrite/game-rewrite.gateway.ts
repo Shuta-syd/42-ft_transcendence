@@ -104,6 +104,36 @@ export class GameReWriteGateway
     }
 
     if (gameRoom === null) return;
+    let isOngoing = null;
+    if (!isInviteGame) {
+      isOngoing = await this.prisma.game.findUnique({
+        where: {
+          id: parseInt(roomId),
+        }
+      });
+      if (isOngoing.onGoing === false)
+        return;
+    } else {
+      isOngoing = await this.prisma.inviteGame.findUnique({
+        where: {
+          id: roomId,
+        }
+      });
+      if (isOngoing.onGoing === false)
+        return;
+    }
+
+
+
+    const isAlreadyMatched = await this.prisma.match.findFirst({
+        where: {
+            roomId,
+        }
+    });
+    if (isAlreadyMatched !== null) return;
+
+    console.log(gameRoom, user.name, gameRoom.player1, gameRoom.player2);
+    console.log('disconnect');
 
     if (
       gameRoom.player1 === user.name &&
@@ -113,12 +143,14 @@ export class GameReWriteGateway
         player1: user.name,
         player2: gameRoom.player2,
         winner_id: '2',
+        roomId: roomId,
       });
     } else if (gameRoom.player2 === user.name) {
       await this.matchService.createMatch({
         player1: gameRoom.player1,
         player2: user.name,
         winner_id: '1',
+        roomId: roomId,
       });
     }
 
@@ -249,9 +281,9 @@ export class GameReWriteGateway
     this.server.to(roomId).emit('Ping', payload, client.id);
   }
   @SubscribeMessage('Pong')
-  handlePong(
-    @MessageBody() payload: { name: string },
-    @ConnectedSocket() client: Socket,
+  async handlePong(
+      @MessageBody() payload: { name: string },
+      @ConnectedSocket() client: Socket,
   ) {
     if (payload.name === undefined) return; // 例外? cookieで検証する必要ある?
 
@@ -265,7 +297,16 @@ export class GameReWriteGateway
       roomId = UserNameToInviteGameRoomId.get(payload.name);
     if (roomId === undefined) return; // 例外?
 
-    this.server.to(roomId).emit('Pong', payload, client.id);
+    this.server.to(roomId).emit('Pong', payload, client.id, roomId);
+    const game = await this.prisma.game.update({
+      where: {id: parseInt(roomId)},
+      data: {onGoing: true},
+    });
+    if (game !== undefined) return;
+    const inviteGame = await this.prisma.inviteGame.update({
+      where: {id: roomId},
+      data: {onGoing: true},
+    });
   }
 
   /**

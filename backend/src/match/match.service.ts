@@ -13,6 +13,7 @@ export class MatchService {
         player1: dto.player1,
         player2: dto.player2,
         winner_id: parseInt(dto.winner_id, 10),
+        roomId: dto.roomId,
       },
     });
   }

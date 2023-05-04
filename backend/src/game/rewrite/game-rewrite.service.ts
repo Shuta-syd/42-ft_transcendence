@@ -25,6 +25,7 @@ export class GameReWriteService {
         player2: {
           contains: 'player2_',
         },
+        onGoing: false,
       },
     });
 
