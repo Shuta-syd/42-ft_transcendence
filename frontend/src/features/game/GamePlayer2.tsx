@@ -171,7 +171,7 @@ const GamePlayer2 = (props: { socket: Socket, user: User }) => {
       // onlineに戻るイベントを送る
 
       setTimeout(() => {
-        history("/game");
+        history("/game-rewrite");
       }, 3 * 1000);
     };
 
@@ -258,7 +258,7 @@ const GamePlayer2 = (props: { socket: Socket, user: User }) => {
   }
 
   socket.on('ExitGame', () => {
-    alert('異常終了しました。/gameに戻ります。');
+    alert('異常終了しました。/game-rewriteに戻ります。');
     window.location.href = '/game-rewrite';
   });
 
