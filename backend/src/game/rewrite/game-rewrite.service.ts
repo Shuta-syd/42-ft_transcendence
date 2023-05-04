@@ -1,13 +1,9 @@
 /* eslint-disable prettier/prettier */
-import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { Game, InviteGame } from '@prisma/client';
-import { v4 as uuidv4 } from 'uuid';
-import { DeleteGameDto, InviteGameDto } from './game-rewrite.dto';
+import {ForbiddenException, Injectable, NotFoundException,} from '@nestjs/common';
+import {PrismaService} from '../../prisma/prisma.service';
+import {Game, InviteGame} from '@prisma/client';
+import {v4 as uuidv4} from 'uuid';
+import {DeleteGameDto, InviteGameDto} from './game-rewrite.dto';
 
 @Injectable()
 export class GameReWriteService {
@@ -35,12 +31,10 @@ export class GameReWriteService {
     // 'player2'の文字列がある場合はまだplayer2が参加していないから空いていることを示す
     if (player2NotAssginedGame) {
       // ある場合は JoinRandomGameAsPlayer2
-      const game = this.JoinRandomGameAsPlayer2(playerName);
-      return game;
+      return await this.JoinRandomGameAsPlayer2(playerName);
     } else {
       // ない場合はcreateRandomGameRoom()
-      const game = this.createRandomGameRoom(playerName);
-      return game;
+      return await this.createRandomGameRoom(playerName);
     }
 
     // 上記で参加もしくは作成したGameを返り値として返す
