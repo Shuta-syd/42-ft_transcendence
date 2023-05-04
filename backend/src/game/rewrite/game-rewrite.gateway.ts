@@ -27,20 +27,23 @@ import axios from 'axios';
   namespace: '/game-rewrite',
 })
 export class GameReWriteGateway
-  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+  implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
+{
   constructor(
     private readonly jwtService: JwtService,
     private readonly matchService: MatchService,
     private readonly configService: ConfigService,
     private readonly prisma: PrismaService,
     private readonly gameService: GameReWriteService,
-  ) { }
+  ) {}
 
   @WebSocketServer()
   server: Server;
   private logger: Logger = new Logger('GameReWriteGateway');
 
-  async handleConnection(client: Socket) { this.logger.log(`[Game] Client connected: ${client.id}`); }
+  async handleConnection(client: Socket) {
+    this.logger.log(`[Game] Client connected: ${client.id}`);
+  }
 
   async handleDisconnect(client: Socket) {
     let userID = '';
@@ -66,11 +69,15 @@ export class GameReWriteGateway
     });
     if (!user) return;
 
-    await axios.post('http://localhost:8080/game/status/off', { userId: userID });
+    await axios.post('http://localhost:8080/game/status/off', {
+      userId: userID,
+    });
 
     let isInviteGame = false;
-    const UserNameToRandomGameRoomId = this.gameService.getUserNameToRandomGameRoomId();
-    const UserNameToInviteGameRoomId = this.gameService.getUserNameToInviteGameRoomId();
+    const UserNameToRandomGameRoomId =
+      this.gameService.getUserNameToRandomGameRoomId();
+    const UserNameToInviteGameRoomId =
+      this.gameService.getUserNameToInviteGameRoomId();
     let roomId = UserNameToRandomGameRoomId.get(user.name);
 
     if (roomId === undefined) {
@@ -78,22 +85,21 @@ export class GameReWriteGateway
       isInviteGame = true;
     }
     if (roomId === undefined) return; // 例外?
-   
-    this.server.to(roomId).emit('ExitGame');
 
+    this.server.to(roomId).emit('ExitGame');
 
     let gameRoom = null;
     if (!isInviteGame) {
       gameRoom = await this.prisma.game.findUnique({
         where: {
           id: parseInt(roomId),
-        }
+        },
       });
     } else {
       gameRoom = await this.prisma.inviteGame.findUnique({
         where: {
           id: roomId,
-        }
+        },
       });
     }
 
@@ -129,15 +135,17 @@ export class GameReWriteGateway
     console.log(gameRoom, user.name, gameRoom.player1, gameRoom.player2);
     console.log('disconnect');
 
-    if (gameRoom.player1 === user.name && !gameRoom.player2.includes('player2')) {
+    if (
+      gameRoom.player1 === user.name &&
+      !gameRoom.player2.includes('player2')
+    ) {
       await this.matchService.createMatch({
         player1: user.name,
         player2: gameRoom.player2,
         winner_id: '2',
         roomId: roomId,
       });
-    }
-    else if (gameRoom.player2 === user.name) {
+    } else if (gameRoom.player2 === user.name) {
       await this.matchService.createMatch({
         player1: gameRoom.player1,
         player2: user.name,
@@ -147,17 +155,15 @@ export class GameReWriteGateway
     }
 
     if (!isInviteGame) {
-      await this.prisma.game.delete({
-        where: {
-          id: parseInt(roomId),
-        }
-      })
+      await this.gameService.DeleteRandomGameRoom({
+        playerName: user.name,
+        roomId: roomId,
+      });
     } else {
-      await this.prisma.inviteGame.delete({
-        where: {
-          id: roomId,
-        }
-      })
+      await this.gameService.DeleteInviteGameRoom({
+        playerName: user.name,
+        roomId: roomId,
+      });
     }
   }
 
@@ -169,8 +175,10 @@ export class GameReWriteGateway
     @MessageBody() payload: PaddleDto,
     @ConnectedSocket() client: Socket,
   ) {
-    const UserNameToRandomGameRoomId = this.gameService.getUserNameToRandomGameRoomId();
-    const UserNameToInviteGameRoomId = this.gameService.getUserNameToInviteGameRoomId();
+    const UserNameToRandomGameRoomId =
+      this.gameService.getUserNameToRandomGameRoomId();
+    const UserNameToInviteGameRoomId =
+      this.gameService.getUserNameToInviteGameRoomId();
     let roomId = UserNameToRandomGameRoomId.get(payload.playerName);
 
     if (roomId === undefined)
@@ -187,10 +195,12 @@ export class GameReWriteGateway
   @SubscribeMessage('BallPosToServer')
   sendBallInfoToRoomClients(
     @MessageBody() payload: BallPosDto,
-    @ConnectedSocket() client: Socket
+    @ConnectedSocket() client: Socket,
   ) {
-    const UserNameToRandomGameRoomId = this.gameService.getUserNameToRandomGameRoomId();
-    const UserNameToInviteGameRoomId = this.gameService.getUserNameToInviteGameRoomId();
+    const UserNameToRandomGameRoomId =
+      this.gameService.getUserNameToRandomGameRoomId();
+    const UserNameToInviteGameRoomId =
+      this.gameService.getUserNameToInviteGameRoomId();
     let roomId = UserNameToRandomGameRoomId.get(payload.playerName);
 
     if (roomId === undefined)
@@ -206,12 +216,14 @@ export class GameReWriteGateway
   @SubscribeMessage('JoinRoom')
   handleJoinRoom(
     @MessageBody() payload: { name: string },
-    @ConnectedSocket() client: Socket
+    @ConnectedSocket() client: Socket,
   ) {
     if (payload.name === undefined) return; // 例外? cookieで検証する必要ある?
 
-    const UserNameToRandomGameRoomId = this.gameService.getUserNameToRandomGameRoomId();
-    const UserNameToInviteGameRoomId = this.gameService.getUserNameToInviteGameRoomId();
+    const UserNameToRandomGameRoomId =
+      this.gameService.getUserNameToRandomGameRoomId();
+    const UserNameToInviteGameRoomId =
+      this.gameService.getUserNameToInviteGameRoomId();
     let roomId = UserNameToRandomGameRoomId.get(payload.name);
 
     if (roomId === undefined)
@@ -232,8 +244,10 @@ export class GameReWriteGateway
   ) {
     if (payload.name === undefined) return; // 例外? cookieで検証する必要ある?
 
-    const UserNameToRandomGameRoomId = this.gameService.getUserNameToRandomGameRoomId();
-    const UserNameToInviteGameRoomId = this.gameService.getUserNameToInviteGameRoomId();
+    const UserNameToRandomGameRoomId =
+      this.gameService.getUserNameToRandomGameRoomId();
+    const UserNameToInviteGameRoomId =
+      this.gameService.getUserNameToInviteGameRoomId();
     let roomId = UserNameToRandomGameRoomId.get(payload.name);
 
     if (roomId === undefined)
@@ -254,8 +268,10 @@ export class GameReWriteGateway
   ) {
     if (payload.name === undefined) return; // 例外? cookieで検証する必要ある?
 
-    const UserNameToRandomGameRoomId = this.gameService.getUserNameToRandomGameRoomId();
-    const UserNameToInviteGameRoomId = this.gameService.getUserNameToInviteGameRoomId();
+    const UserNameToRandomGameRoomId =
+      this.gameService.getUserNameToRandomGameRoomId();
+    const UserNameToInviteGameRoomId =
+      this.gameService.getUserNameToInviteGameRoomId();
     let roomId = UserNameToRandomGameRoomId.get(payload.name);
 
     if (roomId === undefined)
@@ -271,8 +287,10 @@ export class GameReWriteGateway
   ) {
     if (payload.name === undefined) return; // 例外? cookieで検証する必要ある?
 
-    const UserNameToRandomGameRoomId = this.gameService.getUserNameToRandomGameRoomId();
-    const UserNameToInviteGameRoomId = this.gameService.getUserNameToInviteGameRoomId();
+    const UserNameToRandomGameRoomId =
+      this.gameService.getUserNameToRandomGameRoomId();
+    const UserNameToInviteGameRoomId =
+      this.gameService.getUserNameToInviteGameRoomId();
     let roomId = UserNameToRandomGameRoomId.get(payload.name);
 
     if (roomId === undefined)
@@ -301,8 +319,10 @@ export class GameReWriteGateway
   ) {
     if (payload.playerName === undefined) return; // 例外? cookieで検証する必要ある?
 
-    const UserNameToRandomGameRoomId = this.gameService.getUserNameToRandomGameRoomId();
-    const UserNameToInviteGameRoomId = this.gameService.getUserNameToInviteGameRoomId();
+    const UserNameToRandomGameRoomId =
+      this.gameService.getUserNameToRandomGameRoomId();
+    const UserNameToInviteGameRoomId =
+      this.gameService.getUserNameToInviteGameRoomId();
     let roomId = UserNameToRandomGameRoomId.get(payload.playerName);
 
     if (roomId === undefined)
@@ -319,8 +339,10 @@ export class GameReWriteGateway
   ) {
     let isInviteGame = false;
 
-    const UserNameToRandomGameRoomId = this.gameService.getUserNameToRandomGameRoomId();
-    const UserNameToInviteGameRoomId = this.gameService.getUserNameToInviteGameRoomId();
+    const UserNameToRandomGameRoomId =
+      this.gameService.getUserNameToRandomGameRoomId();
+    const UserNameToInviteGameRoomId =
+      this.gameService.getUserNameToInviteGameRoomId();
     let roomId = UserNameToRandomGameRoomId[payload.name];
 
     if (roomId === undefined) {
@@ -329,8 +351,16 @@ export class GameReWriteGateway
     }
     if (roomId === undefined) return; // 例外?
 
-    if (!isInviteGame) await this.gameService.DeleteRandomGameRoom({ playerName: payload.name, roomId, });
-    else await this.gameService.DeleteInviteGameRoom({ playerName: payload.name, roomId, });
+    if (!isInviteGame)
+      await this.gameService.DeleteRandomGameRoom({
+        playerName: payload.name,
+        roomId,
+      });
+    else
+      await this.gameService.DeleteInviteGameRoom({
+        playerName: payload.name,
+        roomId,
+      });
   }
 
   afterInit(server: Server) {
