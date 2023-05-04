@@ -118,7 +118,8 @@ export class GameReWriteGateway
     }
 
 
-
+    console.log('disconnect');
+    console.log(gameRoom, user.name, gameRoom.player1, gameRoom.player2);
     if (gameRoom.player1 === user.name && !gameRoom.player2.includes('player2')) {
       await this.matchService.createMatch({
         player1: user.name,

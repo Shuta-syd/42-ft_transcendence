@@ -225,7 +225,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
       window.requestAnimationFrame(draw);
     } else if (leftScore === lastScore) {
       /*
-            hit api of "http://localhost:8080/match"
+            hit api of "http://localhost:8080/match"ん
             ここでmatchの結果が決まるのでそのタイミングでhistoryとしてrequestを送信する
              */
       const matchData = {
@@ -247,7 +247,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
       if (window.location.pathname === '/game/player1') {
         handleInGameStatusDelete();
       }
-    } else {
+    } else if (rightScore === lastScore) {
       const matchData = {
         player1: user.name,
         player2: p2name,
