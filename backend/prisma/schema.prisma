@@ -114,10 +114,12 @@ model Game {
   id      Int    @id @default(autoincrement())
   player1 String @unique
   player2 String @unique
+  onGoing Boolean @default(false)
 }
 
 model InviteGame {
   id      String @id @default(uuid())
   player1 String @unique
   player2 String @unique
+  onGoing Boolean @default(false)
 }

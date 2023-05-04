@@ -248,6 +248,15 @@ export class GameReWriteGateway
     if (roomId === undefined) return; // 例外?
 
     this.server.to(roomId).emit('Pong', payload, client.id);
+    const game = await this.prisma.game.update({
+            where: { id: parseInt(roomId) },
+            data: { ongoing: true },
+        });
+    if (game !== undefined) return;
+    const inviteGame = this.prisma.inviteGame.update({
+            where: { id: roomId },
+            data: { ongoing: true },
+        });
   }
 
   /**
