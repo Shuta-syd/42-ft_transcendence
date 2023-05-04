@@ -98,6 +98,26 @@ export class GameReWriteGateway
     }
 
     if (gameRoom === null) return;
+    let isOngoing = null;
+    if (!isInviteGame) {
+      isOngoing = await this.prisma.game.findUnique({
+        where: {
+          id: parseInt(roomId),
+        }
+      });
+      if (isOngoing.onGoing === false)
+        return;
+    } else {
+      isOngoing = await this.prisma.inviteGame.findUnique({
+        where: {
+          id: roomId,
+        }
+      });
+      if (isOngoing.onGoing === false)
+        return;
+    }
+
+
 
     if (gameRoom.player1 === user.name && !gameRoom.player2.includes('player2')) {
       await this.matchService.createMatch({
@@ -233,9 +253,9 @@ export class GameReWriteGateway
     this.server.to(roomId).emit('Ping', payload, client.id);
   }
   @SubscribeMessage('Pong')
-  handlePong(
-    @MessageBody() payload: { name: string },
-    @ConnectedSocket() client: Socket,
+  async handlePong(
+      @MessageBody() payload: { name: string },
+      @ConnectedSocket() client: Socket,
   ) {
     if (payload.name === undefined) return; // 例外? cookieで検証する必要ある?
 
@@ -249,14 +269,14 @@ export class GameReWriteGateway
 
     this.server.to(roomId).emit('Pong', payload, client.id);
     const game = await this.prisma.game.update({
-            where: { id: parseInt(roomId) },
-            data: { ongoing: true },
-        });
+      where: {id: parseInt(roomId)},
+      data: {onGoing: true},
+    });
     if (game !== undefined) return;
-    const inviteGame = this.prisma.inviteGame.update({
-            where: { id: roomId },
-            data: { ongoing: true },
-        });
+    const inviteGame = await this.prisma.inviteGame.update({
+      where: {id: roomId},
+      data: {onGoing: true},
+    });
   }
 
   /**
