@@ -118,13 +118,23 @@ export class GameReWriteGateway
     }
 
 
-    console.log('disconnect');
+
+    const isAlreadyMatched = await this.prisma.match.findFirst({
+        where: {
+            roomId,
+        }
+    });
+    if (isAlreadyMatched !== null) return;
+
     console.log(gameRoom, user.name, gameRoom.player1, gameRoom.player2);
+    console.log('disconnect');
+
     if (gameRoom.player1 === user.name && !gameRoom.player2.includes('player2')) {
       await this.matchService.createMatch({
         player1: user.name,
         player2: gameRoom.player2,
         winner_id: '2',
+        roomId: roomId,
       });
     }
     else if (gameRoom.player2 === user.name) {
@@ -132,6 +142,7 @@ export class GameReWriteGateway
         player1: gameRoom.player1,
         player2: user.name,
         winner_id: '1',
+        roomId: roomId,
       });
     }
 
@@ -268,7 +279,7 @@ export class GameReWriteGateway
       roomId = UserNameToInviteGameRoomId.get(payload.name);
     if (roomId === undefined) return; // 例外?
 
-    this.server.to(roomId).emit('Pong', payload, client.id);
+    this.server.to(roomId).emit('Pong', payload, client.id, roomId);
     const game = await this.prisma.game.update({
       where: {id: parseInt(roomId)},
       data: {onGoing: true},

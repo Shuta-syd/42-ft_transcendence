@@ -9,6 +9,9 @@ import { RootWebsocketContext } from '../../contexts/WebsocketContext';
 const GamePlayer1 = (props: { socket: Socket, user: User }) => {
   const { socket, user } = props;
   const rootSocket: Socket = useContext(RootWebsocketContext);
+  const [roomId, setRoomId] = React.useState<string>('');
+
+
 
   // global variables
   let context: CanvasRenderingContext2D | null;
@@ -232,6 +235,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
         player1: user.name,
         player2: p2name,
         winner_id: 2,
+        roomId,
       };
       axios
           .post('http://localhost:8080/match', matchData)
@@ -252,6 +256,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
         player1: user.name,
         player2: p2name,
         winner_id: 1,
+        roomId,
       };
       axios
           .post('http://localhost:8080/match', matchData)
@@ -323,9 +328,10 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
     if (socket.id !== socketid) leftPaddle.y = leftPaddley.paddleHeight;
   });
 
-  socket.on('Pong', (dto: { name: string}, socketid: string) => {
+  socket.on('Pong', (dto: { name: string}, socketid: string, roomIdDto: string) => {
     isRecievePong = true;
     p2name = dto.name;
+    setRoomId(roomIdDto);
   });
 
   const BallSpeedUp = () => {
