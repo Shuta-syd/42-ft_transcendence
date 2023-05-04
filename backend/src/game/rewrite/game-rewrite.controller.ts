@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   NotFoundException,
@@ -13,6 +14,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Game, InviteGame } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { GameIdDto } from './game-rewrite.dto';
 
 @Controller('game-rewrite')
 @UseGuards(AuthGuard('jwt'))
@@ -58,6 +60,10 @@ export class GameReWriteController {
     status: 200,
     description: 'Successfully joined a random game as player 2.',
   })
+  @ApiResponse({
+    status: 404,
+    description: 'There is no random game room available.',
+  })
   async joinRandomeGameAsPlayer2(@Req() req: Request): Promise<Game> {
     return this.gameService.JoinRandomGameAsPlayer2(req.user.name);
   }
@@ -68,8 +74,22 @@ export class GameReWriteController {
     status: 200,
     description: 'Successfully joined an invite game as player 2.',
   })
-  async joinInviteGameAsPlayer2(@Req() req: Request): Promise<InviteGame> {
-    return this.gameService.JoinInviteGameAsPlayer2(req.user.name);
+  @ApiResponse({
+    status: 403,
+    description: 'This room is already full.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'There is no available room',
+  })
+  async joinInviteGameAsPlayer2(
+    @Req() req: Request,
+    @Body() data: GameIdDto,
+  ): Promise<InviteGame> {
+    return this.gameService.JoinInviteGameAsPlayer2({
+      invitedPlayerName: req.user.name,
+      roomId: data.roomId,
+    });
   }
 
   @Delete('random-game')
@@ -79,19 +99,26 @@ export class GameReWriteController {
     description: 'The random game room has been successfully deleted.',
   })
   @ApiResponse({
+    status: 403,
+    description: 'The user is not participating in this game.',
+  })
+  @ApiResponse({
     status: 404,
     description: 'The invite game was not found.',
   })
-  async deleteRandomGame(@Req() req: Request) {
+  async deleteRandomGame(
+    @Req() req: Request,
+    @Body() data: GameIdDto,
+  ): Promise<Game> {
     const room = await this.prisma.game.findUnique({
       where: {
-        player1: req.user.name,
+        id: parseInt(data.roomId),
       },
     });
     if (!room) {
       throw new NotFoundException('Random Game Room not found');
     }
-    await this.gameService.DeleteRandomGameRoom({
+    return this.gameService.DeleteRandomGameRoom({
       playerName: req.user.name,
       roomId: room.id.toString(),
     });
@@ -104,19 +131,26 @@ export class GameReWriteController {
     description: 'The invite game room has been successfully deleted.',
   })
   @ApiResponse({
+    status: 403,
+    description: 'Your not room owner or player of this game.',
+  })
+  @ApiResponse({
     status: 404,
     description: 'The invite game was not found.',
   })
-  async deleteInviteGame(@Req() req: Request) {
+  async deleteInviteGame(
+    @Req() req: Request,
+    @Body() data: GameIdDto,
+  ): Promise<InviteGame> {
     const room = await this.prisma.inviteGame.findUnique({
       where: {
-        player1: req.user.name,
+        id: data.roomId,
       },
     });
     if (!room) {
       throw new NotFoundException('Random Game Room not found');
     }
-    await this.gameService.DeleteInviteGameRoom({
+    return this.gameService.DeleteInviteGameRoom({
       playerName: req.user.name,
       roomId: room.id.toString(),
     });

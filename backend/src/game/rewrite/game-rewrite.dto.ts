@@ -1,5 +1,18 @@
+import { ApiProperty } from '@nestjs/swagger';
+import { IsUUID } from 'class-validator';
+
 export class DeleteGameDto {
   playerName: string;
+  roomId: string;
+}
+
+export class GameIdDto {
+  @ApiProperty()
+  roomId: string;
+}
+
+export class InviteGameDto {
+  invitedPlayerName: string;
   roomId: string;
 }
 

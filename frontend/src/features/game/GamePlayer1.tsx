@@ -316,7 +316,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
   };
 
   socket.on('ExitGame', () => {
-    window.location.href = '/game';
+    window.location.href = '/game-rewrite';
   });
 
   socket.on('GameToClient', (leftPaddley: PaddleAndRoom, socketid: string) => {
