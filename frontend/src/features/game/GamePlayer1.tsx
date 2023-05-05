@@ -121,7 +121,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
     let p2name: string;
 
     //---------------------------------------------------------------------------------
-    function draw() {
+    async function draw() {
         if (!user?.name) return;
         context?.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
         drawStaticObject();
@@ -233,9 +233,9 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
                 player1: user.name,
                 player2: p2name,
                 winner_id: 2,
-                roomId,
+                roomId, // roomIdはリクエストに入れない、取得はサーバー側で行う
             };
-            axios
+            await axios
                 .post('http://localhost:8080/match', matchData)
                 .catch(
                     (error) => alert('エラーが起きました。ページをリロードしてください。')
@@ -254,9 +254,9 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
                 player1: user.name,
                 player2: p2name,
                 winner_id: 1,
-                roomId,
+                roomId,  // roomIdはリクエストに入れない、取得はサーバー側で行う
             };
-            axios
+           await axios
                 .post('http://localhost:8080/match', matchData)
                 .catch((error) => alert('エラーが起きました。ページをリロードしてください。'));
             context.fillStyle = 'red';
