@@ -143,14 +143,12 @@ export class GameReWriteGateway
         player1: user.name,
         player2: gameRoom.player2,
         winner_id: '2',
-        roomId: roomId,
       });
     } else if (gameRoom.player2 === user.name) {
       await this.matchService.createMatch({
         player1: gameRoom.player1,
         player2: user.name,
         winner_id: '1',
-        roomId: roomId,
       });
     }
 

@@ -233,7 +233,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
                 player1: user.name,
                 player2: p2name,
                 winner_id: 2,
-                roomId,
+                // roomId,
             };
             axios
                 .post('http://localhost:8080/match', matchData)
@@ -254,7 +254,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
                 player1: user.name,
                 player2: p2name,
                 winner_id: 1,
-                roomId,
+                // roomId,
             };
             axios
                 .post('http://localhost:8080/match', matchData)

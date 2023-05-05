@@ -255,7 +255,6 @@ export class GameGateway {
           player1: user.name,
           player2: isExitPlayer1.player2,
           winner_id: '2',
-          roomId,
         });
         await this.prismaService.game.delete({
           where: {
@@ -286,7 +285,6 @@ export class GameGateway {
           player1: isExitPlayer2.player1,
           player2: user.name,
           winner_id: '1',
-          roomId,
         });
         await this.prismaService.game.delete({
           where: {
