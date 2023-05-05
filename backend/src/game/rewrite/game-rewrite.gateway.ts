@@ -111,7 +111,7 @@ export class GameReWriteGateway
           id: parseInt(roomId),
         }
       });
-      if (isOngoing.onGoing === false)
+      if (isOngoing && isOngoing.onGoing === false)
         return;
     } else {
       isOngoing = await this.prisma.inviteGame.findUnique({
@@ -119,7 +119,7 @@ export class GameReWriteGateway
           id: roomId,
         }
       });
-      if (isOngoing.onGoing === false)
+      if (isOngoing && isOngoing.onGoing === false)
         return;
     }
 
