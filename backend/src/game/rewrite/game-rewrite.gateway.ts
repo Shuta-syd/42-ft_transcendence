@@ -87,6 +87,13 @@ export class GameReWriteGateway
     if (roomId === undefined) return; // 例外?
 
     this.server.to(roomId).emit('ExitGame');
+    // matchの存在判定 -> あったら即リターン
+    const isAlreadyMatched = await this.prisma.match.findFirst({
+        where: {
+            roomId,
+        }
+    });
+    if (isAlreadyMatched !== null) return;
 
     let gameRoom = null;
     if (!isInviteGame) {
@@ -123,14 +130,6 @@ export class GameReWriteGateway
         return;
     }
 
-
-
-    const isAlreadyMatched = await this.prisma.match.findFirst({
-        where: {
-            roomId,
-        }
-    });
-    if (isAlreadyMatched !== null) return;
 
     console.log(gameRoom, user.name, gameRoom.player1, gameRoom.player2);
     console.log('disconnect');

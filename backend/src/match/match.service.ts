@@ -8,6 +8,9 @@ export class MatchService {
   constructor(private prisma: PrismaService) {}
 
   async createMatch(dto: MatchDto): Promise<Match | null> {
+    if (!dto.roomId) {
+      return null;
+    }
     return this.prisma.match.create({
       data: {
         player1: dto.player1,
