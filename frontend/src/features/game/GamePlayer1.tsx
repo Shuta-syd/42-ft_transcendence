@@ -121,7 +121,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
     let p2name: string;
 
     //---------------------------------------------------------------------------------
-    function draw() {
+    async function draw() {
         if (!user?.name) return;
         context?.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
         drawStaticObject();
@@ -235,7 +235,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
                 winner_id: 2,
                 // roomId,
             };
-            axios
+            await axios
                 .post('http://localhost:8080/match', matchData)
                 .catch(
                     (error) => alert('エラーが起きました。ページをリロードしてください。')
@@ -256,7 +256,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
                 winner_id: 1,
                 // roomId,
             };
-            axios
+           await axios
                 .post('http://localhost:8080/match', matchData)
                 .catch((error) => alert('エラーが起きました。ページをリロードしてください。'));
             context.fillStyle = 'red';
@@ -326,8 +326,12 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
     socket.on('Pong', (dto: { name: string }, socketid: string, roomIdDto: string) => {
         isRecievePong = true;
         p2name = dto.name;
-        if (!roomId) {
-            setRoomId(roomIdDto);
+        // TODO: ロントでroomIdを取得しなくて良いから、以下の処理は削除して、roomIdも使わない
+        if (roomIdDto) {
+            if (!roomId) {
+                console.log('roomId is already set');
+                setRoomId(roomIdDto);
+            }
         }
     });
 
