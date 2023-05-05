@@ -6,6 +6,8 @@ import {useNavigate} from 'react-router-dom';
 import {User} from '../../types/PrismaType';
 import {RootWebsocketContext} from '../../contexts/WebsocketContext';
 
+let ballDefaultSpeed = 2;
+
 const GamePlayer1 = (props: { socket: Socket, user: User }) => {
     const {socket, user} = props;
     const rootSocket: Socket = useContext(RootWebsocketContext);
@@ -49,7 +51,6 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
 
     /* start flag */
     let isRecievePong = false;
-    let ballDefaultSpeed = 2;
 
     const ball = {
         x: BALLX,
@@ -65,7 +66,8 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
             context?.fillStyle && (context.fillStyle = this.color);
             context?.fill();
         },
-        init() {
+      init() {
+          console.log('init', ballDefaultSpeed)
             this.x = BALLX;
             this.y = BALLY;
             this.vx = ballDefaultSpeed;
@@ -121,7 +123,8 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
     let p2name: string;
 
     //---------------------------------------------------------------------------------
-    function draw() {
+  function draw() {
+      console.log('draw', ball.vx, ballDefaultSpeed);
         if (!user?.name) return;
         context?.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
         drawStaticObject();
@@ -332,10 +335,14 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
     });
 
     const BallSpeedUp = () => {
-        ballDefaultSpeed += 0.5;
+      ballDefaultSpeed += 0.5;
+      ball.vx += 0.5;
+      ball.vy += 0.5;
     };
     const BallSpeedDown = () => {
-        ballDefaultSpeed -= 0.5;
+      ballDefaultSpeed -= 0.5;
+      ball.vx -= 0.5;
+      ball.vy -= 0.5;
     };
 
     const LevelButton = () => (
