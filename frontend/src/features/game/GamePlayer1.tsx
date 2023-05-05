@@ -326,8 +326,11 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
     socket.on('Pong', (dto: { name: string }, socketid: string, roomIdDto: string) => {
         isRecievePong = true;
         p2name = dto.name;
-        if (!roomId) {
-            setRoomId(roomIdDto);
+        if (roomIdDto) {
+            if (!roomId) {
+                console.log('roomId is already set');
+                setRoomId(roomIdDto);
+            }
         }
     });
 
