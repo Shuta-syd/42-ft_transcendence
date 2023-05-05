@@ -1,9 +1,13 @@
 /* eslint-disable prettier/prettier */
-import {ForbiddenException, Injectable, NotFoundException,} from '@nestjs/common';
-import {PrismaService} from '../../prisma/prisma.service';
-import {Game, InviteGame} from '@prisma/client';
-import {v4 as uuidv4} from 'uuid';
-import {DeleteGameDto, InviteGameDto} from './game-rewrite.dto';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { PrismaService } from '../../prisma/prisma.service';
+import { Game, InviteGame } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+import { DeleteGameDto, InviteGameDto } from './game-rewrite.dto';
 
 @Injectable()
 export class GameReWriteService {
@@ -119,6 +123,18 @@ export class GameReWriteService {
    * player2としてRandom Gameに参加する（Gameデータベースを上書きする）
    */
   async JoinRandomGameAsPlayer2(playerName: string): Promise<Game> {
+    // 既にplayer2としてアサインされているゲームがあるかを確認
+    const alreadyAssignedRandomGameAsPlayer2 = await this.prisma.game.findFirst(
+      {
+        where: {
+          player2: playerName,
+        },
+      },
+    );
+    if (alreadyAssignedRandomGameAsPlayer2) {
+      return alreadyAssignedRandomGameAsPlayer2;
+    }
+
     // prisma.findFirstでplayer2プロパティに'player2'の文字列が入ったレコード1つ取り出す
     const player2NotAssginedGame = await this.prisma.game.findFirst({
       where: {
