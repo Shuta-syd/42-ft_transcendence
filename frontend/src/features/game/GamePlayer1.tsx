@@ -66,8 +66,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
             context?.fillStyle && (context.fillStyle = this.color);
             context?.fill();
         },
-      init() {
-          console.log('init', ballDefaultSpeed)
+        init() {
             this.x = BALLX;
             this.y = BALLY;
             this.vx = ballDefaultSpeed;
@@ -122,9 +121,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
     const lastScore = 5;
     let p2name: string;
 
-    //---------------------------------------------------------------------------------
-  function draw() {
-      console.log('draw', ball.vx, ballDefaultSpeed);
+    function draw() {
         if (!user?.name) return;
         context?.clearRect(0, 0, canvas?.width || 0, canvas?.height || 0);
         drawStaticObject();
@@ -223,15 +220,11 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
                 history("/game-rewrite");
             }, 3 * 1000);
         };
-        //---------------------------------------------------------------------
+
 
         if (leftScore < lastScore && rightScore < lastScore) {
             window.requestAnimationFrame(draw);
         } else if (leftScore === lastScore) {
-            /*
-                  hit api of "http://localhost:8080/match"
-                  ここでmatchの結果が決まるのでそのタイミングでhistoryとしてrequestを送信する
-                   */
             const matchData = {
                 player1: user.name,
                 player2: p2name,
@@ -310,9 +303,6 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
         window.addEventListener('keydown', handleKeyDown);
     }, [user]);
 
-    useEffect(() => {
-    }, [rightPaddle.y]);
-
     type PaddleAndRoom = {
         paddleHeight: number;
         playerName: string;
@@ -335,14 +325,14 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
     });
 
     const BallSpeedUp = () => {
-      ballDefaultSpeed += 0.5;
-      ball.vx += 0.5;
-      ball.vy += 0.5;
+        ballDefaultSpeed += 0.5;
+        ball.vx += 0.5;
+        ball.vy += 0.5;
     };
     const BallSpeedDown = () => {
-      ballDefaultSpeed -= 0.5;
-      ball.vx -= 0.5;
-      ball.vy -= 0.5;
+        ballDefaultSpeed -= 0.5;
+        ball.vx -= 0.5;
+        ball.vy -= 0.5;
     };
 
     const LevelButton = () => (
