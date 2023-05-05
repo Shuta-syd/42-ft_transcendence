@@ -1,6 +1,5 @@
 # .dockerignoreを以下に記述
 
 node_modules
-dist
+build
 README.md
-
