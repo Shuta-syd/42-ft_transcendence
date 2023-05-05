@@ -1,9 +1,13 @@
 /* eslint-disable prettier/prettier */
-import {ForbiddenException, Injectable, NotFoundException,} from '@nestjs/common';
-import {PrismaService} from '../../prisma/prisma.service';
-import {Game, InviteGame} from '@prisma/client';
-import {v4 as uuidv4} from 'uuid';
-import {DeleteGameDto, InviteGameDto} from './game-rewrite.dto';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { PrismaService } from '../../prisma/prisma.service';
+import { Game, InviteGame } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+import { DeleteGameDto, InviteGameDto } from './game-rewrite.dto';
 
 @Injectable()
 export class GameReWriteService {
@@ -19,6 +23,21 @@ export class GameReWriteService {
    * 返り値はGame
    */
   async createOrJoinRandomGameAsPlayer(playerName: string): Promise<Game> {
+    // すでにassignされているランダムゲームがあるかをprisma.findUniqueで検索
+    const alreadyAssignedGame = await this.prisma.game.findFirst({
+      where: {
+        OR: [
+          {
+            player1: playerName,
+          },
+          {
+            player2: playerName,
+          },
+        ],
+      },
+    });
+    // ある場合はその値を返す
+    if (alreadyAssignedGame) return alreadyAssignedGame;
     // prisma.findFirstでplayer2プロパティに'player2'の文字列が入ったレコード1つ取り出す
     const player2NotAssginedGame = await this.prisma.game.findFirst({
       where: {
@@ -51,20 +70,7 @@ export class GameReWriteService {
    */
   async createRandomGameRoom(player1Name: string): Promise<Game> {
     // すでにassignされているランダムゲームがあるかをprisma.findUniqueで検索
-    const prismaGame = await this.prisma.game.findFirst({
-      where: {
-        OR: [
-          {
-            player1: player1Name,
-          },
-          {
-            player2: player1Name,
-          },
-        ],
-      },
-    });
-    // ある場合はその値を返す
-    if (prismaGame) return prismaGame;
+
     // awaitして同期処理に変更 thenは使用しない
     // 作成済みのゲームがない場合は新たに作成する
     // player1は引数の変数、player2は’player2_’+ uuidv4()
