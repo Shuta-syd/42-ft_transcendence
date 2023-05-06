@@ -37,6 +37,15 @@ export class MatchService {
       roomId = inviteGame.id;
     }
 
+    const isRoomId = await this.prisma.match.findUnique({
+      where: {
+        roomId: roomId,
+      },
+    });
+
+    if (isRoomId) {
+      return;
+    }
     return this.prisma.match.create({
       data: {
         player1: dto.player1,
