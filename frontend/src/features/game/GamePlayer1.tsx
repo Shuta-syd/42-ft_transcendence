@@ -241,8 +241,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
             context.fillText('You Lose!', 360, 300);
             context.fillStyle = 'black';
             context.fillText('5秒後にgameページに戻ります.', 100, 600);
-            const game = await socket.emit('TerminateGame', {name: user.name});
-            console.log(`delete game${  game}`);
+            await socket.emit('TerminateGame', {name: user.name});
             if (window.location.pathname === '/game/player1') {
                 handleInGameStatusDelete();
             }
@@ -261,7 +260,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
             context.fillText('You Win!', 360, 300);
             context.fillStyle = 'black';
             context.fillText('5秒後にgameページに戻ります.', 100, 600);
-            socket.emit('TerminateGame', {name: user.name});
+            await socket.emit('TerminateGame', {name: user.name});
             if (window.location.pathname === '/game/player1') {
                 handleInGameStatusDelete();
             }
@@ -323,7 +322,6 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
         // TODO: ロントでroomIdを取得しなくて良いから、以下の処理は削除して、roomIdも使わない
         if (roomIdDto) {
             if (!roomId) {
-                // console.log('roomId is already set');
                 setRoomId(roomIdDto);
             }
         }
