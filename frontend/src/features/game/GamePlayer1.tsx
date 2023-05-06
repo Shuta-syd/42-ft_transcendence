@@ -241,7 +241,8 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
             context.fillText('You Lose!', 360, 300);
             context.fillStyle = 'black';
             context.fillText('5秒後にgameページに戻ります.', 100, 600);
-            socket.emit('TerminateGame', {name: user.name});
+            const game = await socket.emit('TerminateGame', {name: user.name});
+            console.log(`delete game${  game}`);
             if (window.location.pathname === '/game/player1') {
                 handleInGameStatusDelete();
             }

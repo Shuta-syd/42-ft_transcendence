@@ -30,10 +30,6 @@ export class MatchService {
           // player2: dto.player2,
         },
       });
-      if (!game) {
-        //inviteGameにもGameにも入っていない場合
-        throw new NotFoundException();
-      }
       roomId = inviteGame.id;
     }
 
