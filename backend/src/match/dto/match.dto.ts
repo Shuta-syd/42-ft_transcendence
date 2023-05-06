@@ -7,6 +7,4 @@ export class MatchDto {
   player2: string;
   @ApiProperty()
   winner_id: string;
-  @ApiProperty()
-  roomId: string;
 }

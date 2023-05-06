@@ -229,7 +229,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
                 player1: user.name,
                 player2: p2name,
                 winner_id: 2,
-                roomId, // roomIdはリクエストに入れない、取得はサーバー側で行う
+                // roomId, // roomIdはリクエストに入れない、取得はサーバー側で行う
             };
             await axios
                 .post('http://localhost:8080/match', matchData)
@@ -241,7 +241,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
             context.fillText('You Lose!', 360, 300);
             context.fillStyle = 'black';
             context.fillText('5秒後にgameページに戻ります.', 100, 600);
-            socket.emit('TerminateGame', {name: user.name});
+            await socket.emit('TerminateGame', {name: user.name});
             if (window.location.pathname === '/game/player1') {
                 handleInGameStatusDelete();
             }
@@ -260,7 +260,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
             context.fillText('You Win!', 360, 300);
             context.fillStyle = 'black';
             context.fillText('5秒後にgameページに戻ります.', 100, 600);
-            socket.emit('TerminateGame', {name: user.name});
+            await socket.emit('TerminateGame', {name: user.name});
             if (window.location.pathname === '/game/player1') {
                 handleInGameStatusDelete();
             }
@@ -322,7 +322,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
         // TODO: ロントでroomIdを取得しなくて良いから、以下の処理は削除して、roomIdも使わない
         if (roomIdDto) {
             if (!roomId) {
-                console.log('roomId is already set');
+                // console.log('roomId is already set');
                 setRoomId(roomIdDto);
             }
         }
