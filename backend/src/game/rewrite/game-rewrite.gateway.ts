@@ -283,38 +283,34 @@ export class GameReWriteGateway
       @MessageBody() payload: { name: string },
       @ConnectedSocket() client: Socket,
   ) {
-    if (payload.name === undefined) return; // 例外? cookieで検証する必要ある?
+    if (!payload.name) return; // 例外? cookieで検証する必要ある?
 
-    const UserNameToRandomGameRoomId =
-      this.gameService.getUserNameToRandomGameRoomId();
-    const UserNameToInviteGameRoomId =
-      this.gameService.getUserNameToInviteGameRoomId();
-    let roomId = UserNameToRandomGameRoomId.get(payload.name);
-
-    if (roomId === undefined)
-      roomId = UserNameToInviteGameRoomId.get(payload.name);
-    if (roomId === undefined) return; // 例外?
-
-    this.server.to(roomId).emit('Pong', payload, client.id, roomId);
     const isGameExist = await this.prisma.game.findUnique({
-      where: {id: parseInt(roomId)},
+      where: {player2: payload.name},
     });
     if (isGameExist) {
       const game = await this.prisma.game.update({
-        where: {id: parseInt(roomId)},
+        where: {player2: payload.name},
         data: {onGoing: true},
       });
-      if (game) return game;
+      if (game){
+        this.server.to(game.id.toString()).emit('Pong', payload, client.id, game.id.toString());
+        return game;
+      }
+
     } else {
       const inviteGame = await this.prisma.inviteGame.findUnique({
-        where: {id: roomId},
+        where: {player2: payload.name},
       });
       if (inviteGame) {
         const inviteGame = await this.prisma.inviteGame.update({
-          where: {id: roomId},
+          where: {player2: payload.name},
           data: {onGoing: true},
         });
-        if (inviteGame) return inviteGame;
+        if (inviteGame) {
+          this.server.to(inviteGame.id).emit('Pong', payload, client.id, inviteGame.id);
+          return inviteGame;
+        }
       }
     }
     return null;
