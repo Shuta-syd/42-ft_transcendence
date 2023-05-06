@@ -329,7 +329,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
         // TODO: ロントでroomIdを取得しなくて良いから、以下の処理は削除して、roomIdも使わない
         if (roomIdDto) {
             if (!roomId) {
-                console.log('roomId is already set');
+                // console.log('roomId is already set');
                 setRoomId(roomIdDto);
             }
         }
