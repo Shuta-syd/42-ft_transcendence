@@ -241,7 +241,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
             context.fillText('You Lose!', 360, 300);
             context.fillStyle = 'black';
             context.fillText('5秒後にgameページに戻ります.', 100, 600);
-            await socket.emit('TerminateGame', {name: user.name});
+            socket.emit('TerminateGame', {name: user.name});
             if (window.location.pathname === '/game/player1') {
                 handleInGameStatusDelete();
             }
@@ -260,7 +260,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
             context.fillText('You Win!', 360, 300);
             context.fillStyle = 'black';
             context.fillText('5秒後にgameページに戻ります.', 100, 600);
-            await socket.emit('TerminateGame', {name: user.name});
+            socket.emit('TerminateGame', {name: user.name});
             if (window.location.pathname === '/game/player1') {
                 handleInGameStatusDelete();
             }
