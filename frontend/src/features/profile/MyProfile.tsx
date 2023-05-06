@@ -42,7 +42,7 @@ const MyProfile = () => {
       let count: number = 0;
       for (const match of matches) {
         const winnerName =
-          match.winner_id === '1' ? match.player1 : match.player2;
+          match.winner_id == '1' ? match.player1 : match.player2;
         if (winnerName === user?.name) {
           count += 1;
         }
