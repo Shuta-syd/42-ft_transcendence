@@ -228,9 +228,6 @@ const GamePlayer2 = (props: { socket: Socket, user: User }) => {
         window.requestAnimationFrame(draw);
     }, [user]);
 
-    useEffect(() => {
-    }, [rightPaddle.y]);
-
     type PaddleAndRoom = {
         paddleHeight: number;
         playerName: string;

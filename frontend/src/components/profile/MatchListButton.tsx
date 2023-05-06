@@ -33,7 +33,7 @@ const MatchListButton = (props: MatchListProps) => {
         <List>
           {props.matches.map((match) => (
             <ListItem key={match.id}>
-              <ListItemText primary={`${match.player1} vs ${match.player2}    winner: ${match.winner_id === '1' ? match.player1 : match.player2}`} />
+              <ListItemText primary={`${match.player1} vs ${match.player2}    winner: ${match.winner_id == '1' ? match.player1 : match.player2}`} />
             </ListItem>
           ))}
         </List>
