@@ -104,7 +104,7 @@ export class GameReWriteGateway
         },
       });
     } else {
-      gameRoom = await this.prisma.inviteGame.findUnique({
+      gameRoom = await this.prisma..findUnique({
         where: {
           id: roomId,
         },
@@ -383,11 +383,12 @@ export class GameReWriteGateway
       if (!inviteGame) return null;
       roomId = inviteGame.id;
       // player1、player2の名前がどちらか一方でも一致している場合、inviteGame複数削除？？
-      const isinviteGame = await this.prisma.inviteGame.delete({
-        where: {
-          id: roomId,
-        },
-      });
+
+      const isinviteGame = await this.gameService.DeleteInviteGameRoom({
+        playerName: payload.name,
+        roomId: roomId,
+      })
+
       return isinviteGame;
     }
     return null;
