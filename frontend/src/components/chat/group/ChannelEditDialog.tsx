@@ -73,7 +73,6 @@ export default function ChannelEditDialog(props: ChannelEditDialogProps) {
                 control={control}
                 RenderComponent={(field: any) => (
                   <TextField
-                  maxLength={100}
                     {...field}
                     autoFocus
                     fullWidth
@@ -100,7 +99,6 @@ export default function ChannelEditDialog(props: ChannelEditDialogProps) {
                 RenderComponent={(field: any) => (
                   <TextField
                     {...field}
-                    maxLength={100}
                     disabled={type !== 'PROTECT'}
                     fullWidth
                     label={'oldPassword'}
@@ -114,7 +112,6 @@ export default function ChannelEditDialog(props: ChannelEditDialogProps) {
                 RenderComponent={(field: any) => (
                   <TextField
                     {...field}
-                    maxLength={100}
                     disabled={type !== 'PROTECT'}
                     fullWidth
                     label={'newPassword'}

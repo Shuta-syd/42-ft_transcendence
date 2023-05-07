@@ -56,7 +56,6 @@ export default function ChannelCreateDialog(props: ChannelCreateDialogProps) {
                 RenderComponent={(field: any) => (
                   <TextField
                     {...field}
-                    maxLength={100}
                     autoFocus
                     fullWidth
                     label={'Channel Name'}
@@ -82,7 +81,6 @@ export default function ChannelCreateDialog(props: ChannelCreateDialogProps) {
                 RenderComponent={(field: any) => (
                   <TextField
                     {...field}
-                    maxLength={100}
                     disabled={type !== 'PROTECT'}
                     fullWidth
                     label={'password'}

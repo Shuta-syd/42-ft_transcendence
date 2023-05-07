@@ -19,7 +19,6 @@ function TextFieldComponent(props: TextFieldComponentProps) {
         fullWidth
         type={"text"}
         value={value}
-        maxLength={100}
         style={{
           borderRadius: 15,
           boxShadow: "2px 2px 2px rgba(0, 0, 0, 0.2)"
