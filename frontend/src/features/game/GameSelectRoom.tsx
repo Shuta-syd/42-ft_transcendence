@@ -87,6 +87,7 @@ const GameSelectRoom = (props: { user: User }) => {
                 fontSize: '2rem',
               }}
               value={tmpNumber}
+              maxLength={100}
               onChange={handleInputChange}
             />
             <button

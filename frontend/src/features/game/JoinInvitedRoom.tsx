@@ -80,6 +80,7 @@ const JoinInvitedRoom = (props: { socket: Socket, user: User }) => {
                                 }}
                                 value={tmpNumber}
                                 onChange={handleInputChange}
+                                maxLength={100}
                             />
                             <button
                                 onClick={handleButtonClick}
