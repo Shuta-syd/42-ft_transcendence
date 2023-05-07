@@ -71,6 +71,7 @@ export default function SearchChannelDialog(props: SearchChannelDialogProps) {
       >
         <Box sx={{ position: 'relative', height:'40vh'}}>
           <TextField
+            maxLength={100}
             fullWidth
             autoFocus
             value={text}
@@ -112,6 +113,7 @@ export default function SearchChannelDialog(props: SearchChannelDialogProps) {
                           <>
                             <TextField
                               size="small"
+                              maxLength={100}
                               label={'password'}
                               value={channel.password ?? ""}
                               onChange={e => { handleOnChange(e.target.value, channel.id); }}

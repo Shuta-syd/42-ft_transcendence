@@ -48,6 +48,7 @@ export default function ChatGroupComponent(props: ChatGroupComponentProps) {
             >
             <TextField
               fullWidth
+              maxLength={100}
               placeholder={'Search'}
               InputProps={{
                 style: {

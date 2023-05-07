@@ -48,6 +48,7 @@ export default function ChannelGroupComponent(props: ChannelGroupComponentProps)
             >
             <TextField
               fullWidth
+              maxLength={100}
               placeholder={'Search'}
               InputProps={{
                 style: {
