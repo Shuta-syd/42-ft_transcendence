@@ -364,11 +364,10 @@ export class GameReWriteGateway
     if (game && game.onGoing) {
       //gameに入っている場合
       roomId = game.id.toString();
-      const isgame = await this.prisma.game.delete({
-        where: {
-          id: parseInt(roomId),
-        },
-      });
+      const isgame = await this.gameService.DeleteRandomGameRoom({
+        playerName: payload.name,
+        roomId: roomId,
+      })
       return isgame;
     } else {
       //gameに入ってない場合
