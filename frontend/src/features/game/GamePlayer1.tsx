@@ -242,9 +242,8 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
             context.fillStyle = 'black';
             context.fillText('5秒後にgameページに戻ります.', 100, 600);
             socket.emit('TerminateGame', {name: user.name});
-            if (window.location.pathname === '/game/player1') {
-                handleInGameStatusDelete();
-            }
+            ballDefaultSpeed = 2;
+            handleInGameStatusDelete();
         } else if (rightScore === lastScore) {
             const matchData = {
                 player1: user.name,
@@ -252,7 +251,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
                 winner_id: 1,
                 roomId,  // roomIdはリクエストに入れない、取得はサーバー側で行う
             };
-           await axios
+            await axios
                 .post('http://localhost:8080/match', matchData)
                 .catch((error) => alert('エラーが起きました。ページをリロードしてください。'));
             context.fillStyle = 'red';
@@ -261,9 +260,8 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
             context.fillStyle = 'black';
             context.fillText('5秒後にgameページに戻ります.', 100, 600);
             socket.emit('TerminateGame', {name: user.name});
-            if (window.location.pathname === '/game/player1') {
-                handleInGameStatusDelete();
-            }
+            ballDefaultSpeed = 2;
+            handleInGameStatusDelete();
         }
     }
 
@@ -309,6 +307,7 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
     };
 
     socket.on('ExitGame', () => {
+        ballDefaultSpeed = 2;
         window.location.href = '/game-rewrite';
     });
 
@@ -327,16 +326,22 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
             }
         }
     });
+    const maxBallSpeed = 10;
+    const minBallSpeed = 1;
 
     const BallSpeedUp = () => {
-        ballDefaultSpeed += 0.5;
-        ball.vx += 0.5;
-        ball.vy += 0.5;
+        if (ballDefaultSpeed < maxBallSpeed) {
+            ballDefaultSpeed += 0.5;
+            ball.vx += 0.5;
+            ball.vy += 0.5;
+        }
     };
     const BallSpeedDown = () => {
-        ballDefaultSpeed -= 0.5;
-        ball.vx -= 0.5;
-        ball.vy -= 0.5;
+        if (ballDefaultSpeed > minBallSpeed) {
+            ballDefaultSpeed -= 0.5;
+            ball.vx -= 0.5;
+            ball.vy -= 0.5;
+        }
     };
 
     const LevelButton = () => (
