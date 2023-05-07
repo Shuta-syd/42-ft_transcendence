@@ -242,9 +242,9 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
             context.fillStyle = 'black';
             context.fillText('5秒後にgameページに戻ります.', 100, 600);
             socket.emit('TerminateGame', {name: user.name});
-            if (window.location.pathname === '/game/player1') {
+            // if (window.location.pathname === '/game/player1') {
                 handleInGameStatusDelete();
-            }
+            // }
         } else if (rightScore === lastScore) {
             const matchData = {
                 player1: user.name,
@@ -261,9 +261,9 @@ const GamePlayer1 = (props: { socket: Socket, user: User }) => {
             context.fillStyle = 'black';
             context.fillText('5秒後にgameページに戻ります.', 100, 600);
             socket.emit('TerminateGame', {name: user.name});
-            if (window.location.pathname === '/game/player1') {
+            // if (window.location.pathname === '/game/player1') {
                 handleInGameStatusDelete();
-            }
+            // }
         }
     }
 

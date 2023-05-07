@@ -104,7 +104,7 @@ export class GameReWriteGateway
         },
       });
     } else {
-      gameRoom = await this.prisma..findUnique({
+      gameRoom = await this.prisma.inviteGame.findUnique({
         where: {
           id: roomId,
         },
