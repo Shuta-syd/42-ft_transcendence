@@ -364,11 +364,10 @@ export class GameReWriteGateway
     if (game && game.onGoing) {
       //gameに入っている場合
       roomId = game.id.toString();
-      const isgame = await this.prisma.game.delete({
-        where: {
-          id: parseInt(roomId),
-        },
-      });
+      const isgame = await this.gameService.DeleteRandomGameRoom({
+        playerName: payload.name,
+        roomId: roomId,
+      })
       return isgame;
     } else {
       //gameに入ってない場合
@@ -383,11 +382,12 @@ export class GameReWriteGateway
       if (!inviteGame) return null;
       roomId = inviteGame.id;
       // player1、player2の名前がどちらか一方でも一致している場合、inviteGame複数削除？？
-      const isinviteGame = await this.prisma.inviteGame.delete({
-        where: {
-          id: roomId,
-        },
-      });
+
+      const isinviteGame = await this.gameService.DeleteInviteGameRoom({
+        playerName: payload.name,
+        roomId: roomId,
+      })
+
       return isinviteGame;
     }
     return null;
