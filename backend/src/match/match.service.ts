@@ -31,6 +31,9 @@ export class MatchService {
           // player2: dto.player2,
         },
       });
+      if (!inviteGame) {
+        return null;
+      }
       roomId = inviteGame.id;
     }
 

@@ -255,6 +255,7 @@ export class GameReWriteService {
    * @description
    * playerNameが属しているInviteGameRoom(database: InviteGame)を削除する
    * 旧terminateGame()を分解している。（分解しているのは簡略化のため）
+   * palyer1, 2 tおもにプレイヤーが入っている
    */
   async DeleteInviteGameRoom({
     playerName,

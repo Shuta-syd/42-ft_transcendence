@@ -19,7 +19,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Logger, NotFoundException } from '@nestjs/common';
 import axios from 'axios';
-import { Game, InviteGame } from "@prisma/client";
+import { Game, InviteGame } from '@prisma/client';
 
 @WebSocketGateway({
   cors: {
@@ -90,9 +90,9 @@ export class GameReWriteGateway
     this.server.to(roomId).emit('ExitGame');
     // matchの存在判定 -> あったら即リターン
     const isAlreadyMatched = await this.prisma.match.findFirst({
-        where: {
-            roomId,
-        }
+      where: {
+        roomId,
+      },
     });
     if (isAlreadyMatched !== null) return;
 
@@ -117,20 +117,17 @@ export class GameReWriteGateway
       isOngoing = await this.prisma.game.findUnique({
         where: {
           id: parseInt(roomId),
-        }
+        },
       });
-      if (isOngoing && isOngoing.onGoing === false)
-        return;
+      if (isOngoing && isOngoing.onGoing === false) return;
     } else {
       isOngoing = await this.prisma.inviteGame.findUnique({
         where: {
           id: roomId,
-        }
+        },
       });
-      if (isOngoing && isOngoing.onGoing === false)
-        return;
+      if (isOngoing && isOngoing.onGoing === false) return;
     }
-
 
     console.log(gameRoom, user.name, gameRoom.player1, gameRoom.player2);
     console.log('disconnect');
@@ -153,15 +150,23 @@ export class GameReWriteGateway
     }
 
     if (!isInviteGame) {
-      await this.gameService.DeleteRandomGameRoom({
-        playerName: user.name,
-        roomId: roomId,
-      });
+      try {
+        await this.gameService.DeleteRandomGameRoom({
+          playerName: user.name,
+          roomId: roomId,
+        });
+      } catch (error) {
+        console.log(error);
+      }
     } else {
-      await this.gameService.DeleteInviteGameRoom({
-        playerName: user.name,
-        roomId: roomId,
-      });
+      try {
+        await this.gameService.DeleteInviteGameRoom({
+          playerName: user.name,
+          roomId: roomId,
+        });
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 
@@ -280,35 +285,38 @@ export class GameReWriteGateway
   }
   @SubscribeMessage('Pong')
   async handlePong(
-      @MessageBody() payload: { name: string },
-      @ConnectedSocket() client: Socket,
+    @MessageBody() payload: { name: string },
+    @ConnectedSocket() client: Socket,
   ) {
     if (!payload.name) return; // 例外? cookieで検証する必要ある?
 
     const isGameExist = await this.prisma.game.findUnique({
-      where: {player2: payload.name},
+      where: { player2: payload.name },
     });
     if (isGameExist) {
       const game = await this.prisma.game.update({
-        where: {player2: payload.name},
-        data: {onGoing: true},
+        where: { player2: payload.name },
+        data: { onGoing: true },
       });
-      if (game){
-        this.server.to(game.id.toString()).emit('Pong', payload, client.id, game.id.toString());
+      if (game) {
+        this.server
+          .to(game.id.toString())
+          .emit('Pong', payload, client.id, game.id.toString());
         return game;
       }
-
     } else {
       const inviteGame = await this.prisma.inviteGame.findUnique({
-        where: {player2: payload.name},
+        where: { player2: payload.name },
       });
       if (inviteGame) {
         const inviteGame = await this.prisma.inviteGame.update({
-          where: {player2: payload.name},
-          data: {onGoing: true},
+          where: { player2: payload.name },
+          data: { onGoing: true },
         });
         if (inviteGame) {
-          this.server.to(inviteGame.id).emit('Pong', payload, client.id, inviteGame.id);
+          this.server
+            .to(inviteGame.id)
+            .emit('Pong', payload, client.id, inviteGame.id);
           return inviteGame;
         }
       }
@@ -344,7 +352,6 @@ export class GameReWriteGateway
     @MessageBody() payload: { name: string },
     @ConnectedSocket() client: Socket,
   ): Promise<Game | InviteGame | null> {
-
     let roomId: string;
     let inviteGame: InviteGame;
 
@@ -359,20 +366,23 @@ export class GameReWriteGateway
       roomId = game.id.toString();
       const isgame = await this.prisma.game.delete({
         where: {
-          id: parseInt(roomId)
+          id: parseInt(roomId),
         },
       });
       return isgame;
     } else {
       //gameに入ってない場合
       //inviteGameに入っているか確認
+      console.log(`payload.name: ${payload.name}`);
       inviteGame = await this.prisma.inviteGame.findUnique({
         where: {
           player1: payload.name,
           // player2: dto.player2,
         },
       });
+      if (!inviteGame) return null;
       roomId = inviteGame.id;
+      // player1、player2の名前がどちらか一方でも一致している場合、inviteGame複数削除？？
       const isinviteGame = await this.prisma.inviteGame.delete({
         where: {
           id: roomId,
