@@ -73,13 +73,13 @@ function App() {
               </Route>
             </Route>
             <Route
-              path="/game"
+              path="/game-rewrite"
               element={
               <PrivateRouter>
                 <GameMatching/>
               </PrivateRouter>
             } />
-              <Route path={"/game/:room"} element={<GameRouting />} />
+              <Route path={"/game-rewrite/:room"} element={<GameRouting />} />
             <Route
               path={"/user"}
               element={

@@ -12,12 +12,7 @@ const CreateGameRoom = ({ user }: { user: User }) => {
   useEffect(() => {
     const createRoom = async () => {
       try {
-        const { data:GameRoom } = await axios.post<Game>(
-          `http://localhost:8080/game/newplayer`,
-          {
-            playerName: user.name,
-          },
-        )
+        const { data:GameRoom } = await axios.post<Game>(`http://localhost:8080/game-rewrite/random-game/player`)
         setGame(GameRoom);
         setRoomId(GameRoom?.id);
       } catch (error) {
@@ -59,9 +54,9 @@ const CreateGameRoom = ({ user }: { user: User }) => {
 
   const ShowPage = () => {
     if (game?.player1 !== user?.name) {
-      return <Link to={'/game/player2'}>Player2</Link>;
+      return <Link to={'/game-rewrite/player2'}>Player2</Link>;
     }
-    return <Link to={'/game/player1'}>Player1</Link>;
+    return <Link to={'/game-rewrite/player1'}>Player1</Link>;
   };
 
   return (

@@ -3,20 +3,13 @@ import { Link } from 'react-router-dom';
 import { Grid } from '@mui/material';
 import { Game, User } from '../../types/PrismaType';
 import { fetchGameRoomArr } from '../../hooks/game/useGameObserver';
-import { GameObserverReq, useGameUser } from '../../hooks/game/useGameuser';
+import { GameObserverReq } from '../../hooks/game/useGameuser';
 
-const GameSelectRoom = () => {
+const GameSelectRoom = (props: { user: User }) => {
+  const { user } = props;
   const [tmpNumber, setTmpNumber] = useState<string>('');
   const [number, setNumber] = useState<number>(0);
   const [IsAssigned, setIsAsssigned] = useState<boolean>(false);
-
-  const [user, setUser] = useState<User>();
-  const UserPromises = useGameUser();
-  useEffect(() => {
-    UserPromises.then((userDto: User) => {
-      setUser(userDto);
-    });
-  }, []);
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setTmpNumber(event.target.value);

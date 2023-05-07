@@ -23,11 +23,11 @@ const GameMatching = () => {
       title: 'Join With Invite ID',
       width: '100%',
     },
-    {
-      url: 'https://www.travelvoice.jp/wp-content/uploads/2019/05/fans_on_stadium_game.jpg',
-      title: 'Observer',
-      width: '100%',
-    },
+    // {
+    //   url: 'https://www.travelvoice.jp/wp-content/uploads/2019/05/fans_on_stadium_game.jpg',
+    //   title: 'Observer',
+    //   width: '100%',
+    // },
   ];
 
   const ImageButton = styled(ButtonBase)(({ theme }) => ({
@@ -100,14 +100,15 @@ const GameMatching = () => {
     let url = '';
 
     if (type === 'Random Match') {
-      url = '/game/game_room/';
+      url = '/game-rewrite/game_room/';
     } else if (type === 'Invite a Player') {
-      url = '/game/invite_room/';
+      url = '/game-rewrite/invite_room/';
     } else if (type === 'Join With Invite ID') {
       url = 'join_invited_room';
-    } else if (type === 'Observer') {
-      url = '/game/select_room';
     }
+    // } else if (type === 'Observer') {
+    //   url = '/game-rewrite/select_room';
+    // }
     navigate(url);
   };
 

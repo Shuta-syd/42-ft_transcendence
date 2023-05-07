@@ -12,6 +12,7 @@ import { AppGateway } from './app.gateway';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UTF8Middleware } from './midlleware/utf-8.middleware';
+import { GameReWriteModule } from './game/rewrite/game-rewrite.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { UTF8Middleware } from './midlleware/utf-8.middleware';
     GameModule,
     JwtModule,
     ConfigModule,
+    GameReWriteModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService, AppGateway, ConfigService, JwtService],

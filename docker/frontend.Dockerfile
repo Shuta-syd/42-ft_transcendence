@@ -5,7 +5,6 @@ WORKDIR /frontend
 # package.jsonをコンテナにコピー
 COPY ./frontend/package.json ./frontend/package-lock.json /frontend/
 RUN npm install -g npm@latest
-RUN npm install -g npm-check-updates
 RUN npm update
 RUN npm install
 

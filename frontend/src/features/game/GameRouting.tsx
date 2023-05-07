@@ -16,7 +16,7 @@ const GameRouting = () => {
   const { room } = useParams<{ room: string }>();
   const [user, setUser] = useState<User>();
   const [Loading, setLoading] = useState<boolean>(true);
-  const socket: Socket = useSocket('http://localhost:8080/game');
+  const socket: Socket = useSocket('http://localhost:8080/game-rewrite');
 
   useEffect(() => {
     const getUser = async () => {
@@ -43,13 +43,13 @@ const GameRouting = () => {
     case 'observer':
       return <GameObserver socket={socket} />;
     case 'select_room':
-      return <GameSelectRoom />;
+      return <GameSelectRoom user={user} />;
     case 'game_room':
       return <CreateGameRoom user={user} />;
     case 'invite_room':
-      return <InviteRoom socket={socket} />;
+      return <InviteRoom socket={socket} user={user}/>;
     case 'join_invited_room':
-      return <JoinInvitedRoom socket={socket} />;
+      return <JoinInvitedRoom socket={socket} user={user} />;
     default:
       return (
         <div>

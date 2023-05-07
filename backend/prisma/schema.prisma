@@ -86,6 +86,7 @@ model BanUserOnChatRoom {
 
 model Match {
   id        Int    @id @default(autoincrement())
+  roomId    String @unique
   createAt  DateTime  @default(now())
   player1   String
   player2   String
@@ -114,10 +115,12 @@ model Game {
   id      Int    @id @default(autoincrement())
   player1 String @unique
   player2 String @unique
+  onGoing Boolean @default(false)
 }
 
 model InviteGame {
   id      String @id @default(uuid())
   player1 String @unique
   player2 String @unique
+  onGoing Boolean @default(false)
 }

@@ -62,7 +62,7 @@ export default function SearchFriendDialog(props: SearchFriendDialogProps) {
         onClose={handleClose}
       >
         <Box sx={{ position: 'relative', height:'40vh'}}>
-        <TextField
+          <TextField
             fullWidth
             autoFocus
             value={text}
