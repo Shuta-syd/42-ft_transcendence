@@ -172,6 +172,23 @@ export class GameReWriteService {
     const invitedPlayerName = dto.invitedPlayerName;
     const roomId = dto.roomId;
 
+    if (!invitedPlayerName) return;
+    const IsAlreadyAsPlayer1 = await this.prisma.inviteGame.findUnique({
+      where: {
+        player1: invitedPlayerName,
+      },
+    });
+
+    //player1としてassignしてたら削除
+    if (IsAlreadyAsPlayer1) {
+      await this.prisma.inviteGame.delete({
+        where: {
+          player1: invitedPlayerName,
+        },
+      });
+      this.userNameToInviteGameRoomId.delete(invitedPlayerName);
+    }
+
     // player2に既に'player2'を含む文字列以外があった場合は例外スロー(ForbiddenException)
     const invitedGame = await this.prisma.inviteGame.findUnique({
       where: {
@@ -255,12 +272,14 @@ export class GameReWriteService {
    * @description
    * playerNameが属しているInviteGameRoom(database: InviteGame)を削除する
    * 旧terminateGame()を分解している。（分解しているのは簡略化のため）
+   * palyer1, 2 tおもにプレイヤーが入っている
    */
   async DeleteInviteGameRoom({
     playerName,
     roomId,
   }: DeleteGameDto): Promise<InviteGame> {
     // dto.roomIdのデータレコードが存在しているかをprisma.findUniqueで検索
+    console.log(roomId);
     const game = await this.prisma.inviteGame.findUnique({
       where: {
         id: roomId,
@@ -279,16 +298,46 @@ export class GameReWriteService {
     // 上記がどちらとも当てはまらない場合は例外（ForbiddenException）
 
     // 正常の場合はprisma.game.deleteで削除
-    const deleteGame = await this.prisma.inviteGame.delete({
-      where: {
-        id: roomId,
-      },
-    });
+    const Player1 = game.player1;
+    console.log(Player1);
+    const Player2 = game.player2;
+    console.log(Player2);
+    let deleteGame1;
+    let deleteGame2;
+
+    if (Player1) {
+      const isPlayer1InviteGame = await this.prisma.inviteGame.findUnique({
+        where: {
+          player1: Player1,
+        },
+      });
+      if (isPlayer1InviteGame) {
+        deleteGame1 = await this.prisma.inviteGame.delete({
+          where: {
+            player1: Player1,
+          },
+        });
+      }
+    }
+    if (Player2) {
+      const isPlayer2InviteGame = await this.prisma.inviteGame.findUnique({
+        where: {
+          player2: Player2,
+        },
+      });
+      if (isPlayer2InviteGame) {
+        deleteGame2 = await this.prisma.inviteGame.delete({
+          where: {
+            player2: Player2,
+          },
+        });
+      }
+    }
 
     // userNameToInviteGameRoomIdからも削除 player1 player2両方とも
     this.userNameToInviteGameRoomId.delete(game.player1);
     this.userNameToInviteGameRoomId.delete(game.player2);
-    return deleteGame;
+    return deleteGame1 || deleteGame2;
   }
 
   getUserNameToRandomGameRoomId() {
