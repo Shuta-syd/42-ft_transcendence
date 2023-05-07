@@ -79,6 +79,7 @@ CREATE TABLE "BanUserOnChatRoom" (
 -- CreateTable
 CREATE TABLE "Match" (
     "id" SERIAL NOT NULL,
+    "roomId" TEXT NOT NULL,
     "createAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "player1" TEXT NOT NULL,
     "player2" TEXT NOT NULL,
@@ -92,6 +93,7 @@ CREATE TABLE "Game" (
     "id" SERIAL NOT NULL,
     "player1" TEXT NOT NULL,
     "player2" TEXT NOT NULL,
+    "onGoing" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "Game_pkey" PRIMARY KEY ("id")
 );
@@ -101,6 +103,7 @@ CREATE TABLE "InviteGame" (
     "id" TEXT NOT NULL,
     "player1" TEXT NOT NULL,
     "player2" TEXT NOT NULL,
+    "onGoing" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "InviteGame_pkey" PRIMARY KEY ("id")
 );
@@ -119,6 +122,9 @@ CREATE UNIQUE INDEX "User_name_key" ON "User"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "BlockList_blockerId_blockedId_key" ON "BlockList"("blockerId", "blockedId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Match_roomId_key" ON "Match"("roomId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Game_player1_key" ON "Game"("player1");
