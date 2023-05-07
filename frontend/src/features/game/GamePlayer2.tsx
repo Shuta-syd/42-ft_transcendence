@@ -188,18 +188,14 @@ const GamePlayer2 = (props: { socket: Socket, user: User }) => {
             context.fillText('You Lose!', 360, 300);
             context.fillStyle = 'black';
             context.fillText('5秒後にgameページに戻ります.', 100, 600);
-            if (window.location.pathname === '/game-rewrite/player2') {
-                handleInGameStatusDelete();
-            }
+            handleInGameStatusDelete();
         } else {
             context.fillStyle = 'red';
             context.font = "bold 50px 'ＭＳ 明朝'";
             context.fillText('You Win!', 360, 300);
             context.fillStyle = 'black';
             context.fillText('5秒後にgameページに戻ります.', 100, 600);
-            if (window.location.pathname === '/game-rewrite/player2') {
-                handleInGameStatusDelete();
-            }
+            handleInGameStatusDelete();
         }
     }
 
